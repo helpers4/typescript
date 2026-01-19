@@ -9,7 +9,7 @@
  * to TypeScript files in the helpers4 project.
  * 
  * Improvements:
- * - Uses native Bun.Glob (no external dependencies)
+ * - Uses glob package for file pattern matching
  * - Portable via PROJECT_ROOT environment variable
  * - Works in local, devcontainer, CI/CD environments
  * - Handles shebangs correctly
@@ -20,6 +20,7 @@
 
 import { readFile, writeFile } from "fs/promises";
 import { resolve } from "path";
+import { globSync } from "glob";
 
 interface VsCodeSettings {
   "psi-header.templates": {
@@ -54,7 +55,6 @@ async function loadLicenseHeaderFromVsCode(): Promise<string> {
 
   // Find TypeScript template and lang config
   const tsTemplate = settings["psi-header.templates"]?.find(t => t.language === "typescript");
-  const tsLangConfig = settings["psi-header.lang-config"]?.find(c => c.language === "typescript");
   const config = settings["psi-header.config"];
 
   if (!tsTemplate || !config) {
@@ -87,7 +87,7 @@ async function addLicenseHeader() {
   // Load license header from VS Code settings
   const licenseHeader = await loadLicenseHeaderFromVsCode();
 
-  // Search for all TypeScript files in the project with Bun.Glob
+  // Search for all TypeScript files in the project
   const patterns = [
     "helpers/**/*.ts",
     "scripts/**/*.ts",
@@ -99,9 +99,7 @@ async function addLicenseHeader() {
   let totalAdded = 0;
 
   for (const pattern of patterns) {
-    // Use Bun.glob() instead of external package
-    const glob = new Bun.Glob(pattern);
-    const files = [...glob.scanSync({ cwd: projectRoot, onlyFiles: true })];
+    const files = globSync(pattern, { cwd: projectRoot, nodir: true });
 
     for (const file of files) {
       totalProcessed++;

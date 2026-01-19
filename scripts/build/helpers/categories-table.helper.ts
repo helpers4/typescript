@@ -6,6 +6,7 @@
 
 import { join } from "node:path";
 import { DIR } from "../../constants";
+import { readFileJson } from "../../utils";
 
 /**
  * Category configuration interface
@@ -31,7 +32,7 @@ export async function generateCategoriesTable(categories: string[]): Promise<str
 
   const tableRows = await Promise.all(
     categories.map(async (category) => {
-      const config: CategoryConfig = await Bun.file(join(DIR.HELPERS, category, "config.json")).json();
+      const config = readFileJson<CategoryConfig>(join(DIR.HELPERS, category, "config.json"));
       const packageName = `@helpers4/${category}`;
       const npmUrl = `https://www.npmjs.com/package/@helpers4/${category}`;
       const sourceUrl = `https://github.com/helpers4/helpers4/tree/main/helpers/${category}`;

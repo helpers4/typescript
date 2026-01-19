@@ -23,7 +23,9 @@
  */
 
 import { join } from "node:path";
+import { ensureDir } from "fs-extra";
 import { DIR } from "../../constants";
+import { readFileJson, writeFile } from "../../utils";
 import { stripV } from "../../../helpers/version/stripV";
 
 /**
@@ -37,46 +39,38 @@ export async function createBundleMetadata(
 ) {
   const metaDir = join(buildBundleDir, "meta");
 
-  // Read root package.json to get version and other info
-  const rootPackage = await Bun.file(join(DIR.ROOT, "package.json")).json();
+  // Ensure meta directory exists
+  await ensureDir(metaDir);
 
-  // Get Bun version
-  let bunVersion: string | null = null;
-  try {
-    // Try different ways to get Bun version
-    bunVersion = Bun.version || (process.versions as any).bun || null;
-  } catch (error) {
-    // Fallback if Bun.version is not available
-    bunVersion = null;
-  }
+  // Read root package.json to get version and other info
+  const rootPackage = readFileJson<Record<string, unknown>>(join(DIR.ROOT, "package.json"));
 
   // Create build.json with build metadata
   const buildMetadata = {
     buildDate: new Date().toISOString(),
-    version: stripV(rootPackage.version),
+    version: stripV(rootPackage.version as string),
     categories: categories.sort(),
     totalCategories: categories.length,
-    buildTool: "bun",
-    bunVersion: bunVersion ? stripV(bunVersion) : null,
+    buildTool: "vite",
     nodeVersion: stripV(process.version),
     platform: process.platform
   };
 
-  await Bun.write(
+  writeFile(
     join(metaDir, "build.json"),
     JSON.stringify(buildMetadata, null, 2)
   );
 
   // Create packages.json with all package versions
   const packagesMetadata = categories.reduce<Record<string, string>>((acc, category) => {
-    acc[`@helpers4/${category}`] = rootPackage.version;
+    acc[`@helpers4/${category}`] = rootPackage.version as string;
     return acc;
   }, {
     // Include the bundle package itself
-    "@helpers4/all": rootPackage.version
+    "@helpers4/all": rootPackage.version as string
   });
 
-  await Bun.write(
+  writeFile(
     join(metaDir, "packages.json"),
     JSON.stringify(packagesMetadata, null, 2)
   );

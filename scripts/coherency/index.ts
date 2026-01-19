@@ -14,7 +14,7 @@ const tests = ['bundle', 'version', 'category', 'dependencies', 'sizes'];
 async function runAllTests() {
   console.log("🔍 Running coherency tests in parallel...\n");
 
-  const commands = tests.map(test => `bun scripts/coherency/${test}/index.ts`);
+  const commands = tests.map(test => `npx tsx scripts/coherency/${test}/index.ts`);
   const parallelCommand = commands.join(' & ') + '; wait';
 
   try {
