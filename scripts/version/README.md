@@ -12,13 +12,16 @@ Manages version bumps for the project and all packages.
 
 ```bash
 # Automatic version calculation from git commits
-bun scripts/version/version-manager.ts --auto
+npm run version:auto
 
 # Manual version types
-bun scripts/version/version-manager.ts patch      # 2.0.0-alpha.0 → 2.0.0
-bun scripts/version/version-manager.ts minor      # 2.0.0 → 2.1.0
-bun scripts/version/version-manager.ts major      # 2.0.0 → 3.0.0
-bun scripts/version/version-manager.ts prerelease # 2.0.0 → 2.0.1-alpha.0
+npm run version:patch      # 2.0.0-alpha.0 → 2.0.0
+npm run version:minor      # 2.0.0 → 2.1.0
+npm run version:major      # 2.0.0 → 3.0.0
+npm run version:prerelease # 2.0.0 → 2.0.1-alpha.0
+
+# Or directly with tsx
+npx tsx scripts/version/version-manager.ts --auto
 ```
 
 #### Options
@@ -43,16 +46,16 @@ Complete release process including testing, building, and publishing.
 
 ```bash
 # Full release process
-bun scripts/version/release.ts patch
-bun scripts/version/release.ts minor
-bun scripts/version/release.ts major
-bun scripts/version/release.ts prerelease
+npm run release:patch
+npm run release:minor
+npm run release:major
+npm run release:prerelease
 
 # Auto-detect version and release
-bun scripts/version/release.ts --auto
+npx tsx scripts/version/release.ts --auto
 
 # Dry run
-bun scripts/version/release.ts patch --dry-run
+npm run release:dry-run
 ```
 
 #### Options

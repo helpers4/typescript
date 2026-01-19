@@ -23,7 +23,7 @@ insert_final_newline = off
 max_line_length = off
 
 # Ignore all
-[bun.lockb]
+[package-lock.json]
 max_line_length = off
 insert_final_newline = off
 trim_trailing_whitespace = false

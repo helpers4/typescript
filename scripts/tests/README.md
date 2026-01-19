@@ -4,47 +4,55 @@ This directory contains utility scripts and configurations for testing.
 
 ## Files
 
-### `preload.ts`
+### Configuration
 
-Test preload configuration for Bun test runner.
+Test configuration is handled by Vitest through `vitest.config.ts` in the project root.
 
 #### Purpose
 
-This file is executed before test files to:
-- Set up global test environment
-- Configure test utilities
-- Initialize test-specific settings
-- Provide common test helpers
+The Vitest configuration:
+- Sets up global test environment
+- Configures test utilities (happy-dom)
+- Includes test file patterns
+- Provides common test helpers through globals
 
 #### Configuration
 
-Referenced in `bunfig.toml`:
-```toml
-[test]
-preload = "scripts/tests/preload.ts"
+Referenced in `vitest.config.ts`:
+```typescript
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+    include: ['helpers/**/*.{test,spec}.ts'],
+  },
+});
 ```
 
 #### Integration
 
-- **Bun Test Runner** : Automatically loaded before test execution
-- **Global Setup** : Provides consistent test environment
-- **Helper Functions** : Common utilities available to all tests
+- **Vitest Test Runner** : Modern test framework with fast execution
+- **Global Setup** : Provides consistent test environment with globals enabled
+- **Helper Functions** : Common utilities from vitest available to all tests
 
 ## Usage
 
-The preload script runs automatically when executing tests:
+Run tests using npm scripts:
 
 ```bash
-# Run tests (preload automatically executed)
-bun test
+# Run tests
+npm test
 
 # Run specific test files
-bun test helpers/**/*.test.ts
+npm test -- helpers/array/
+
+# Run tests in watch mode
+npm run test:watch
 ```
 
 ## Benefits
 
 - **Consistency** : Same setup across all tests
 - **DRY Principle** : Avoid repeating setup code in individual tests
-- **Performance** : One-time setup instead of per-test initialization
-- **Global Access** : Test utilities available everywhere
+- **Performance** : Fast parallel execution with Vitest
+- **Global Access** : Test utilities (describe, it, expect) available everywhere

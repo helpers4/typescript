@@ -45,13 +45,13 @@ scripts/
 
 ```bash
 # Build everything
-bun run scripts/build/index.ts
+npm run build
 
 # Test bundle coherency
-bun run scripts/coherency/test-bundle.ts
+npm run coherency:bundle
 
 # Run all coherency tests
-bun run scripts/coherency/index.ts
+npm run coherency
 ```
 
 ### Benefits
