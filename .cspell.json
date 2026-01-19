@@ -45,7 +45,6 @@
     ".history",
     ".vscode",
     "*_cspell.txt",
-    "bun.lockb",
     "megalinter",
     "node_modules",
     "node_modules/**",

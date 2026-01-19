@@ -69,19 +69,19 @@ class PreReleaseValidator {
       });
     }
 
-    // Check Bun
+    // Check npm
     try {
-      const { stdout } = await execAsync('bun --version');
+      const { stdout } = await execAsync('npm --version');
       const version = stdout.trim();
       suite.results.push({
         passed: true,
-        message: `Bun version: ${version}`
+        message: `npm version: ${version}`
       });
     } catch (error) {
       suite.results.push({
         passed: false,
-        message: 'Bun not found',
-        details: 'Bun is required as the package manager'
+        message: 'npm not found',
+        details: 'npm is required as the package manager'
       });
     }
 
@@ -231,7 +231,7 @@ class PreReleaseValidator {
       suite.results.push({
         passed: false,
         message: 'node_modules not found',
-        details: 'Run: bun install'
+        details: 'Run: npm install'
       });
     }
 
@@ -273,7 +273,7 @@ class PreReleaseValidator {
     // Check if we can run tests
     try {
       console.log('   🧪 Testing test command...');
-      await execAsync('bun run test', { timeout: 30000 });
+      await execAsync('npm test', { timeout: 30000 });
       suite.results.push({
         passed: true,
         message: 'Tests run successfully'
@@ -289,7 +289,7 @@ class PreReleaseValidator {
     // Check if we can build
     try {
       console.log('   🏗️ Testing build command...');
-      await execAsync('bun run build', { timeout: 60000 });
+      await execAsync('npm run build', { timeout: 60000 });
       suite.results.push({
         passed: true,
         message: 'Build completed successfully'
@@ -316,7 +316,7 @@ class PreReleaseValidator {
     // Check coherency tests
     try {
       console.log('   🔍 Testing coherency...');
-      await execAsync('bun run coherency', { timeout: 30000 });
+      await execAsync('npm run coherency', { timeout: 30000 });
       suite.results.push({
         passed: true,
         message: 'Coherency tests passed'
@@ -359,9 +359,9 @@ class PreReleaseValidator {
     if (allPassed) {
       console.log('🎉 All validation checks passed! Ready for release.');
       console.log('\nNext steps:');
-      console.log('  • bun run release:dry-run    (test the release process)');
-      console.log('  • bun run release:patch      (patch release)');
-      console.log('  • bun run release:minor      (minor release)');
+      console.log('  • npm run release:dry-run    (test the release process)');
+      console.log('  • npm run release:patch      (patch release)');
+      console.log('  • npm run release:minor      (minor release)');
     } else {
       console.log('❌ Some validation checks failed. Please fix issues before release.');
     }

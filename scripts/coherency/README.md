@@ -48,10 +48,10 @@ Main coherency test runner that executes all validation tests in parallel for op
 
 ```bash
 # Run all coherency tests in parallel
-bun scripts/coherency/
+npm run coherency
 
-# Also available via npm script
-bun run coherency
+# Or directly with tsx
+npx tsx scripts/coherency/
 ```
 
 ### Individual Test Modules
@@ -70,9 +70,7 @@ Tests the main bundle package integrity and completeness.
 **Usage:**
 
 ```bash
-bun scripts/coherency/bundle/
-# or
-bun run coherency:bundle
+npm run coherency:bundle
 ```
 
 #### `version/` - Version Consistency
@@ -94,9 +92,7 @@ Ensures all packages have consistent version numbers across the project.
 **Usage:**
 
 ```bash
-bun scripts/coherency/version/
-# or
-bun run coherency:version
+npm run coherency:version
 ```
 
 #### `category/` - Category Package Validation
@@ -118,9 +114,7 @@ Validates all category packages (array, string, object, etc.) for structural con
 **Usage:**
 
 ```bash
-bun scripts/coherency/category/
-# or
-bun run coherency:category
+npm run coherency:category
 ```
 
 #### `dependencies/` - Dependencies Coherency
@@ -142,9 +136,7 @@ Verifies dependencies consistency across all packages.
 **Usage:**
 
 ```bash
-bun scripts/coherency/dependencies/
-# or
-bun run coherency:dependencies
+npm run coherency:dependencies
 ```
 
 #### `sizes/` - Bundle Size Analysis
@@ -166,9 +158,7 @@ Analyzes bundle sizes and provides insights into package sizes and structure.
 **Usage:**
 
 ```bash
-bun scripts/coherency/sizes/
-# or
-bun run coherency:sizes
+npm run coherency:sizes
 ```
 
 ## Integration
@@ -186,14 +176,14 @@ The following commands are available for running coherency tests:
 
 ```bash
 # Run all tests in parallel (recommended)
-bun run coherency
+npm run coherency
 
 # Run individual tests
-bun run coherency:bundle        # Bundle integrity test
-bun run coherency:version       # Version consistency test
-bun run coherency:category      # Category packages validation
-bun run coherency:dependencies  # Dependencies coherency test
-bun run coherency:sizes         # Bundle size analysis
+npm run coherency:bundle        # Bundle integrity test
+npm run coherency:version       # Version consistency test
+npm run coherency:category      # Category packages validation
+npm run coherency:dependencies  # Dependencies coherency test
+npm run coherency:sizes         # Bundle size analysis
 ```
 
 ## Usage in CI/CD
@@ -212,7 +202,7 @@ Or run directly:
 
 ```yaml
 - name: Run Coherency Tests
-  run: bun run coherency
+  run: npm run coherency
 ```
 
 ## Test Output

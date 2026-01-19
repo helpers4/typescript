@@ -43,13 +43,13 @@ if: |
 ## Security Scanning
 
 ### Dependency Vulnerability Audit
-Automated scanning using Bun's built-in security audit:
+Automated scanning using npm's built-in security audit:
 
 ```yaml
 - name: Run security audit
   run: |
     echo "Running security audit..."
-    bun audit || echo "::warning::Security audit found issues"
+    npm audit || echo "::warning::Security audit found issues"
 ```
 
 ### Sensitive Data Detection

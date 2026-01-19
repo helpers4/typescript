@@ -12,10 +12,10 @@ Main build orchestrator that coordinates the entire build process.
 
 ```bash
 # Build all packages
-bun scripts/build/
-
-# Also available via npm script
 npm run build
+
+# Or directly with tsx
+npx tsx scripts/build/
 ```
 
 ### `build-categories.ts`

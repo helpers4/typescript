@@ -56,7 +56,7 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
     if (!options.skipTests) {
       console.log('\n🧪 Step 2: Running tests');
       if (!options.dryRun) {
-        await execAsync('bun run test');
+        await execAsync('npm test');
       }
       console.log('✅ Tests passed');
     } else {
@@ -87,7 +87,7 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
     if (!options.skipBuild) {
       console.log('\n🏗️  Step 4: Building packages');
       if (!options.dryRun) {
-        await execAsync('bun run build');
+        await execAsync('npm run build');
       }
       console.log('✅ Build completed');
     } else {
@@ -98,7 +98,7 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
     if (!options.skipCoherency) {
       console.log('\n🔍 Step 5: Running coherency tests');
       if (!options.dryRun) {
-        await execAsync('bun scripts/coherency/');
+        await execAsync('npm run coherency');
       }
       console.log('✅ Coherency tests passed');
     } else {
@@ -123,7 +123,7 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
     if (!options.skipPublish) {
       console.log('\n📦 Step 7: Publishing packages');
       if (!options.dryRun) {
-        await execAsync('bun scripts/publish/');
+        await execAsync('npm run publish:packages');
       } else {
         console.log('[DRY RUN] Would publish packages to NPM');
       }
@@ -166,7 +166,7 @@ if (import.meta.url.endsWith(process.argv[1])) {
     versionType = args[0] as VersionType;
 
     if (!versionType || !['major', 'minor', 'patch', 'prerelease'].includes(versionType)) {
-      console.error('Usage: bun release.ts <major|minor|patch|prerelease|--auto> [options]');
+      console.error('Usage: npx tsx release.ts <major|minor|patch|prerelease|--auto> [options]');
       console.error('');
       console.error('Version Types:');
       console.error('  major          : Breaking changes (1.0.0 → 2.0.0)');
@@ -184,9 +184,9 @@ if (import.meta.url.endsWith(process.argv[1])) {
       console.error('  --skip-publish  : Skip publishing to NPM');
       console.error('');
       console.error('Examples:');
-      console.error('  bun release.ts patch           # Patch release');
-      console.error('  bun release.ts --auto          # Auto-calculate from commits');
-      console.error('  bun release.ts minor --dry-run # Test minor release');
+      console.error('  npx tsx release.ts patch           # Patch release');
+      console.error('  npx tsx release.ts --auto          # Auto-calculate from commits');
+      console.error('  npx tsx release.ts minor --dry-run # Test minor release');
       process.exit(1);
     }
   }

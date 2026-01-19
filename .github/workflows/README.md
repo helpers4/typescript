@@ -15,10 +15,10 @@ This directory contains GitHub Actions workflows for the helpers4 project.
 - `branch`: Target branch (default: main)
 
 **Process**:
-1. **Setup**: Checkout code and install dependencies with Bun
-2. **Test**: Run all unit tests
+1. **Setup**: Checkout code and install dependencies with Node.js
+2. **Test**: Run all unit tests with Vitest
 3. **Version**: Update version in package.json (handles alpha/beta increments)
-4. **Build**: Build all packages
+4. **Build**: Build all packages with Vite
 5. **Coherency**: Run integrity tests on built packages
 6. **Commit**: Create version commit and push to repository
 7. **Tag**: Create and push git tag

@@ -32,7 +32,7 @@ The release process is automated through GitHub Actions and includes:
 git pull origin main
 
 # Ensure dependencies are installed
-bun install
+npm install
 
 # Ensure working directory is clean
 git status
@@ -41,31 +41,31 @@ git status
 ### Release Commands
 ```bash
 # Dry run (recommended first)
-bun run release:dry-run
+npm run release:dry-run
 
 # Patch release
-bun run release:patch
+npm run release:patch
 
 # Minor release  
-bun run release:minor
+npm run release:minor
 
 # Major release
-bun run release:major
+npm run release:major
 
 # Prerelease (alpha/beta)
-bun run release:prerelease
+npm run release:prerelease
 ```
 
 ### Advanced Options
 ```bash
 # Skip specific steps
-bun scripts/version/release.ts patch --skip-tests --skip-build
+npx tsx scripts/version/release.ts patch --skip-tests --skip-build
 
 # Target specific branch
-bun scripts/version/release.ts minor --branch develop
+npx tsx scripts/version/release.ts minor --branch develop
 
 # Full dry run
-bun scripts/version/release.ts major --dry-run
+npx tsx scripts/version/release.ts major --dry-run
 ```
 
 ## GitHub Actions Release
@@ -80,10 +80,10 @@ bun scripts/version/release.ts major --dry-run
 5. Click **Run workflow**
 
 ### What Happens
-1. **Checkout & Setup**: Gets code and sets up Bun
-2. **Tests**: Runs `bun run test`
+1. **Checkout & Setup**: Gets code and sets up Node.js
+2. **Tests**: Runs `npm test`
 3. **Version Update**: Updates package.json versions
-4. **Build**: Runs `bun run build` 
+4. **Build**: Runs `npm run build` 
 5. **Coherency**: Runs coherency tests
 6. **Git Operations**: Creates commit and tag, pushes to repository
 7. **NPM Publish**: Publishes all packages to NPM registry
@@ -141,11 +141,11 @@ git stash
 - Ensure no file locks on package.json
 
 **Build Fails**
-- Run `bun run build` locally to debug
+- Run `npm run build` locally to debug
 - Check for TypeScript errors
 
 **Coherency Tests Fail**
-- Run `bun run coherency` locally
+- Run `npm run coherency` locally
 - Review specific test failures
 
 **NPM Publish Fails**
