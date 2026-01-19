@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { expect, test } from "bun:test";
+import { expect, test } from "vitest";
 import { truthyPromiseOrThrow } from "./truthyPromiseOrThrow";
 
 // -- truthyPromiseOrThrow ----------------------------------------------------

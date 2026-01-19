@@ -8,7 +8,7 @@
  * This program is under the terms of the GNU Affero General Public License version 3
  * The full license information can be found in LICENSE in the root directory of this project.
  */
-import { expect, test } from "bun:test";
+import { expect, test } from "vitest";
 import { labelize } from "./labelize";
 
 // -- labelize -----------------------------------------------------------------

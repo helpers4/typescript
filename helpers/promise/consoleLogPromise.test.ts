@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
-import { expect, spyOn, test } from "bun:test";
+import { expect, test, vi } from "vitest";
 import { consoleLogPromise } from "./consoleLogPromise";
 
 // -- consoleLogPromise --------------------------------------------------------
@@ -18,8 +18,9 @@ const prefix = "My custom error message";
     { value: 42, label: "number" },
 ].forEach(({ value, label }) => {
     test("consoleLogPromise logs " + label, async () => {
-        const spy = spyOn(console, "log");
+        const spy = vi.spyOn(console, "log");
         await Promise.resolve(value).then(consoleLogPromise(prefix));
         expect(spy).toHaveBeenCalledWith(prefix, value);
+        spy.mockRestore();
     });
 });
