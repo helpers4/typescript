@@ -19,37 +19,38 @@ runs:
       with:
         name: package-json-${{ github.run_id }}
 
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        bun-version: latest
+        node-version: '22'
+        cache: 'npm'
 
     - name: Cache dependencies
       uses: actions/cache@v4
       with:
         path: |
-          ~/.bun/install/cache
+          ~/.npm
           node_modules
-        key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-bun-
+          ${{ runner.os }}-node-
 
     - name: Install dependencies
       shell: bash
-      run: bun install --frozen-lockfile
+      run: npm ci
 
     - name: Run tests
       shell: bash
       run: |
         echo "Running tests..."
-        bun test
+        npm test
 
     - name: Build project
       id: build
       shell: bash
       run: |
         echo "Building project..."
-        bun run build
+        npm run build
         echo "status=success" >> $GITHUB_OUTPUT
 
     - name: Upload build artifact

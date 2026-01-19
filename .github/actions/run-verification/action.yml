@@ -1,5 +1,5 @@
 name: "Run Verification Tests"
-description: "Run coherency tests including bundle size analysis with Bun"
+description: "Run coherency tests including bundle size analysis"
 
 inputs:
   build-artifact:
@@ -44,20 +44,21 @@ runs:
         name: ${{ inputs.build-artifact }}
         path: build/
 
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        bun-version: latest
+        node-version: '22'
+        cache: 'npm'
 
     - name: Install dependencies
       shell: bash
-      run: bun install
+      run: npm ci
 
     - name: Run Bundle Package test
       id: bundle-test
       shell: bash
       run: |
-        if bun run coherency:bundle; then
+        if npm run coherency:bundle; then
           echo "status=success" >> $GITHUB_OUTPUT
         else
           echo "status=failure" >> $GITHUB_OUTPUT
@@ -68,7 +69,7 @@ runs:
       id: version-test
       shell: bash
       run: |
-        if bun run coherency:version; then
+        if npm run coherency:version; then
           echo "status=success" >> $GITHUB_OUTPUT
         else
           echo "status=failure" >> $GITHUB_OUTPUT
@@ -79,7 +80,7 @@ runs:
       id: category-test
       shell: bash
       run: |
-        if bun run coherency:category; then
+        if npm run coherency:category; then
           echo "status=success" >> $GITHUB_OUTPUT
         else
           echo "status=failure" >> $GITHUB_OUTPUT
@@ -90,7 +91,7 @@ runs:
       id: dependencies-test
       shell: bash
       run: |
-        if bun run coherency:dependencies; then
+        if npm run coherency:dependencies; then
           echo "status=success" >> $GITHUB_OUTPUT
         else
           echo "status=failure" >> $GITHUB_OUTPUT
@@ -101,7 +102,7 @@ runs:
       id: bundle-sizes-test
       shell: bash
       run: |
-        if bun run coherency:sizes; then
+        if npm run coherency:sizes; then
           echo "status=success" >> $GITHUB_OUTPUT
         else
           echo "status=failure" >> $GITHUB_OUTPUT

@@ -22,31 +22,32 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        bun-version: latest
+        node-version: '22'
+        cache: 'npm'
 
     - name: Cache dependencies
       uses: actions/cache@v4
       with:
         path: |
-          ~/.bun/install/cache
+          ~/.npm
           node_modules
-        key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-bun-
+          ${{ runner.os }}-node-
 
     - name: Install dependencies
       shell: bash
-      run: bun install --frozen-lockfile
+      run: npm ci
 
     - name: Calculate version for PR
       id: version
       shell: bash
       run: |
         echo "Calculating version for PR validation..."
-        CURRENT_VERSION=$(bun --print "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")
+        CURRENT_VERSION=$(node -p "JSON.parse(require('fs').readFileSync('package.json', 'utf8')).version")
         echo "Current version: $CURRENT_VERSION"
 
         # For PR validation, check if there are version-affecting changes

@@ -1,5 +1,5 @@
 name: "Run Unit Tests"
-description: "Run unit tests with Bun"
+description: "Run unit tests with Vitest"
 
 outputs:
   status:
@@ -13,22 +13,23 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        bun-version: latest
+        node-version: '22'
+        cache: 'npm'
 
     - name: Install dependencies
       shell: bash
-      run: bun install
+      run: npm ci
 
     - name: Run unit tests
       id: test
       shell: bash
       run: |
-        echo "Running unit tests with Bun..."
+        echo "Running unit tests with Vitest..."
 
-        if bun run test; then
+        if npm run test; then
           echo "status=success" >> $GITHUB_OUTPUT
           echo "details=All unit tests passed" >> $GITHUB_OUTPUT
         else

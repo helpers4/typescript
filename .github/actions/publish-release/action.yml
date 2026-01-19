@@ -62,12 +62,12 @@ runs:
       run: |
         if [ "${{ inputs.dry-run }}" = "true" ]; then
           echo "🔍 DRY RUN: Would publish version ${{ inputs.new-version }} to NPM"
-          bun run build
+          npm run build
           npm pack --dry-run
           echo "published=false" >> $GITHUB_OUTPUT
         else
           echo "📦 Publishing version ${{ inputs.new-version }} to NPM..."
-          bun run build
+          npm run build
           
           # Check if this is a prerelease
           if echo "${{ inputs.new-version }}" | grep -q "beta\|alpha\|rc"; then

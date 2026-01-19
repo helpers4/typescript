@@ -1,5 +1,5 @@
 name: "Run Build"
-description: "Build the project with Bun"
+description: "Build the project with Vite"
 
 outputs:
   status:
@@ -13,22 +13,23 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        bun-version: latest
+        node-version: '22'
+        cache: 'npm'
 
     - name: Install dependencies
       shell: bash
-      run: bun install
+      run: npm ci
 
     - name: Run build
       id: build
       shell: bash
       run: |
-        echo "Building project with Bun..."
+        echo "Building project with Vite..."
 
-        if bun run build; then
+        if npm run build; then
           echo "status=success" >> $GITHUB_OUTPUT
           echo "details=Build completed successfully" >> $GITHUB_OUTPUT
         else
