@@ -1,5 +1,5 @@
 name: "Run Lint"
-description: "Run linting checks with Bun (assumes dependencies already installed)"
+description: "Run linting checks with oxlint (assumes dependencies already installed)"
 
 outputs:
   status:
@@ -13,18 +13,19 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v2
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        bun-version: latest
+        node-version: '22'
+        cache: 'npm'
 
     - name: Run linting
       id: lint
       shell: bash
       run: |
-        echo "Running linting with Bun..."
+        echo "Running linting with oxlint..."
 
-        if bun run lint; then
+        if npm run lint; then
           echo "status=success" >> $GITHUB_OUTPUT
           echo "details=No linting errors found" >> $GITHUB_OUTPUT
         else

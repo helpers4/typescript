@@ -76,13 +76,14 @@ jobs:
           path: package.json
           retention-days: 1
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: latest
+          node-version: '22'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: npm ci
 
       - name: Update version
         id: version
@@ -94,9 +95,9 @@ jobs:
           # Update the version
           if [[ "${{ inputs.version_type }}" == "auto" ]]; then
             echo "🤖 Auto-calculating version from git commits..."
-            bun scripts/version/version-manager.ts --auto
+            npx tsx scripts/version/version-manager.ts --auto
           else
-            bun scripts/version/version-manager.ts ${{ inputs.version_type }}
+            npx tsx scripts/version/version-manager.ts ${{ inputs.version_type }}
           fi
           
           # Get the new version from package.json after update
