@@ -14,8 +14,9 @@
         "ms-vscode.vscode-typescript-next",
         "oven.bun-vscode",
         // Code Quality & Linting
-        "dbaeumer.vscode-eslint",
-        "streetsidesoftware.code-spell-checker",
+        "dbaeumer.vscode-eslint", // to replace with oxc
+        "streetsidesoftware.code-spell-checker", // to replace with oxc
+        "oxc.oxc-vscode",
         // React Development
         "bradlc.vscode-tailwindcss",
         "dsznajder.es7-react-js-snippets",
