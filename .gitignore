@@ -11,3 +11,6 @@
 # Copilot
 .copilot/*
 !.copilot/README.md
+
+# Vitest & Coverage
+/coverage
