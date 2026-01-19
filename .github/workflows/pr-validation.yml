@@ -90,6 +90,10 @@ jobs:
 
     outputs:
       test-status: ${{ steps.test.outputs.status }}
+      coverage-lines: ${{ steps.test.outputs.coverage-lines }}
+      coverage-branches: ${{ steps.test.outputs.coverage-branches }}
+      coverage-functions: ${{ steps.test.outputs.coverage-functions }}
+      coverage-statements: ${{ steps.test.outputs.coverage-statements }}
 
     steps:
       - name: Checkout code
@@ -97,9 +101,11 @@ jobs:
         with:
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
 
-      - name: Run tests
+      - name: Run tests with coverage
         id: test
         uses: ./.github/actions/run-unit-tests
+        with:
+          coverage: "true"
 
   # Simple validation jobs
   security:
@@ -251,31 +257,114 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const createSummaryTable = (jobs) => {
+            const createJobsTable = (jobs) => {
               const rows = Object.entries(jobs).map(([job, status]) => {
                 const icon = status === 'success' ? '✅' : 
                            status === 'failure' ? '❌' : 
                            status === 'skipped' ? '⏭️' : '⚠️';
-                return `| ${job} | ${icon} ${status} |`;
+                const statusBadge = status === 'success' ? '`passing`' :
+                                   status === 'failure' ? '`failing`' :
+                                   status === 'skipped' ? '`skipped`' : '`unknown`';
+                return `| ${icon} | **${job}** | ${statusBadge} |`;
               }).join('\n');
               
-              return `## 🔍 PR Validation Summary\n\n| Job | Status |\n|-----|--------|\n${rows}`;
+              return `| | Job | Status |\n|:---:|-----|:------:|\n${rows}`;
+            };
+
+            const createCoverageSection = (coverage) => {
+              const target = 100;
+              const getStatus = (value) => {
+                const num = parseFloat(value);
+                if (num >= target) return { icon: '✅', color: 'brightgreen', label: 'perfect' };
+                if (num >= 90) return { icon: '🟢', color: 'green', label: 'excellent' };
+                if (num >= 80) return { icon: '🟡', color: 'yellow', label: 'good' };
+                if (num >= 60) return { icon: '🟠', color: 'orange', label: 'needs work' };
+                return { icon: '🔴', color: 'red', label: 'critical' };
+              };
+              
+              const createProgressBar = (value) => {
+                const pct = parseFloat(value);
+                const filled = Math.floor(pct / 5);
+                const empty = 20 - filled;
+                return '`' + '▓'.repeat(filled) + '░'.repeat(empty) + '`';
+              };
+
+              const avgCoverage = (Object.values(coverage).reduce((a, b) => a + parseFloat(b), 0) / 4).toFixed(1);
+              const avgStatus = getStatus(avgCoverage);
+
+              const rows = Object.entries(coverage).map(([metric, value]) => {
+                const status = getStatus(value);
+                const bar = createProgressBar(value);
+                return `| ${status.icon} | **${metric}** | ${bar} | **${value}%** |`;
+              }).join('\n');
+              
+              const header = `
+> ${avgStatus.icon} **Overall Coverage: ${avgCoverage}%** ${avgStatus.label === 'perfect' ? '— Target reached! 🎯' : `— Target: ${target}%`}
+
+| | Metric | Progress | Coverage |
+|:---:|--------|:--------:|:--------:|
+${rows}`;
+              
+              return header;
             };
 
             const jobs = {
-              'Version Calculation': '${{ needs.version-calculation.outputs.status || 'unknown' }}',
-              'Build': '${{ needs.build.outputs.build-success || 'unknown' }}',
-              'Test': '${{ needs.test.outputs.test-status || 'unknown' }}',
-              'Security Audit': '${{ needs.security.outputs.security-status || 'unknown' }}',
-              'Lint': '${{ needs.lint.outputs.lint-status || 'unknown' }}',
-              'Type Check': '${{ needs.type-check.outputs.typecheck-status || 'unknown' }}',
-              'Coherency Tests': '${{ needs.verification.outputs.verification-status || 'unknown' }}',
+              '🔢 Version': '${{ needs.version-calculation.outputs.status || 'unknown' }}',
+              '🏗️ Build': '${{ needs.build.outputs.build-success || 'unknown' }}',
+              '🧪 Tests': '${{ needs.test.outputs.test-status || 'unknown' }}',
+              '🔒 Security': '${{ needs.security.outputs.security-status || 'unknown' }}',
+              '📝 Lint': '${{ needs.lint.outputs.lint-status || 'unknown' }}',
+              '📘 TypeCheck': '${{ needs.type-check.outputs.typecheck-status || 'unknown' }}',
+              '🔗 Coherency': '${{ needs.verification.outputs.verification-status || 'unknown' }}',
             };
 
-            const comment = createSummaryTable(jobs);
+            const coverage = {
+              'Lines': '${{ needs.test.outputs.coverage-lines || '0' }}',
+              'Branches': '${{ needs.test.outputs.coverage-branches || '0' }}',
+              'Functions': '${{ needs.test.outputs.coverage-functions || '0' }}',
+              'Statements': '${{ needs.test.outputs.coverage-statements || '0' }}',
+            };
+
+            const passedCount = Object.values(jobs).filter(s => s === 'success').length;
+            const totalJobs = Object.keys(jobs).length;
+            const allPassed = passedCount === totalJobs;
+            const avgCoverage = (Object.values(coverage).reduce((a, b) => a + parseFloat(b), 0) / 4).toFixed(1);
+            const coverageOk = parseFloat(avgCoverage) >= 100;
+
+            const statusBanner = allPassed && coverageOk 
+              ? '## ✅ PR Validation Passed\n\n> All checks passed and coverage target reached!'
+              : allPassed 
+                ? `## 🟡 PR Validation Passed\n\n> All checks passed • Coverage: ${avgCoverage}% (target: 100%)`
+                : `## ❌ PR Validation Failed\n\n> ${passedCount}/${totalJobs} checks passed`;
+
+            const comment = `${statusBanner}
+
+---
+
+### 📋 Pipeline Status
+
+${createJobsTable(jobs)}
+
+---
+
+### 📊 Code Coverage
+
+${createCoverageSection(coverage)}
+
+---
+
+<details>
+<summary>ℹ️ <b>About this report</b></summary>
+
+- 🎯 **Coverage Target**: 100% for all metrics
+- 🔄 This comment updates automatically with each push
+- 📈 Coverage is measured using Vitest + v8
+
+</details>
+
+<sub>🤖 Generated by **@helpers4** CI • ${new Date().toISOString().split('T')[0]}</sub>`;
 
             try {
-              // Find existing comment or create new one
               const { data: comments } = await github.rest.issues.listComments({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -283,7 +372,7 @@ jobs:
               });
               
               const botComment = comments.find(comment => 
-                comment.user.type === 'Bot' && comment.body.includes('PR Validation Summary')
+                comment.user.type === 'Bot' && comment.body.includes('PR Validation')
               );
               
               if (botComment) {
@@ -305,6 +394,5 @@ jobs:
               }
             } catch (error) {
               console.error('Error updating PR comment:', error);
-              // Don't fail the workflow if comment update fails
               console.log('Comment update failed, but continuing workflow...');
             }

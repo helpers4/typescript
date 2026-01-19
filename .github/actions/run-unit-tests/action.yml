@@ -1,5 +1,11 @@
 name: "Run Unit Tests"
-description: "Run unit tests with Vitest"
+description: "Run unit tests with Vitest and coverage"
+
+inputs:
+  coverage:
+    description: "Enable coverage reporting"
+    required: false
+    default: "false"
 
 outputs:
   status:
@@ -9,6 +15,22 @@ outputs:
   details:
     description: "Test execution details"
     value: ${{ steps.test.outputs.details }}
+
+  coverage-lines:
+    description: "Lines coverage percentage"
+    value: ${{ steps.coverage.outputs.lines }}
+
+  coverage-branches:
+    description: "Branches coverage percentage"
+    value: ${{ steps.coverage.outputs.branches }}
+
+  coverage-functions:
+    description: "Functions coverage percentage"
+    value: ${{ steps.coverage.outputs.functions }}
+
+  coverage-statements:
+    description: "Statements coverage percentage"
+    value: ${{ steps.coverage.outputs.statements }}
 
 runs:
   using: "composite"
@@ -34,11 +56,44 @@ runs:
       run: |
         echo "Running unit tests with Vitest..."
 
-        if pnpm test; then
-          echo "status=success" >> $GITHUB_OUTPUT
-          echo "details=All unit tests passed" >> $GITHUB_OUTPUT
+        if [ "${{ inputs.coverage }}" = "true" ]; then
+          if pnpm test:coverage; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "details=All unit tests passed with coverage" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "details=Unit tests or coverage thresholds failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
         else
-          echo "status=failure" >> $GITHUB_OUTPUT
-          echo "details=Unit tests failed" >> $GITHUB_OUTPUT
-          exit 1
+          if pnpm test; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "details=All unit tests passed" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "details=Unit tests failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+        fi
+
+    - name: Extract coverage data
+      id: coverage
+      if: inputs.coverage == 'true'
+      shell: bash
+      run: |
+        if [ -f coverage/coverage-summary.json ]; then
+          LINES=$(jq '.total.lines.pct' coverage/coverage-summary.json)
+          BRANCHES=$(jq '.total.branches.pct' coverage/coverage-summary.json)
+          FUNCTIONS=$(jq '.total.functions.pct' coverage/coverage-summary.json)
+          STATEMENTS=$(jq '.total.statements.pct' coverage/coverage-summary.json)
+          
+          echo "lines=$LINES" >> $GITHUB_OUTPUT
+          echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
+          echo "functions=$FUNCTIONS" >> $GITHUB_OUTPUT
+          echo "statements=$STATEMENTS" >> $GITHUB_OUTPUT
+        else
+          echo "lines=0" >> $GITHUB_OUTPUT
+          echo "branches=0" >> $GITHUB_OUTPUT
+          echo "functions=0" >> $GITHUB_OUTPUT
+          echo "statements=0" >> $GITHUB_OUTPUT
         fi
