@@ -28,7 +28,7 @@ export async function prepareBundleReadme(
 
   // Generate the individual packages list
   const individualPackagesList = categories
-    .map(category => `- \`npm install @helpers4/${category}\``)
+    .map(category => `- \`pnpm install @helpers4/${category}\``)
     .join('\n');
 
   // Generate the categories table

@@ -12,10 +12,10 @@ Automatically adds or updates license headers in TypeScript files.
 
 ```bash
 # Add license headers to all TypeScript files
-npm run license:add
+pnpm run license:add
 
 # Or directly with tsx
-npx tsx scripts/license/add-license-headers.ts
+pnpm exec tsx scripts/license/add-license-headers.ts
 ```
 
 #### Features

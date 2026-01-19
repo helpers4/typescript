@@ -131,7 +131,7 @@ if (import.meta.url.endsWith(process.argv[1])) {
       break;
 
     default:
-      console.error('Usage: npx tsx git-utils.ts <current-branch|is-clean|latest-tag>');
+      console.error('Usage: pnpm exec tsx git-utils.ts <current-branch|is-clean|latest-tag>');
       process.exit(1);
   }
 }

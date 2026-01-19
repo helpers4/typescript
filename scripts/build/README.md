@@ -12,10 +12,10 @@ Main build orchestrator that coordinates the entire build process.
 
 ```bash
 # Build all packages
-npm run build
+pnpm run build
 
 # Or directly with tsx
-npx tsx scripts/build/
+pnpm exec tsx scripts/build/
 ```
 
 ### `build-categories.ts`

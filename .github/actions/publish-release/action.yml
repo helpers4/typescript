@@ -62,18 +62,18 @@ runs:
       run: |
         if [ "${{ inputs.dry-run }}" = "true" ]; then
           echo "🔍 DRY RUN: Would publish version ${{ inputs.new-version }} to NPM"
-          npm run build
-          npm pack --dry-run
+          pnpm run build
+          pnpm pack --dry-run
           echo "published=false" >> $GITHUB_OUTPUT
         else
           echo "📦 Publishing version ${{ inputs.new-version }} to NPM..."
-          npm run build
+          pnpm run build
           
           # Check if this is a prerelease
           if echo "${{ inputs.new-version }}" | grep -q "beta\|alpha\|rc"; then
-            npm publish --tag beta
+            pnpm publish --tag beta --no-git-checks
           else
-            npm publish
+            pnpm publish --no-git-checks
           fi
           
           echo "✅ Successfully published to NPM"

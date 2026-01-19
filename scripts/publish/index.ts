@@ -106,7 +106,7 @@ function parseArgs(): PublishConfig {
  */
 function printHelp(): void {
   console.log(`
-Usage: npx tsx scripts/publish/index.ts [options]
+Usage: pnpm exec tsx scripts/publish/index.ts [options]
 
 Options:
   --dry-run              Simulate publishing without actually publishing
@@ -122,10 +122,10 @@ Options:
   --help                 Show this help message
 
 Examples:
-  npx tsx scripts/publish/index.ts                    # Publish all packages
-  npx tsx scripts/publish/index.ts --dry-run          # Test publishing
-  npx tsx scripts/publish/index.ts --tag beta         # Publish with beta tag
-  npx tsx scripts/publish/index.ts --category-delay 30  # Wait 30s between category and bundle
+  pnpm exec tsx scripts/publish/index.ts                    # Publish all packages
+  pnpm exec tsx scripts/publish/index.ts --dry-run          # Test publishing
+  pnpm exec tsx scripts/publish/index.ts --tag beta         # Publish with beta tag
+  pnpm exec tsx scripts/publish/index.ts --category-delay 30  # Wait 30s between category and bundle
 `);
 }
 

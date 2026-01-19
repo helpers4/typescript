@@ -45,13 +45,13 @@ scripts/
 
 ```bash
 # Build everything
-npm run build
+pnpm run build
 
 # Test bundle coherency
-npm run coherency:bundle
+pnpm run coherency:bundle
 
 # Run all coherency tests
-npm run coherency
+pnpm run coherency
 ```
 
 ### Benefits

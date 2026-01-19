@@ -13,15 +13,20 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '22'
-        cache: 'npm'
+        node-version: "24"
+        cache: "pnpm"
 
     - name: Install dependencies
       shell: bash
-      run: npm ci
+      run: pnpm install --frozen-lockfile
 
     - name: Run build
       id: build
@@ -29,7 +34,7 @@ runs:
       run: |
         echo "Building project with Vite..."
 
-        if npm run build; then
+        if pnpm run build; then
           echo "status=success" >> $GITHUB_OUTPUT
           echo "details=Build completed successfully" >> $GITHUB_OUTPUT
         else
