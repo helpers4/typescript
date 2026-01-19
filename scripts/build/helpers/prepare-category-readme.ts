@@ -6,6 +6,7 @@
 
 import { join } from "node:path";
 import { DIR } from "../../constants";
+import { readFileText, writeFile } from "../../utils";
 import { generateCategoriesTable } from "./categories-table.helper";
 
 /**
@@ -16,7 +17,7 @@ import { generateCategoriesTable } from "./categories-table.helper";
  * @param categories - The list of all categories.
  */
 export async function prepareCategoryReadme(buildCategoryDir: string, category: string, tsFiles: string[], categories: string[]) {
-    const readmeTemplate = await Bun.file(join(DIR.TEMPLATE_CATEGORY, "README.md")).text();
+    const readmeTemplate = readFileText(join(DIR.TEMPLATE_CATEGORY, "README.md"));
     const methodsList = tsFiles.map(file => `- ${file.replace(".ts", "")}`).join("\n");
     const siblingsList = categories.filter(cat => cat !== category).map(cat => `- [${cat}](../${cat})`).join("\n");
     const categoriesTable = await generateCategoriesTable(categories);
@@ -27,5 +28,5 @@ export async function prepareCategoryReadme(buildCategoryDir: string, category: 
         .replace(/<!-- AUTOMATIC-SIBLINGS -->[\s\S]*<!-- \/AUTOMATIC-SIBLINGS -->/, `<!-- AUTOMATIC-SIBLINGS -->\n${siblingsList}\n<!-- /AUTOMATIC-SIBLINGS -->`)
         .replace(/<!-- AUTOMATIC-CATEGORIES-TABLE -->[\s\S]*<!-- \/AUTOMATIC-CATEGORIES-TABLE -->/, `<!-- AUTOMATIC-CATEGORIES-TABLE -->\n${categoriesTable}\n<!-- /AUTOMATIC-CATEGORIES-TABLE -->`);
 
-    await Bun.write(join(buildCategoryDir, "README.md"), readmeContent);
+    writeFile(join(buildCategoryDir, "README.md"), readmeContent);
 }

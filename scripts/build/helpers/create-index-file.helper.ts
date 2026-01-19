@@ -5,6 +5,7 @@
  */
 
 import { join, basename } from "node:path";
+import { writeFile } from "../../utils";
 
 /**
  * Create an index.ts file that re-exports all matched .ts files in the category.
@@ -24,6 +25,6 @@ export async function createIndexFile(categoryPath: string, tsFiles: string[]) {
         .join("\n") + "\n";
 
     const indexPath = join(categoryPath, "index.ts");
-    await Bun.write(indexPath, indexContent);
+    writeFile(indexPath, indexContent);
     return indexPath;
 }

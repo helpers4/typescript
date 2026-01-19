@@ -6,6 +6,7 @@
 
 import { join } from "node:path";
 import { DIR } from "../../constants";
+import { readFileText, writeFile } from "../../utils";
 import { generateCategoriesTable } from "./categories-table.helper";
 
 /**
@@ -18,7 +19,7 @@ export async function prepareBundleReadme(
   categories: string[]
 ) {
   // Read the template README
-  const templateReadme = await Bun.file(join(DIR.TEMPLATE_BUNDLE, "README.md")).text();
+  const templateReadme = readFileText(join(DIR.TEMPLATE_BUNDLE, "README.md"));
 
   // Generate the categories list
   const categoriesList = categories
@@ -39,6 +40,5 @@ export async function prepareBundleReadme(
     .replace('{{individual_packages}}', individualPackagesList)
     .replace('{{categories_table}}', categoriesTable);
 
-  // Use Bun's native file writing
-  await Bun.write(join(buildBundleDir, "README.md"), readme);
+  writeFile(join(buildBundleDir, "README.md"), readme);
 }

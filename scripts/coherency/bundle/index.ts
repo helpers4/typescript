@@ -11,6 +11,15 @@
  */
 
 import { join } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+
+function readFileText(filePath: string): string {
+  return readFileSync(filePath, 'utf-8');
+}
+
+function readFileJson<T>(filePath: string): T {
+  return JSON.parse(readFileText(filePath)) as T;
+}
 
 async function testBundle() {
   console.log("🧪 Testing @helpers4/all bundle package...");
@@ -28,24 +37,23 @@ async function testBundle() {
 
   for (const file of expectedFiles) {
     const filePath = join(bundlePath, file);
-    try {
-      await Bun.file(filePath).text();
+    if (existsSync(filePath)) {
       console.log(`✅ ${file} exists`);
-    } catch (error) {
+    } else {
       console.log(`❌ ${file} missing`);
       return false;
     }
   }
 
   // Test metadata content
-  const buildMeta = await Bun.file(join(bundlePath, "meta/build.json")).json();
-  const packagesMeta = await Bun.file(join(bundlePath, "meta/packages.json")).json();
-  const packageJson = await Bun.file(join(bundlePath, "package.json")).json();
+  const buildMeta = readFileJson<Record<string, unknown>>(join(bundlePath, "meta/build.json"));
+  const packagesMeta = readFileJson<Record<string, unknown>>(join(bundlePath, "meta/packages.json"));
+  const packageJson = readFileJson<Record<string, unknown>>(join(bundlePath, "package.json"));
 
   console.log(`✅ Bundle contains ${buildMeta.totalCategories} categories`);
-  console.log(`✅ Build date: ${new Date(buildMeta.buildDate).toLocaleString()}`);
+  console.log(`✅ Build date: ${new Date(buildMeta.buildDate as string).toLocaleString()}`);
   console.log(`✅ Version: ${buildMeta.version}`);
-  console.log(`✅ Dependencies: ${Object.keys(packageJson.dependencies || {}).length} packages`);
+  console.log(`✅ Dependencies: ${Object.keys((packageJson.dependencies as Record<string, string>) || {}).length} packages`);
   console.log(`✅ Metadata includes ${Object.keys(packagesMeta).length} package versions`);
 
   console.log("\n🎉 Bundle package test completed successfully!");
@@ -56,13 +64,13 @@ async function runBundleTest() {
   try {
     console.log("🧪 Bundle Package:");
     console.log("   Tests the main bundle package integrity");
-    
+
     const result = await testBundle();
-    
+
     if (result === false) {
       throw new Error("Test Bundle Package returned false");
     }
-    
+
     console.log("✅ Bundle Package passed");
     process.exit(0);
   } catch (error) {
@@ -72,6 +80,4 @@ async function runBundleTest() {
 }
 
 // Run the test if this script is called directly
-if (import.meta.url.includes(process.argv[1]) || import.meta.url.includes('bundle')) {
-  runBundleTest().catch(console.error);
-}
+runBundleTest().catch(console.error);

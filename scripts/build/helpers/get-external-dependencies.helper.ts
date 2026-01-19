@@ -7,6 +7,7 @@
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { DIR } from "../../constants";
+import { readFileText } from "../../utils";
 
 /**
  * Analyzes the external packages used in a specific category by parsing import statements
@@ -24,7 +25,7 @@ export async function getExternalDependencies(categoryName: string): Promise<str
 
   for (const file of tsFiles) {
     const filePath = join(categoryPath, file);
-    const content = await Bun.file(filePath).text();
+    const content = readFileText(filePath);
 
     // Extract import statements
     const importRegex = /import\s+[^;]+from\s+['"]([^'"]+)['"]/g;
