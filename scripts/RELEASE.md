@@ -32,7 +32,7 @@ The release process is automated through GitHub Actions and includes:
 git pull origin main
 
 # Ensure dependencies are installed
-npm install
+pnpm install
 
 # Ensure working directory is clean
 git status
@@ -41,31 +41,31 @@ git status
 ### Release Commands
 ```bash
 # Dry run (recommended first)
-npm run release:dry-run
+pnpm run release:dry-run
 
 # Patch release
-npm run release:patch
+pnpm run release:patch
 
 # Minor release  
-npm run release:minor
+pnpm run release:minor
 
 # Major release
-npm run release:major
+pnpm run release:major
 
 # Prerelease (alpha/beta)
-npm run release:prerelease
+pnpm run release:prerelease
 ```
 
 ### Advanced Options
 ```bash
 # Skip specific steps
-npx tsx scripts/version/release.ts patch --skip-tests --skip-build
+pnpm exec tsx scripts/version/release.ts patch --skip-tests --skip-build
 
 # Target specific branch
-npx tsx scripts/version/release.ts minor --branch develop
+pnpm exec tsx scripts/version/release.ts minor --branch develop
 
 # Full dry run
-npx tsx scripts/version/release.ts major --dry-run
+pnpm exec tsx scripts/version/release.ts major --dry-run
 ```
 
 ## GitHub Actions Release
@@ -81,9 +81,9 @@ npx tsx scripts/version/release.ts major --dry-run
 
 ### What Happens
 1. **Checkout & Setup**: Gets code and sets up Node.js
-2. **Tests**: Runs `npm test`
+2. **Tests**: Runs `pnpm test`
 3. **Version Update**: Updates package.json versions
-4. **Build**: Runs `npm run build` 
+4. **Build**: Runs `pnpm run build` 
 5. **Coherency**: Runs coherency tests
 6. **Git Operations**: Creates commit and tag, pushes to repository
 7. **NPM Publish**: Publishes all packages to NPM registry
@@ -141,11 +141,11 @@ git stash
 - Ensure no file locks on package.json
 
 **Build Fails**
-- Run `npm run build` locally to debug
+- Run `pnpm run build` locally to debug
 - Check for TypeScript errors
 
 **Coherency Tests Fail**
-- Run `npm run coherency` locally
+- Run `pnpm run coherency` locally
 - Review specific test failures
 
 **NPM Publish Fails**

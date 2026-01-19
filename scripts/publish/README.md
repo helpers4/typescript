@@ -12,13 +12,13 @@ Main publishing script with comprehensive features.
 
 ```bash
 # Publish all packages
-npm run publish:packages
+pnpm run publish:packages
 
 # Test publishing without actually publishing
-npm run publish:dry-run
+pnpm run publish:dry-run
 
 # Custom configuration (direct execution)
-npx tsx scripts/publish/index.ts --dry-run --access public --tag beta --category-delay 30
+pnpm exec tsx scripts/publish/index.ts --dry-run --access public --tag beta --category-delay 30
 ```
 
 #### Features
@@ -90,16 +90,16 @@ The publishing system integrates with:
 
 ```bash
 # Standard release publishing
-npm run publish:packages
+pnpm run publish:packages
 
 # Beta release with custom tag
-npx tsx scripts/publish/index.ts --tag beta --access public
+pnpm exec tsx scripts/publish/index.ts --tag beta --access public
 
 # Custom registry
-npx tsx scripts/publish/index.ts --registry https://custom-registry.com
+pnpm exec tsx scripts/publish/index.ts --registry https://custom-registry.com
 
 # Quick publish with minimal validation
-npx tsx scripts/publish/index.ts --skip-validation --category-delay 10
+pnpm exec tsx scripts/publish/index.ts --skip-validation --category-delay 10
 ```
 
 ## Related Documentation

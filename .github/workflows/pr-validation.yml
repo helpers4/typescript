@@ -2,11 +2,11 @@ name: Pull Request Validation
 
 on:
   pull_request:
-    branches: [ main, develop ]
-    types: [ opened, synchronize, reopened, ready_for_review ]
+    branches: [main, develop]
+    types: [opened, synchronize, reopened, ready_for_review]
   pull_request_target:
-    branches: [ main, develop ]
-    types: [ opened, synchronize, reopened, ready_for_review ]
+    branches: [main, develop]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read
@@ -38,12 +38,12 @@ jobs:
     if: |
       github.event_name == 'pull_request' || 
       (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
-    
+
     outputs:
       version: ${{ steps.version.outputs.version }}
       version-changed: ${{ steps.version.outputs.changed }}
       status: ${{ steps.version.outputs.status }}
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -64,10 +64,10 @@ jobs:
     if: |
       github.event_name == 'pull_request' || 
       (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
-    
+
     outputs:
       build-success: ${{ steps.build.outputs.status }}
-      
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -87,10 +87,10 @@ jobs:
     if: |
       github.event_name == 'pull_request' || 
       (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
-    
+
     outputs:
       test-status: ${{ steps.test.outputs.status }}
-      
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -107,30 +107,35 @@ jobs:
     if: |
       github.event_name == 'pull_request' || 
       (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
-    
+
     outputs:
       security-status: ${{ steps.security.outputs.status }}
-      
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "24"
+          cache: "pnpm"
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Run security audit
         id: security
         run: |
           echo "Running security audit..."
-          npm audit || true
+          pnpm audit || true
           echo "status=success" >> $GITHUB_OUTPUT
 
   lint:
@@ -138,24 +143,29 @@ jobs:
     if: |
       github.event_name == 'pull_request' || 
       (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
-    
+
     outputs:
       lint-status: ${{ steps.lint.outputs.status }}
-      
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "24"
+          cache: "pnpm"
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Run linting
         id: lint
@@ -166,24 +176,29 @@ jobs:
     if: |
       github.event_name == 'pull_request' || 
       (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
-    
+
     outputs:
       typecheck-status: ${{ steps.typecheck.outputs.status }}
-      
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "24"
+          cache: "pnpm"
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Run TypeScript check
         id: typecheck
@@ -196,10 +211,10 @@ jobs:
     if: |
       github.event_name == 'pull_request' || 
       (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
-    
+
     outputs:
       verification-status: ${{ steps.verification.outputs.status }}
-      
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -215,12 +230,21 @@ jobs:
   # PR comment with results
   pr-comment:
     runs-on: ubuntu-latest
-    needs: [version-calculation, build, test, security, lint, type-check, verification]
+    needs:
+      [
+        version-calculation,
+        build,
+        test,
+        security,
+        lint,
+        type-check,
+        verification,
+      ]
     if: |
       always() && 
       (github.event_name == 'pull_request' || 
        (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository))
-    
+
     steps:
       - name: Update PR comment
         uses: actions/github-script@v7
@@ -237,7 +261,7 @@ jobs:
               
               return `## 🔍 PR Validation Summary\n\n| Job | Status |\n|-----|--------|\n${rows}`;
             };
-            
+
             const jobs = {
               'Version Calculation': '${{ needs.version-calculation.outputs.status || 'unknown' }}',
               'Build': '${{ needs.build.outputs.build-success || 'unknown' }}',
@@ -247,9 +271,9 @@ jobs:
               'Type Check': '${{ needs.type-check.outputs.typecheck-status || 'unknown' }}',
               'Coherency Tests': '${{ needs.verification.outputs.verification-status || 'unknown' }}',
             };
-            
+
             const comment = createSummaryTable(jobs);
-            
+
             try {
               // Find existing comment or create new one
               const { data: comments } = await github.rest.issues.listComments({

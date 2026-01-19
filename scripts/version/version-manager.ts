@@ -320,8 +320,8 @@ function printHelp(): void {
 Version Manager - Automatic version calculation and updating
 
 Usage: 
-  npx tsx version-manager.ts <version-type>     # Explicit version type
-  npx tsx version-manager.ts --auto             # Auto-calculate from commits
+  pnpm exec tsx version-manager.ts <version-type>     # Explicit version type
+  pnpm exec tsx version-manager.ts --auto             # Auto-calculate from commits
   
 Version Types:
   major          Increment major version (1.0.0 → 2.0.0)
@@ -337,9 +337,9 @@ Options:
   --help, -h                  Show this help message
 
 Examples:
-  npx tsx version-manager.ts patch              # Explicit patch version
-  npx tsx version-manager.ts --auto             # Calculate from commits
-  npx tsx version-manager.ts --auto --dry-run   # Preview auto-calculated changes
+  pnpm exec tsx version-manager.ts patch              # Explicit patch version
+  pnpm exec tsx version-manager.ts --auto             # Calculate from commits
+  pnpm exec tsx version-manager.ts --auto --dry-run   # Preview auto-calculated changes
   
 Auto-calculation uses conventional commits:
   - feat: ... → minor version

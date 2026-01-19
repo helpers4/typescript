@@ -61,22 +61,22 @@ Version and release management
 
 ```bash
 # Build all packages
-npm run build
+pnpm run build
 
 # Run coherency tests
-npm run coherency
+pnpm run coherency
 
 # Version bump (patch/minor/major/prerelease)
-npm run version:patch
+pnpm run version:patch
 
 # Auto-detect version from commits
-npm run version:auto
+pnpm run version:auto
 
 # Publish packages
-npm run publish
+pnpm run publish
 
 # Dry run publish
-npm run publish:dry-run
+pnpm run publish:dry-run
 ```
 
 ## Documentation

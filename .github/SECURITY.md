@@ -43,13 +43,13 @@ if: |
 ## Security Scanning
 
 ### Dependency Vulnerability Audit
-Automated scanning using npm's built-in security audit:
+Automated scanning using pnpm's built-in security audit:
 
 ```yaml
 - name: Run security audit
   run: |
     echo "Running security audit..."
-    npm audit || echo "::warning::Security audit found issues"
+    pnpm audit || echo "::warning::Security audit found issues"
 ```
 
 ### Sensitive Data Detection

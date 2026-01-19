@@ -231,7 +231,7 @@ class PreReleaseValidator {
       suite.results.push({
         passed: false,
         message: 'node_modules not found',
-        details: 'Run: npm install'
+        details: 'Run: pnpm install'
       });
     }
 
@@ -273,7 +273,7 @@ class PreReleaseValidator {
     // Check if we can run tests
     try {
       console.log('   🧪 Testing test command...');
-      await execAsync('npm test', { timeout: 30000 });
+      await execAsync('pnpm test', { timeout: 30000 });
       suite.results.push({
         passed: true,
         message: 'Tests run successfully'
@@ -289,7 +289,7 @@ class PreReleaseValidator {
     // Check if we can build
     try {
       console.log('   🏗️ Testing build command...');
-      await execAsync('npm run build', { timeout: 60000 });
+      await execAsync('pnpm run build', { timeout: 60000 });
       suite.results.push({
         passed: true,
         message: 'Build completed successfully'
@@ -316,7 +316,7 @@ class PreReleaseValidator {
     // Check coherency tests
     try {
       console.log('   🔍 Testing coherency...');
-      await execAsync('npm run coherency', { timeout: 30000 });
+      await execAsync('pnpm run coherency', { timeout: 30000 });
       suite.results.push({
         passed: true,
         message: 'Coherency tests passed'
@@ -359,9 +359,9 @@ class PreReleaseValidator {
     if (allPassed) {
       console.log('🎉 All validation checks passed! Ready for release.');
       console.log('\nNext steps:');
-      console.log('  • npm run release:dry-run    (test the release process)');
-      console.log('  • npm run release:patch      (patch release)');
-      console.log('  • npm run release:minor      (minor release)');
+      console.log('  • pnpm run release:dry-run    (test the release process)');
+      console.log('  • pnpm run release:patch      (patch release)');
+      console.log('  • pnpm run release:minor      (minor release)');
     } else {
       console.log('❌ Some validation checks failed. Please fix issues before release.');
     }

@@ -41,13 +41,13 @@ Run tests using npm scripts:
 
 ```bash
 # Run tests
-npm test
+pnpm test
 
 # Run specific test files
-npm test -- helpers/array/
+pnpm test -- helpers/array/
 
 # Run tests in watch mode
-npm run test:watch
+pnpm run test:watch
 ```
 
 ## Benefits

@@ -1,6 +1,6 @@
 {
   "name": "H4",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:22",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:24",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},
     "ghcr.io/baxyz/devcontainer-features/shell-history-per-project:0.0.5": {},
@@ -53,7 +53,7 @@
         "editor.codeActionsOnSave": {
           "source.fixAll": "explicit"
         },
-        "npm.packageManager": "npm",
+        "npm.packageManager": "pnpm",
         "markdown.extension.toc.levels": "2..6",
         "markdown.extension.preview.autoShowPreviewToSide": true,
         "[markdown]": {
@@ -72,13 +72,16 @@
   },
   "containerEnv": {
     "SSH_AUTH_SOCK": "${localEnv:SSH_AUTH_SOCK}",
-    "GPG_TTY": "/dev/pts/0"
+    "GPG_TTY": "/dev/pts/0",
+    "PNPM_HOME": "/home/vscode/.local/share/pnpm",
+    "PATH": "/home/vscode/.local/share/pnpm:${containerEnv:PATH}"
   },
   "mounts": [
     "source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached",
-    "source=${localEnv:HOME}/.gnupg,target=/home/vscode/.gnupg,type=bind,consistency=cached"
+    "source=${localEnv:HOME}/.gnupg,target=/home/vscode/.gnupg,type=bind,consistency=cached",
+    "source=helpers4-pnpm-store,target=/home/vscode/.local/share/pnpm/store,type=volume"
   ],
-  "postCreateCommand": "npm install",
+  "postCreateCommand": "corepack enable && corepack prepare pnpm@9.15.4 --activate && pnpm install",
   "forwardPorts": [
     3000
   ],

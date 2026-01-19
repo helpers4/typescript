@@ -48,10 +48,10 @@ Main coherency test runner that executes all validation tests in parallel for op
 
 ```bash
 # Run all coherency tests in parallel
-npm run coherency
+pnpm run coherency
 
 # Or directly with tsx
-npx tsx scripts/coherency/
+pnpm exec tsx scripts/coherency/
 ```
 
 ### Individual Test Modules
@@ -70,7 +70,7 @@ Tests the main bundle package integrity and completeness.
 **Usage:**
 
 ```bash
-npm run coherency:bundle
+pnpm run coherency:bundle
 ```
 
 #### `version/` - Version Consistency
@@ -92,7 +92,7 @@ Ensures all packages have consistent version numbers across the project.
 **Usage:**
 
 ```bash
-npm run coherency:version
+pnpm run coherency:version
 ```
 
 #### `category/` - Category Package Validation
@@ -114,7 +114,7 @@ Validates all category packages (array, string, object, etc.) for structural con
 **Usage:**
 
 ```bash
-npm run coherency:category
+pnpm run coherency:category
 ```
 
 #### `dependencies/` - Dependencies Coherency
@@ -136,7 +136,7 @@ Verifies dependencies consistency across all packages.
 **Usage:**
 
 ```bash
-npm run coherency:dependencies
+pnpm run coherency:dependencies
 ```
 
 #### `sizes/` - Bundle Size Analysis
@@ -158,7 +158,7 @@ Analyzes bundle sizes and provides insights into package sizes and structure.
 **Usage:**
 
 ```bash
-npm run coherency:sizes
+pnpm run coherency:sizes
 ```
 
 ## Integration
@@ -176,14 +176,14 @@ The following commands are available for running coherency tests:
 
 ```bash
 # Run all tests in parallel (recommended)
-npm run coherency
+pnpm run coherency
 
 # Run individual tests
-npm run coherency:bundle        # Bundle integrity test
-npm run coherency:version       # Version consistency test
-npm run coherency:category      # Category packages validation
-npm run coherency:dependencies  # Dependencies coherency test
-npm run coherency:sizes         # Bundle size analysis
+pnpm run coherency:bundle        # Bundle integrity test
+pnpm run coherency:version       # Version consistency test
+pnpm run coherency:category      # Category packages validation
+pnpm run coherency:dependencies  # Dependencies coherency test
+pnpm run coherency:sizes         # Bundle size analysis
 ```
 
 ## Usage in CI/CD
@@ -202,7 +202,7 @@ Or run directly:
 
 ```yaml
 - name: Run Coherency Tests
-  run: npm run coherency
+  run: pnpm run coherency
 ```
 
 ## Test Output
