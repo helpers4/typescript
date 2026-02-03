@@ -3,85 +3,23 @@
   "image": "mcr.microsoft.com/devcontainers/typescript-node:24",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/baxyz/devcontainer-features/shell-history-per-project:0.0.5": {},
-    "ghcr.io/baxyz/devcontainer-features/git-absorb:0": {}
+    "ghcr.io/helpers4/devcontainer/local-mounts:1": {},
+    "ghcr.io/helpers4/devcontainer/shell-history-per-project:1": {},
+    "ghcr.io/helpers4/devcontainer/git-absorb:1": {},
+    "ghcr.io/helpers4/devcontainer/package-auto-install:1": {},
+    "ghcr.io/helpers4/devcontainer/vite-plus:1": {},
+    "ghcr.io/helpers4/devcontainer/typescript-dev:1": {},
+    "ghcr.io/helpers4/devcontainer/:1": {},
+    "ghcr.io/joshuanianji/devcontainer-features/mount-pnpm-store:1": {}
   },
   "customizations": {
     "vscode": {
       "extensions": [
-        // Core TypeScript & JavaScript
-        "ms-vscode.vscode-typescript-next",
-        // Code Quality & Linting
-        "oxc.oxc-vscode",
-        "streetsidesoftware.code-spell-checker",
-        // Testing
-        "vitest.explorer",
-        // React Development
-        "bradlc.vscode-tailwindcss",
-        "dsznajder.es7-react-js-snippets",
-        // Markdown and Documentation
-        "yzhang.markdown-all-in-one",
-        "davidanson.vscode-markdownlint",
-        "bierner.markdown-mermaid",
-        // TypeScript Utilities
-        "guilhermetheodoro.typescript-indexing",
-        "christian-kohler.npm-intellisense",
-        // Git & Version Control
-        "donjayamanne.githistory",
-        "gxl.git-graph-3",
-        "github.vscode-pull-request-github",
-        "github.vscode-github-actions",
-        "vivaxy.vscode-conventional-commits",
-        // AI Assistant
-        "github.copilot",
-        "github.copilot-chat",
-        // Editor Enhancements
-        "cardinal90.multi-cursor-case-preserve",
-        "moshfeu.compare-folders",
-        "xyz.local-history",
-        // File Format Support
-        "redhat.vscode-yaml",
-        "mechatroner.rainbow-csv",
         // License Header Management
-        "psioniq.psi-header",
-        "MS-CEINTL.vscode-language-pack-fr"
-      ],
-      "settings": {
-        "typescript.preferences.useAliasesForRenames": false,
-        "typescript.updateImportsOnFileMove.enabled": "always",
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-          "source.fixAll": "explicit"
-        },
-        "npm.packageManager": "pnpm",
-        "markdown.extension.toc.levels": "2..6",
-        "markdown.extension.preview.autoShowPreviewToSide": true,
-        "[markdown]": {
-          "editor.wordWrap": "on",
-          "editor.rulers": [
-            80
-          ],
-          "editor.quickSuggestions": {
-            "comments": "off",
-            "strings": "off",
-            "other": "off"
-          }
-        }
-      }
+        "psioniq.psi-header"
+      ]
     }
   },
-  "containerEnv": {
-    "SSH_AUTH_SOCK": "${localEnv:SSH_AUTH_SOCK}",
-    "GPG_TTY": "/dev/pts/0",
-    "PNPM_HOME": "/home/vscode/.local/share/pnpm",
-    "PATH": "/home/vscode/.local/share/pnpm:${containerEnv:PATH}"
-  },
-  "mounts": [
-    "source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,consistency=cached",
-    "source=${localEnv:HOME}/.gnupg,target=/home/vscode/.gnupg,type=bind,consistency=cached",
-    "source=helpers4-pnpm-store,target=/home/vscode/.local/share/pnpm/store,type=volume"
-  ],
-  "postCreateCommand": "corepack enable && corepack prepare pnpm@9.15.4 --activate && pnpm install",
   "forwardPorts": [
     3000
   ],
@@ -91,5 +29,4 @@
       "onAutoForward": "notify"
     }
   }
-}
 }
