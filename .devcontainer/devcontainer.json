@@ -9,7 +9,6 @@
     "ghcr.io/helpers4/devcontainer/package-auto-install:1": {},
     "ghcr.io/helpers4/devcontainer/vite-plus:1": {},
     "ghcr.io/helpers4/devcontainer/typescript-dev:1": {},
-    "ghcr.io/helpers4/devcontainer/:1": {},
     "ghcr.io/joshuanianji/devcontainer-features/mount-pnpm-store:1": {}
   },
   "customizations": {

@@ -53,25 +53,25 @@
   },
   "type": "module",
   "dependencies": {
-    "angular-oauth2-oidc": "^19.0.0",
+    "angular-oauth2-oidc": "^20.0.2",
     "radashi": "^12.4.0",
     "rxjs": "^7.8.2",
     "simple-deepcompare": "^1.0.7"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^22.10.0",
-    "@vitest/coverage-v8": "^2.1.8",
+    "@types/node": "^25.2.0",
+    "@vitest/coverage-v8": "^4.0.18",
     "fs-extra": "^11.3.0",
-    "glob": "^13.0.0",
-    "happy-dom": "^15.11.7",
-    "oxlint": "^0.16.2",
-    "rollup": "^4.29.1",
+    "glob": "^13.0.1",
+    "happy-dom": "^20.5.0",
+    "oxlint": "^1.43.0",
+    "rollup": "^4.57.1",
     "rollup-plugin-dts": "^6.1.1",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "vite": "^6.0.5",
-    "vitest": "^2.1.8"
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
   },
   "packageManager": "pnpm@10.28.2+sha512.41872f037ad22f7348e3b1debbaf7e867cfd448f2726d9cf74c08f19507c31d2c8e7a11525b983febc2df640b5438dee6023ebb1f84ed43cc2d654d2bc326264",
   "engines": {
