@@ -26,7 +26,7 @@ permissions:
   id-token: write
 
 env:
-  NODE_VERSION: "lts"
+  NODE_VERSION: "24"
 
 jobs:
   # Step 1: Repository guard
@@ -50,21 +50,21 @@ jobs:
     needs: repo-guard
     uses: ./.github/workflows/job-lint.yml
     with:
-      node-version: "lts"
+      node-version: "24"
 
   # Step 3: Type check
   type-check:
     needs: repo-guard
     uses: ./.github/workflows/job-typecheck.yml
     with:
-      node-version: "lts"
+      node-version: "24"
 
   # Step 4: Tests
   tests:
     needs: repo-guard
     uses: ./.github/workflows/job-tests.yml
     with:
-      node-version: "lts"
+      node-version: "24"
 
   # Step 2: Build and verify
   build-and-verify:
