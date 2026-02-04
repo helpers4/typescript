@@ -16,7 +16,6 @@ env:
   WORKFLOW_ID: ${{ github.run_id }}
   ARTIFACT_PACKAGE: package-json-${{ github.run_id }}
   ARTIFACT_BUILD: build-${{ github.run_id }}
-  NODE_VERSION: "lts"
 
 jobs:
   # Version calculation with artifact upload
@@ -37,7 +36,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "lts"
+          node-version: "24"
 
       - name: Enable corepack
         run: corepack enable
@@ -58,7 +57,7 @@ jobs:
     needs: version-calculation
     uses: ./.github/workflows/job-build.yml
     with:
-      node-version: "lts"
+      node-version: "24"
       upload-artifact: true
       artifact-name: build-${{ github.run_id }}
 
@@ -67,25 +66,25 @@ jobs:
     needs: version-calculation
     uses: ./.github/workflows/job-tests.yml
     with:
-      node-version: "lts"
+      node-version: "24"
       coverage: true
 
   lint:
     uses: ./.github/workflows/job-lint.yml
     with:
-      node-version: "lts"
+      node-version: "24"
 
   type-check:
     uses: ./.github/workflows/job-typecheck.yml
     with:
-      node-version: "lts"
+      node-version: "24"
 
   # Verification job (depends on build for artifacts)
   verification:
     needs: [build, test]
     uses: ./.github/workflows/job-verification.yml
     with:
-      node-version: "lts"
+      node-version: "24"
       build-artifact: build-${{ github.run_id }}
 
   # PR comment with results
