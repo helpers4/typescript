@@ -4,9 +4,6 @@ on:
   pull_request:
     branches: [main, develop]
     types: [opened, synchronize, reopened, ready_for_review]
-  pull_request_target:
-    branches: [main, develop]
-    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read
@@ -20,24 +17,11 @@ env:
   ARTIFACT_PACKAGE: package-json-${{ github.run_id }}
   ARTIFACT_BUILD: build-${{ github.run_id }}
   NODE_VERSION: "lts"
-  IS_TRUSTED_PR: ${{ github.event_name == 'pull_request' || (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository) }}
 
 jobs:
-  # Security check for external contributors
-  security-check:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository
-    steps:
-      - name: Check if PR is from external contributor
-        run: |
-          echo "::warning::This PR is from an external contributor. Manual review required before running CI."
-          echo "::error::External PR detected. Workflow stopped for security."
-          exit 1
-
   # Version calculation with artifact upload
   version-calculation:
     runs-on: ubuntu-latest
-    if: ${{ env.IS_TRUSTED_PR == 'true' }}
 
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -48,7 +32,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -73,7 +56,6 @@ jobs:
   # Build project with artifact upload
   build:
     needs: version-calculation
-    if: ${{ env.IS_TRUSTED_PR == 'true' }}
     uses: ./.github/workflows/job-build.yml
     with:
       node-version: ${{ env.NODE_VERSION }}
@@ -83,20 +65,17 @@ jobs:
   # Test job (runs in parallel with build)
   test:
     needs: version-calculation
-    if: ${{ env.IS_TRUSTED_PR == 'true' }}
     uses: ./.github/workflows/job-tests.yml
     with:
       node-version: ${{ env.NODE_VERSION }}
       coverage: true
 
   lint:
-    if: ${{ env.IS_TRUSTED_PR == 'true' }}
     uses: ./.github/workflows/job-lint.yml
     with:
       node-version: ${{ env.NODE_VERSION }}
 
   type-check:
-    if: ${{ env.IS_TRUSTED_PR == 'true' }}
     uses: ./.github/workflows/job-typecheck.yml
     with:
       node-version: ${{ env.NODE_VERSION }}
@@ -104,7 +83,6 @@ jobs:
   # Verification job (depends on build for artifacts)
   verification:
     needs: [build, test]
-    if: ${{ env.IS_TRUSTED_PR == 'true' }}
     uses: ./.github/workflows/job-verification.yml
     with:
       node-version: ${{ env.NODE_VERSION }}
@@ -122,7 +100,7 @@ jobs:
         type-check,
         verification,
       ]
-    if: ${{ always() && env.IS_TRUSTED_PR == 'true' }}
+    if: always()
 
     steps:
       - name: Update PR comment

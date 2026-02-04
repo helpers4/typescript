@@ -2,6 +2,15 @@
 
 This file provides context and guidelines for AI coding agents (GitHub Copilot, Claude, etc.) working on this repository.
 
+## ⛔ CRITICAL RESTRICTIONS
+
+### Forbidden Actions
+- **NEVER execute `git push`** - The user will push manually after review
+- **NEVER use GPT models** - Use Claude models only (claude-sonnet-4, Claude Opus 4.5)
+
+### Model Restriction Rationale
+GPT models have shown inconsistent behavior with this codebase's coding conventions and TypeScript strict mode requirements. Claude models are preferred.
+
 ## Project Overview
 
 **@helpers4** is a TypeScript utility library providing standalone, tree-shakable helper functions organized by category. The library is designed to be framework-agnostic and optimized for modern JavaScript/TypeScript projects.
