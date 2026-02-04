@@ -19,6 +19,8 @@ env:
   WORKFLOW_ID: ${{ github.run_id }}
   ARTIFACT_PACKAGE: package-json-${{ github.run_id }}
   ARTIFACT_BUILD: build-${{ github.run_id }}
+  NODE_VERSION: "lts"
+  IS_TRUSTED_PR: ${{ github.event_name == 'pull_request' || (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository) }}
 
 jobs:
   # Security check for external contributors
@@ -35,9 +37,7 @@ jobs:
   # Version calculation with artifact upload
   version-calculation:
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' || 
-      (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
+    if: ${{ env.IS_TRUSTED_PR == 'true' }}
 
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -51,187 +51,64 @@ jobs:
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
 
-      - name: Calculate version and upload artifact
-        id: version
-        uses: ./.github/actions/version-manager
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          artifact-name: ${{ env.ARTIFACT_PACKAGE }}
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Get current version
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "status=success" >> $GITHUB_OUTPUT
+          echo "changed=false" >> $GITHUB_OUTPUT
 
   # Build project with artifact upload
   build:
-    runs-on: ubuntu-latest
     needs: version-calculation
-    if: |
-      github.event_name == 'pull_request' || 
-      (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
-
-    outputs:
-      build-success: ${{ steps.build.outputs.status }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
-
-      - name: Build project and upload artifact
-        id: build
-        uses: ./.github/actions/build-project
-        with:
-          artifact-name: ${{ env.ARTIFACT_BUILD }}
+    if: ${{ env.IS_TRUSTED_PR == 'true' }}
+    uses: ./.github/workflows/job-build.yml
+    with:
+      node-version: ${{ env.NODE_VERSION }}
+      upload-artifact: true
+      artifact-name: ${{ env.ARTIFACT_BUILD }}
 
   # Test job (runs in parallel with build)
   test:
-    runs-on: ubuntu-latest
     needs: version-calculation
-    if: |
-      github.event_name == 'pull_request' || 
-      (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
-
-    outputs:
-      test-status: ${{ steps.test.outputs.status }}
-      coverage-lines: ${{ steps.test.outputs.coverage-lines }}
-      coverage-branches: ${{ steps.test.outputs.coverage-branches }}
-      coverage-functions: ${{ steps.test.outputs.coverage-functions }}
-      coverage-statements: ${{ steps.test.outputs.coverage-statements }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
-
-      - name: Run tests with coverage
-        id: test
-        uses: ./.github/actions/run-unit-tests
-        with:
-          coverage: "true"
-
-  # Simple validation jobs
-  security:
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' || 
-      (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
-
-    outputs:
-      security-status: ${{ steps.security.outputs.status }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run security audit
-        id: security
-        run: |
-          echo "Running security audit..."
-          pnpm audit || true
-          echo "status=success" >> $GITHUB_OUTPUT
+    if: ${{ env.IS_TRUSTED_PR == 'true' }}
+    uses: ./.github/workflows/job-tests.yml
+    with:
+      node-version: ${{ env.NODE_VERSION }}
+      coverage: true
 
   lint:
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' || 
-      (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
-
-    outputs:
-      lint-status: ${{ steps.lint.outputs.status }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run linting
-        id: lint
-        uses: ./.github/actions/run-lint
+    if: ${{ env.IS_TRUSTED_PR == 'true' }}
+    uses: ./.github/workflows/job-lint.yml
+    with:
+      node-version: ${{ env.NODE_VERSION }}
 
   type-check:
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'pull_request' || 
-      (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
-
-    outputs:
-      typecheck-status: ${{ steps.typecheck.outputs.status }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run TypeScript check
-        id: typecheck
-        uses: ./.github/actions/run-typecheck
+    if: ${{ env.IS_TRUSTED_PR == 'true' }}
+    uses: ./.github/workflows/job-typecheck.yml
+    with:
+      node-version: ${{ env.NODE_VERSION }}
 
   # Verification job (depends on build for artifacts)
   verification:
-    runs-on: ubuntu-latest
     needs: [build, test]
-    if: |
-      github.event_name == 'pull_request' || 
-      (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
-
-    outputs:
-      verification-status: ${{ steps.verification.outputs.status }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
-
-      - name: Run verification tests
-        id: verification
-        uses: ./.github/actions/run-verification
-        with:
-          build-artifact: ${{ env.ARTIFACT_BUILD }}
+    if: ${{ env.IS_TRUSTED_PR == 'true' }}
+    uses: ./.github/workflows/job-verification.yml
+    with:
+      node-version: ${{ env.NODE_VERSION }}
+      build-artifact: ${{ env.ARTIFACT_BUILD }}
 
   # PR comment with results
   pr-comment:
@@ -241,15 +118,11 @@ jobs:
         version-calculation,
         build,
         test,
-        security,
         lint,
         type-check,
         verification,
       ]
-    if: |
-      always() && 
-      (github.event_name == 'pull_request' || 
-       (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository))
+    if: ${{ always() && env.IS_TRUSTED_PR == 'true' }}
 
     steps:
       - name: Update PR comment
@@ -259,15 +132,15 @@ jobs:
           script: |
             const createJobsTable = (jobs) => {
               const rows = Object.entries(jobs).map(([job, status]) => {
-                const icon = status === 'success' ? '✅' : 
-                           status === 'failure' ? '❌' : 
+                const icon = status === 'success' ? '✅' :
+                           status === 'failure' ? '❌' :
                            status === 'skipped' ? '⏭️' : '⚠️';
                 const statusBadge = status === 'success' ? '`passing`' :
                                    status === 'failure' ? '`failing`' :
                                    status === 'skipped' ? '`skipped`' : '`unknown`';
                 return `| ${icon} | **${job}** | ${statusBadge} |`;
               }).join('\n');
-              
+
               return `| | Job | Status |\n|:---:|-----|:------:|\n${rows}`;
             };
 
@@ -281,7 +154,7 @@ jobs:
                 if (num >= 60) return { icon: '🟠', color: 'orange', label: 'needs work' };
                 return { icon: '🔴', color: 'red', label: 'critical' };
               };
-              
+
               const createProgressBar = (value) => {
                 const pct = parseFloat(value);
                 const filled = Math.floor(pct / 5);
@@ -297,25 +170,24 @@ jobs:
                 const bar = createProgressBar(value);
                 return `| ${status.icon} | **${metric}** | ${bar} | **${value}%** |`;
               }).join('\n');
-              
+
               const header = `
 > ${avgStatus.icon} **Overall Coverage: ${avgCoverage}%** ${avgStatus.label === 'perfect' ? '— Target reached! 🎯' : `— Target: ${target}%`}
 
 | | Metric | Progress | Coverage |
 |:---:|--------|:--------:|:--------:|
 ${rows}`;
-              
+
               return header;
             };
 
             const jobs = {
               '🔢 Version': '${{ needs.version-calculation.outputs.status || 'unknown' }}',
-              '🏗️ Build': '${{ needs.build.outputs.build-success || 'unknown' }}',
-              '🧪 Tests': '${{ needs.test.outputs.test-status || 'unknown' }}',
-              '🔒 Security': '${{ needs.security.outputs.security-status || 'unknown' }}',
-              '📝 Lint': '${{ needs.lint.outputs.lint-status || 'unknown' }}',
-              '📘 TypeCheck': '${{ needs.type-check.outputs.typecheck-status || 'unknown' }}',
-              '🔗 Coherency': '${{ needs.verification.outputs.verification-status || 'unknown' }}',
+              '🏗️ Build': '${{ needs.build.outputs.status || 'unknown' }}',
+              '🧪 Tests': '${{ needs.test.outputs.status || 'unknown' }}',
+              '📝 Lint': '${{ needs.lint.outputs.status || 'unknown' }}',
+              '📘 TypeCheck': '${{ needs.type-check.outputs.status || 'unknown' }}',
+              '🔗 Coherency': '${{ needs.verification.outputs.status || 'unknown' }}',
             };
 
             const coverage = {
@@ -331,9 +203,9 @@ ${rows}`;
             const avgCoverage = (Object.values(coverage).reduce((a, b) => a + parseFloat(b), 0) / 4).toFixed(1);
             const coverageOk = parseFloat(avgCoverage) >= 100;
 
-            const statusBanner = allPassed && coverageOk 
+            const statusBanner = allPassed && coverageOk
               ? '## ✅ PR Validation Passed\n\n> All checks passed and coverage target reached!'
-              : allPassed 
+              : allPassed
                 ? `## 🟡 PR Validation Passed\n\n> All checks passed • Coverage: ${avgCoverage}% (target: 100%)`
                 : `## ❌ PR Validation Failed\n\n> ${passedCount}/${totalJobs} checks passed`;
 
@@ -370,11 +242,11 @@ ${createCoverageSection(coverage)}
                 repo: context.repo.repo,
                 issue_number: context.issue.number,
               });
-              
-              const botComment = comments.find(comment => 
+
+              const botComment = comments.find(comment =>
                 comment.user.type === 'Bot' && comment.body.includes('PR Validation')
               );
-              
+
               if (botComment) {
                 await github.rest.issues.updateComment({
                   owner: context.repo.owner,

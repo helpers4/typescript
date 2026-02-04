@@ -14,6 +14,11 @@ on:
           - major
           - prerelease
           - auto
+      dry-run:
+        description: "Perform a dry-run (no git push, no npm publish)"
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -21,202 +26,185 @@ permissions:
   id-token: write
 
 env:
-  WORKFLOW_ID: ${{ github.run_id }}
-  ARTIFACT_PACKAGE: release-package-json-${{ github.run_id }}
-  ARTIFACT_BUILD: release-build-output-${{ github.run_id }}
+  NODE_VERSION: "lts"
 
 jobs:
-  # Security check: Only allow release on main repository
-  security-check:
+  # Step 1: Repository guard
+  repo-guard:
     runs-on: ubuntu-latest
     steps:
-      - name: Check repository ownership
+      - name: Security check
         run: |
-          if [ "${{ github.repository }}" != "helpers4/helpers4" ]; then
-            echo "::error::Release workflow can only be executed on the main repository helpers4/helpers4"
-            echo "Current repository: ${{ github.repository }}"
+          if [ "${{ github.repository }}" != "helpers4/typescript" ]; then
+            echo "::error::Release workflow can only be executed on helpers4/typescript"
             exit 1
           fi
-          echo "✅ Repository ownership verified: ${{ github.repository }}"
+          echo "✅ Repository ownership verified"
 
-  # Version calculation and update job
-  version-update:
+  # Step 2: Lint
+  lint:
+    needs: repo-guard
+    uses: ./.github/workflows/job-lint.yml
+    with:
+      node-version: ${{ env.NODE_VERSION }}
+
+  # Step 3: Type check
+  type-check:
+    needs: repo-guard
+    uses: ./.github/workflows/job-typecheck.yml
+    with:
+      node-version: ${{ env.NODE_VERSION }}
+
+  # Step 4: Tests
+  tests:
+    needs: repo-guard
+    uses: ./.github/workflows/job-tests.yml
+    with:
+      node-version: ${{ env.NODE_VERSION }}
+
+  # Step 2: Build and verify
+  build-and-verify:
     runs-on: ubuntu-latest
-    needs: security-check
-
-    outputs:
-      current-version: ${{ steps.version.outputs.current-version }}
-      new-version: ${{ steps.version.outputs.new-version }}
-      version-changed: ${{ steps.version.outputs.version-changed }}
+    needs: [lint, type-check, tests]
 
     steps:
-      - name: Setup release environment
-        uses: ./.github/actions/release-setup
+      - name: Get GitHub App Token
+        id: app_token
+        uses: tibdex/github-app-token@v2
         with:
-          app-id: ${{ vars.PUSHINATOR_ID }}
-          private-key: ${{ secrets.PUSHINATOR_KEY }}
+          app_id: ${{ vars.PUSHINATOR_ID }}
+          private_key: ${{ secrets.PUSHINATOR_KEY }}
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
           fetch-depth: 0
-
-      - name: Setup environment
-        uses: ./.github/actions/setup-environment
-        with:
-          node-version: "20"
-
-      - name: Calculate and update version
-        id: version
-        uses: ./.github/actions/version-manager
-        with:
-          version-type: ${{ inputs.version_type }}
-
-      - name: Upload updated package.json
-        if: steps.version.outputs.version-changed == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.ARTIFACT_PACKAGE }}
-          path: package.json
-          retention-days: 1
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
+          token: ${{ steps.app_token.outputs.token }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "24"
-          cache: "pnpm"
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable corepack
+        run: corepack enable
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Update version
-        id: version
-        run: |
-          # Get current version
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
-          echo "Current version: $CURRENT_VERSION"
+      - name: Build project
+        run: pnpm run build
 
-          # Update the version
-          if [[ "${{ inputs.version_type }}" == "auto" ]]; then
-            echo "🤖 Auto-calculating version from git commits..."
-            pnpm exec tsx scripts/version/version-manager.ts --auto
+      - name: Run coherency checks
+        shell: bash
+        run: |
+          node -e "
+          const NODE_VERSION = process.env.NODE_VERSION;
+          const CURRENT_VERSION = require('./package.json').version;
+          console.log('📦 Current version:', CURRENT_VERSION);
+          "
+
+          if [ "${{ inputs.version_type }}" == "auto" ]; then
+            pnpm version:auto
           else
-            pnpm exec tsx scripts/version/version-manager.ts ${{ inputs.version_type }}
+            pnpm version:${{ inputs.version_type }}
           fi
 
-          # Get the new version from package.json after update
           NEW_VERSION=$(node -p "require('./package.json').version")
-          echo "New version: $NEW_VERSION"
+          echo "new-version=$NEW_VERSION" >> $GITHUB_ENV
+          pnpm coherency
 
-          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-
-      - name: Upload updated package.json
+      - name: Upload package.json with new version
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ARTIFACT_PACKAGE }}
+          name: updated-package
           path: package.json
           retention-days: 1
 
-  # Build and test job (depends on version update)
-  build-and-test:
+  # Step 3: Publish release
+  publish:
     runs-on: ubuntu-latest
-    needs: [security-check, version-update]
-    if: needs.version-update.outputs.version-changed == 'true'
+    needs: build-and-verify
 
     steps:
-      - name: Setup release environment
-        uses: ./.github/actions/release-setup
+      - name: Get GitHub App Token
+        id: app_token
+        uses: tibdex/github-app-token@v2
         with:
-          app-id: ${{ vars.PUSHINATOR_ID }}
-          private-key: ${{ secrets.PUSHINATOR_KEY }}
+          app_id: ${{ vars.PUSHINATOR_ID }}
+          private_key: ${{ secrets.PUSHINATOR_KEY }}
 
-      - name: Download updated package.json
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app_token.outputs.token }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download updated package
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.ARTIFACT_PACKAGE }}
+          name: updated-package
+          path: .
 
-      - name: Setup environment
-        uses: ./.github/actions/setup-environment
-        with:
-          node-version: "20"
+      - name: Get version
+        id: version
+        run: |
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "new-version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Run tests
-        uses: ./.github/actions/run-tests
-        with:
-          test-type: "test"
+      - name: Commit version update
+        run: |
+          git add package.json pnpm-lock.yaml
+          git commit -m "chore(release): bump version to ${{ steps.version.outputs.new-version }}" || echo "No changes to commit"
 
-      - name: Build packages
-        uses: ./.github/actions/run-tests
-        with:
-          test-type: "build"
+          if [[ "${{ inputs.dry-run }}" == "false" ]]; then
+            git push origin ${{ github.ref }}
+            echo "✅ Changes pushed to repository"
+          else
+            echo "⚠️  DRY-RUN: Skipping git push"
+          fi
 
-      - name: Run coherency tests
-        uses: ./.github/actions/run-tests
-        with:
-          test-type: "coherency"
+      - name: Publish to npm
+        run: |
+          if [[ "${{ inputs.dry-run }}" == "false" ]]; then
+            pnpm release:${{ inputs.version_type }}
+          else
+            pnpm release:${{ inputs.version_type }} --dry-run
+            echo "⚠️  DRY-RUN: npm publish skipped"
+          fi
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.ARTIFACT_BUILD }}
-          path: |
-            build/
-            dist/
-          retention-days: 1
-
-  # Release job (depends on build and test)
-  release:
-    runs-on: ubuntu-latest
-    needs: [security-check, version-update, build-and-test]
-    if: needs.version-update.outputs.version-changed == 'true'
-
-    steps:
-      - name: Setup release environment
-        id: setup
-        uses: ./.github/actions/release-setup
-        with:
-          app-id: ${{ vars.PUSHINATOR_ID }}
-          private-key: ${{ secrets.PUSHINATOR_KEY }}
-          fetch-depth: 0
-
-      - name: Download artifacts
-        uses: ./.github/actions/checkout-and-download
-        with:
-          download-package: "true"
-          download-build: "true"
-          artifact-package-name: ${{ env.ARTIFACT_PACKAGE }}
-          artifact-build-name: ${{ env.ARTIFACT_BUILD }}
-
-      - name: Setup environment
-        uses: ./.github/actions/setup-environment
-        with:
-          node-version: "20"
-
-      - name: Publish release
-        uses: ./.github/actions/publish-release
-        with:
-          github-token: ${{ steps.setup.outputs.token }}
-          npm-token: ${{ secrets.NPM_TOKEN }}
-          new-version: ${{ needs.version-update.outputs.new-version }}
-
-      - name: Trigger Documentation Update
+      - name: Trigger documentation update
         id: trigger_docs
         continue-on-error: true
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ steps.setup.outputs.token }}
+          token: ${{ github.token }}
           repository: helpers4/doc
           event-type: new-release
-          client-payload: '{"version": "${{ needs.version-update.outputs.new-version }}"}'
+          client-payload: '{"version": "${{ steps.version.outputs.new-version }}"}'
 
-      - name: Documentation trigger status
+      - name: Release summary
         run: |
-          if [ "${{ steps.trigger_docs.outcome }}" = "success" ]; then
-            echo "✅ Documentation update triggered successfully"
-          else
-            echo "⚠️  WARNING: Documentation update trigger failed"
-            echo "📄 Please manually trigger documentation update for helpers4/doc"
+          echo "✅ Release completed successfully!"
+          echo "📦 Version: ${{ steps.version.outputs.new-version }}"
+          if [[ "${{ inputs.dry-run }}" == "true" ]]; then
+            echo "⚠️  This was a DRY-RUN - no changes were published"
           fi
-          echo "📦 Version: ${{ needs.version-update.outputs.new-version }}"
+          if [ "${{ steps.trigger_docs.outcome }}" = "success" ]; then
+            echo "📚 Documentation update triggered"
+          else
+            echo "⚠️  Documentation update trigger failed (non-blocking)"
+          fi
