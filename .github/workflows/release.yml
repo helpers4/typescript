@@ -39,6 +39,10 @@ jobs:
             echo "::error::Release workflow can only be executed on helpers4/typescript"
             exit 1
           fi
+          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            echo "::error::Release workflow can only be executed on main"
+            exit 1
+          fi
           echo "✅ Repository ownership verified"
 
   # Step 2: Lint
