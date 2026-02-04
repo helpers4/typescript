@@ -37,7 +37,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: "lts"
 
       - name: Enable corepack
         run: corepack enable
@@ -58,35 +58,35 @@ jobs:
     needs: version-calculation
     uses: ./.github/workflows/job-build.yml
     with:
-      node-version: ${{ env.NODE_VERSION }}
+      node-version: "lts"
       upload-artifact: true
-      artifact-name: ${{ env.ARTIFACT_BUILD }}
+      artifact-name: build-${{ github.run_id }}
 
   # Test job (runs in parallel with build)
   test:
     needs: version-calculation
     uses: ./.github/workflows/job-tests.yml
     with:
-      node-version: ${{ env.NODE_VERSION }}
+      node-version: "lts"
       coverage: true
 
   lint:
     uses: ./.github/workflows/job-lint.yml
     with:
-      node-version: ${{ env.NODE_VERSION }}
+      node-version: "lts"
 
   type-check:
     uses: ./.github/workflows/job-typecheck.yml
     with:
-      node-version: ${{ env.NODE_VERSION }}
+      node-version: "lts"
 
   # Verification job (depends on build for artifacts)
   verification:
     needs: [build, test]
     uses: ./.github/workflows/job-verification.yml
     with:
-      node-version: ${{ env.NODE_VERSION }}
-      build-artifact: ${{ env.ARTIFACT_BUILD }}
+      node-version: "lts"
+      build-artifact: build-${{ github.run_id }}
 
   # PR comment with results
   pr-comment:
@@ -149,12 +149,13 @@ jobs:
                 return `| ${status.icon} | **${metric}** | ${bar} | **${value}%** |`;
               }).join('\n');
 
-              const header = `
-  > ${avgStatus.icon} **Overall Coverage: ${avgCoverage}%** ${avgStatus.label === 'perfect' ? '— Target reached! 🎯' : '— Target: ' + target + '%'}
-
-  | | Metric | Progress | Coverage |
-  |:---:|--------|:--------:|:--------:|
-  ${rows}`;
+              const header = [
+                `> ${avgStatus.icon} **Overall Coverage: ${avgCoverage}%** ${avgStatus.label === 'perfect' ? '— Target reached! 🎯' : '— Target: ' + target + '%'}`,
+                '',
+                '| | Metric | Progress | Coverage |',
+                '|:---:|--------|:--------:|:--------:|',
+                rows,
+              ].join('\n');
 
               return header;
             };

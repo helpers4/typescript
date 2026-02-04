@@ -50,21 +50,21 @@ jobs:
     needs: repo-guard
     uses: ./.github/workflows/job-lint.yml
     with:
-      node-version: ${{ env.NODE_VERSION }}
+      node-version: "lts"
 
   # Step 3: Type check
   type-check:
     needs: repo-guard
     uses: ./.github/workflows/job-typecheck.yml
     with:
-      node-version: ${{ env.NODE_VERSION }}
+      node-version: "lts"
 
   # Step 4: Tests
   tests:
     needs: repo-guard
     uses: ./.github/workflows/job-tests.yml
     with:
-      node-version: ${{ env.NODE_VERSION }}
+      node-version: "lts"
 
   # Step 2: Build and verify
   build-and-verify:
