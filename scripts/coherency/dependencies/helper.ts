@@ -37,9 +37,9 @@ export async function testDependenciesCoherency(): Promise<void> {
 
       // Check dependencies consistency
       const packageDeps = {
-        ...packageJson.dependencies || {},
-        ...packageJson.devDependencies || {},
-        ...packageJson.peerDependencies || {}
+        ...packageJson.dependencies,
+        ...packageJson.devDependencies,
+        ...packageJson.peerDependencies
       };
 
       for (const [depName, depVersion] of Object.entries(packageDeps)) {

@@ -7,12 +7,12 @@
 /**
  * Quick comparison of two objects using JSON.stringify.
  * This is a fast but simple comparison that may not work for all edge cases.
- * 
+ *
  * @param objA - First object to compare
  * @param objB - Second object to compare
  * @returns `true` if objects are identical according to JSON.stringify, `false` otherwise
  */
-export function quickCompare(objA: object, objB: object): boolean {
+export function quickCompare(objA: unknown, objB: unknown): boolean {
   // Quick reference equality check
   if (objA === objB) {
     return true;

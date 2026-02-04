@@ -73,7 +73,6 @@ export function analyzeCommits(commits: CommitInfo[]): VersionCalculationResult 
   const breakingBodyPattern = /BREAKING CHANGE:/i;
 
   for (const commit of commits) {
-    const message = commit.subject.toLowerCase();
     const fullMessage = `${commit.subject}\n${commit.body}`;
 
     // Check for breaking changes

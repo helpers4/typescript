@@ -20,7 +20,7 @@ async function runAllTests() {
   try {
     execSync(parallelCommand, { stdio: 'inherit', cwd: process.cwd() });
     console.log("\n🎉 All coherency tests completed!");
-  } catch (error) {
+  } catch {
     console.error("\n💥 Some coherency tests failed!");
     process.exit(1);
   }

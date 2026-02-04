@@ -61,7 +61,7 @@ class PreReleaseValidator {
         passed: true,
         message: `Node.js version: ${version}`
       });
-    } catch (error) {
+    } catch {
       suite.results.push({
         passed: false,
         message: 'Node.js not found',
@@ -77,7 +77,7 @@ class PreReleaseValidator {
         passed: true,
         message: `npm version: ${version}`
       });
-    } catch (error) {
+    } catch {
       suite.results.push({
         passed: false,
         message: 'npm not found',
@@ -93,7 +93,7 @@ class PreReleaseValidator {
         passed: true,
         message: `Git version: ${version}`
       });
-    } catch (error) {
+    } catch {
       suite.results.push({
         passed: false,
         message: 'Git not found',
@@ -114,7 +114,7 @@ class PreReleaseValidator {
         passed: true,
         message: 'Git repository detected'
       });
-    } catch (error) {
+    } catch {
       suite.results.push({
         passed: false,
         message: 'Not in a git repository',
@@ -164,7 +164,7 @@ class PreReleaseValidator {
         passed: true,
         message: 'Remote origin is accessible'
       });
-    } catch (error) {
+    } catch {
       suite.results.push({
         passed: false,
         message: 'Remote origin not accessible',
@@ -278,7 +278,7 @@ class PreReleaseValidator {
         passed: true,
         message: 'Tests run successfully'
       });
-    } catch (error) {
+    } catch {
       suite.results.push({
         passed: false,
         message: 'Tests failed',
@@ -305,7 +305,7 @@ class PreReleaseValidator {
           details: buildDirs.length === 0 ? 'No packages were built' : undefined
         });
       }
-    } catch (error) {
+    } catch {
       suite.results.push({
         passed: false,
         message: 'Build failed',
@@ -321,7 +321,7 @@ class PreReleaseValidator {
         passed: true,
         message: 'Coherency tests passed'
       });
-    } catch (error) {
+    } catch {
       suite.results.push({
         passed: false,
         message: 'Coherency tests failed',

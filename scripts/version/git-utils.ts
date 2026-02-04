@@ -102,7 +102,7 @@ export async function getLatestTag(): Promise<string | null> {
   try {
     const { stdout } = await execAsync('git describe --tags --abbrev=0');
     return stdout.trim();
-  } catch (error) {
+  } catch {
     // No tags found
     return null;
   }

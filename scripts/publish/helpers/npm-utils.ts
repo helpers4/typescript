@@ -36,7 +36,7 @@ export async function checkNpmAuth(): Promise<boolean> {
   try {
     await execAsync('npm whoami');
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -48,7 +48,7 @@ export async function packageVersionExists(packageName: string, version: string)
   try {
     const { stdout } = await execAsync(`npm view ${packageName}@${version} version --silent`);
     return stdout.trim() === version;
-  } catch (error) {
+  } catch {
     // Package or version doesn't exist
     return false;
   }

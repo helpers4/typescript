@@ -52,7 +52,9 @@ export async function prepareCategoryPackageJson(
     .filter(([, version]) => !!version)
     // Reduce to an object { dep: version }
     .reduce<Record<string, string>>((acc, [dep, version]) => {
-      acc[dep] = version as string;
+      if (dep && typeof dep === 'string') {
+        acc[dep] = version as string;
+      }
       return acc;
     }, {});
 
