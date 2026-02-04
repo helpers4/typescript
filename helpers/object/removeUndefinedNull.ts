@@ -12,7 +12,7 @@ import { isNullish } from "radashi";
  * @param obj an object
  * @returns A shallow copy of the object without null or undefined values
  */
-export function removeUndefinedNull<T extends Record<string, string | boolean | number>>(obj: T): T;
+export function removeUndefinedNull<T extends Record<string, string | number | boolean | null | undefined>>(obj: T): Partial<T>;
 
 /**
  * Remove null and undefined values from an object.
@@ -20,7 +20,7 @@ export function removeUndefinedNull<T extends Record<string, string | boolean | 
  * @param obj a null object
  * @returns null
  */
-export function removeUndefinedNull<T extends Record<string, string | boolean | number>>(obj: null): null;
+export function removeUndefinedNull(obj: null): null;
 
 /**
  * Remove null and undefined values from an object.
@@ -28,7 +28,7 @@ export function removeUndefinedNull<T extends Record<string, string | boolean | 
  * @param obj an undefined object
  * @returns undefined
  */
-export function removeUndefinedNull<T extends Record<string, string | boolean | number>>(obj: undefined): undefined;
+export function removeUndefinedNull(obj: undefined): undefined;
 
 /**
  * Remove null and undefined values from an object.
@@ -36,9 +36,9 @@ export function removeUndefinedNull<T extends Record<string, string | boolean | 
  * @param obj an object
  * @returns A shallow copy of the object without null or undefined values
  */
-export function removeUndefinedNull<T extends Record<string, string | boolean | number>>(obj: T | null | undefined): T | null | undefined {
+export function removeUndefinedNull<T extends Record<string, string | number | boolean | null | undefined>>(obj: T | null | undefined): Partial<T> | null | undefined {
   return obj ? Object.entries(obj)
     .filter(([_, v]) => !isNullish(v))
-    .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), <T>{}) : obj;
+    .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {} as Partial<T>) : obj;
 }
 

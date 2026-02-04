@@ -23,7 +23,7 @@ describe('relativeURLToAbsolute', () => {
                 ...window.location,
                 origin: "https://www.window.location.origin.com",
             },
-        };
+        } as unknown as Window & typeof globalThis;
 
         expect(relativeURLToAbsolute("/test-url")).toBe(
             `${document.baseURI}/test-url`
@@ -33,7 +33,7 @@ describe('relativeURLToAbsolute', () => {
     test("should use window.location.origin secondly", () => {
         global.document = {
             ...document,
-            baseURI: undefined,
+            baseURI: undefined as unknown as string,
         };
         global.window = {
             ...window,
@@ -41,7 +41,7 @@ describe('relativeURLToAbsolute', () => {
                 ...window.location,
                 origin: "https://www.window.location.origin.com",
             },
-        };
+        } as unknown as Window & typeof globalThis;
 
         expect(relativeURLToAbsolute("/test-url")).toBe(
             `${window.location.origin}/test-url`
