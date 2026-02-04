@@ -1,0 +1,106 @@
+name: Job - Verification
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: false
+        type: string
+        default: "lts"
+      build-artifact:
+        required: true
+        type: string
+    outputs:
+      status:
+        description: "Overall verification test execution status"
+        value: ${{ jobs.verification.outputs.status }}
+
+jobs:
+  verification:
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.summary.outputs.status }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.build-artifact }}
+          path: build/
+
+      - name: Run Bundle Package test
+        id: bundle-test
+        run: |
+          if pnpm run coherency:bundle; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Run Version Consistency test
+        id: version-test
+        run: |
+          if pnpm run coherency:version; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Run Category Packages test
+        id: category-test
+        run: |
+          if pnpm run coherency:category; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Run Dependencies Coherency test
+        id: dependencies-test
+        run: |
+          if pnpm run coherency:dependencies; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Run Bundle Sizes test
+        id: bundle-sizes-test
+        run: |
+          if pnpm run coherency:sizes; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Summary
+        id: summary
+        run: |
+          if [[ "${{ steps.bundle-test.outputs.status }}" == "success" && \
+                "${{ steps.version-test.outputs.status }}" == "success" && \
+                "${{ steps.category-test.outputs.status }}" == "success" && \
+                "${{ steps.dependencies-test.outputs.status }}" == "success" && \
+                "${{ steps.bundle-sizes-test.outputs.status }}" == "success" ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi

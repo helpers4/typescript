@@ -1,0 +1,44 @@
+name: Job - TypeCheck
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: false
+        type: string
+        default: "lts"
+    outputs:
+      status:
+        description: "TypeCheck execution status"
+        value: ${{ jobs.typecheck.outputs.status }}
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.typecheck.outputs.status }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run TypeScript check
+        id: typecheck
+        run: |
+          echo "Running TypeScript type checking..."
+          if pnpm run typecheck; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi

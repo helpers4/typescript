@@ -1,0 +1,44 @@
+name: Job - Lint
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: false
+        type: string
+        default: "lts"
+    outputs:
+      status:
+        description: "Lint execution status"
+        value: ${{ jobs.lint.outputs.status }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.lint.outputs.status }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run linting
+        id: lint
+        run: |
+          echo "Running linting with oxlint..."
+          if pnpm run lint; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
