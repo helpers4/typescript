@@ -52,8 +52,8 @@ export async function discoverPackages(buildDir: string): Promise<PackageMetadat
         isCategory: entry !== 'all',
         isBundle: entry === 'all',
         dependencies: Object.keys({
-          ...packageJson.dependencies || {},
-          ...packageJson.peerDependencies || {}
+          ...packageJson.dependencies,
+          ...packageJson.peerDependencies
         })
       });
     } catch (error) {

@@ -13,11 +13,14 @@
     "inlineSourceMap": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    // Strict type checking
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    // Note: The 'any' type is strictly forbidden in this codebase.
+    // Use 'unknown' for truly unknown types, or specific union types.
     "traceResolution": false,
     "listEmittedFiles": false,
     "listFiles": false,

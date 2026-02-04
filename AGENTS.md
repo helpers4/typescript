@@ -61,6 +61,7 @@ helpers4/
 
 ### Code Style
 - Use TypeScript strict mode
+- **The `any` type is strictly forbidden** - use `unknown` for truly unknown types, or specific union types
 - Export functions individually (for tree-shaking)
 - Include JSDoc comments with `@param`, `@returns`, `@example`
 - Use single quotes for strings

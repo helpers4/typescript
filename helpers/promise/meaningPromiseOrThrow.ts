@@ -30,7 +30,7 @@ export function meaningPromiseOrThrow<T>(
 }
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-function isEmptyObject(obj: Object): boolean {
+function isEmptyObject(obj: object): boolean {
     return (
         Object.keys(obj).length === 0 &&
         Object.getPrototypeOf(obj) === Object.prototype

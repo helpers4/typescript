@@ -26,7 +26,7 @@ describe('isSpecialObject', () => {
   it('should return false for arrays', () => {
     expect(isSpecialObject([])).toBe(false);
     expect(isSpecialObject([1, 2, 3])).toBe(false);
-    expect(isSpecialObject(new Array(5))).toBe(false);
+    expect(isSpecialObject(Array.from({ length: 5 }))).toBe(false);
   });
 
   it('should return true for Date objects', () => {

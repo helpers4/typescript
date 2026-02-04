@@ -15,7 +15,6 @@ import {
 } from './helpers/npm-utils';
 import {
   discoverPackages,
-  sortPackagesForPublishing,
   groupPackagesByType,
   validatePackageStructure
 } from './helpers/package-discovery';
