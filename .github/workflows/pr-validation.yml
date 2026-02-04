@@ -160,19 +160,19 @@ jobs:
             };
 
             const jobs = {
-              '🔢 Version': '${{ needs.version-calculation.outputs.status || 'unknown' }}',
-              '🏗️ Build': '${{ needs.build.outputs.status || 'unknown' }}',
-              '🧪 Tests': '${{ needs.test.outputs.status || 'unknown' }}',
-              '📝 Lint': '${{ needs.lint.outputs.status || 'unknown' }}',
-              '📘 TypeCheck': '${{ needs.type-check.outputs.status || 'unknown' }}',
-              '🔗 Coherency': '${{ needs.verification.outputs.status || 'unknown' }}',
+              '🔢 Version': "${{ needs.version-calculation.outputs.status || 'unknown' }}",
+              '🏗️ Build': "${{ needs.build.outputs.status || 'unknown' }}",
+              '🧪 Tests': "${{ needs.test.outputs.status || 'unknown' }}",
+              '📝 Lint': "${{ needs.lint.outputs.status || 'unknown' }}",
+              '📘 TypeCheck': "${{ needs.type-check.outputs.status || 'unknown' }}",
+              '🔗 Coherency': "${{ needs.verification.outputs.status || 'unknown' }}",
             };
 
             const coverage = {
-              'Lines': '${{ needs.test.outputs.coverage-lines || '0' }}',
-              'Branches': '${{ needs.test.outputs.coverage-branches || '0' }}',
-              'Functions': '${{ needs.test.outputs.coverage-functions || '0' }}',
-              'Statements': '${{ needs.test.outputs.coverage-statements || '0' }}',
+              'Lines': "${{ needs.test.outputs.coverage-lines || '0' }}",
+              'Branches': "${{ needs.test.outputs.coverage-branches || '0' }}",
+              'Functions': "${{ needs.test.outputs.coverage-functions || '0' }}",
+              'Statements': "${{ needs.test.outputs.coverage-statements || '0' }}",
             };
 
             const passedCount = Object.values(jobs).filter(s => s === 'success').length;
