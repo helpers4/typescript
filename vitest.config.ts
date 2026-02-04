@@ -14,7 +14,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'json-summary', 'html'],
       include: ['helpers/**/*.ts'],
-      exclude: ['helpers/**/*.{test,spec}.ts', 'helpers/**/index.ts'],
+      exclude: ['helpers/**/*.{test,spec}.ts', 'helpers/**/*.bench.ts', 'helpers/**/index.ts'],
       // Target: 100% coverage
       // Current thresholds are set to warn but not fail
       // Remove these comments and set all to 100 when ready
