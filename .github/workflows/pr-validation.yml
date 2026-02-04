@@ -150,11 +150,11 @@ jobs:
               }).join('\n');
 
               const header = `
-> ${avgStatus.icon} **Overall Coverage: ${avgCoverage}%** ${avgStatus.label === 'perfect' ? '— Target reached! 🎯' : `— Target: ${target}%`}
+  > ${avgStatus.icon} **Overall Coverage: ${avgCoverage}%** ${avgStatus.label === 'perfect' ? '— Target reached! 🎯' : '— Target: ' + target + '%'}
 
-| | Metric | Progress | Coverage |
-|:---:|--------|:--------:|:--------:|
-${rows}`;
+  | | Metric | Progress | Coverage |
+  |:---:|--------|:--------:|:--------:|
+  ${rows}`;
 
               return header;
             };
