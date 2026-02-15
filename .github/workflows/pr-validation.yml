@@ -79,6 +79,26 @@ jobs:
     with:
       node-version: "24"
 
+  conventional-commits:
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.status.outputs.status }}
+    steps:
+      - name: Check conventional commits
+        uses: helpers4/action/conventional-commits@main
+        with:
+          checkout: "true"
+          pr-comment: "error"
+      - name: Set status
+        id: status
+        if: always()
+        run: |
+          if [ ${{ job.status }} == 'success' ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+          fi
+
   # Verification job (depends on build for artifacts)
   verification:
     needs: [build, test]
@@ -97,6 +117,7 @@ jobs:
         test,
         lint,
         type-check,
+        conventional-commits,
         verification,
       ]
     if: always()
@@ -165,7 +186,8 @@ jobs:
               '🧪 Tests': "${{ needs.test.outputs.status || 'unknown' }}",
               '📝 Lint': "${{ needs.lint.outputs.status || 'unknown' }}",
               '📘 TypeCheck': "${{ needs.type-check.outputs.status || 'unknown' }}",
-              '🔗 Coherency': "${{ needs.verification.outputs.status || 'unknown' }}",
+              '� Conventional Commits': "${{ needs.conventional-commits.outputs.status || 'unknown' }}",
+              '�🔗 Coherency': "${{ needs.verification.outputs.status || 'unknown' }}",
             };
 
             const coverage = {
