@@ -268,3 +268,4 @@ ${createCoverageSection(coverage)}
               console.error('Error updating PR comment:', error);
               console.log('Comment update failed, but continuing workflow...');
             }
+            return true;
