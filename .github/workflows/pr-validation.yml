@@ -82,22 +82,13 @@ jobs:
   conventional-commits:
     runs-on: ubuntu-latest
     outputs:
-      status: ${{ steps.status.outputs.status }}
+      status: ${{ steps.check.outputs.status }}
     steps:
-      - name: Check conventional commits
+      - name: Validate conventional commits
+        id: check
         uses: helpers4/action/conventional-commits@main
         with:
-          checkout: "true"
-          pr-comment: "error"
-      - name: Set status
-        id: status
-        if: always()
-        run: |
-          if [ ${{ job.status }} == 'success' ]; then
-            echo "status=success" >> $GITHUB_OUTPUT
-          else
-            echo "status=failure" >> $GITHUB_OUTPUT
-          fi
+          pr-comment: error
 
   # Verification job (depends on build for artifacts)
   verification:
