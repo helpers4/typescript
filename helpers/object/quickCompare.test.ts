@@ -71,4 +71,35 @@ describe('quickCompare', () => {
     // This is a known limitation of quickCompare
     expect(quickCompare(obj1, obj2)).toBe(false);
   });
+
+  it('should handle circular references by falling back to === comparison', () => {
+    const obj1: any = { a: 1 };
+    obj1.self = obj1;
+    const obj2: any = { a: 1 };
+    obj2.self = obj2;
+
+    expect(quickCompare(obj1, obj1)).toBe(true); // Same reference
+    expect(quickCompare(obj1, obj2)).toBe(false); // Different references
+  });
+
+  it('should handle dates', () => {
+    const date1 = new Date('2023-01-01');
+    const date2 = new Date('2023-01-01');
+    const date3 = new Date('2023-01-02');
+
+    expect(quickCompare(date1, date2)).toBe(true);
+    expect(quickCompare(date1, date3)).toBe(false);
+  });
+
+  it('should handle mixed types', () => {
+    expect(quickCompare(1, '1')).toBe(false);
+    expect(quickCompare([], {})).toBe(false);
+    expect(quickCompare(null, 0)).toBe(false);
+  });
+
+  it('should handle objects with undefined values', () => {
+    const obj1 = { a: 1, b: undefined };
+    const obj2 = { a: 1, b: undefined };
+    expect(quickCompare(obj1, obj2)).toBe(true);
+  });
 });

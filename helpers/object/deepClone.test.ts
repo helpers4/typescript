@@ -44,4 +44,30 @@ describe("deepClone", () => {
     expect(cloned).toEqual(date);
     expect(cloned).not.toBe(date);
   });
+
+  it("should handle undefined", () => {
+    expect(deepClone(undefined)).toBe(undefined);
+  });
+
+  it("should clone objects with multiple nested levels", () => {
+    const original = {
+      a: { b: { c: { d: { e: 'deep' } } } },
+      arr: [1, { nested: [2, 3] }]
+    };
+    const cloned = deepClone(original);
+
+    expect(cloned).toEqual(original);
+    expect(cloned).not.toBe(original);
+    expect(cloned.a.b.c.d).not.toBe(original.a.b.c.d);
+    expect(cloned.arr[1]).not.toBe(original.arr[1]);
+  });
+
+  it("should handle objects with inherited properties", () => {
+    const original = Object.create({ inherited: 'value' });
+    original.own = 'property';
+    const cloned = deepClone(original);
+
+    expect(cloned.own).toBe('property');
+    expect(cloned.inherited).toBeUndefined(); // Only own properties are cloned
+  });
 });

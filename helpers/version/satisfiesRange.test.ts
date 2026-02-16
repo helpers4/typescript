@@ -49,4 +49,43 @@ describe("satisfiesRange", () => {
     expect(satisfiesRange("1.3.0", "~1.2.0")).toBe(false);
     expect(satisfiesRange("1.1.9", "~1.2.0")).toBe(false);
   });
+
+  it("should handle v prefix in ranges", () => {
+    expect(satisfiesRange("v1.2.3", "^v1.0.0")).toBe(true);
+    expect(satisfiesRange("1.2.3", "^v1.0.0")).toBe(true);
+    expect(satisfiesRange("v1.2.3", "^1.0.0")).toBe(true);
+  });
+
+  it("should handle three-part version comparisons", () => {
+    expect(satisfiesRange("1.2.5", ">=1.2.3")).toBe(true);
+    expect(satisfiesRange("1.2.3", ">=1.2.3")).toBe(true);
+    expect(satisfiesRange("1.2.2", ">=1.2.3")).toBe(false);
+  });
+
+  it("should handle with minor version 0", () => {
+    expect(satisfiesRange("1.0.5", "~1.0.0")).toBe(true);
+    expect(satisfiesRange("1.0.0", "~1.0.0")).toBe(true);
+    expect(satisfiesRange("1.1.0", "~1.0.0")).toBe(false);
+  });
+
+  it("should return false for unrecognized range format", () => {
+    expect(satisfiesRange("1.2.3", "invalid-range")).toBe(false);
+  });
+
+  it("should handle caret ranges with different patch levels", () => {
+    expect(satisfiesRange("1.0.5", "^1.0.0")).toBe(true);
+    expect(satisfiesRange("1.5.0", "^1.0.0")).toBe(true);
+    expect(satisfiesRange("1.99.99", "^1.0.0")).toBe(true);
+  });
+
+  it("should handle tilde ranges with different patch levels", () => {
+    expect(satisfiesRange("1.2.1", "~1.2.0")).toBe(true);
+    expect(satisfiesRange("1.2.99", "~1.2.0")).toBe(true);
+    expect(satisfiesRange("1.2.0", "~1.2.0")).toBe(true);
+  });
+
+  it("should handle version with missing patch", () => {
+    expect(satisfiesRange("1.2", ">=1.0")).toBe(true);
+    expect(satisfiesRange("1.0", "^1.0")).toBe(true);
+  });
 });
