@@ -93,5 +93,8 @@ describe("satisfiesRange", () => {
     expect(satisfiesRange("1.2.3", "invalid-range")).toBe(false);
     expect(satisfiesRange("1.0.0", "!!1.0.0")).toBe(false);
     expect(satisfiesRange("1.0.0", "@1.0.0")).toBe(false);
+    // Test format that has an operator character but no valid prefix (=> unsupported range format)
+    expect(satisfiesRange("1.0.0", "~")).toBe(false);
+    expect(satisfiesRange("1.0.0", "=1.0.0")).toBe(false);  // '=' alone is not '>=', '<=', or exact match
   });
 });

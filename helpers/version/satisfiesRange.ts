@@ -62,10 +62,10 @@ export function satisfiesRange(version: string, range: string): boolean {
     return versionMajor === targetMajor &&
       versionMinor === targetMinor &&
       compareVersionsSimple(normalizedVersion, targetVersion) >= 0;
+  } else {
+    // Unsupported range format
+    return false;
   }
-
-  // Unsupported range format
-  return false;
 }
 
 function compareVersionsSimple(version1: string, version2: string): number {
