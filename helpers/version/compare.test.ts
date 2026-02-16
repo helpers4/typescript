@@ -168,6 +168,31 @@ describe("compare", () => {
       // Test case where alphanumeric identifiers are equal, should continue to next
       expect(compare("1.0.0-alpha.1", "1.0.0-alpha.2")).toBe(-1); // First id equal (alpha==alpha), compare second (1<2)
       expect(compare("1.0.0-beta.x", "1.0.0-beta.y")).toBe(-1); // First id equal (beta==beta), compare second (x<y)
+      // Test alphanumeric ordering in else block
+      expect(compare("1.0.0-beta.1", "1.0.0-alpha.2")).toBe(1); // beta > alpha
+      expect(compare("1.0.0-gamma", "1.0.0-alpha")).toBe(1); // gamma > alpha
+      // Test alphanumeric equal in else block (exercises both id1<id2 and implicit else)
+      expect(compare("1.0.0-alpha.y", "1.0.0-alpha.x")).toBe(1); // alpha==alpha, then y>x (else branch of if id1<id2)
+    });
+
+    it("should handle multiple equal numeric identifiers with final difference", () => {
+      // Test case where first numeric identifiers loop through equality with continue, then differ
+      expect(compare("1.0.0-1.1.2", "1.0.0-1.1.3")).toBe(-1); // 1==1 (continue), 1==1 (continue), 2<3
+      expect(compare("1.0.0-5.5.5", "1.0.0-5.5.6")).toBe(-1); // 5==5 (continue), 5==5 (continue), 5<6
+      // Test with leading zeros (numeric comparison) - "01" and "1" should be treated as equal numbers
+      expect(compare("1.0.0-01.1", "1.0.0-1.2")).toBe(-1); // parseInt("01") === parseInt("1") (1==1), continue, then 1<2
+      expect(compare("1.0.0-05.2", "1.0.0-5.3")).toBe(-1); // parseInt("05") === parseInt("5") (5==5), continue, then 2<3
+      // Test numeric identifiers that are equal (covers continue in numeric block)
+      expect(compare("1.0.0-1.2.3", "1.0.0-1.2.4")).toBe(-1); // 1==1 (continue), 2==2 (continue), 3<4
+    });
+
+    it("should handle multiple equal alphanumeric identifiers with final difference", () => {
+      // Test case where first alphanumeric identifiers loop through equality with continue, then differ
+      expect(compare("1.0.0-alpha.beta.1", "1.0.0-alpha.beta.2")).toBe(-1); // alpha==alpha (continue), beta==beta (continue), 1<2
+      expect(compare("1.0.0-a.b.x", "1.0.0-a.b.y")).toBe(-1); // a==a (continue), b==b (continue), x<y
+      // Test alphanumeric equal cases (covers continue in alphanumeric else block)
+      expect(compare("1.0.0-alpha.1", "1.0.0-alpha.1")).toBe(0); // alpha==alpha (continue), 1==1 (continue), no more identifiers, equal
+      expect(compare("1.0.0-a.b.c", "1.0.0-a.b.c")).toBe(0); // a==a, b==b, c==c, equal
     });
   });
 });

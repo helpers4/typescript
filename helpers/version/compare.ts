@@ -34,8 +34,6 @@ function comparePrerelease(pre1: string[], pre2: string[]): number {
     const id1 = pre1[i];
     const id2 = pre2[i];
 
-    if (id1 === id2) continue;
-
     const isNum1 = /^\d+$/.test(id1);
     const isNum2 = /^\d+$/.test(id2);
 
@@ -47,15 +45,18 @@ function comparePrerelease(pre1: string[], pre2: string[]): number {
       if (num1 > num2) return 1;
       // num1 === num2, continue to next identifier
     }
-
     // Numeric has lower precedence than alphanumeric
-    if (isNum1) return -1;
-    if (isNum2) return 1;
-
+    else if (isNum1) {
+      return -1;
+    } else if (isNum2) {
+      return 1;
+    }
     // Both alphanumeric: compare lexically (ASCII sort)
-    if (id1 < id2) return -1;
-    if (id1 > id2) return 1;
-    // id1 === id2, continue to next identifier
+    else {
+      if (id1 < id2) return -1;
+      if (id1 > id2) return 1;
+      // id1 === id2, continue to next identifier
+    }
   }
 
   return 0;
