@@ -23,4 +23,20 @@ describe('arrayEquals', () => {
     it('should return false for nested arrays if they are not identical', () => {
         expect(arrayEquals([[1, 2], [3, 4]], [[1, 2], [4, 5]])).toBe(false);
     });
+
+    it('should handle arrays with objects', () => {
+        expect(arrayEquals([{ a: 1 }, { b: 2 }], [{ b: 2 }, { a: 1 }])).toBe(true);
+    });
+
+    it('should handle mixed nested structures', () => {
+        expect(arrayEquals([[{ a: 1 }]], [[{ a: 1 }]])).toBe(true);
+    });
+
+    it('should return false for empty arrays with non-empty arrays', () => {
+        expect(arrayEquals([], [1])).toBe(false);
+    });
+
+    it('should return true for empty arrays', () => {
+        expect(arrayEquals([], [])).toBe(true);
+    });
 });

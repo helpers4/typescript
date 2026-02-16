@@ -89,8 +89,14 @@ describe('compare', () => {
     });
 
     it('should return true for same day with vastly different times', () => {
-      const morning = new Date('2023-01-01T06:00:00.000Z');
-      const evening = new Date('2023-01-01T23:59:59.999Z');
+      // Create dates in local time to avoid timezone issues
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth();
+      const day = today.getDate();
+
+      const morning = new Date(year, month, day, 6, 0, 0, 0);
+      const evening = new Date(year, month, day, 23, 59, 59, 999);
       expect(compare(morning, evening, options)).toBe(true);
     });
   });

@@ -35,6 +35,17 @@ describe("safe date utilities", () => {
       expect(safeDate(validDate)).toEqual(validDate);
       expect(safeDate(invalidDate)).toBe(null);
     });
+
+    it("should handle millisecond timestamps", () => {
+      const msTimestamp = 1642694400000; // milliseconds
+      const date = safeDate(msTimestamp);
+      expect(date).toBeInstanceOf(Date);
+      expect(date?.getTime()).toBe(msTimestamp);
+    });
+
+    it("should return null for NaN", () => {
+      expect(safeDate(NaN)).toBe(null);
+    });
   });
 
   describe("dateToISOString", () => {
@@ -46,6 +57,18 @@ describe("safe date utilities", () => {
     it("should return null for invalid dates", () => {
       expect(dateToISOString(null)).toBe(null);
       expect(dateToISOString("invalid")).toBe(null);
+    });
+
+    it("should convert Date objects to ISO string", () => {
+      const date = new Date("2022-01-20T10:00:00Z");
+      const iso = dateToISOString(date);
+      expect(iso).toBe("2022-01-20T10:00:00.000Z");
+    });
+
+    it("should convert timestamps to ISO string", () => {
+      const timestamp = 1642694400000;
+      const iso = dateToISOString(timestamp);
+      expect(iso).not.toBeNull();
     });
   });
 });
