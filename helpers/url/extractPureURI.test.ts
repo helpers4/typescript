@@ -18,6 +18,14 @@ describe('extractPureURI', () => {
         expect(extractPureURI("www.foo.com/api/#userInfos")).toBe(
             "www.foo.com/api/"
         ));
+    test("should extract URI from URL with both query and fragment, taking query first", () =>
+        expect(extractPureURI("www.foo.com/api/?param=1#anchor")).toBe(
+            "www.foo.com/api/"
+        ));
+    test("should extract URI from URL with both query and fragment, taking fragment first", () =>
+        expect(extractPureURI("www.foo.com/api/#anchor?param=1")).toBe(
+            "www.foo.com/api/"
+        ));
     test("should do nothing from empty string", () =>
         expect(extractPureURI("")).toBe(""));
     test("should do nothing from standalone slash", () =>
@@ -30,4 +38,6 @@ describe('extractPureURI', () => {
         expect(extractPureURI(undefined)).toBe(undefined));
     test("should handle null", () =>
         expect(extractPureURI(null)).toBe(null));
+    test("should handle URL with only fragment and query together", () =>
+        expect(extractPureURI("path#anchor?query")).toBe("path"));
 });

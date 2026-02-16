@@ -121,5 +121,189 @@ describe("sort functions", () => {
       const sorted = [...items].sort(createSortByDateFn());
       expect(sorted.map(i => i.date.getFullYear())).toEqual([2021, 2022, 2023]);
     });
+
+    it("should find title property as fallback", () => {
+      const items = [
+        { title: 'z' },
+        { title: 'a' },
+        { title: 'c' }
+      ];
+
+      const sorted = [...items].sort(createSortByStringFn());
+      expect(sorted.map(i => i.title)).toEqual(['a', 'c', 'z']);
+    });
+
+    it("should find description property as fallback", () => {
+      const items = [
+        { description: 'z' },
+        { description: 'a' },
+        { description: 'c' }
+      ];
+
+      const sorted = [...items].sort(createSortByStringFn());
+      expect(sorted.map(i => i.description)).toEqual(['a', 'c', 'z']);
+    });
+
+    it("should handle equal string values", () => {
+      const items = [
+        { value: 'a' },
+        { value: 'a' },
+        { value: 'a' }
+      ];
+
+      const sorted = [...items].sort(createSortByStringFn());
+      expect(sorted.map(i => i.value)).toEqual(['a', 'a', 'a']);
+    });
+
+    it("should handle equal string values case insensitive", () => {
+      const items = [
+        { value: 'A' },
+        { value: 'a' },
+        { value: 'A' }
+      ];
+
+      const sorted = [...items].sort(createSortByStringFn('value', true));
+      expect(sorted.map(i => i.value)).toEqual(['A', 'a', 'A']);
+    });
+
+    it("should sort descending strings correctly", () => {
+      const items = [
+        { value: 'apple' },
+        { value: 'zebra' },
+        { value: 'banana' }
+      ];
+
+      const sorted = [...items].sort((a, b) => createSortByStringFn('value')(b, a));
+      expect(sorted.map(i => i.value)).toEqual(['zebra', 'banana', 'apple']);
+    });
+
+    it("should handle empty string values", () => {
+      const items = [
+        { value: '' },
+        { value: 'a' },
+        { value: '' }
+      ];
+
+      const sorted = [...items].sort(createSortByStringFn());
+      expect(sorted[0].value).toBe('');
+      expect(sorted[1].value).toBe('');
+      expect(sorted[2].value).toBe('a');
+    });
+
+    it("should handle null/undefined values", () => {
+      const items = [
+        { value: null },
+        { value: 'a' },
+        { value: undefined }
+      ];
+
+      const sorted = [...items].sort(createSortByStringFn());
+      expect(sorted[0].value).toBe(null);
+      expect(sorted[1].value).toBe(undefined);
+      expect(sorted[2].value).toBe('a');
+    });
+
+    it("should properly handle case-insensitive sorting", () => {
+      const items = [
+        { value: 'Z' },
+        { value: 'a' },
+        { value: 'B' }
+      ];
+
+      // Case-insensitive: should be a, B, Z (lowercase comparison)
+      const sorted = [...items].sort(createSortByStringFn('value', true));
+      expect(sorted[0].value).toBe('a');
+      expect(sorted[1].value).toBe('B');
+      expect(sorted[2].value).toBe('Z');
+    });
+
+    it("should handle numeric comparison in sortByNumber", () => {
+      const items = [
+        { value: 200 },
+        { value: 10 },
+        { value: 100 }
+      ];
+
+      const sorted = [...items].sort(createSortByNumberFn('value'));
+      // Numeric: 10 < 100 < 200 (not lexical)
+      expect(sorted[0].value).toBe(10);
+      expect(sorted[1].value).toBe(100);
+      expect(sorted[2].value).toBe(200);
+    });
+
+    it("should handle reverse numeric sorting in date", () => {
+      const items = [
+        { timestamp: new Date('2023-01-01') },
+        { timestamp: new Date('2021-01-01') },
+        { timestamp: new Date('2022-01-01') }
+      ];
+
+      const sorted = [...items].sort((a, b) => createSortByDateFn('timestamp')(b, a));
+      expect(sorted[0].timestamp.getFullYear()).toBe(2023);
+      expect(sorted[1].timestamp.getFullYear()).toBe(2022);
+      expect(sorted[2].timestamp.getFullYear()).toBe(2021);
+    });
+
+    it("should handle sensitive and insensitive sorting with same text", () => {
+      const items1 = [
+        { value: 'abc' },
+        { value: 'ABC' },
+        { value: 'AbC' }
+      ];
+
+      // Case-sensitive: uppercase before lowercase
+      const sortedSensitive = [...items1].sort(createSortByStringFn('value', false));
+
+      // Case-insensitive: should maintain relative order when equal
+      const sortedInsensitive = [...items1].sort(createSortByStringFn('value', true));
+
+      expect(sortedSensitive.length).toBe(3);
+      expect(sortedInsensitive.length).toBe(3);
+    });
+
+    it("should sort with default properties when no property specified", () => {
+      const items = [
+        { value: 'z' },
+        { value: 'a' },
+        { value: 'm' }
+      ];
+
+      const sorted = [...items].sort(createSortByStringFn(undefined, false));
+      expect(sorted[0].value).toBe('a');
+      expect(sorted[1].value).toBe('m');
+      expect(sorted[2].value).toBe('z');
+    });
+
+    it("should handle null/undefined property values in string sort", () => {
+      const items = [
+        { name: 'John' },
+        { name: null as any },
+        { name: undefined as any },
+        { name: 'Alice' }
+      ];
+
+      const sorted = [...items].sort(createSortByStringFn('name'));
+      // null/undefined are converted to empty strings, so they come first
+      expect(sorted[0].name ?? '').toBe('');
+      expect(sorted[1].name ?? '').toBe('');
+      expect(sorted[2].name).toBe('Alice');
+      expect(sorted[3].name).toBe('John');
+    });
+
+    it("should handle null/undefined property values in number sort", () => {
+      const items = [
+        { value: 10 },
+        { value: null as any },
+        { value: undefined as any },
+        { value: 5 }
+      ];
+
+      const sorted = [...items].sort(createSortByNumberFn('value'));
+      // null/undefined are converted to 0 by Number() during comparison
+      expect(sorted[0].value ?? 0).toBe(0);
+      expect(sorted[1].value ?? 0).toBe(0);
+      expect(sorted[2].value).toBe(5);
+      expect(sorted[3].value).toBe(10);
+    });
   });
 });

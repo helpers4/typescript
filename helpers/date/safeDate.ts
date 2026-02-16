@@ -31,6 +31,8 @@ export function safeDate(input: string | number | Date | null | undefined): Date
     return isNaN(date.getTime()) ? null : date;
   }
 
+  // All valid input types are handled above
+  // This point should never be reached with proper TypeScript types
   return null;
 }
 

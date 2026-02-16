@@ -46,6 +46,30 @@ describe("safe date utilities", () => {
     it("should return null for NaN", () => {
       expect(safeDate(NaN)).toBe(null);
     });
+
+    it("should handle date with milliseconds greater than 3-digit", () => {
+      const largeNumber = 999999999999; // Very large timestamp
+      const date = safeDate(largeNumber);
+      expect(date).toBeInstanceOf(Date);
+      expect(date?.getTime()).toBe(largeNumber);
+    });
+
+    it("should handle string dates with various formats", () => {
+      const validDates = [
+        "2022-01-20",
+        "2022/01/20",
+        "01/20/2022",
+        "January 20, 2022",
+        "2022-01-20T10:30:00",
+        "2022-01-20T10:30:00Z"
+      ];
+
+      validDates.forEach(dateStr => {
+        const date = safeDate(dateStr);
+        expect(date).toBeInstanceOf(Date);
+        expect(date?.getFullYear()).toBe(2022);
+      });
+    });
   });
 
   describe("dateToISOString", () => {
@@ -69,6 +93,33 @@ describe("safe date utilities", () => {
       const timestamp = 1642694400000;
       const iso = dateToISOString(timestamp);
       expect(iso).not.toBeNull();
+    });
+
+    it("should handle undefined and empty string in dateToISOString", () => {
+      expect(dateToISOString(undefined)).toBe(null);
+      expect(dateToISOString("")).toBe(null);
+      expect(dateToISOString(0)).toBe(null);
+    });
+
+    it("should handle invalid string dates in dateToISOString", () => {
+      expect(dateToISOString("not-a-date")).toBe(null);
+      expect(dateToISOString("12345-invalid")).toBe(null);
+    });
+
+    it("should handle NaN in dateToISOString", () => {
+      expect(dateToISOString(NaN)).toBe(null);
+    });
+
+    it("should handle null input in dateToISOString", () => {
+      expect(dateToISOString(null)).toBe(null);
+    });
+
+    it("should handle unexpected input types gracefully", () => {
+      // Test with types that shouldn't reach safeDate but ensure safety
+      expect(safeDate({} as any)).toBe(null);
+      expect(safeDate([] as any)).toBe(null);
+      expect(safeDate(true as any)).toBe(null);
+      expect(safeDate(false as any)).toBe(null);
     });
   });
 });

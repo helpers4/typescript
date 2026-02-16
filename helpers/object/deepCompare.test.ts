@@ -186,4 +186,90 @@ describe('deepCompare', () => {
     expect(result.special).toBe(false); // Maps compared by reference
     expect(result.normal.nested.deep).toBe(false); // Normal objects compared deeply
   });
+
+  it('should handle unequal primitives in object properties', () => {
+    const obj1 = { num: 42, str: 'hello', bool: true };
+    const obj2 = { num: 43, str: 'world', bool: false };
+    const result = deepCompare(obj1, obj2) as DeepCompareResult;
+    expect(result).toEqual({ num: false, str: false, bool: false });
+  });
+
+  it('should handle comparing objects with various special types', () => {
+    const date1 = new Date('2023-01-01');
+    const date2 = new Date('2023-01-01');
+    const date3 = new Date('2023-01-02');
+
+    expect(deepCompare(date1, date2)).toBe(true);
+    expect(deepCompare(date1, date3)).toBe(false);
+  });
+
+  it('should handle dates in object properties correctly', () => {
+    const obj1 = { created: new Date('2023-01-01'), name: 'test' };
+    const obj2 = { created: new Date('2023-01-01'), name: 'test' };
+    const obj3 = { created: new Date('2023-01-02'), name: 'test' };
+
+    expect(deepCompare(obj1, obj2)).toBe(true);
+    expect(deepCompare(obj1, obj3)).toEqual({ created: false });
+  });
+
+  it('should handle functions in object properties', () => {
+    const func1 = () => { };
+    const func2 = () => { };
+
+    const obj1 = { fn: func1 };
+    const obj2 = { fn: func1 };
+    const obj3 = { fn: func2 };
+
+    expect(deepCompare(obj1, obj2)).toBe(true);
+    expect(deepCompare(obj1, obj3)).toEqual({ fn: false });
+  });
+
+  it('should handle mixed types in properties', () => {
+    const obj1 = { a: null, b: undefined, c: 42 };
+    const obj2 = { a: undefined, b: null, c: '42' };
+    const result = deepCompare(obj1, obj2) as DeepCompareResult;
+    expect(result).toEqual({ a: false, b: false, c: false });
+  });
+
+  it('should handle null/undefined in object property values', () => {
+    const obj1 = { value: null };
+    const obj2 = { value: undefined };
+    const obj3 = { value: true };
+
+    expect(deepCompare(obj1, obj2)).toEqual({ value: false });
+    expect(deepCompare(obj1, obj3)).toEqual({ value: false });
+    expect(deepCompare(obj2, obj3)).toEqual({ value: false });
+  });
+
+  it('should handle nested objects with only-in-A properties', () => {
+    const obj1 = { nested: { a: 1, b: 2 } };
+    const obj2 = { nested: { a: 1 } };
+    const result = deepCompare(obj1, obj2);
+    expect(result).toEqual({ nested: { b: 'onlyA' } });
+  });
+
+  it('should handle deeply nested differences with object result', () => {
+    const obj1 = { level1: { level2: { x: 1, y: 2 } } };
+    const obj2 = { level1: { level2: { x: 1, y: 3 } } };
+    const result = deepCompare(obj1, obj2);
+    expect(result).toEqual({ level1: { level2: { y: false } } });
+  });
+
+  it('should handle nested objects returning false (incompatible types)', () => {
+    // Test where nestedResult is exactly `false` due to type incompatibility
+    const obj1 = { nested: { a: 1 } };
+    const obj2 = { nested: [] as any };  // Array instead of object
+    const result = deepCompare(obj1, obj2);
+    // nested comparison returns false (array vs object)
+    expect(result).toEqual({ nested: false });
+  });
+
+  it('should handle identical nested objects (nestedResult === true)', () => {
+    // Test where nestedResult is exactly `true`
+    const obj1 = { nested: { x: 1, y: 2 }, other: 'different' };
+    const obj2 = { nested: { x: 1, y: 2 }, other: 'value' };
+    const result = deepCompare(obj1, obj2);
+    // nested is identical (true), but other differs
+    expect(result).toEqual({ other: false });
+  });
 });

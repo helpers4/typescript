@@ -133,5 +133,29 @@ describe("compare", () => {
       expect(compare("v1.0.0-alpha", "v1.0.0-beta")).toBe(-1);
       expect(compare("v1.0.0-alpha", "1.0.0-alpha")).toBe(0);
     });
+
+    it("should handle complex version strings with zeros", () => {
+      expect(compare("0.0.0", "0.0.1")).toBe(-1);
+      expect(compare("1.0.0", "1.0.0-rc.1")).toBe(1);
+      expect(compare("2.0.0", "1.9.9")).toBe(1);
+    });
+
+    it("should handle longer prerelease arrays with mixed numeric and alphanumeric", () => {
+      expect(compare("1.0.0-alpha.1.2", "1.0.0-alpha.1.3")).toBe(-1);
+      expect(compare("1.0.0-1.2.3", "1.0.0-1.2.4")).toBe(-1);
+      expect(compare("1.0.0-rc.1.beta.2", "1.0.0-rc.1.beta.10")).toBe(-1);
+    });
+
+    it("should handle numeric prerelease identifiers correctly", () => {
+      expect(compare("1.0.0-10", "1.0.0-9")).toBe(1); // 10 > 9 numerically
+      expect(compare("1.0.0-2.10", "1.0.0-2.9")).toBe(1); // 10 > 9 numerically
+      expect(compare("1.0.0-10", "1.0.0-a")).toBe(-1); // numeric < alpha
+    });
+
+    it("should handle mixed prerelease and no prerelease", () => {
+      expect(compare("1.0.0", "1.0.0-0")).toBe(1); // release > any prerelease
+      expect(compare("1.0.0-a", "1.0.0")).toBe(-1); // prerelease < release
+      expect(compare("2.0.0-zzz", "1.0.0")).toBe(1); // major difference dominates
+    });
   });
 });
