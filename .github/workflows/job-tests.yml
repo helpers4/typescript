@@ -76,22 +76,20 @@ jobs:
         id: coverage
         if: inputs.coverage == true
         run: |
-          node -e "
-          const fs = require('fs');
-          const path = 'coverage/coverage-summary.json';
-          if (!fs.existsSync(path)) {
-            console.log('Coverage summary not found');
-            process.exit(1);
-          }
-          const summary = JSON.parse(fs.readFileSync(path, 'utf8'));
-          const total = summary.total || {};
-          const getPct = (key) => (total[key] && typeof total[key].pct === 'number') ? total[key].pct : 0;
-          const lines = getPct('lines');
-          const branches = getPct('branches');
-          const functions = getPct('functions');
-          const statements = getPct('statements');
-          fs.appendFileSync(process.env.GITHUB_OUTPUT, `lines=${lines}\n`);
-          fs.appendFileSync(process.env.GITHUB_OUTPUT, `branches=${branches}\n`);
-          fs.appendFileSync(process.env.GITHUB_OUTPUT, `functions=${functions}\n`);
-          fs.appendFileSync(process.env.GITHUB_OUTPUT, `statements=${statements}\n`);
-          "
+          COVERAGE_FILE="coverage/coverage-summary.json"
+          
+          if [ ! -f "$COVERAGE_FILE" ]; then
+            echo "Coverage summary not found"
+            exit 1
+          fi
+          
+          TOTAL=$(jq '.total' "$COVERAGE_FILE")
+          LINES=$(echo "$TOTAL" | jq '.lines.pct // 0')
+          BRANCHES=$(echo "$TOTAL" | jq '.branches.pct // 0')
+          FUNCTIONS=$(echo "$TOTAL" | jq '.functions.pct // 0')
+          STATEMENTS=$(echo "$TOTAL" | jq '.statements.pct // 0')
+          
+          echo "lines=$LINES" >> $GITHUB_OUTPUT
+          echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
+          echo "functions=$FUNCTIONS" >> $GITHUB_OUTPUT
+          echo "statements=$STATEMENTS" >> $GITHUB_OUTPUT
