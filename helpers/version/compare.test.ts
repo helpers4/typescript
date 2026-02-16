@@ -157,5 +157,17 @@ describe("compare", () => {
       expect(compare("1.0.0-a", "1.0.0")).toBe(-1); // prerelease < release
       expect(compare("2.0.0-zzz", "1.0.0")).toBe(1); // major difference dominates
     });
+
+    it("should handle equal numeric identifiers in prerelease", () => {
+      // Test case where numeric identifiers are equal, should continue to next
+      expect(compare("1.0.0-1.1", "1.0.0-1.2")).toBe(-1); // First id equal (1==1), compare second (1<2)
+      expect(compare("1.0.0-5.5", "1.0.0-5.10")).toBe(-1); // First id equal (5==5), compare second (5<10)
+    });
+
+    it("should handle equal alphanumeric identifiers in prerelease", () => {
+      // Test case where alphanumeric identifiers are equal, should continue to next
+      expect(compare("1.0.0-alpha.1", "1.0.0-alpha.2")).toBe(-1); // First id equal (alpha==alpha), compare second (1<2)
+      expect(compare("1.0.0-beta.x", "1.0.0-beta.y")).toBe(-1); // First id equal (beta==beta), compare second (x<y)
+    });
   });
 });

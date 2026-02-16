@@ -45,7 +45,7 @@ function comparePrerelease(pre1: string[], pre2: string[]): number {
       const num2 = parseInt(id2, 10);
       if (num1 < num2) return -1;
       if (num1 > num2) return 1;
-      continue;
+      // num1 === num2, continue to next identifier
     }
 
     // Numeric has lower precedence than alphanumeric
@@ -55,6 +55,7 @@ function comparePrerelease(pre1: string[], pre2: string[]): number {
     // Both alphanumeric: compare lexically (ASCII sort)
     if (id1 < id2) return -1;
     if (id1 > id2) return 1;
+    // id1 === id2, continue to next identifier
   }
 
   return 0;

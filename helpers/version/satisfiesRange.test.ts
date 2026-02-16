@@ -88,4 +88,10 @@ describe("satisfiesRange", () => {
     expect(satisfiesRange("1.2", ">=1.0")).toBe(true);
     expect(satisfiesRange("1.0", "^1.0")).toBe(true);
   });
+
+  it("should handle invalid range formats", () => {
+    expect(satisfiesRange("1.2.3", "invalid-range")).toBe(false);
+    expect(satisfiesRange("1.0.0", "!!1.0.0")).toBe(false);
+    expect(satisfiesRange("1.0.0", "@1.0.0")).toBe(false);
+  });
 });

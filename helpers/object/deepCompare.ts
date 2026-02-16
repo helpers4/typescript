@@ -66,7 +66,8 @@ export function deepCompare(objA: object | undefined | null, objB: object | unde
       differences[key] = "onlyB";
     } else if (hasA && !hasB) {
       differences[key] = "onlyA";
-    } else if (hasA && hasB) {
+    } else {
+      // Both objects have this key - compare values
       const valueA = (objA as any)[key];
       const valueB = (objB as any)[key];
 
