@@ -64,6 +64,7 @@ export function satisfiesRange(version: string, range: string): boolean {
       compareVersionsSimple(normalizedVersion, targetVersion) >= 0;
   }
 
+  // Unsupported range format
   return false;
 }
 
