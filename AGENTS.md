@@ -1,6 +1,6 @@
 # AGENTS.md - AI Coding Agent Instructions
 
-This file provides context and guidelines for AI coding agents (GitHub Copilot, Claude, etc.) working on this repository.
+This file provides context and guidelines for AI coding agents (GitHub Copilot, Claude, etc.) working on helpers4 repositories.
 
 ## ⛔ CRITICAL RESTRICTIONS
 
@@ -9,208 +9,164 @@ This file provides context and guidelines for AI coding agents (GitHub Copilot, 
 - **NEVER use GPT models** - Use Claude models only (claude-sonnet-4, Claude Opus 4.5)
 
 ### Model Restriction Rationale
-GPT models have shown inconsistent behavior with this codebase's coding conventions and TypeScript strict mode requirements. Claude models are preferred.
+Claude models have shown consistent behavior with this codebase's coding conventions and TypeScript strict mode requirements. GPT models are not preferred for this project.
 
-## Project Overview
+## Organization Overview
 
-**@helpers4** is a TypeScript utility library providing standalone, tree-shakable helper functions organized by category. The library is designed to be framework-agnostic and optimized for modern JavaScript/TypeScript projects.
+**helpers4** is a collection of open-source utilities:
+- **typescript**: Tree-shakable TypeScript utility functions (12+ categories)
+- **devcontainer**: Development container features for consistent environments
+- **action**: GitHub Actions for automation and CI/CD workflows
+- **website**: Documentation and landing page
 
-## Tech Stack
-
-| Component | Technology | Version |
-|-----------|------------|---------|
-| Runtime | Node.js | >= 24.0.0 |
-| Package Manager | pnpm | 9.15.4 |
-| Language | TypeScript | 5.x |
-| Build | Vite + Rollup | 6.x |
-| Testing | Vitest | 2.x |
-| Linting | oxlint | 0.16.x |
-| Type Declarations | rollup-plugin-dts | 6.x |
-| TypeScript Execution | tsx | 4.x |
-
-## Project Structure
-
-```
-helpers4/
-├── helpers/           # Source code - helper functions by category
-│   ├── array/         # Array utilities (chunk, unique, intersection, etc.)
-│   ├── date/          # Date utilities (compare, format, safeDate, etc.)
-│   ├── function/      # Function utilities (debounce, throttle, memoize)
-│   ├── math/          # Math utilities
-│   ├── number/        # Number utilities (clamp, random, roundTo)
-│   ├── object/        # Object utilities (deepClone, deepMerge, deepCompare)
-│   ├── observable/    # RxJS Observable helpers
-│   ├── promise/       # Promise utilities
-│   ├── string/        # String manipulation helpers
-│   ├── type/          # Type utilities and guards
-│   ├── url/           # URL manipulation helpers
-│   └── version/       # SemVer utilities (parse, compare, increment)
-├── build/             # Build output (generated)
-├── scripts/           # Build and automation scripts
-│   ├── build/         # Build system (Vite + Rollup)
-│   ├── coherency/     # Project coherency checks
-│   ├── version/       # Version management
-│   └── publish/       # Publishing automation
-└── .github/           # GitHub Actions workflows
-```
-
-## Coding Conventions
-
-### File Structure
-- Each helper function lives in its own file: `functionName.ts`
-- Tests are colocated: `functionName.test.ts` (Vitest) or `functionName.spec.ts`
-- Each category has an `index.ts` that re-exports all helpers
-- Each category has a `config.json` for build configuration
-
-### Naming Conventions
-- **Functions**: camelCase (e.g., `deepCompare`, `toISO8601`)
-- **Types/Interfaces**: PascalCase (e.g., `ParsedVersion`)
-- **Files**: Same as function name (e.g., `deepCompare.ts`)
-- **Comparison functions**: Use consistent naming (`compare`, `quickCompare`, `deepCompare`)
+## General Principles
 
 ### Code Style
-- Use TypeScript strict mode
-- **The `any` type is strictly forbidden** - use `unknown` for truly unknown types, or specific union types
-- Export functions individually (for tree-shaking)
+- Use TypeScript with strict mode enabled
+- Avoid `any` type - use `unknown` or specific types instead
 - Include JSDoc comments with `@param`, `@returns`, `@example`
-- Use single quotes for strings
 - Use 2-space indentation
-- No semicolons (handled by formatter)
+- Use single quotes for strings
+- Prefer descriptive variable and function names
 
-### File Header
-Every source file must include the license header:
-```typescript
-/**
- * This file is part of helpers4.
- * Copyright (C) 2025 baxyz
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
-```
+### Commit Messages
 
-## Testing Guidelines
-
-### Framework
-- **Vitest** for all tests
-- Test environment: `happy-dom` (for DOM-related tests)
-
-### Test Structure
-```typescript
-import { describe, expect, it } from 'vitest';
-import { functionName } from './functionName';
-
-describe('functionName', () => {
-  it('should do something', () => {
-    expect(functionName(input)).toBe(expected);
-  });
-});
-```
-
-### Running Tests
-```bash
-pnpm test                    # Run all tests
-pnpm test path/to/file       # Run specific test file
-pnpm test:watch              # Watch mode
-pnpm test:coverage           # With coverage
-```
-
-## Build System
-
-### Commands
-```bash
-pnpm build                   # Build all packages
-pnpm typecheck               # TypeScript type checking
-pnpm lint                    # Run oxlint with auto-fix
-```
-
-### Build Output
-- Each category builds to `build/<category>/`
-- Generates both `.js` (ESM) and `.d.ts` files
-- Bundle package at `build/all/` includes everything
-
-## Standards & Specifications
-
-### SemVer 2.0.0
-Version helpers follow [SemVer 2.0.0](https://semver.org/):
-- Core version: `MAJOR.MINOR.PATCH`
-- Pre-release: `-alpha`, `-beta.1`, `-rc.1`
-- Build metadata: `+build`, `+sha.abc123` (ignored in comparison)
-
-### Date Formats
-- **ISO 8601**: `YYYY-MM-DDTHH:mm:ss.sssZ`
-- **RFC 3339**: `YYYY-MM-DDTHH:mm:ssZ` (profile of ISO 8601)
-- **RFC 2822**: `Day, DD Mon YYYY HH:mm:ss +0000` (email/HTTP headers)
-
-## CI/CD
-
-### GitHub Actions
-- **Node.js 24** with **pnpm**
-- Tests run on push/PR to main branches
-- Build verification on all PRs
-
-### DevContainer
-- Base image: `typescript-node:24`
-- pnpm store persisted via Docker volume
-- Corepack enabled for pnpm management
-
-## Common Tasks for AI Agents
-
-### Adding a New Helper
-1. Create `helpers/<category>/newHelper.ts` with license header
-2. Create `helpers/<category>/newHelper.test.ts` with comprehensive tests
-3. Export from `helpers/<category>/index.ts`
-4. Run tests: `pnpm test helpers/<category>/`
-5. Commit with conventional commit message
-
-### Commit Message Format
-
-This project follows [Conventional Commits](https://www.conventionalcommits.org/) with emojis:
+Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
-<type>(<scope>): <emoji> <description>
+<type>(<scope>): <description>
 
 - Detail 1
 - Detail 2
 ```
 
-**Types & Emojis**:
+**Types**:
 - `feat`: ✨ New feature
 - `fix`: 🐛 Bug fix
 - `refactor`: ♻️ Code refactoring
 - `docs`: 📚 Documentation
 - `test`: 🧪 Tests
 - `chore`: 🔧 Maintenance
-- `ci`: 🏗️ CI/CD changes
 
-### Modifying Existing Code
-1. Read the existing implementation and tests
-2. Understand the contract/interface
-3. Make minimal, focused changes
-4. Update tests if behavior changes
-5. Run `pnpm test` to verify
-6. Run `pnpm typecheck` for type safety
+### Testing
+
+- Add tests for new features
+- Ensure all tests pass locally
+- Use the test framework specified in each repository
+- Aim for good coverage on critical paths
+
+### Documentation
+
+- Update README for user-facing changes
+- Add/update comments for complex logic
+- Update CHANGELOG if provided
+
+## Repository-Specific Guidelines
+
+### TypeScript (`helpers4/typescript`)
+
+**Purpose**: Utility functions organized by category (array, date, object, promise, string, etc.)
+
+**Tech Stack**:
+- Node.js >= 24.0.0
+- TypeScript 5.x
+- Vite + Rollup for builds
+- Vitest for testing
+- oxlint for linting
+
+**Key Rules**:
+- Tree-shakable exports only
+- One helper function per file
+- Tests colocated (`.test.ts` or `.spec.ts`)
+- Each category has `index.ts` for re-exports
+- License header required on all source files
+
+**Commands**:
+```bash
+pnpm test              # Run tests
+pnpm build             # Build all packages
+pnpm typecheck         # TypeScript check
+pnpm lint              # Lint with oxlint
+```
+
+### DevContainer (`helpers4/devcontainer`)
+
+**Purpose**: Development container features for consistent dev environments
+
+**Tech Stack**:
+- Docker-based dev containers
+- Various feature packages (typescript-dev, vite-plus, git-absorb, etc.)
+
+**Key Files**:
+- `devcontainer-feature.json` - Feature metadata
+- `install.sh` - Feature installation script
+- `test.sh` - Feature tests
+
+### Action (`helpers4/action`)
+
+**Purpose**: GitHub Actions for workflow automation
+
+**Key Files**:
+- `action.yml` - Action metadata
+- `scripts/` - Implementation scripts
+- `README.md` - Usage documentation
+
+### Website (`helpers4/website`)
+
+**Purpose**: Documentation portals and landing page
+
+**Tech Stack**:
+- Qwik (landing page)
+- Docusaurus (documentation portals)
+- Vite for builds
+
+**Sections**:
+- `/`: Landing page
+- `/ts`: TypeScript documentation
+- `/dev-container`: DevContainer documentation
+- `/action`: GitHub Actions documentation
+
+## Common Tasks
+
+### Adding a Feature
+1. Create your changes
+2. Add tests
+3. Follow commit conventions
+4. Ensure tests pass locally
+5. Create clear PR description
+
+### Fixing a Bug
+1. Identify root cause
+2. Write minimal fix
+3. Add test case for the bug
+4. Verify no regressions
+
+### Updating Documentation
+1. Keep changes accurate and current
+2. Use clear, concise language
+3. Include code examples where helpful
+4. Test links and examples
+
+## Contributing Owners
+
+- **@baxyz** - Organization owner and maintainer
 
 ## Important Notes
 
-- **Tree-shaking**: All exports must support tree-shaking
-- **No side effects**: Helper functions should be pure when possible
-- **Backward compatibility**: Maintain API compatibility in minor/patch versions
-- **TypeScript first**: Always provide proper types
-- **Test coverage**: Aim for comprehensive test coverage on all helpers
+- **Open communication**: Ask questions in issues/PRs if unclear
+- **Test locally**: Always verify changes work locally first
+- **Review existing code**: Understand patterns before implementing
+- **Backward compatibility**: Consider implications for existing users
+- **Type safety**: Maintain strong typing across the project
 
-## Dependencies
+## Repository Links
 
-### Runtime Dependencies (used in helpers)
-- `rxjs`: Observable utilities
-- `radashi`: Utility functions
-- `simple-deepcompare`: Deep comparison
-- `angular-oauth2-oidc`: OAuth utilities
+- TypeScript: https://github.com/helpers4/typescript
+- DevContainer: https://github.com/helpers4/devcontainer
+- Actions: https://github.com/helpers4/action
+- Website: https://github.com/helpers4/website
+- Organization: https://github.com/helpers4
 
-### Dev Dependencies
-- Standard build/test tooling (see Tech Stack)
-- No additional linting tools needed (oxlint handles everything except spellcheck)
+## Questions?
 
-## Contact
-
-- **Author**: baxyz <baxy@etik.com>
-- **Repository**: https://github.com/helpers4/helpers4
-- **License**: AGPL-3.0
+If you need clarification on any aspect, open an issue or comment on the PR. We're here to help!
