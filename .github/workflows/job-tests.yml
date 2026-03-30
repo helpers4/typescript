@@ -77,18 +77,18 @@ jobs:
         if: inputs.coverage == true
         run: |
           COVERAGE_FILE="coverage/coverage-summary.json"
-          
+
           if [ ! -f "$COVERAGE_FILE" ]; then
             echo "Coverage summary not found"
             exit 1
           fi
-          
+
           TOTAL=$(jq '.total' "$COVERAGE_FILE")
           LINES=$(echo "$TOTAL" | jq '.lines.pct // 0')
           BRANCHES=$(echo "$TOTAL" | jq '.branches.pct // 0')
           FUNCTIONS=$(echo "$TOTAL" | jq '.functions.pct // 0')
           STATEMENTS=$(echo "$TOTAL" | jq '.statements.pct // 0')
-          
+
           echo "lines=$LINES" >> $GITHUB_OUTPUT
           echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
           echo "functions=$FUNCTIONS" >> $GITHUB_OUTPUT
