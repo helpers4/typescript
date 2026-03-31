@@ -149,7 +149,8 @@ git stash
 - Review specific test failures
 
 **NPM Publish Fails**
-- Verify NPM_TOKEN secret is set
+- Verify OIDC publisher is configured on npmjs.com for `helpers4/typescript`
+- Verify `id-token: write` permission is set in the workflow
 - Check NPM registry status
 - Ensure package names are available
 
@@ -196,7 +197,8 @@ scripts/
 
 ## Security Notes
 
-- **NPM_TOKEN**: Store as GitHub repository secret
+- **OIDC Provenance**: Publishing uses npm OIDC via GitHub Actions (`--provenance`)
+- **No NPM token required**: Authentication is handled by OpenID Connect
 - **GITHUB_TOKEN**: Automatically provided by GitHub Actions
-- All operations use secure token authentication
+- All operations use secure OIDC authentication
 - No sensitive data is logged or exposed
