@@ -17,7 +17,9 @@
       "types": "./lib/index.d.ts",
       "import": "./lib/index.js"
     },
-    "./examples.json": "./examples.json"
+    "./examples.json": "./examples.json",
+    "./api.json": "./api.json",
+    "./package.json": "./package.json"
   },
   "keywords": [
     "helpers",
@@ -29,6 +31,7 @@
     "lib/index.d.ts",
     "lib/index.js.map",
     "examples.json",
+    "api.json",
     "LICENSE.md",
     "package.json",
     "README.md"
