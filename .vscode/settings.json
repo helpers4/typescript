@@ -56,5 +56,10 @@
   ],
   "conventionalCommits.scopes": [
     "CI-CD"
+  ],
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Generate commit messages in English only. Use Conventional Commits format with a gitmoji between the scope and the description: `<type>(<scope>): <emoji> <description>`. The scope is optional but when used MUST be one of: CI-CD, or a helper category name (array, date, function, math, number, object, observable, promise, string, type, url, version). Types and their emoji: feat → ✨, fix → 🐛, docs → 📝, refactor → ♻️, test → ✅, chore → 🔧, perf → 🚀, style → 💄, ci → 👷, build → 📦, revert → ⏪. Always include the emoji. Keep the description short (≤72 chars), lowercase, imperative mood, no period at the end. If there are multiple logical changes, use a bullet list in the body. Examples: `feat(array): ✨ add flatMap helper`, `fix(date): 🐛 handle invalid timestamp input`, `test(promise): ✅ add retry edge case tests`."
+    }
   ]
 }

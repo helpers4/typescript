@@ -31,22 +31,32 @@ Claude models have shown consistent behavior with this codebase's coding convent
 
 ### Commit Messages
 
-Follow [Conventional Commits](https://www.conventionalcommits.org/):
+Follow [Conventional Commits](https://www.conventionalcommits.org/) with a gitmoji between the scope and the description.
 
-```
-<type>(<scope>): <description>
+**Format:** `<type>(<scope>): <emoji> <description>`
 
-- Detail 1
-- Detail 2
-```
+**Examples:**
+- `feat(array): ✨ add flatMap helper`
+- `fix(date): 🐛 handle invalid timestamp input`
+- `test(promise): ✅ add retry edge case tests`
+- `refactor(object): ♻️ simplify deepMerge logic`
 
-**Types**:
-- `feat`: ✨ New feature
-- `fix`: 🐛 Bug fix
-- `refactor`: ♻️ Code refactoring
-- `docs`: 📚 Documentation
-- `test`: 🧪 Tests
-- `chore`: 🔧 Maintenance
+**Scopes:** CI-CD, or a helper category: array, date, function, math, number, object, observable, promise, string, type, url, version
+
+**Types:**
+| Emoji | Type | Description |
+|-------|------|-------------|
+| ✨ | feat | New feature |
+| 🐛 | fix | Bug fix |
+| 📝 | docs | Documentation |
+| ♻️ | refactor | Code refactoring |
+| ✅ | test | Tests |
+| 🔧 | chore | Maintenance |
+| 🚀 | perf | Performance |
+| 💄 | style | Code style |
+| 👷 | ci | CI/CD |
+| 📦 | build | Build system |
+| ⏪ | revert | Revert |
 
 ### Testing
 
