@@ -32,8 +32,9 @@ This directory contains GitHub Actions workflows for the helpers4 project.
 - 🔄 **Retry Logic**: Up to 3 attempts per package with 30s delays
 - 📊 **Detailed Logging**: Comprehensive status reporting
 
-**Required Secrets**:
-- `NPM_TOKEN`: NPM authentication token with publish permissions
+**Authentication**:
+- Uses npm OIDC provenance (no token required)
+- `id-token: write` permission enables SLSA attestation
 - `GITHUB_TOKEN`: Automatically provided by GitHub Actions
 
 ## Usage
