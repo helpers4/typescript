@@ -107,6 +107,58 @@ jobs:
       node-version: "24"
       build-artifact: build-${{ github.run_id }}
 
+  # Mutation testing (non-blocking, informational only)
+  mutation:
+    needs: version-calculation
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 30
+
+    outputs:
+      score: ${{ steps.score.outputs.score }}
+      status: ${{ steps.status.outputs.status }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run mutation tests
+        id: mutation
+        run: |
+          pnpm mutation 2>&1 | tee mutation-output.txt
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+
+      - name: Extract mutation score
+        id: score
+        if: always()
+        run: |
+          SCORE=$(grep -oP 'Final mutation score of \K[\d.]+' mutation-output.txt || echo '')
+          if [ -z "$SCORE" ]; then
+            SCORE=$(grep -oP '% Mutation score.*?\|\s+\K[\d.]+' mutation-output.txt | head -1 || echo 'N/A')
+          fi
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+
+      - name: Set status
+        id: status
+        if: always()
+        run: |
+          if [ "${{ steps.mutation.outputs.exit_code }}" == "0" ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+          fi
+
   # PR comment with results
   pr-comment:
     runs-on: ubuntu-latest
@@ -119,6 +171,7 @@ jobs:
         type-check,
         conventional-commits,
         verification,
+        mutation,
       ]
     if: always()
 
@@ -180,6 +233,41 @@ jobs:
               return header;
             };
 
+            const createMutationSection = (score, status) => {
+              if (status === 'unknown' || status === 'skipped') {
+                return '> ⏭️ **Mutation Testing**: skipped';
+              }
+
+              const num = parseFloat(score);
+              if (isNaN(num)) {
+                return '> ⚠️ **Mutation Testing**: score could not be determined';
+              }
+
+              const getStatus = (value) => {
+                if (value >= 90) return { icon: '🟢', label: 'excellent' };
+                if (value >= 80) return { icon: '🟡', label: 'good' };
+                if (value >= 70) return { icon: '🟠', label: 'acceptable' };
+                return { icon: '🔴', label: 'needs improvement' };
+              };
+
+              const createProgressBar = (value) => {
+                const filled = Math.floor(value / 5);
+                const empty = 20 - filled;
+                return '`' + '▓'.repeat(filled) + '░'.repeat(empty) + '`';
+              };
+
+              const s = getStatus(num);
+              return [
+                `> ${s.icon} **Mutation Score: ${score}%** — ${s.label}`,
+                '',
+                `| | Metric | Progress | Score |`,
+                `|:---:|--------|:--------:|:-----:|`,
+                `| ${s.icon} | **Mutation Score** | ${createProgressBar(num)} | **${score}%** |`,
+                '',
+                '> 🧬 *Mutation testing is informational only and does not block the PR*',
+              ].join('\n');
+            };
+
             const jobs = {
               '🔢 Version': "${{ needs.version-calculation.outputs.status || 'unknown' }}",
               '🏗️ Build': "${{ needs.build.outputs.status || 'unknown' }}",
@@ -196,6 +284,9 @@ jobs:
               'Functions': "${{ needs.test.outputs.coverage-functions || '0' }}",
               'Statements': "${{ needs.test.outputs.coverage-statements || '0' }}",
             };
+
+            const mutationScore = "${{ needs.mutation.outputs.score || 'N/A' }}";
+            const mutationStatus = "${{ needs.mutation.outputs.status || 'unknown' }}";
 
             const passedCount = Object.values(jobs).filter(s => s === 'success').length;
             const totalJobs = Object.keys(jobs).length;
@@ -225,10 +316,17 @@ jobs:
 
             ---
 
+            ### 🧬 Mutation Testing
+
+            ${createMutationSection(mutationScore, mutationStatus)}
+
+            ---
+
             <details>
             <summary>ℹ️ <b>About this report</b></summary>
 
             - 🎯 **Coverage Target**: 100% for all metrics
+            - 🧬 **Mutation Testing**: powered by [Stryker](https://stryker-mutator.io/) (non-blocking)
             - 🔄 This comment updates automatically with each push
             - 📈 Coverage is measured using Vitest + v8
 

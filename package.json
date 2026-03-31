@@ -51,7 +51,9 @@
     "release:dry-run": "tsx scripts/version/release.ts patch --dry-run",
     "release:validate": "tsx scripts/version/pre-release-validator.ts",
     "examples": "tsx scripts/examples/index.ts",
-    "smoke": "tsx scripts/examples/smoke.ts"
+    "smoke": "tsx scripts/examples/smoke.ts",
+    "mutation": "stryker run",
+    "mutation:category": "stryker run --mutate"
   },
   "type": "module",
   "dependencies": {
@@ -61,6 +63,8 @@
     "simple-deepcompare": "^1.0.7"
   },
   "devDependencies": {
+    "@stryker-mutator/core": "^9.6.0",
+    "@stryker-mutator/vitest-runner": "^9.6.0",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.2.0",
     "@vitest/coverage-v8": "^4.0.18",
