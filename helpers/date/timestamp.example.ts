@@ -8,7 +8,7 @@ import { isTimestampInSeconds, normalizeTimestamp } from './timestamp';
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
-  helper: 'timestamp',
+  helper: 'isTimestampInSeconds',
   category: 'date',
   examples: [
     {

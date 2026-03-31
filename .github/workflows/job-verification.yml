@@ -91,6 +91,16 @@ jobs:
             exit 1
           fi
 
+      - name: Run post-build smoke tests
+        id: smoke-test
+        run: |
+          if pnpm run smoke; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
       - name: Summary
         id: summary
         run: |
@@ -98,7 +108,8 @@ jobs:
                 "${{ steps.version-test.outputs.status }}" == "success" && \
                 "${{ steps.category-test.outputs.status }}" == "success" && \
                 "${{ steps.dependencies-test.outputs.status }}" == "success" && \
-                "${{ steps.bundle-sizes-test.outputs.status }}" == "success" ]]; then
+                "${{ steps.bundle-sizes-test.outputs.status }}" == "success" && \
+                "${{ steps.smoke-test.outputs.status }}" == "success" ]]; then
             echo "status=success" >> $GITHUB_OUTPUT
           else
             echo "status=failure" >> $GITHUB_OUTPUT

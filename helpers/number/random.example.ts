@@ -8,7 +8,7 @@ import { randomBetween, randomIntBetween } from './random';
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
-  helper: 'random',
+  helper: 'randomBetween',
   category: 'number',
   examples: [
     {
