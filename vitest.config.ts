@@ -14,7 +14,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'json-summary', 'html'],
       include: ['helpers/**/*.ts'],
-      exclude: ['helpers/**/*.{test,spec,bench}.ts', 'helpers/**/index.ts'],
+      exclude: ['helpers/**/*.{test,spec,bench,example}.ts', 'helpers/**/index.ts'],
       thresholds: {
         lines: 100,
         functions: 100,
