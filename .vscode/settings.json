@@ -55,6 +55,18 @@
     }
   ],
   "conventionalCommits.scopes": [
+    "array",
+    "date",
+    "function",
+    "math",
+    "number",
+    "object",
+    "observable",
+    "promise",
+    "string",
+    "type",
+    "url",
+    "version",
     "CI-CD"
   ],
   "github.copilot.chat.commitMessageGeneration.instructions": [
