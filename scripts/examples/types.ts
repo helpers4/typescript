@@ -44,3 +44,29 @@ export interface HelperExamples {
   /** List of usage examples */
   readonly examples: readonly ExampleDefinition[];
 }
+
+/**
+ * Serializable version of ExampleDefinition (no assert function).
+ * This is the shape written to examples.json in each built package.
+ */
+export interface SerializedExample {
+  readonly title: string;
+  readonly description: string;
+  readonly code: string;
+}
+
+/**
+ * Serializable version of HelperExamples for JSON output.
+ */
+export interface SerializedHelperExamples {
+  readonly helper: string;
+  readonly examples: readonly SerializedExample[];
+}
+
+/**
+ * The full examples.json structure for one category.
+ */
+export interface CategoryExamplesJson {
+  readonly category: string;
+  readonly helpers: readonly SerializedHelperExamples[];
+}

@@ -8,6 +8,7 @@ import { emptyDir } from "fs-extra";
 import { DIR } from "../constants";
 import { buildCategories } from "./build-categories";
 import { buildBundle } from "./build-bundle";
+import { buildExamples } from "./build-examples";
 
 async function main() {
   // Create or empty the /build directory
@@ -16,6 +17,10 @@ async function main() {
 
   // Build all individual categories
   const validCategories = await buildCategories();
+
+  // Generate examples.json for each category
+  await buildExamples(validCategories);
+  console.info(" ✔️📝 Built examples");
 
   // Build the bundle package with all valid categories
   await buildBundle(validCategories);
