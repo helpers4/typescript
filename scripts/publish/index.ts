@@ -182,14 +182,16 @@ async function publishPackages(config: PublishConfig): Promise<void> {
       console.log('🧪 DRY RUN MODE - No packages will actually be published\n');
     }
 
-    // Check NPM authentication
-    if (!config.dryRun) {
+    // Check NPM authentication (skipped when using OIDC provenance in CI)
+    if (!config.dryRun && !config.provenance) {
       console.log('🔐 Checking NPM authentication...');
       const isAuthenticated = await checkNpmAuth();
       if (!isAuthenticated) {
         throw new Error('NPM authentication failed. Please login with: npm login');
       }
       console.log('✅ NPM authentication verified\n');
+    } else if (config.provenance) {
+      console.log('🔐 Using OIDC provenance for authentication\n');
     }
 
     // Discover packages

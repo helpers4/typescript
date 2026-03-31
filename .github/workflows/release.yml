@@ -148,6 +148,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          registry-url: "https://registry.npmjs.org"
 
       - name: Enable corepack
         run: corepack enable
@@ -187,8 +188,6 @@ jobs:
             pnpm release:${{ inputs.version_type }} --dry-run
             echo "⚠️  DRY-RUN: npm publish skipped"
           fi
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Trigger documentation update
         id: trigger_docs
