@@ -49,7 +49,8 @@
     "release:prerelease": "tsx scripts/version/release.ts prerelease",
     "release:auto": "tsx scripts/version/release.ts --auto",
     "release:dry-run": "tsx scripts/version/release.ts patch --dry-run",
-    "release:validate": "tsx scripts/version/pre-release-validator.ts"
+    "release:validate": "tsx scripts/version/pre-release-validator.ts",
+    "examples": "tsx scripts/examples/index.ts"
   },
   "type": "module",
   "dependencies": {

@@ -1,0 +1,35 @@
+/**
+ * This file is part of helpers4.
+ * Copyright (C) 2025 baxyz
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+import { capitalize } from './capitalize';
+import type { HelperExamples } from '../../scripts/examples/types';
+
+const examples: HelperExamples = {
+  helper: 'capitalize',
+  category: 'string',
+  examples: [
+    {
+      title: 'Capitalize a word',
+      description: 'Uppercases the first letter and lowercases the rest.',
+      code: `capitalize('hello')
+// => 'Hello'`,
+      assert: () => {
+        if (capitalize('hello') !== 'Hello') throw new Error('Unexpected result');
+      },
+    },
+    {
+      title: 'Handle mixed case',
+      description: 'Lowercases all letters except the first one.',
+      code: `capitalize('hELLO')
+// => 'Hello'`,
+      assert: () => {
+        if (capitalize('hELLO') !== 'Hello') throw new Error('Unexpected result');
+      },
+    },
+  ],
+};
+
+export default examples;
