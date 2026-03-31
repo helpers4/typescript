@@ -16,7 +16,7 @@ const EXTERNAL_DEPS = ['radashi', 'simple-deepcompare', 'angular-oauth2-oidc', '
 
 /**
  * Compile a TypeScript file using Vite/Rollup build with rollup-plugin-dts for .d.ts generation.
- * 
+ *
  * @param filePath - The path of the TypeScript file to compile.
  * @param outDir - The output directory for the compiled file.
  * @returns A promise that resolves when the compilation is complete.
@@ -44,7 +44,7 @@ export async function compileTypeScript(filePath: string, outDir: string) {
           }
         },
         minify: false,
-        sourcemap: false
+        sourcemap: true
       },
       logLevel: 'silent'
     };
