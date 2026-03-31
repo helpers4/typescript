@@ -16,6 +16,7 @@ export interface PublishOptions {
   tag?: string;
   dryRun?: boolean;
   registry?: string;
+  provenance?: boolean;
   retries?: number;
   retryDelay?: number;
 }
@@ -92,6 +93,7 @@ export async function publishPackage(
     tag = 'latest',
     dryRun = false,
     registry,
+    provenance = false,
     retries = 3,
     retryDelay = 5000
   } = options;
@@ -128,6 +130,10 @@ export async function publishPackage(
 
     if (registry) {
       commands.push('--registry', registry);
+    }
+
+    if (provenance) {
+      commands.push('--provenance');
     }
 
     const command = commands.join(' ');

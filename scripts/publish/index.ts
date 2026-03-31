@@ -29,6 +29,7 @@ interface PublishConfig {
   access: 'public' | 'restricted';
   tag: string;
   registry?: string;
+  provenance: boolean;
   skipValidation: boolean;
   categoryDelay: number; // ms to wait between category and bundle publishing
   retries: number;
@@ -47,6 +48,7 @@ function parseArgs(): PublishConfig {
     dryRun: false,
     access: 'public',
     tag: 'latest',
+    provenance: !!process.env.CI,
     skipValidation: false,
     categoryDelay: 60000, // 60 seconds
     retries: 3,
@@ -69,6 +71,12 @@ function parseArgs(): PublishConfig {
         break;
       case '--registry':
         config.registry = args[++i];
+        break;
+      case '--provenance':
+        config.provenance = true;
+        break;
+      case '--no-provenance':
+        config.provenance = false;
         break;
       case '--skip-validation':
         config.skipValidation = true;
@@ -112,6 +120,8 @@ Options:
   --access <public|restricted>  Set package access (default: public)
   --tag <tag>            Set the npm tag (default: latest)
   --registry <url>       Set custom npm registry
+  --provenance           Enable npm SLSA provenance attestation (auto-enabled in CI)
+  --no-provenance        Disable npm provenance attestation
   --skip-validation      Skip package validation before publishing
   --category-delay <seconds>  Delay between category and bundle publishing (default: 60)
   --retries <number>     Number of retry attempts per package (default: 3)
@@ -214,6 +224,7 @@ async function publishPackages(config: PublishConfig): Promise<void> {
       access: config.access,
       tag: config.tag,
       registry: config.registry,
+      provenance: config.provenance,
       dryRun: config.dryRun,
       retries: config.retries,
       retryDelay: config.retryDelay
