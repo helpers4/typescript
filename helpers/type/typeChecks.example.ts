@@ -8,7 +8,7 @@ import { isString, isNumber, isBoolean, isArray, isObject, isDate, isSet, isFunc
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
-  helper: 'typeChecks',
+  helper: 'isString',
   category: 'type',
   examples: [
     {

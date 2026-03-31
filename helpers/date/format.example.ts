@@ -8,7 +8,7 @@ import { toISO8601, toRFC3339, toRFC2822 } from './format';
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
-  helper: 'format',
+  helper: 'toISO8601',
   category: 'date',
   examples: [
     {

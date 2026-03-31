@@ -8,7 +8,7 @@ import { sortNumberAscFn, sortStringAscFn, createSortByStringFn } from './sort';
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
-  helper: 'sort',
+  helper: 'sortNumberAscFn',
   category: 'array',
   examples: [
     {
