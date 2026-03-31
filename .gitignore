@@ -14,3 +14,7 @@
 
 # Vitest & Coverage
 /coverage
+
+# Stryker
+/reports
+/.stryker-tmp
