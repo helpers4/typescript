@@ -14,16 +14,14 @@ const execAsync = promisify(exec);
 interface GitCommitOptions {
   message: string;
   files?: string[];
-  tag?: string;
   pushBranch?: string;
-  pushTag?: boolean;
 }
 
 /**
- * Execute git commands for version commit and tagging
+ * Execute git commands for version commit
  */
 export async function createVersionCommitAndTag(options: GitCommitOptions): Promise<void> {
-  console.log('📝 Creating version commit and tag...');
+  console.log('📝 Creating version commit...');
 
   try {
     // Add files to git
@@ -48,18 +46,6 @@ export async function createVersionCommitAndTag(options: GitCommitOptions): Prom
     if (options.pushBranch) {
       console.log(`🚀 Pushing to branch: ${options.pushBranch}`);
       await execAsync(`git push origin ${options.pushBranch}`);
-    }
-
-    // Create tag if specified
-    if (options.tag) {
-      console.log(`🏷️  Creating tag: ${options.tag}`);
-      await execAsync(`git tag ${options.tag}`);
-
-      // Push tag if requested
-      if (options.pushTag) {
-        console.log(`🚀 Pushing tag: ${options.tag}`);
-        await execAsync(`git push origin ${options.tag}`);
-      }
     }
 
     console.log('✅ Git operations completed successfully');
