@@ -3,7 +3,7 @@
 /**
  * This file is part of helpers4.
  * Copyright (C) 2025 baxyz
- * SPDX-License-Identifier: AGPL-3.0-or-later
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
 // Simple index that runs all coherency tests by calling their individual scripts

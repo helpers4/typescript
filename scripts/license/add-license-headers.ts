@@ -1,11 +1,11 @@
 /**
  * This file is part of helpers4.
  * Copyright (C) 2025 baxyz
- * SPDX-License-Identifier: AGPL-3.0-or-later
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
 /**
- * Script to automatically add AGPL-3.0-or-later license headers
+ * Script to automatically add LGPL-3.0-or-later license headers
  * to TypeScript files in the helpers4 project.
  * 
  * Improvements:
@@ -66,7 +66,7 @@ async function loadLicenseHeaderFromVsCode(): Promise<string> {
     return line
       .replace("<<yeartoyear>>", "2025")
       .replace("<<copyrightHolder>>", config.copyrightHolder || "baxyz")
-      .replace("<<spdxid>>", config.license || "AGPL-3.0-or-later");
+      .replace("<<spdxid>>", config.license || "LGPL-3.0-or-later");
   });
 
   // Use hardcoded comment format since lang-config parsing seems broken

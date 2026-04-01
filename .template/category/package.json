@@ -3,7 +3,7 @@
   "version": "{{version}}",
   "description": "A set of helpers in TS/JS, compatible with tree-shaking, for {{category}}.",
   "author": "baxyz <baxy@etik.com>",
-  "license": "AGPL-3.0",
+  "license": "LGPL-3.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/helpers4/helpers4.git"
