@@ -105,18 +105,17 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
       console.log('\n⏭️  Step 5: Skipping coherency tests');
     }
 
-    // Step 6: Create commit and tag
-    console.log('\n📝 Step 6: Creating version commit and tag');
+    // Step 6: Create commit and push
+    // Tags are created by the CI workflow via the GitHub API (verified signatures)
+    console.log('\n📝 Step 6: Creating version commit');
     if (!options.dryRun) {
       await createVersionCommitAndTag({
         message: `chore: release v${newVersion}`,
         files: ['package.json', 'build/'],
-        tag: `v${newVersion}`,
-        pushBranch: targetBranch,
-        pushTag: true
+        pushBranch: targetBranch
       });
     } else {
-      console.log(`[DRY RUN] Would create commit and tag v${newVersion}`);
+      console.log(`[DRY RUN] Would create commit for v${newVersion}`);
     }
 
     // Step 7: Publish packages
@@ -136,7 +135,6 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
     if (!options.dryRun) {
       console.log(`📦 Version: ${newVersion}`);
       console.log(`🌿 Branch: ${targetBranch}`);
-      console.log(`🏷️  Tag: v${newVersion}`);
     }
 
   } catch (error) {
