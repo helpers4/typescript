@@ -58,7 +58,7 @@
   "type": "module",
   "dependencies": {
     "angular-oauth2-oidc": "^20.0.2",
-    "radashi": "^12.4.0",
+    "radashi": "^12.7.2",
     "rxjs": "^7.8.2",
     "simple-deepcompare": "^1.0.7"
   },
