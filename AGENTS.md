@@ -8,7 +8,7 @@
 
 ## Organization Context
 
-**helpers4** is a collection of open-source utilities across 5 repos: `typescript` (this repo), `devcontainer`, `action`, `website`, `.github`. All licensed AGPL-3.0.
+**helpers4** is a collection of open-source utilities across 5 repos: `typescript` (this repo), `devcontainer`, `action`, `website`, `.github`. All licensed LGPL-3.0.
 
 ## Commit Messages
 
@@ -139,7 +139,7 @@ helpers/<category>/
 /**
  * This file is part of helpers4.
  * Copyright (C) 2025 baxyz
- * SPDX-License-Identifier: AGPL-3.0-or-later
+ * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 ```
 
