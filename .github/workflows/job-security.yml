@@ -7,6 +7,10 @@ on:
         required: false
         type: string
         default: "24"
+      audit-level:
+        required: false
+        type: string
+        default: "low"
     outputs:
       status:
         description: "Security audit status"
@@ -35,6 +39,12 @@ jobs:
       - name: Run security audit
         id: security
         run: |
-          echo "Running security audit..."
-          pnpm audit || true
-          echo "status=success" >> $GITHUB_OUTPUT
+          echo "Running strict security audit..."
+          echo "Audit level: ${{ inputs.audit-level }}"
+
+          if pnpm audit --audit-level "${{ inputs.audit-level }}"; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
