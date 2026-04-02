@@ -1,7 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "./*"
+      ]
+    },
     "incremental": true,
     "target": "ESNext",
     "outDir": "build",
