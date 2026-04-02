@@ -9,6 +9,9 @@
     "ghcr.io/helpers4/devcontainer/essential-dev:1": {},
     "ghcr.io/helpers4/devcontainer/typescript-dev:1": {},
     "ghcr.io/helpers4/devcontainer/vite-plus:1": {},
+    "ghcr.io/helpers4/devcontainer/peon-ping:1": {
+      "packs": "peasant_fr,peon_fr,warcraft-peon"
+    },
     "ghcr.io/joshuanianji/devcontainer-features/mount-pnpm-store:1": {},
     "ghcr.io/helpers4/devcontainer/package-auto-install:1": {},
     "ghcr.io/helpers4/devcontainer/auto-header:1": {
