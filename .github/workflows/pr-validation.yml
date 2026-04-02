@@ -79,6 +79,12 @@ jobs:
     with:
       node-version: "24"
 
+  security:
+    uses: ./.github/workflows/job-security.yml
+    with:
+      node-version: "24"
+      audit-level: "low"
+
   conventional-commits:
     runs-on: ubuntu-latest
     outputs:
@@ -169,6 +175,7 @@ jobs:
         test,
         lint,
         type-check,
+        security,
         conventional-commits,
         verification,
         mutation,
@@ -274,6 +281,7 @@ jobs:
               '🧪 Tests': "${{ needs.test.outputs.status || 'unknown' }}",
               '📝 Lint': "${{ needs.lint.outputs.status || 'unknown' }}",
               '📘 TypeCheck': "${{ needs.type-check.outputs.status || 'unknown' }}",
+              '🔐 Security Audit': "${{ needs.security.outputs.status || 'unknown' }}",
               '🧾 Conventional Commits': "${{ needs.conventional-commits.outputs.status || 'unknown' }}",
               '🔗 Coherency': "${{ needs.verification.outputs.status || 'unknown' }}",
             };

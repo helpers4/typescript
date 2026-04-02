@@ -10,7 +10,15 @@
  */
 
 import { isObject } from "radashi";
-import type { OAuthErrorEvent } from "angular-oauth2-oidc";
+
+// Keep this as a local structural type instead of importing from
+// angular-oauth2-oidc. The package was only used for typing here, but it pulled
+// a vulnerable runtime dependency tree into the published package and caused the
+// strict security audit to fail.
+interface OAuthErrorEventLike {
+    type: string;
+    reason: string;
+}
 
 /**
  * Convert an error to a readable message.
@@ -75,7 +83,7 @@ export function errorToReadableMessage(error?: unknown, stringify?: boolean | st
 
     // Handle OpenID interception
     if ("reason" in errObj && "params" in errObj) {
-        const errOAuth = error as OAuthErrorEvent & {
+        const errOAuth = error as OAuthErrorEventLike & {
             type: "code_error";
             params: { error: string; error_description: string };
         };
