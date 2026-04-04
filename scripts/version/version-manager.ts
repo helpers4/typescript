@@ -22,6 +22,7 @@ interface VersionComponents {
 
 interface VersionUpdateOptions {
   versionType?: VersionType;
+  prereleaseId?: 'alpha' | 'beta' | 'rc';
   rootPath?: string;
   autoCalculate?: boolean;
   updateBuildPackages?: boolean;
@@ -71,7 +72,7 @@ function stringifyVersion(components: VersionComponents): string {
 /**
  * Increment version based on type
  */
-function incrementVersion(currentVersion: string, versionType: VersionType): string {
+function incrementVersion(currentVersion: string, versionType: VersionType, prereleaseId?: 'alpha' | 'beta' | 'rc'): string {
   const components = parseVersion(currentVersion);
 
   switch (versionType) {
@@ -97,18 +98,22 @@ function incrementVersion(currentVersion: string, versionType: VersionType): str
       }
       break;
 
-    case 'prerelease':
+    case 'prerelease': {
+      const targetId = prereleaseId ?? 'alpha';
       if (components.prerelease) {
-        // Increment existing prerelease
-        components.prerelease.version++;
+        if (targetId !== components.prerelease.type) {
+          // Switching prerelease type resets the counter
+          components.prerelease = { type: targetId, version: 0 };
+        } else {
+          // Same type: increment existing prerelease
+          components.prerelease.version++;
+        }
       } else {
         // Add new prerelease
-        components.prerelease = {
-          type: 'alpha',
-          version: 0
-        };
+        components.prerelease = { type: targetId, version: 0 };
       }
       break;
+    }
 
     default:
       throw new Error(`Invalid version type: ${versionType}`);
@@ -216,7 +221,7 @@ export async function updateAllPackageVersions(options: VersionUpdateOptions): P
   console.log(`🎯 Version type: ${versionType}`);
 
   // Calculate new version
-  const newVersion = incrementVersion(currentVersion, versionType);
+  const newVersion = incrementVersion(currentVersion, versionType, options.prereleaseId);
   console.log(`🎯 New version: ${newVersion}\n`);
 
   // Update root package.json
@@ -296,6 +301,15 @@ function parseArgs(): VersionUpdateOptions & { help?: boolean } {
       case '--no-build':
         options.updateBuildPackages = false;
         break;
+      case '--prerelease-id': {
+        const id = args[++i];
+        if (id !== 'alpha' && id !== 'beta' && id !== 'rc') {
+          console.error(`Invalid prerelease id: ${id} (expected alpha, beta, or rc)`);
+          process.exit(1);
+        }
+        options.prereleaseId = id;
+        break;
+      }
       case '--root':
         options.rootPath = path.resolve(args[++i]);
         break;
@@ -331,15 +345,18 @@ Version Types:
 
 Options:
   --auto, --auto-calculate    Calculate version type from git commits
+  --prerelease-id <id>       Prerelease identifier: alpha, beta, or rc (default: alpha)
   --dry-run                   Show what would be changed without modifying files
   --no-build                  Don't update build package versions
   --root <path>               Specify root directory (default: current directory)
   --help, -h                  Show this help message
 
 Examples:
-  pnpm exec tsx version-manager.ts patch              # Explicit patch version
-  pnpm exec tsx version-manager.ts --auto             # Calculate from commits
-  pnpm exec tsx version-manager.ts --auto --dry-run   # Preview auto-calculated changes
+  pnpm exec tsx version-manager.ts patch                          # Explicit patch version
+  pnpm exec tsx version-manager.ts prerelease                     # Alpha prerelease
+  pnpm exec tsx version-manager.ts prerelease --prerelease-id rc  # RC prerelease
+  pnpm exec tsx version-manager.ts --auto                         # Calculate from commits
+  pnpm exec tsx version-manager.ts --auto --dry-run               # Preview auto-calculated changes
   
 Auto-calculation uses conventional commits:
   - feat: ... → minor version
