@@ -8,10 +8,10 @@
 
 import path from 'path';
 import {
-  checkNpmAuth,
-  publishPackage,
   PublishOptions,
-  PublishResult
+  PublishResult,
+  checkNpmAuth,
+  publishPackage
 } from './helpers/npm-utils';
 import {
   discoverPackages,

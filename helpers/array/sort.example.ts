@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { sortNumberAscFn, sortStringAscFn, createSortByStringFn } from './sort';
+import { createSortByStringFn, sortNumberAscFn, sortStringAscFn } from './sort';
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
