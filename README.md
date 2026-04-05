@@ -10,10 +10,11 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@helpers4/all"><img src="https://img.shields.io/npm/v/@helpers4/all?label=npm&color=cb3837" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/@helpers4/all"><img src="https://img.shields.io/npm/v/@helpers4/all/alpha?label=pre-release&color=orange" alt="npm pre-release" /></a>
   <a href="https://www.npmjs.com/package/@helpers4/all"><img src="https://img.shields.io/npm/dm/@helpers4/all?color=blue" alt="npm downloads" /></a>
-  <a href="https://github.com/helpers4/typescript/actions/workflows/pr-validation.yml"><img src="https://img.shields.io/github/actions/workflow/status/helpers4/typescript/pr-validation.yml?branch=main&label=CI" alt="CI status" /></a>
+  <a href="https://github.com/helpers4/typescript/actions/workflows/release.yml"><img src="https://img.shields.io/github/actions/workflow/status/helpers4/typescript/release.yml?branch=main&label=release" alt="release status" /></a>
   <a href="https://github.com/helpers4/typescript/blob/main/LICENSE"><img src="https://img.shields.io/github/license/helpers4/typescript?color=blue" alt="license" /></a>
-  <img src="https://img.shields.io/badge/TypeScript-5-blue?logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/tsgo-7-blue?logo=typescript&logoColor=white" alt="tsgo" />
   <img src="https://img.shields.io/badge/tree--shakable-✓-green" alt="tree-shakable" />
 </p>
 
