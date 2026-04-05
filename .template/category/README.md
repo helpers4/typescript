@@ -9,7 +9,7 @@ A set of helpers for working with URLs.
 
 ## Documentation
 
-[https://helpers4.js.org/{{category}}](https://helpers4.js.org/{{category}})
+[https://helpers4.dev/typescript/categories/{{category}}/](https://helpers4.dev/typescript/categories/{{category}}/)
 
 <!-- AUTOMATIC-METHODS -->
 - method
