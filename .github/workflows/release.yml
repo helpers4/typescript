@@ -227,21 +227,17 @@ jobs:
           git add package.json
           git commit -m "chore(release): 🔧 bump version to ${{ steps.version.outputs.new-version }}" || echo "No changes to commit"
 
-          if [[ "${{ inputs.dry-run }}" == "false" ]]; then
-            git push origin ${{ github.ref }}
-            echo "✅ Changes pushed to repository"
-          else
-            echo "⚠️  DRY-RUN: Skipping git push"
-          fi
+      - name: Push version commit
+        if: ${{ !inputs.dry-run }}
+        run: git push origin ${{ github.ref }}
 
       - name: Publish to npm
-        run: |
-          if [[ "${{ inputs.dry-run }}" == "false" ]]; then
-            pnpm publish:packages --tag "${{ steps.version.outputs.npm-tag }}"
-          else
-            pnpm publish:packages --tag "${{ steps.version.outputs.npm-tag }}" --dry-run
-            echo "⚠️  DRY-RUN: npm publish skipped"
-          fi
+        if: ${{ !inputs.dry-run }}
+        run: pnpm publish:packages --tag "${{ steps.version.outputs.npm-tag }}"
+
+      - name: Publish to npm (dry-run)
+        if: ${{ inputs.dry-run }}
+        run: pnpm publish:packages --tag "${{ steps.version.outputs.npm-tag }}" --dry-run
 
       - name: Trigger documentation update
         id: trigger_docs
@@ -305,11 +301,12 @@ jobs:
           echo "✅ Release completed successfully!"
           echo "📦 Version: ${{ steps.version.outputs.new-version }}"
           echo "🏷️  NPM tag: ${{ steps.version.outputs.npm-tag }}"
-          if [[ "${{ inputs.dry-run }}" == "true" ]]; then
-            echo "⚠️  This was a DRY-RUN - no changes were published"
-          fi
           if [ "${{ steps.trigger_docs.outcome }}" = "success" ]; then
             echo "📚 Documentation update triggered"
           else
             echo "⚠️  Documentation update trigger failed (non-blocking)"
           fi
+
+      - name: Dry-run summary
+        if: ${{ inputs.dry-run }}
+        run: echo "⚠️  This was a DRY-RUN - no changes were published"

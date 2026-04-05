@@ -4,7 +4,7 @@
   "author": "baxyz <baxy@etik.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/helpers4/helpers4.git"
+    "url": "git+https://github.com/helpers4/typescript.git"
   },
   "description": "A set of helpers in TS/JS, compatible with tree-shaking, which helps you to manipulate URL, Observable, Promise, ...",
   "keywords": [

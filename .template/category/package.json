@@ -6,7 +6,7 @@
   "license": "LGPL-3.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/helpers4/helpers4.git"
+    "url": "git+https://github.com/helpers4/typescript.git"
   },
   "type": "module",
   "sideEffects": false,
