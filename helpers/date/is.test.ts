@@ -59,4 +59,22 @@ describe('isSameDay', () => {
     const utcEvening = new Date('2023-01-01T22:00:00.000Z');
     expect(isSameDay(utcMorning, utcEvening)).toBe(true);
   });
+
+  it('should return false for same month and day but different year', () => {
+    const date1 = new Date('2023-06-15T12:00:00.000Z');
+    const date2 = new Date('2024-06-15T12:00:00.000Z');
+    expect(isSameDay(date1, date2)).toBe(false);
+  });
+
+  it('should return false for same year and day but different month', () => {
+    const date1 = new Date('2023-03-15T12:00:00.000Z');
+    const date2 = new Date('2023-04-15T12:00:00.000Z');
+    expect(isSameDay(date1, date2)).toBe(false);
+  });
+
+  it('should return false for same year and month but different day', () => {
+    const date1 = new Date('2023-06-15T12:00:00.000Z');
+    const date2 = new Date('2023-06-16T12:00:00.000Z');
+    expect(isSameDay(date1, date2)).toBe(false);
+  });
 });

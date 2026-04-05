@@ -20,11 +20,23 @@ describe("safe date utilities", () => {
       expect(date).toBeInstanceOf(Date);
     });
 
-    it("should return null for invalid inputs", () => {
+    it("should return null for null", () => {
       expect(safeDate(null)).toBe(null);
+    });
+
+    it("should return null for undefined", () => {
       expect(safeDate(undefined)).toBe(null);
+    });
+
+    it("should return null for empty string", () => {
       expect(safeDate("")).toBe(null);
+    });
+
+    it("should return null for zero", () => {
       expect(safeDate(0)).toBe(null);
+    });
+
+    it("should return null for invalid date string", () => {
       expect(safeDate("invalid")).toBe(null);
     });
 

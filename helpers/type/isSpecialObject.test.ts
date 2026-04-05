@@ -90,21 +90,31 @@ describe('isSpecialObject', () => {
   });
 
   it('should return true for HTMLElement in browser', () => {
-    // In happy-dom, HTMLElement may or may not be fully implemented
-    // Test that our code doesn't crash when checking HTMLElement
-    try {
-      const element = document.createElement('div');
-      expect(isSpecialObject(element)).toBe(true);
-    } catch {
-      // If HTMLElement is not available, just skip
-      expect(true).toBe(true);
-    }
+    const element = document.createElement('div');
+    expect(isSpecialObject(element)).toBe(true);
+  });
+
+  it('should return false for undefined passed directly', () => {
+    expect(isSpecialObject(undefined)).toBe(false);
+  });
+
+  it('should return false for arrays (not special)', () => {
+    expect(isSpecialObject([1, 2])).toBe(false);
   });
 
   it('should return true for built-in types by constructor name', () => {
     // Test Buffer
     const buffer = Buffer.from('test');
     expect(isSpecialObject(buffer)).toBe(true);
+  });
+
+  it('should return true for objects with matching Web API constructor names', () => {
+    const webApiNames = ['File', 'Blob', 'FormData', 'Headers', 'Request', 'Response', 'EventTarget', 'Symbol'];
+    for (const name of webApiNames) {
+      const mock = Object.create({ constructor: { name } });
+      mock.constructor = { name };
+      expect(isSpecialObject(mock)).toBe(true);
+    }
   });
 
   it('should return false for objects with non-matching constructor names', () => {

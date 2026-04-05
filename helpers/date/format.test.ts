@@ -108,12 +108,26 @@ describe('toRFC2822', () => {
   });
 
   it('should handle different months', () => {
-    expect(toRFC2822('2025-02-15T12:00:00Z')).toBe(
-      'Sat, 15 Feb 2025 12:00:00 +0000'
-    );
-    expect(toRFC2822('2025-12-25T12:00:00Z')).toBe(
-      'Thu, 25 Dec 2025 12:00:00 +0000'
-    );
+    // Test all 12 months to kill month string mutations
+    const monthExpected = [
+      ['2025-01-15', 'Jan'],
+      ['2025-02-15', 'Feb'],
+      ['2025-03-15', 'Mar'],
+      ['2025-04-15', 'Apr'],
+      ['2025-05-15', 'May'],
+      ['2025-06-15', 'Jun'],
+      ['2025-07-15', 'Jul'],
+      ['2025-08-15', 'Aug'],
+      ['2025-09-15', 'Sep'],
+      ['2025-10-15', 'Oct'],
+      ['2025-11-15', 'Nov'],
+      ['2025-12-15', 'Dec'],
+    ] as const;
+
+    for (const [dateStr, monthAbbr] of monthExpected) {
+      const result = toRFC2822(`${dateStr}T12:00:00Z`);
+      expect(result).toContain(monthAbbr);
+    }
   });
 
   it('should pad single digit days', () => {

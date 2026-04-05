@@ -102,4 +102,36 @@ describe('quickCompare', () => {
     const obj2 = { a: 1, b: undefined };
     expect(quickCompare(obj1, obj2)).toBe(true);
   });
+
+  it('should return true for same reference via early return', () => {
+    const obj = { a: 1, b: { c: 2 } };
+    expect(quickCompare(obj, obj)).toBe(true);
+  });
+
+  it('should return false when only first argument is a function', () => {
+    expect(quickCompare(() => {}, 'not a function')).toBe(false);
+  });
+
+  it('should return false when only second argument is a function', () => {
+    expect(quickCompare('not a function', () => {})).toBe(false);
+  });
+
+  it('should return true for same function reference', () => {
+    const fn = () => {};
+    expect(quickCompare(fn, fn)).toBe(true);
+  });
+
+  it('should return false for different function references', () => {
+    expect(quickCompare(() => {}, () => {})).toBe(false);
+  });
+
+  it('should handle circular references gracefully', () => {
+    const obj1: Record<string, unknown> = { a: 1 };
+    obj1.self = obj1;
+    const obj2: Record<string, unknown> = { a: 1 };
+    obj2.self = obj2;
+
+    // Different circular objects should return false (fallback to ===)
+    expect(quickCompare(obj1, obj2)).toBe(false);
+  });
 });

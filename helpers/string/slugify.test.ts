@@ -47,4 +47,31 @@ describe('slugify', () => {
   it('should avoid leading and trailing hyphens', () => {
     expect(slugify('---Hello world---')).toBe('hello-world');
   });
+
+  it('should replace non-alphanumeric characters with hyphens', () => {
+    expect(slugify('hello@world#test')).toBe('hello-world-test');
+  });
+
+  it('should collapse multiple consecutive hyphens into one', () => {
+    expect(slugify('a---b')).toBe('a-b');
+  });
+
+  it('should remove leading hyphens only', () => {
+    expect(slugify('---hello')).toBe('hello');
+  });
+
+  it('should remove trailing hyphens only', () => {
+    expect(slugify('hello---')).toBe('hello');
+  });
+
+  it('should normalize unicode characters', () => {
+    expect(slugify('naïve résumé')).toBe('naive-resume');
+  });
+
+  it('should produce hyphen-separated words not concatenated', () => {
+    // Ensures replace(/[^a-z0-9]+/g, '-') uses '-' not ''
+    const result = slugify('hello world');
+    expect(result).toBe('hello-world');
+    expect(result).not.toBe('helloworld');
+  });
 });
