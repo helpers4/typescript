@@ -8,7 +8,7 @@
  * This program is under the terms of the GNU Lesser General Public License version 3
  * The full license information can be found in LICENSE in the root directory of this project.
  */
-import { expect, test } from "vitest";
+import { describe, expect, it, test } from "vitest";
 import { labelize } from "./labelize";
 
 // -- labelize -----------------------------------------------------------------
@@ -33,4 +33,30 @@ import { labelize } from "./labelize";
             .split(" ")
             .forEach((word) => expect(word[0]).toBe(word[0].toUpperCase()));
     });
+});
+
+describe('labelize', () => {
+  it('should split on hyphens and capitalize each word', () => {
+    expect(labelize('hello-world')).toBe('Hello World');
+  });
+
+  it('should split on underscores and capitalize each word', () => {
+    expect(labelize('hello_world')).toBe('Hello World');
+  });
+
+  it('should split on spaces and capitalize each word', () => {
+    expect(labelize('hello world')).toBe('Hello World');
+  });
+
+  it('should lowercase the rest of each word', () => {
+    expect(labelize('HELLO-WORLD')).toBe('Hello World');
+  });
+
+  it('should handle mixed separators', () => {
+    expect(labelize('foo-bar_baz qux')).toBe('Foo Bar Baz Qux');
+  });
+
+  it('should handle consecutive separators', () => {
+    expect(labelize('foo--bar__baz')).toBe('Foo Bar Baz');
+  });
 });

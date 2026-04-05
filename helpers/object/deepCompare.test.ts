@@ -255,6 +255,85 @@ describe('deepCompare', () => {
     expect(result).toEqual({ level1: { level2: { y: false } } });
   });
 
+  // --- Mutation-killing tests ---
+
+  it('should return false when objA is valid object and objB is null', () => {
+    expect(deepCompare({ a: 1 }, null)).toBe(false);
+  });
+
+  it('should return false when objA is valid object and objB is undefined', () => {
+    expect(deepCompare({ a: 1 }, undefined)).toBe(false);
+  });
+
+  it('should return false when comparing Date with plain object at root', () => {
+    expect(deepCompare(new Date('2023-01-01'), { a: 1 })).toBe(false);
+  });
+
+  it('should return false when comparing plain object with Date at root', () => {
+    expect(deepCompare({ a: 1 }, new Date('2023-01-01'))).toBe(false);
+  });
+
+  it('should return false when comparing array with plain object at root', () => {
+    expect(deepCompare([1, 2], { a: 1 })).toBe(false);
+  });
+
+  it('should return false when comparing plain object with array at root', () => {
+    expect(deepCompare({ a: 1 }, [1, 2])).toBe(false);
+  });
+
+  it('should return false when one root arg is special object and other is plain', () => {
+    expect(deepCompare(/test/, { a: 1 })).toBe(false);
+    expect(deepCompare({ a: 1 }, new Map())).toBe(false);
+  });
+
+  it('should handle nested object vs null value', () => {
+    expect(deepCompare({ a: { x: 1 } }, { a: null })).toEqual({ a: false });
+  });
+
+  it('should handle nested null vs object value', () => {
+    expect(deepCompare({ a: null }, { a: { x: 1 } })).toEqual({ a: false });
+  });
+
+  it('should handle nested object vs undefined value', () => {
+    expect(deepCompare({ a: { x: 1 } }, { a: undefined })).toEqual({ a: false });
+  });
+
+  it('should handle nested undefined vs object value', () => {
+    expect(deepCompare({ a: undefined }, { a: { x: 1 } })).toEqual({ a: false });
+  });
+
+  it('should handle nested special object vs plain object value', () => {
+    expect(deepCompare({ a: /regex/ }, { a: { x: 1 } })).toEqual({ a: false });
+  });
+
+  it('should handle nested plain object vs special object value', () => {
+    expect(deepCompare({ a: { x: 1 } }, { a: /regex/ })).toEqual({ a: false });
+  });
+
+  it('should handle nested Date vs non-Date value', () => {
+    expect(deepCompare({ d: new Date('2023-01-01') }, { d: 'not-a-date' })).toEqual({ d: false });
+  });
+
+  it('should handle nested non-Date vs Date value', () => {
+    expect(deepCompare({ d: 'not-a-date' }, { d: new Date('2023-01-01') })).toEqual({ d: false });
+  });
+
+  it('should handle nested array vs non-array value', () => {
+    expect(deepCompare({ arr: [1, 2] }, { arr: 'string' })).toEqual({ arr: false });
+  });
+
+  it('should handle nested non-array vs array value', () => {
+    expect(deepCompare({ arr: 'string' }, { arr: [1, 2] })).toEqual({ arr: false });
+  });
+
+  it('should handle primitive number vs object in property values', () => {
+    expect(deepCompare({ a: 42 }, { a: { x: 1 } })).toEqual({ a: false });
+  });
+
+  it('should handle object vs primitive number in property values', () => {
+    expect(deepCompare({ a: { x: 1 } }, { a: 42 })).toEqual({ a: false });
+  });
+
   it('should handle nested objects returning false (incompatible types)', () => {
     // Test where nestedResult is exactly `false` due to type incompatibility
     const obj1 = { nested: { a: 1 } };
