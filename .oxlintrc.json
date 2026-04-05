@@ -1,0 +1,39 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "typescript",
+    "unicorn",
+    "import",
+    "jsdoc",
+    "oxc"
+  ],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "no-explicit-any": "warn",
+    "sort-imports": "warn",
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts", "**/*.spec.ts", "**/*.bench.ts", "**/*.example.ts"],
+      "rules": {
+        "no-explicit-any": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "build",
+    "coverage",
+    "node_modules",
+    "reports",
+    ".stryker-tmp"
+  ]
+}
