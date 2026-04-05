@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { safeDate, dateToISOString } from "./safeDate";
+import { dateToISOString, safeDate } from "./safeDate";
 
 describe("safe date utilities", () => {
   describe("safeDate", () => {

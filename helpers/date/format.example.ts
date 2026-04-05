@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { toISO8601, toRFC3339, toRFC2822 } from './format';
+import { toISO8601, toRFC2822, toRFC3339 } from './format';
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {

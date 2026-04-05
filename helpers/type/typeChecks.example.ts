@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { isString, isNumber, isBoolean, isArray, isObject, isDate, isSet, isFunction, isValidRegex } from './typeChecks';
+import { isArray, isBoolean, isDate, isFunction, isNumber, isObject, isSet, isString, isValidRegex } from './typeChecks';
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {

@@ -8,7 +8,7 @@
 
 import fs from 'fs-extra';
 import path from 'path';
-import { calculateVersionFromCommits, promptVersionType, VersionType } from './commit-analyzer';
+import { VersionType, calculateVersionFromCommits, promptVersionType } from './commit-analyzer';
 
 interface VersionComponents {
   major: number;

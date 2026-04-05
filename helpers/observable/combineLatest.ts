@@ -47,7 +47,7 @@ export function combineLatest<T extends Record<string, ObservableInput<any>>>(
  *
  * @param {ObservableInput} [observables] An array of input Observables to combine with each other.
  * An array of Observables must be given as the first argument.
- * @return {Observable} An Observable of projected values from the most recent
+ * @returns {Observable} An Observable of projected values from the most recent
  * values from each input Observable, or an array of the most recent values from
  * each input Observable.
  */

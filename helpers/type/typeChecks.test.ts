@@ -6,14 +6,14 @@
 
 import { describe, expect, it } from "vitest";
 import {
+  isArray,
+  isBoolean,
+  isDate,
+  isFunction,
+  isNumber,
+  isObject,
   isSet,
   isString,
-  isNumber,
-  isBoolean,
-  isArray,
-  isObject,
-  isFunction,
-  isDate,
   isValidRegex
 } from "./typeChecks";
 

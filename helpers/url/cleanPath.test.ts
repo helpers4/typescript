@@ -8,7 +8,7 @@
  * This program is under the terms of the GNU Lesser General Public License version 3
  * The full license information can be found in LICENSE in the root directory of this project.
  */
-import { expect, test, describe } from "vitest";
+import { describe, expect, test } from "vitest";
 import { cleanPath } from './cleanPath';
 
 describe('cleanPath', () => {
