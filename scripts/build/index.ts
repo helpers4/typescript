@@ -10,6 +10,7 @@ import { buildCategories } from "./build-categories";
 import { buildBundle } from "./build-bundle";
 import { buildExamples } from "./build-examples";
 import { buildApiDocs } from "./build-api-docs";
+import { buildLicenses } from "./build-licenses";
 
 async function main() {
   // Create or empty the /build directory
@@ -26,6 +27,10 @@ async function main() {
   // Generate api.json for each category
   await buildApiDocs(validCategories);
   console.info(" ✔️📖 Built API docs");
+
+  // Generate licenses.json for each category
+  await buildLicenses(validCategories);
+  console.info(" ✔️⚖️  Built licenses");
 
   // Build the bundle package with all valid categories
   await buildBundle(validCategories);
