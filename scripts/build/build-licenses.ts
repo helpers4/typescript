@@ -37,9 +37,13 @@ function readDependencyLicense(packageName: string): DependencyLicense {
     ?.replace(/^git\+/, '')
     ?.replace(/\.git$/, '');
 
+  const license = typeof pkg.license === 'string'
+    ? pkg.license
+    : (pkg.license as Record<string, string> | undefined)?.type ?? 'UNKNOWN';
+
   return {
     name: packageName,
-    license: (pkg.license as string) ?? 'UNKNOWN',
+    license,
     ...(pkg.homepage ? { homepage: pkg.homepage as string } : {}),
     ...(cleanRepo ? { repository: cleanRepo } : {}),
   };
@@ -47,7 +51,7 @@ function readDependencyLicense(packageName: string): DependencyLicense {
 
 /**
  * Generates a `licenses.json` file in each built category directory.
- * Lists third-party dependencies with their SPDX license identifiers.
+ * Lists third-party dependencies with their license field from package.json.
  *
  * @param validCategories - Categories that were successfully built
  */
