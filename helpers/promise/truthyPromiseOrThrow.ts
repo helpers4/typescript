@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-/*
- * This program is under the terms of the GNU Lesser General Public License version 3
- * The full license information can be found in LICENSE in the root directory of this project.
+/**
+ * Returns a function that passes through truthy data or throws an error.
+ * @param error - The error message to throw if data is falsy
+ * @returns A function that returns the data if truthy, or throws
  * @since 1.0.0
  */
-
 export function truthyPromiseOrThrow<T>(error: string): (data: T) => T | never {
     return (data: unknown) => {
         if (data) {
