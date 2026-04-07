@@ -4,11 +4,19 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { throttle } from "./throttle";
 
 describe("throttle", () => {
-  it("should throttle function calls", async () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("should throttle function calls", () => {
     let callCount = 0;
     const throttledFunc = throttle(() => callCount++, 100);
 
@@ -18,7 +26,7 @@ describe("throttle", () => {
 
     expect(callCount).toBe(1);
 
-    await new Promise(resolve => setTimeout(resolve, 150));
+    vi.advanceTimersByTime(150);
     expect(callCount).toBe(2);
   });
 
@@ -32,7 +40,7 @@ describe("throttle", () => {
     expect(lastArgs).toEqual([1, 'test', true]);
   });
 
-  it("should invoke immediately when called exactly at the wait boundary", async () => {
+  it("should invoke immediately when called exactly at the wait boundary", () => {
     let callCount = 0;
     const wait = 50;
     const throttledFunc = throttle(() => callCount++, wait);
@@ -40,13 +48,13 @@ describe("throttle", () => {
     throttledFunc();
     expect(callCount).toBe(1);
 
-    // Wait exactly the throttle duration then call again
-    await new Promise(resolve => setTimeout(resolve, wait));
+    // Advance exactly the throttle duration then call again
+    vi.advanceTimersByTime(wait);
     throttledFunc();
     expect(callCount).toBe(2);
   });
 
-  it("should schedule trailing call with correct remaining delay", async () => {
+  it("should schedule trailing call with correct remaining delay", () => {
     let callCount = 0;
     const wait = 100;
     const throttledFunc = throttle(() => callCount++, wait);
@@ -54,13 +62,13 @@ describe("throttle", () => {
     throttledFunc(); // Immediate call
     expect(callCount).toBe(1);
 
-    // Call again quickly (after ~30ms, well within the wait window)
-    await new Promise(resolve => setTimeout(resolve, 30));
+    // Call again quickly (after 30ms, well within the wait window)
+    vi.advanceTimersByTime(30);
     throttledFunc();
     expect(callCount).toBe(1); // Still throttled
 
-    // The trailing call should fire after the remaining ~70ms, not after wait+30=130ms
-    await new Promise(resolve => setTimeout(resolve, 90));
+    // The trailing call should fire after the remaining ~70ms
+    vi.advanceTimersByTime(70);
     expect(callCount).toBe(2);
   });
 });
