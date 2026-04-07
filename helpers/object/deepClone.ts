@@ -8,6 +8,7 @@
  * Creates a deep copy of an object or array
  * @param obj - The object to clone
  * @returns Deep cloned object
+ * @since 1.9.0
  */
 export function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== "object") {

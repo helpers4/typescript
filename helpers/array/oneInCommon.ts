@@ -10,6 +10,7 @@
  * @param a One list
  * @param b Another list
  * @returns `true` if one item is in common, `false` otherwise.
+ * @since 1.0.0
  */
 export function oneInCommon<T>(a: readonly T[], b: readonly T[]): boolean {
     return a.some((i) => b.includes(i));

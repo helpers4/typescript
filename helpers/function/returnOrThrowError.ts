@@ -12,6 +12,7 @@ import { isDefinedAndNotNull } from './isDefinedAndNotNull';
  * @param value A possible non-defined value.
  * @param error The error message to throw.
  * @returns A defined value or an error.
+ * @since 1.0.0
  */
 export function returnOrThrowError<T>(value: T | undefined | null, error: string): T {
     if (isDefinedAndNotNull(value)) {

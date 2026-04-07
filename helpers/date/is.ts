@@ -9,6 +9,7 @@
  * @param date1 - First date
  * @param date2 - Second date
  * @returns True if same day
+ * @since 2.0.0
  */
 export function isSameDay(date1: Date, date2: Date): boolean {
   return (

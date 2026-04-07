@@ -10,6 +10,7 @@
  * @param path - The dot-notated path (e.g., 'a.b.c')
  * @param value - The value to set
  * @returns The modified object
+ * @since 1.9.0
  */
 export function set(obj: Record<string, any>, path: string, value: any): Record<string, any> {
   const keys = path.split('.');

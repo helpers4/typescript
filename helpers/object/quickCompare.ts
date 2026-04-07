@@ -11,6 +11,7 @@
  * @param objA - First object to compare
  * @param objB - Second object to compare
  * @returns `true` if objects are identical according to JSON.stringify, `false` otherwise
+ * @since 2.0.0
  */
 export function quickCompare(objA: unknown, objB: unknown): boolean {
   // Quick reference equality check

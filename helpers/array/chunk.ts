@@ -9,6 +9,7 @@
  * @param array - The array to chunk
  * @param size - The size of each chunk
  * @returns Array of chunks
+ * @since 1.9.0
  */
 export function chunk<T>(array: T[], size: number): T[][] {
   if (size <= 0) return [];

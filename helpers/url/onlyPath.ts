@@ -25,6 +25,7 @@
  * onlyPath(undefined) // => undefined
  * onlyPath(null) // => null
  * ```
+ * @since 1.0.0
  */
 export function onlyPath(url: string): string
 
@@ -49,6 +50,7 @@ export function onlyPath(url: string): string
  * onlyPath(undefined) // => undefined
  * onlyPath(null) // => null
  * ```
+ * @since 1.0.0
  */
 export function onlyPath(url: null): null
 
@@ -73,6 +75,7 @@ export function onlyPath(url: null): null
  * onlyPath(undefined) // => undefined
  * onlyPath(null) // => null
  * ```
+ * @since 1.0.0
  */
 export function onlyPath(url: undefined): undefined
 
@@ -97,6 +100,7 @@ export function onlyPath(url: undefined): undefined
  * onlyPath(undefined) // => undefined
  * onlyPath(null) // => null
  * ```
+ * @since 1.0.0
  */
 export function onlyPath(
   url: string | undefined | null,

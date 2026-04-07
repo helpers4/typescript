@@ -9,6 +9,7 @@
  * @param func - The function to throttle
  * @param wait - The number of milliseconds to throttle invocations to
  * @returns The throttled function
+ * @since 1.9.0
  */
 export function throttle<T extends (...args: any[]) => any>(
   func: T,

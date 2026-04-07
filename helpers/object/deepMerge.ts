@@ -9,6 +9,7 @@
  * @param target - The target object
  * @param sources - The source objects to merge
  * @returns The merged object
+ * @since 1.9.0
  */
 export function deepMerge<T extends Record<string, any>>(target: T, ...sources: Record<string, any>[]): T {
   if (!sources.length) return target;

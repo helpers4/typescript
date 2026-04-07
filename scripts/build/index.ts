@@ -8,9 +8,7 @@ import { emptyDir } from "fs-extra";
 import { DIR } from "../constants";
 import { buildCategories } from "./build-categories";
 import { buildBundle } from "./build-bundle";
-import { buildExamples } from "./build-examples";
-import { buildApiDocs } from "./build-api-docs";
-import { buildLicenses } from "./build-licenses";
+import { buildWebsiteMetadata } from "./build-website-metadata";
 
 async function main() {
   // Create or empty the /build directory
@@ -20,17 +18,9 @@ async function main() {
   // Build all individual categories
   const validCategories = await buildCategories();
 
-  // Generate examples.json for each category
-  await buildExamples(validCategories);
-  console.info(" ✔️📝 Built examples");
-
-  // Generate api.json for each category
-  await buildApiDocs(validCategories);
-  console.info(" ✔️📖 Built API docs");
-
-  // Generate licenses.json for each category
-  await buildLicenses(validCategories);
-  console.info(" ✔️⚖️  Built licenses");
+  // Generate enriched website metadata in meta/
+  await buildWebsiteMetadata(validCategories);
+  console.info(" ✔️🌐 Built website metadata");
 
   // Build the bundle package with all valid categories
   await buildBundle(validCategories);

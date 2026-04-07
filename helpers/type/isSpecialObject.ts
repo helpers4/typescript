@@ -10,6 +10,7 @@
  * 
  * @param value - The value to check
  * @returns `true` if the value is a special object, `false` otherwise
+ * @since 2.0.0
  */
 export function isSpecialObject(value: unknown): boolean {
   if (value === null || value === undefined) {

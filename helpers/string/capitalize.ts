@@ -8,6 +8,7 @@
  * Capitalizes the first letter of a string
  * @param str - The string to capitalize
  * @returns String with first letter capitalized
+ * @since 1.9.0
  */
 export function capitalize(str: string): string {
   if (!str) return str;

@@ -10,6 +10,7 @@ import { isSpecialObject } from '../type/isSpecialObject';
 
 /**
  * Result type for deep comparison when objects are not identical
+ * @since 2.0.0
  */
 export interface DeepCompareResult {
   [key: string]: "onlyA" | "onlyB" | false | DeepCompareResult;
@@ -21,6 +22,7 @@ export interface DeepCompareResult {
  * @param objA - First object to compare (can be object, undefined, or null)
  * @param objB - Second object to compare (can be object, undefined, or null)
  * @returns `true` if objects are identical, `false` if incompatible types, or a `DeepCompareResult` object detailing differences
+ * @since 2.0.0
  */
 export function deepCompare(objA: object | undefined | null, objB: object | undefined | null): true | false | DeepCompareResult {
   // Quick reference equality check

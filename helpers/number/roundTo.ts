@@ -9,6 +9,7 @@
  * @param value - The number to round
  * @param decimals - Number of decimal places
  * @returns Rounded number
+ * @since 1.9.0
  */
 export function roundTo(value: number, decimals: number): number {
   const multiplier = Math.pow(10, decimals);

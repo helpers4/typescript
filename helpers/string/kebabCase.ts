@@ -8,6 +8,7 @@
  * Converts camelCase to kebab-case
  * @param str - The camelCase string to convert
  * @returns String in kebab-case
+ * @since 1.9.0
  */
 export function kebabCase(str: string): string {
   return str

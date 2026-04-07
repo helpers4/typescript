@@ -7,6 +7,7 @@
 /*
  * This program is under the terms of the GNU Lesser General Public License version 3
  * The full license information can be found in LICENSE in the root directory of this project.
+ * @since 1.0.0
  */
 
 export function falsyPromiseOrThrow<T>(error: string): (data: T) => T | never {

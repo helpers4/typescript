@@ -9,6 +9,7 @@
  * @param version - Version to check
  * @param range - Range pattern (e.g., ">=1.0.0", "~1.2.0", "^1.0.0")
  * @returns True if version satisfies the range
+ * @since 1.9.0
  */
 export function satisfiesRange(version: string, range: string): boolean {
   const normalize = (v: string) => v.replace(/^v/, '');

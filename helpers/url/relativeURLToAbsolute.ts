@@ -13,6 +13,12 @@ import { withoutTrailingSlash } from "./withoutTrailingSlash";
 import { withLeadingSlash } from "./withLeadingSlash";
 import { cleanPath } from "./cleanPath";
 
+/**
+ * Converts a relative URL to an absolute URL using the current document base URI.
+ * @param relativeUrl - The relative URL to convert
+ * @returns The absolute URL
+ * @since 1.0.0
+ */
 export function relativeURLToAbsolute(relativeUrl: string): string {
     return (
         withoutTrailingSlash(document.baseURI ?? window.location.origin) +

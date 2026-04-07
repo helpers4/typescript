@@ -13,6 +13,7 @@
  * @param arrA - First array to compare
  * @param arrB - Second array to compare
  * @returns `true` if arrays are deeply equal, `false` otherwise
+ * @since 2.0.0
  */
 export function deepCompare<T>(arrA: T[], arrB: T[]): boolean {
   // Quick reference equality check

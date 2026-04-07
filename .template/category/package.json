@@ -17,9 +17,9 @@
       "types": "./lib/index.d.ts",
       "import": "./lib/index.js"
     },
-    "./examples.json": "./examples.json",
-    "./api.json": "./api.json",
-    "./licenses.json": "./licenses.json",
+    "./meta/api.json": "./meta/api.json",
+    "./meta/examples.json": "./meta/examples.json",
+    "./meta/licenses.json": "./meta/licenses.json",
     "./package.json": "./package.json"
   },
   "keywords": [
@@ -31,9 +31,7 @@
     "lib/index.js",
     "lib/index.d.ts",
     "lib/index.js.map",
-    "examples.json",
-    "api.json",
-    "licenses.json",
+    "meta/",
     "LICENSE.md",
     "package.json",
     "README.md"

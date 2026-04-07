@@ -10,6 +10,7 @@ import { normalizeTimestamp } from './timestamp';
  * Safely creates a Date object from various input types
  * @param input - String, number, or Date input
  * @returns Valid Date object or null if invalid
+ * @since 1.9.0
  */
 export function safeDate(input: string | number | Date | null | undefined): Date | null {
   if (input === null || input === undefined || input === '' || input === 0) {
@@ -40,6 +41,7 @@ export function safeDate(input: string | number | Date | null | undefined): Date
  * Formats a date to ISO string or returns null
  * @param input - Date input
  * @returns ISO string or null
+ * @since 1.9.0
  */
 export function dateToISOString(input: string | number | Date | null | undefined): string | null {
   const date = safeDate(input);

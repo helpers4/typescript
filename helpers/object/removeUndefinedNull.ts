@@ -11,6 +11,7 @@ import { isNullish } from "radashi";
  *
  * @param obj an object
  * @returns A shallow copy of the object without null or undefined values
+ * @since 1.0.0
  */
 export function removeUndefinedNull<T extends Record<string, string | number | boolean | null | undefined>>(obj: T): Partial<T>;
 
@@ -19,6 +20,7 @@ export function removeUndefinedNull<T extends Record<string, string | number | b
  *
  * @param obj a null object
  * @returns null
+ * @since 1.0.0
  */
 export function removeUndefinedNull(obj: null): null;
 
@@ -27,6 +29,7 @@ export function removeUndefinedNull(obj: null): null;
  *
  * @param obj an undefined object
  * @returns undefined
+ * @since 1.0.0
  */
 export function removeUndefinedNull(obj: undefined): undefined;
 
@@ -35,6 +38,7 @@ export function removeUndefinedNull(obj: undefined): undefined;
  *
  * @param obj an object
  * @returns A shallow copy of the object without null or undefined values
+ * @since 1.0.0
  */
 export function removeUndefinedNull<T extends Record<string, string | number | boolean | null | undefined>>(obj: T | null | undefined): Partial<T> | null | undefined {
   return obj ? Object.entries(obj)

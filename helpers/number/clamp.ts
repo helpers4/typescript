@@ -10,6 +10,7 @@
  * @param min - Minimum value
  * @param max - Maximum value
  * @returns Clamped value
+ * @since 1.9.0
  */
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);

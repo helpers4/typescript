@@ -9,6 +9,7 @@
  * @param ms - Milliseconds to delay
  * @param value - Optional value to resolve with
  * @returns Promise that resolves after delay
+ * @since 1.9.0
  */
 export function delay<T = void>(ms: number, value?: T): Promise<T> {
   return new Promise(resolve => {

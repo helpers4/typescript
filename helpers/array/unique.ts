@@ -8,6 +8,7 @@
  * Removes duplicate values from an array
  * @param array - The array to remove duplicates from
  * @returns New array with unique values only
+ * @since 1.9.0
  */
 export function unique<T>(array: T[]): T[] {
   return Array.from(new Set(array));

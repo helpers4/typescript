@@ -24,6 +24,7 @@ import { isSpecialObject } from './isSpecialObject';
  * isEmpty([]) // true
  * isEmpty({}) // true
  * isEmpty('foo') // false
+ * @since 2.0.0
  */
 export function isEmpty(value: unknown): boolean {
   if (value === null || value === undefined) {
