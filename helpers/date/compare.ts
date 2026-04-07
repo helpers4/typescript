@@ -6,6 +6,7 @@
 
 /**
  * Options for date comparison
+ * @since 2.0.0
  */
 export interface DateCompareOptions {
   /** 
@@ -26,6 +27,7 @@ export interface DateCompareOptions {
  * @param dateB - Second date to compare
  * @param options - Comparison options
  * @returns `true` if dates are identical according to the specified precision, `false` otherwise
+ * @since 2.0.0
  */
 export function compare(dateA: Date, dateB: Date, options: DateCompareOptions = {}): boolean {
   const { precision = 'milliseconds' } = options;

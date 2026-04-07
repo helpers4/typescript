@@ -8,6 +8,7 @@
  * Returns a memoized version of the function that caches results
  * @param func - The function to memoize
  * @returns The memoized function
+ * @since 1.9.0
  */
 export function memoize<T extends (...args: any[]) => any>(func: T): T {
   const cache = new Map<string, ReturnType<T>>();

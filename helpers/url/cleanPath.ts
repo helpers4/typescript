@@ -18,6 +18,7 @@
  * cleanPath(undefined) // => undefined
  * cleanPath(null) // => null
  * ```
+ * @since 1.0.0
  */
 export function cleanPath(
   url: string | undefined | null,

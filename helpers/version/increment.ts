@@ -9,6 +9,7 @@
  * @param version - The version to increment
  * @param type - The increment type ('major', 'minor', 'patch')
  * @returns Incremented version string
+ * @since 1.9.0
  */
 export function increment(
   version: string,

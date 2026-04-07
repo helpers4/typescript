@@ -14,6 +14,7 @@
  *
  * @param url - The URL string to process
  * @returns The URI without query parameters and fragments, or the original value if undefined/null
+ * @since 1.9.0
  */
 export function extractPureURI(url: string): string;
 export function extractPureURI(url: undefined): undefined;

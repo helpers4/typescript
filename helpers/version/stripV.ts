@@ -20,6 +20,7 @@
  * stripV("")           // ""
  * stripV("1.0.0-beta") // "1.0.0-beta"
  * ```
+ * @since 1.9.0
  */
 export function stripV(version: string): string;
 export function stripV(version: null): null;

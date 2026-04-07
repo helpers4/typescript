@@ -6,6 +6,7 @@
 
 /**
  * Sort function type for arrays
+ * @since 1.9.0
  */
 export type SortFn<T> = (a: T, b: T) => number;
 
@@ -14,6 +15,7 @@ export type SortFn<T> = (a: T, b: T) => number;
  * @param a - First number
  * @param b - Second number
  * @returns Sort order
+ * @since 1.9.0
  */
 export const sortNumberAscFn: SortFn<number> = (a: number, b: number) => a - b;
 
@@ -22,6 +24,7 @@ export const sortNumberAscFn: SortFn<number> = (a: number, b: number) => a - b;
  * @param a - First number
  * @param b - Second number
  * @returns Sort order
+ * @since 1.9.0
  */
 export const sortNumberDescFn: SortFn<number> = (a: number, b: number) => b - a;
 
@@ -30,6 +33,7 @@ export const sortNumberDescFn: SortFn<number> = (a: number, b: number) => b - a;
  * @param a - First string
  * @param b - Second string
  * @returns Sort order
+ * @since 1.9.0
  */
 export const sortStringAscFn: SortFn<string> = (a: string, b: string) => a.localeCompare(b);
 
@@ -38,6 +42,7 @@ export const sortStringAscFn: SortFn<string> = (a: string, b: string) => a.local
  * @param a - First string
  * @param b - Second string
  * @returns Sort order
+ * @since 1.9.0
  */
 export const sortStringDescFn: SortFn<string> = (a: string, b: string) => b.localeCompare(a);
 
@@ -46,6 +51,7 @@ export const sortStringDescFn: SortFn<string> = (a: string, b: string) => b.loca
  * @param a - First string
  * @param b - Second string
  * @returns Sort order
+ * @since 1.9.0
  */
 export const sortStringAscInsensitiveFn: SortFn<string> = (a: string, b: string) =>
   a.toLowerCase().localeCompare(b.toLowerCase());
@@ -55,6 +61,7 @@ export const sortStringAscInsensitiveFn: SortFn<string> = (a: string, b: string)
  * @param property - The property to sort by (defaults to trying 'value', 'label', 'title', 'description')
  * @param caseInsensitive - Whether to ignore case
  * @returns Sort function
+ * @since 1.9.0
  */
 export function createSortByStringFn<T extends Record<string, any>>(
   property?: keyof T,
@@ -88,6 +95,7 @@ export function createSortByStringFn<T extends Record<string, any>>(
  * Creates a sort function for objects by number property
  * @param property - The property to sort by (defaults to 'value')
  * @returns Sort function
+ * @since 1.9.0
  */
 export function createSortByNumberFn<T extends Record<string, any>>(
   property?: keyof T
@@ -104,6 +112,7 @@ export function createSortByNumberFn<T extends Record<string, any>>(
  * Creates a sort function for objects by date property
  * @param property - The property to sort by (defaults to 'date')
  * @returns Sort function
+ * @since 1.9.0
  */
 export function createSortByDateFn<T extends Record<string, any>>(
   property?: keyof T

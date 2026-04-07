@@ -9,6 +9,7 @@
  * @param func - The function to debounce
  * @param delay - The number of milliseconds to delay
  * @returns The debounced function
+ * @since 1.9.0
  */
 export function debounce<T extends (...args: any[]) => any>(
   func: T,

@@ -9,6 +9,7 @@
  * @param date1 - First date
  * @param date2 - Second date
  * @returns Number of days difference
+ * @since 2.0.0
  */
 export function daysDifference(date1: Date, date2: Date): number {
   const oneDay = 24 * 60 * 60 * 1000;

@@ -13,6 +13,7 @@
  * @example
  * slugify('Hello World!');
  * // 'hello-world'
+ * @since 2.0.0
  */
 export function slugify(str: string): string {
   return str

@@ -34,6 +34,7 @@ type combineOptions<T, U> = {
  * @returns an observable that emits the result of the map function
  * @see combineLatestOperator
  * @see mapOperator
+ * @since 1.0.0
  */
 export function combine<T, U, R>(
   source1: Observable<T>,

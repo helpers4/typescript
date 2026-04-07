@@ -80,6 +80,7 @@ function comparePrerelease(pre1: string[], pre2: string[]): number {
  * compare('1.0.0-alpha', '1.0.0-beta') // -1
  * compare('1.0.0-alpha.1', '1.0.0-alpha.2') // -1
  * compare('1.0.0+build1', '1.0.0+build2') // 0 (build metadata ignored)
+ * @since 1.9.0
  */
 export function compare(version1: string, version2: string): number {
   const v1 = parse(version1);

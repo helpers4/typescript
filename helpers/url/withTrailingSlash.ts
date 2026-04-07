@@ -24,6 +24,7 @@
  * withTrailingSlash(undefined) // => undefined
  * withTrailingSlash(null) // => null
  * ```
+ * @since 1.0.0
  */
 export function withTrailingSlash(url: string): string
 
@@ -47,6 +48,7 @@ export function withTrailingSlash(url: string): string
  * withTrailingSlash(undefined) // => undefined
  * withTrailingSlash(null) // => null
  * ```
+ * @since 1.0.0
  */
 export function withTrailingSlash(url: undefined): undefined
 
@@ -70,6 +72,7 @@ export function withTrailingSlash(url: undefined): undefined
  * withTrailingSlash(undefined) // => undefined
  * withTrailingSlash(null) // => null
  * ```
+ * @since 1.0.0
  */
 export function withTrailingSlash(url: null): null
 
@@ -93,6 +96,7 @@ export function withTrailingSlash(url: null): null
  * withTrailingSlash(undefined) // => undefined
  * withTrailingSlash(null) // => null
  * ```
+ * @since 1.0.0
  */
 export function withTrailingSlash(
   url: string | undefined | null,

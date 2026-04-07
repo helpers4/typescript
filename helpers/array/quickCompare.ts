@@ -11,6 +11,7 @@
  * @param arrA - First array to compare
  * @param arrB - Second array to compare
  * @returns `true` if arrays are identical according to JSON.stringify, `false` otherwise
+ * @since 2.0.0
  */
 export function quickCompare<T>(arrA: T[], arrB: T[]): boolean {
   try {

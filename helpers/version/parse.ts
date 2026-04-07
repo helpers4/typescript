@@ -6,6 +6,7 @@
 
 /**
  * Represents a parsed semantic version according to SemVer 2.0.0 specification
+ * @since 2.0.0
  */
 export interface ParsedVersion {
   /** Major version number */
@@ -36,6 +37,7 @@ export interface ParsedVersion {
  * parse('v1.0.0-alpha.1') // { major: 1, minor: 0, patch: 0, prerelease: ['alpha', '1'], build: [] }
  * parse('2.0.0+build.123') // { major: 2, minor: 0, patch: 0, prerelease: [], build: ['build', '123'] }
  * parse('1.0.0-beta+exp.sha.5114f85') // { major: 1, minor: 0, patch: 0, prerelease: ['beta'], build: ['exp', 'sha', '5114f85'] }
+ * @since 2.0.0
  */
 export function parse(version: string): ParsedVersion {
   // Remove optional 'v' prefix

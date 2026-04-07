@@ -11,6 +11,7 @@
  * @param a First array
  * @param b Second array
  * @returns The intersection of the two arrays
+ * @since 1.0.0
  */
 export function intersection<T>(a: readonly T[], b: readonly T[]): T[] {
     return a.filter((v) => b.includes(v));

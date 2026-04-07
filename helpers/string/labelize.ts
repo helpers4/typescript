@@ -15,6 +15,7 @@
  * Transform string to lowercase with capitalized first letters and with spaces between words
  *
  * @param str the string to convert
+ * @since 1.0.0
  */
 export function labelize(str: string): string {
     return str

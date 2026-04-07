@@ -9,6 +9,7 @@
  * @param min - Minimum value
  * @param max - Maximum value
  * @returns Random number between min and max
+ * @since 1.9.0
  */
 export function randomBetween(min: number, max: number): number {
   return Math.random() * (max - min) + min;
@@ -19,6 +20,7 @@ export function randomBetween(min: number, max: number): number {
  * @param min - Minimum value
  * @param max - Maximum value
  * @returns Random integer between min and max
+ * @since 1.9.0
  */
 export function randomIntBetween(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;

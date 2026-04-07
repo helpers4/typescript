@@ -17,6 +17,7 @@ import { isObject } from "radashi";
  * @param error an error
  * @param stringify stringifies the error if no extractable message is found
  * @returns a readable message or a stringified error if stringify is true, otherwise undefined
+ * @since 1.0.0
  */
 export function errorToReadableMessage(error: unknown, stringify: true | string): string;
 
@@ -26,6 +27,7 @@ export function errorToReadableMessage(error: unknown, stringify: true | string)
  * @param error an error
  * @param stringify stringifies the error if no extractable message is found
  * @returns a readable message or a stringified error if stringify is true, otherwise undefined
+ * @since 1.0.0
  */
 export function errorToReadableMessage(error?: unknown, stringify?: boolean | string): string | undefined;
 
@@ -35,6 +37,7 @@ export function errorToReadableMessage(error?: unknown, stringify?: boolean | st
  * @param error an error
  * @param stringify stringifies the error if no extractable message is found
  * @returns a readable message or a stringified error if stringify is true, otherwise undefined
+ * @since 1.0.0
  */
 export function errorToReadableMessage(error?: unknown, stringify?: boolean | string): string | undefined {
     // Create a control return

@@ -50,6 +50,7 @@ export function combineLatest<T extends Record<string, ObservableInput<any>>>(
  * @returns {Observable} An Observable of projected values from the most recent
  * values from each input Observable, or an array of the most recent values from
  * each input Observable.
+ * @since 1.0.0
  */
 export function combineLatest(input: any): any {
   if (Array.isArray(input)) {

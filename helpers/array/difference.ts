@@ -9,6 +9,7 @@
  * @param array1 - First array
  * @param array2 - Second array
  * @returns Array with items from first array not present in second array
+ * @since 1.9.0
  */
 export function difference<T>(array1: T[], array2: T[]): T[] {
   const set2 = new Set(array2);

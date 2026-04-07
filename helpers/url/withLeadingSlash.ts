@@ -24,6 +24,7 @@
  * withLeadingSlash(undefined) // => undefined
  * withLeadingSlash(null) // => null
  * ```
+ * @since 1.0.0
  */
 export function withLeadingSlash(url: string): string
 
@@ -47,6 +48,7 @@ export function withLeadingSlash(url: string): string
  * withLeadingSlash(undefined) // => undefined
  * withLeadingSlash(null) // => null
  * ```
+ * @since 1.0.0
  */
 export function withLeadingSlash(url: undefined): undefined
 
@@ -70,6 +72,7 @@ export function withLeadingSlash(url: undefined): undefined
  * withLeadingSlash(undefined) // => undefined
  * withLeadingSlash(null) // => null
  * ```
+ * @since 1.0.0
  */
 export function withLeadingSlash(url: null): null
 
@@ -93,6 +96,7 @@ export function withLeadingSlash(url: null): null
  * withLeadingSlash(undefined) // => undefined
  * withLeadingSlash(null) // => null
  * ```
+ * @since 1.0.0
  */
 export function withLeadingSlash(
   url: string | undefined | null,

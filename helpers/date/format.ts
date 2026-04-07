@@ -14,6 +14,7 @@ import { safeDate } from './safeDate';
  * @example
  * toISO8601(new Date('2025-01-19T12:30:00Z')) // '2025-01-19T12:30:00.000Z'
  * toISO8601(1737290400000) // '2025-01-19T12:00:00.000Z'
+ * @since 2.0.0
  */
 export function toISO8601(date: Date | number | string): string | null {
   const d = safeDate(date);
@@ -31,6 +32,7 @@ export function toISO8601(date: Date | number | string): string | null {
  * @example
  * toRFC3339(new Date('2025-01-19T12:30:45.123Z')) // '2025-01-19T12:30:45Z'
  * toRFC3339(new Date('2025-01-19T12:30:45.123Z'), true) // '2025-01-19T12:30:45.123Z'
+ * @since 2.0.0
  */
 export function toRFC3339(
   date: Date | number | string,
@@ -55,6 +57,7 @@ export function toRFC3339(
  * @returns RFC 2822 formatted string or null if invalid date
  * @example
  * toRFC2822(new Date('2025-01-19T12:30:00Z')) // 'Sun, 19 Jan 2025 12:30:00 +0000'
+ * @since 2.0.0
  */
 export function toRFC2822(date: Date | number | string): string | null {
   const d = safeDate(date);

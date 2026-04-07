@@ -10,6 +10,7 @@
  * @param path - The dot-notated path (e.g., 'a.b.c')
  * @param defaultValue - Default value if path doesn't exist
  * @returns The value at the path or default value
+ * @since 1.9.0
  */
 export function get<T = any>(obj: any, path: string, defaultValue?: T): T | undefined {
   const keys = path.split('.');

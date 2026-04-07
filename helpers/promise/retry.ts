@@ -10,6 +10,7 @@
  * @param maxAttempts - Maximum number of attempts
  * @param delayMs - Delay between attempts in milliseconds
  * @returns Promise that resolves with the result or rejects with the last error
+ * @since 1.9.0
  */
 export async function retry<T>(
   fn: () => Promise<T>,
