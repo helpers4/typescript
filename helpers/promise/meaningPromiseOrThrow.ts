@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-/*
- * This program is under the terms of the GNU Lesser General Public License version 3
- * The full license information can be found in LICENSE in the root directory of this project.
+/**
+ * Returns a function that passes through meaningful data or throws an error.
+ * Data is considered meaningless if it is null, undefined, empty string, empty object, or empty array.
+ * @param error - The error message to throw if data is meaningless
+ * @returns A function that returns the data if meaningful, or throws
  * @since 1.0.0
  */
-
 export function meaningPromiseOrThrow<T>(
     error: string
 ): (data: T) => T | never {
