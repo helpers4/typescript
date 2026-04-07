@@ -111,9 +111,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build project
-        run: pnpm run build
-
       - name: Bump version
         id: version
         shell: bash
@@ -152,6 +149,9 @@ jobs:
           fi
 
           echo "✅ Version bumped to $NEW_VERSION"
+
+      - name: Build project
+        run: pnpm run build
 
       - name: Run coherency checks
         run: pnpm coherency
