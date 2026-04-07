@@ -13,6 +13,7 @@ import {
   type DeclarationReflection,
   type ParameterReflection,
   type ProjectReflection,
+  ReflectionKind,
   type SignatureReflection,
   type TypeParameterReflection,
 } from 'typedoc';
@@ -196,10 +197,10 @@ function processSignature(sig: SignatureReflection): WebsiteSignature {
 
 function processMember(child: DeclarationReflection): WebsiteFunction | undefined {
   const kindMap: Record<number, WebsiteFunction['kind']> = {
-    64: 'function',
-    2097152: 'type',
-    256: 'interface',
-    32: 'variable',
+    [ReflectionKind.Function]: 'function',
+    [ReflectionKind.TypeAlias]: 'type',
+    [ReflectionKind.Interface]: 'interface',
+    [ReflectionKind.Variable]: 'variable',
   };
 
   const kind = kindMap[child.kind];
