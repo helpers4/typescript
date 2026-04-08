@@ -33,6 +33,7 @@ export async function prepareCategoryPackageJson(
     version,
     name: (templatePackage.name as string)?.replace(/{{category}}/g, category),
     description: (templatePackage.description as string)?.replace(/{{category}}/g, category),
+    homepage: (templatePackage.homepage as string)?.replace(/{{category}}/g, category),
     keywords: (templatePackage.keywords as string[])?.flatMap((keyword: string) =>
       keyword === "{{category}}" ? category :
         keyword === "{{methods}}" ? methods :
