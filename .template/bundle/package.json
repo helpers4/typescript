@@ -4,6 +4,7 @@
   "description": "Complete collection of helpers4 utilities - all categories in one convenient package.",
   "author": "baxyz <baxy@etik.com>",
   "license": "LGPL-3.0",
+  "homepage": "https://helpers4.dev/typescript/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/helpers4/typescript.git"
