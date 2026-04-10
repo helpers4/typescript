@@ -13,7 +13,7 @@
  * @returns `true` if objects are identical according to JSON.stringify, `false` otherwise
  * @since 2.0.0
  */
-export function quickCompare(objA: unknown, objB: unknown): boolean {
+export function shallowEquals(objA: unknown, objB: unknown): boolean {
   // Quick reference equality check
   if (objA === objB) {
     return true;

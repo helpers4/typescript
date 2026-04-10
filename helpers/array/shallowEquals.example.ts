@@ -4,29 +4,29 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { quickCompare } from './quickCompare';
+import { shallowEquals } from './shallowEquals';
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
-  helper: 'quickCompare',
+  helper: 'shallowEquals',
   category: 'array',
   examples: [
     {
       title: 'Compare identical arrays',
       description: 'Uses JSON.stringify for a fast shallow comparison.',
-      code: `quickCompare([1, 2, 3], [1, 2, 3])
+      code: `shallowEquals([1, 2, 3], [1, 2, 3])
 // => true`,
       assert: () => {
-        if (!quickCompare([1, 2, 3], [1, 2, 3])) throw new Error('Expected true');
+        if (!shallowEquals([1, 2, 3], [1, 2, 3])) throw new Error('Expected true');
       },
     },
     {
       title: 'Detect order differences',
-      description: 'Unlike equals, quickCompare is order-sensitive.',
-      code: `quickCompare([1, 2], [2, 1])
+      description: 'Unlike equals, shallowEquals is order-sensitive.',
+      code: `shallowEquals([1, 2], [2, 1])
 // => false`,
       assert: () => {
-        if (quickCompare([1, 2], [2, 1])) throw new Error('Expected false');
+        if (shallowEquals([1, 2], [2, 1])) throw new Error('Expected false');
       },
     },
   ],
