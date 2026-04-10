@@ -7,13 +7,13 @@
 /**
  * Quick comparison of two arrays using JSON.stringify.
  * This is a fast but simple comparison that may not work for all edge cases.
- * 
+ *
  * @param arrA - First array to compare
  * @param arrB - Second array to compare
  * @returns `true` if arrays are identical according to JSON.stringify, `false` otherwise
  * @since 2.0.0
  */
-export function quickCompare<T>(arrA: T[], arrB: T[]): boolean {
+export function shallowEquals<T>(arrA: T[], arrB: T[]): boolean {
   try {
     return JSON.stringify(arrA) === JSON.stringify(arrB);
   } catch {

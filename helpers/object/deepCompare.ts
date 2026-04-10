@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { quickCompare as quickCompareArray } from '../array/quickCompare';
+import { shallowEquals as shallowEqualsArray } from '../array/shallowEquals';
 import { compare as compareDate } from '../date/compare';
 import { isSpecialObject } from '../type/isSpecialObject';
 
@@ -18,7 +18,7 @@ export interface DeepCompareResult {
 
 /**
  * Deep comparison of two objects that returns detailed information about differences.
- * 
+ *
  * @param objA - First object to compare (can be object, undefined, or null)
  * @param objB - Second object to compare (can be object, undefined, or null)
  * @returns `true` if objects are identical, `false` if incompatible types, or a `DeepCompareResult` object detailing differences
@@ -40,9 +40,9 @@ export function deepCompare(objA: object | undefined | null, objB: object | unde
     return compareDate(objA, objB);
   }
 
-  // Handle Arrays at root level - use quickCompare
+  // Handle Arrays at root level - use shallowEquals
   if (Array.isArray(objA) && Array.isArray(objB)) {
-    return quickCompareArray(objA, objB);
+    return shallowEqualsArray(objA, objB);
   }
 
   // If one is array and other is not
@@ -73,9 +73,9 @@ export function deepCompare(objA: object | undefined | null, objB: object | unde
       const valueA = (objA as any)[key];
       const valueB = (objB as any)[key];
 
-      // For arrays, use quickCompare
+      // For arrays, use shallowEquals
       if (Array.isArray(valueA) && Array.isArray(valueB)) {
-        if (!quickCompareArray(valueA, valueB)) {
+        if (!shallowEqualsArray(valueA, valueB)) {
           differences[key] = false;
         }
       }

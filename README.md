@@ -62,7 +62,7 @@ chunk([1, 2, 3, 4, 5], 2); // [[1, 2], [3, 4], [5]]
 - **Tree-shakable** — only import what you use
 - **TypeScript-first** — full type safety with generics
 - **Individually packaged** — install one category or all of them
-- **Consistent API** — uniform naming conventions across all modules (e.g., `quickCompare`, `deepCompare`, `compare`)
+- **Consistent API** — uniform naming conventions across all modules (e.g., `shallowEquals`, `deepCompare`, `compare`)
 - **Fully tested** — comprehensive test suite with mutation testing via Stryker
 
 ## Documentation

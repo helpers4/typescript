@@ -16,7 +16,7 @@ This package provides access to all helpers4 utilities through dependencies:
 
 ```typescript
 // Install @helpers4/all, then use individual category packages
-import { arrayEquals, intersection } from '@helpers4/array';
+import { equals, intersection } from '@helpers4/array';
 import { labelize, errorToReadableMessage } from '@helpers4/string';
 import { cleanPath, withTrailingSlash } from '@helpers4/url';
 // ... and so on

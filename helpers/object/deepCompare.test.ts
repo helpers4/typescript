@@ -122,7 +122,7 @@ describe('deepCompare', () => {
     expect(deepCompare(null, { a: 1 })).toBe(false);
   });
 
-  it('should handle arrays using quickCompare', () => {
+  it('should handle arrays using shallowEquals', () => {
     const arr1 = [1, 2, 3];
     const arr2 = [1, 2, 3];
     const arr3 = [1, 2, 4];
@@ -131,7 +131,7 @@ describe('deepCompare', () => {
     expect(deepCompare(arr1, arr3)).toBe(false);
   });
 
-  it('should handle arrays in object properties using quickCompare', () => {
+  it('should handle arrays in object properties using shallowEquals', () => {
     const obj1 = { arr: [1, 2, { nested: 'value' }] };
     const obj2 = { arr: [1, 2, { nested: 'value' }] };
     const obj3 = { arr: [1, 2, { nested: 'different' }] };
