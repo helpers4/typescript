@@ -66,10 +66,10 @@ async function runSmokeTests(): Promise<void> {
         default: {
           helper: string;
           category: string;
-          examples: ReadonlyArray<{
+          examples: readonly {
             title: string;
             assert: () => void | Promise<void>;
-          }>;
+          }[];
         };
       };
       const helperExamples = mod.default;

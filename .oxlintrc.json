@@ -12,18 +12,25 @@
   },
   "rules": {
     "no-explicit-any": "warn",
-    "sort-imports": "warn",
+    "sort-imports": ["error", { "ignoreDeclarationSort": true }],
     "no-unused-vars": [
       "error",
       {
         "argsIgnorePattern": "^_",
         "varsIgnorePattern": "^_"
       }
-    ]
+    ],
+    "typescript/array-type": ["error", { "default": "array" }]
   },
   "overrides": [
     {
       "files": ["**/*.test.ts", "**/*.spec.ts", "**/*.bench.ts", "**/*.example.ts"],
+      "rules": {
+        "no-explicit-any": "off"
+      }
+    },
+    {
+      "files": ["scripts/**/*.ts"],
       "rules": {
         "no-explicit-any": "off"
       }
