@@ -14,6 +14,8 @@
   <a href="https://github.com/helpers4/typescript/actions/workflows/release.yml"><img src="https://img.shields.io/github/actions/workflow/status/helpers4/typescript/release.yml?branch=main&label=release" alt="release status" /></a>
   <a href="https://github.com/helpers4/typescript/blob/main/LICENSE"><img src="https://img.shields.io/github/license/helpers4/typescript?color=blue" alt="license" /></a>
   <img src="https://img.shields.io/badge/tsgo-7-blue?logo=typescript&logoColor=white" alt="tsgo" />
+  <img src="https://img.shields.io/badge/coverage-100%25-brightgreen" alt="coverage" />
+  <img src="https://img.shields.io/badge/mutation-91%25-brightgreen?logo=stryker&logoColor=white" alt="mutation score" />
   <img src="https://img.shields.io/badge/tree--shakable-✓-green" alt="tree-shakable" />
 </p>
 
