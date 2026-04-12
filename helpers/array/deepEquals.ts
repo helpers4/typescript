@@ -15,7 +15,7 @@
  * @returns `true` if arrays are deeply equal, `false` otherwise
  * @since 2.0.0
  */
-export function deepCompare<T>(arrA: T[], arrB: T[]): boolean {
+export function deepEquals<T>(arrA: T[], arrB: T[]): boolean {
   // Quick reference equality check
   if (arrA === arrB) {
     return true;
@@ -38,7 +38,7 @@ export function deepCompare<T>(arrA: T[], arrB: T[]): boolean {
 
     // For arrays, recurse
     if (Array.isArray(elemA) && Array.isArray(elemB)) {
-      if (!deepCompare(elemA, elemB)) {
+      if (!deepEquals(elemA, elemB)) {
         return false;
       }
     }
