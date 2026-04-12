@@ -388,5 +388,17 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
 
     const licensesJson: WebsiteLicensesJson = { category, dependencies };
     writeFile(join(metaDir, 'licenses.json'), JSON.stringify(licensesJson, null, 2));
+
+    // --- Native alternatives (filtered for this category) ---
+    const nativeAlternatives = readFileJson<{ alternatives: { category: string; functions: unknown[] }[] }>(
+      join(DIR.ROOT, 'native-alternatives.json')
+    );
+    const categoryAlternatives = nativeAlternatives.alternatives.find(a => a.category === category);
+    if (categoryAlternatives) {
+      writeFile(
+        join(metaDir, 'native-alternatives.json'),
+        JSON.stringify({ category, functions: categoryAlternatives.functions }, null, 2)
+      );
+    }
   }
 }
