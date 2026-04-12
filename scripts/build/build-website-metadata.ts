@@ -315,6 +315,11 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
   const rootPkg = readFileJson<Record<string, unknown>>(join(DIR.ROOT, 'package.json'));
   const version = rootPkg.version as string;
 
+  // Load native alternatives once (keyed by category)
+  const nativeAlternatives = readFileJson<Record<string, unknown[]>>(
+    join(DIR.ROOT, 'native-alternatives.json')
+  );
+
   for (const category of validCategories) {
     const categoryPath = join(DIR.HELPERS, category);
     const metaDir = join(DIR.BUILD, category, 'meta');
@@ -390,14 +395,11 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
     writeFile(join(metaDir, 'licenses.json'), JSON.stringify(licensesJson, null, 2));
 
     // --- Native alternatives (filtered for this category) ---
-    const nativeAlternatives = readFileJson<{ alternatives: { category: string; functions: unknown[] }[] }>(
-      join(DIR.ROOT, 'native-alternatives.json')
-    );
-    const categoryAlternatives = nativeAlternatives.alternatives.find(a => a.category === category);
+    const categoryAlternatives = nativeAlternatives[category];
     if (categoryAlternatives) {
       writeFile(
         join(metaDir, 'native-alternatives.json'),
-        JSON.stringify({ category, functions: categoryAlternatives.functions }, null, 2)
+        JSON.stringify({ category, functions: categoryAlternatives }, null, 2)
       );
     }
   }

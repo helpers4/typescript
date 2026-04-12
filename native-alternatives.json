@@ -1,272 +1,232 @@
 {
-  "description": "Functions from Lodash, Radashi, or Ramda that helpers4 does not implement because native JavaScript/TypeScript equivalents exist.",
-  "alternatives": [
+  "array": [
     {
-      "category": "array",
-      "functions": [
-        {
-          "name": "flatten / flat",
-          "libraries": ["lodash", "radashi", "ramda"],
-          "native": "Array.prototype.flat(depth?)",
-          "since": "ES2019",
-          "example": "arr.flat()  // one level\narr.flat(Infinity)  // full flatten",
-          "notes": null
-        },
-        {
-          "name": "groupBy / group",
-          "libraries": ["lodash", "radashi", "ramda"],
-          "native": "Object.groupBy(arr, fn)",
-          "since": "ES2024",
-          "example": "Object.groupBy(users, u => u.role)",
-          "notes": "Also Map.groupBy() for Map output"
-        },
-        {
-          "name": "find / findIndex",
-          "libraries": ["lodash", "ramda"],
-          "native": "Array.prototype.find() / findIndex()",
-          "since": "ES2015",
-          "example": "arr.find(x => x > 5)\narr.findIndex(x => x > 5)",
-          "notes": null
-        },
-        {
-          "name": "includes",
-          "libraries": ["lodash", "ramda"],
-          "native": "Array.prototype.includes()",
-          "since": "ES2016",
-          "example": "arr.includes(value)",
-          "notes": null
-        },
-        {
-          "name": "reverse",
-          "libraries": ["lodash", "ramda"],
-          "native": "Array.prototype.toReversed()",
-          "since": "ES2023",
-          "example": "const reversed = arr.toReversed()",
-          "notes": "Immutable version; .reverse() mutates"
-        },
-        {
-          "name": "head / first",
-          "libraries": ["lodash", "radashi", "ramda"],
-          "native": "Array.prototype.at(0)",
-          "since": "ES2022",
-          "example": "arr.at(0)  // or arr[0]",
-          "notes": ".at() supports negative indices"
-        },
-        {
-          "name": "last",
-          "libraries": ["lodash", "radashi", "ramda"],
-          "native": "Array.prototype.at(-1)",
-          "since": "ES2022",
-          "example": "arr.at(-1)",
-          "notes": null
-        },
-        {
-          "name": "tail",
-          "libraries": ["lodash", "ramda"],
-          "native": "Array.prototype.slice(1)",
-          "since": "ES3",
-          "example": "arr.slice(1)",
-          "notes": "One-liner"
-        },
-        {
-          "name": "take",
-          "libraries": ["lodash", "ramda"],
-          "native": "Array.prototype.slice(0, n)",
-          "since": "ES3",
-          "example": "arr.slice(0, n)",
-          "notes": "One-liner"
-        },
-        {
-          "name": "drop",
-          "libraries": ["lodash", "ramda"],
-          "native": "Array.prototype.slice(n)",
-          "since": "ES3",
-          "example": "arr.slice(n)",
-          "notes": "One-liner"
-        }
-      ]
+      "name": "flatten / flat",
+      "libraries": ["lodash", "radashi", "ramda"],
+      "native": "Array.prototype.flat(depth?)",
+      "since": "ES2019",
+      "example": "arr.flat()  // one level\narr.flat(Infinity)  // full flatten"
     },
     {
-      "category": "number",
-      "functions": [
-        {
-          "name": "min / max",
-          "libraries": ["lodash", "radashi", "ramda"],
-          "native": "Math.min(...arr) / Math.max(...arr)",
-          "since": "ES1",
-          "example": "Math.min(...numbers)\nMath.max(...numbers)",
-          "notes": "For large arrays, prefer reduce to avoid stack overflow"
-        },
-        {
-          "name": "ceil / floor",
-          "libraries": ["lodash"],
-          "native": "Math.ceil() / Math.floor()",
-          "since": "ES1",
-          "example": "Math.ceil(4.2)  // 5\nMath.floor(4.8)  // 4",
-          "notes": "No precision param natively; use roundTo from helpers4 for decimal precision"
-        },
-        {
-          "name": "toInt / toFloat",
-          "libraries": ["radashi"],
-          "native": "parseInt(str, 10) / parseFloat(str)",
-          "since": "ES1",
-          "example": "parseInt('42px', 10)  // 42\nparseFloat('3.14')  // 3.14",
-          "notes": "Radashi adds default-value fallback on NaN"
-        }
-      ]
+      "name": "groupBy / group",
+      "libraries": ["lodash", "radashi", "ramda"],
+      "native": "Object.groupBy(arr, fn)",
+      "since": "ES2024",
+      "example": "Object.groupBy(users, u => u.role)",
+      "notes": "Also Map.groupBy() for Map output"
     },
     {
-      "category": "object",
-      "functions": [
-        {
-          "name": "keys / values",
-          "libraries": ["lodash", "radashi", "ramda"],
-          "native": "Object.keys() / Object.values()",
-          "since": "ES2017",
-          "example": "Object.keys(obj)\nObject.values(obj)",
-          "notes": "TypeScript types keys as string[]"
-        },
-        {
-          "name": "toPairs / fromPairs",
-          "libraries": ["lodash", "ramda"],
-          "native": "Object.entries() / Object.fromEntries()",
-          "since": "ES2019",
-          "example": "Object.entries(obj)\nObject.fromEntries(entries)",
-          "notes": null
-        },
-        {
-          "name": "has",
-          "libraries": ["lodash", "ramda"],
-          "native": "Object.hasOwn(obj, key)",
-          "since": "ES2022",
-          "example": "Object.hasOwn(obj, 'key')",
-          "notes": "Replaces obj.hasOwnProperty(key)"
-        },
-        {
-          "name": "merge (shallow)",
-          "libraries": ["lodash", "radashi", "ramda"],
-          "native": "{ ...a, ...b } or Object.assign({}, a, b)",
-          "since": "ES2015",
-          "example": "const merged = { ...defaults, ...options }",
-          "notes": "For deep merge, use deepMerge from helpers4"
-        }
-      ]
+      "name": "find / findIndex",
+      "libraries": ["lodash", "ramda"],
+      "native": "Array.prototype.find() / findIndex()",
+      "since": "ES2015",
+      "example": "arr.find(x => x > 5)\narr.findIndex(x => x > 5)"
     },
     {
-      "category": "string",
-      "functions": [
-        {
-          "name": "trim / trimStart / trimEnd",
-          "libraries": ["lodash", "radashi", "ramda"],
-          "native": "String.prototype.trim() / trimStart() / trimEnd()",
-          "since": "ES2019",
-          "example": "'  hello  '.trim()  // 'hello'",
-          "notes": "No custom-character trim natively"
-        },
-        {
-          "name": "startsWith / endsWith",
-          "libraries": ["lodash", "ramda"],
-          "native": "String.prototype.startsWith() / endsWith()",
-          "since": "ES2015",
-          "example": "'hello'.startsWith('he')  // true",
-          "notes": null
-        },
-        {
-          "name": "padStart / padEnd",
-          "libraries": ["lodash"],
-          "native": "String.prototype.padStart() / padEnd()",
-          "since": "ES2017",
-          "example": "'5'.padStart(3, '0')  // '005'",
-          "notes": null
-        },
-        {
-          "name": "repeat",
-          "libraries": ["lodash", "ramda"],
-          "native": "String.prototype.repeat()",
-          "since": "ES2015",
-          "example": "'abc'.repeat(3)  // 'abcabcabc'",
-          "notes": null
-        }
-      ]
+      "name": "includes",
+      "libraries": ["lodash", "ramda"],
+      "native": "Array.prototype.includes()",
+      "since": "ES2016",
+      "example": "arr.includes(value)"
     },
     {
-      "category": "type",
-      "functions": [
-        {
-          "name": "isUndefined",
-          "libraries": ["lodash", "radashi"],
-          "native": "value === undefined",
-          "since": "ES1",
-          "example": "if (value === undefined) { ... }",
-          "notes": "Or typeof value === 'undefined' for safety in older envs"
-        },
-        {
-          "name": "isNull",
-          "libraries": ["lodash"],
-          "native": "value === null",
-          "since": "ES1",
-          "example": "if (value === null) { ... }",
-          "notes": null
-        },
-        {
-          "name": "isError",
-          "libraries": ["lodash", "radashi"],
-          "native": "value instanceof Error",
-          "since": "ES1",
-          "example": "if (value instanceof Error) { ... }",
-          "notes": null
-        },
-        {
-          "name": "isPromise",
-          "libraries": ["radashi"],
-          "native": "value instanceof Promise",
-          "since": "ES2015",
-          "example": "if (value instanceof Promise) { ... }",
-          "notes": "Does not detect thenables"
-        },
-        {
-          "name": "isRegExp",
-          "libraries": ["lodash", "radashi"],
-          "native": "value instanceof RegExp",
-          "since": "ES1",
-          "example": "if (value instanceof RegExp) { ... }",
-          "notes": null
-        },
-        {
-          "name": "isMap / isWeakMap",
-          "libraries": ["lodash", "radashi"],
-          "native": "value instanceof Map / instanceof WeakMap",
-          "since": "ES2015",
-          "example": "if (value instanceof Map) { ... }",
-          "notes": null
-        }
-      ]
+      "name": "reverse",
+      "libraries": ["lodash", "ramda"],
+      "native": "Array.prototype.toReversed()",
+      "since": "ES2023",
+      "example": "const reversed = arr.toReversed()",
+      "notes": "Immutable version; .reverse() mutates"
     },
     {
-      "category": "promise",
-      "functions": [
-        {
-          "name": "withResolvers",
-          "libraries": ["radashi"],
-          "native": "Promise.withResolvers()",
-          "since": "ES2024",
-          "example": "const { promise, resolve, reject } = Promise.withResolvers()",
-          "notes": null
-        }
-      ]
+      "name": "head / first",
+      "libraries": ["lodash", "radashi", "ramda"],
+      "native": "Array.prototype.at(0)",
+      "since": "ES2022",
+      "example": "arr.at(0)  // or arr[0]",
+      "notes": ".at() supports negative indices"
     },
     {
-      "category": "random",
-      "functions": [
-        {
-          "name": "uid",
-          "libraries": ["radashi"],
-          "native": "crypto.randomUUID()",
-          "since": "Web API",
-          "example": "crypto.randomUUID()  // 'f47ac10b-58cc-...'",
-          "notes": "Generates UUID v4; Radashi uid is shorter and customizable"
-        }
-      ]
+      "name": "last",
+      "libraries": ["lodash", "radashi", "ramda"],
+      "native": "Array.prototype.at(-1)",
+      "since": "ES2022",
+      "example": "arr.at(-1)"
+    },
+    {
+      "name": "tail",
+      "libraries": ["lodash", "ramda"],
+      "native": "Array.prototype.slice(1)",
+      "since": "ES3",
+      "example": "arr.slice(1)"
+    },
+    {
+      "name": "take",
+      "libraries": ["lodash", "ramda"],
+      "native": "Array.prototype.slice(0, n)",
+      "since": "ES3",
+      "example": "arr.slice(0, n)"
+    },
+    {
+      "name": "drop",
+      "libraries": ["lodash", "ramda"],
+      "native": "Array.prototype.slice(n)",
+      "since": "ES3",
+      "example": "arr.slice(n)"
+    }
+  ],
+  "number": [
+    {
+      "name": "min / max",
+      "libraries": ["lodash", "radashi", "ramda"],
+      "native": "Math.min(...arr) / Math.max(...arr)",
+      "since": "ES1",
+      "example": "Math.min(...numbers)\nMath.max(...numbers)",
+      "notes": "For large arrays, prefer reduce to avoid stack overflow"
+    },
+    {
+      "name": "ceil / floor",
+      "libraries": ["lodash"],
+      "native": "Math.ceil() / Math.floor()",
+      "since": "ES1",
+      "example": "Math.ceil(4.2)  // 5\nMath.floor(4.8)  // 4",
+      "notes": "No precision param natively; use roundTo from helpers4 for decimal precision"
+    },
+    {
+      "name": "toInt / toFloat",
+      "libraries": ["radashi"],
+      "native": "parseInt(str, 10) / parseFloat(str)",
+      "since": "ES1",
+      "example": "parseInt('42px', 10)  // 42\nparseFloat('3.14')  // 3.14",
+      "notes": "Radashi adds default-value fallback on NaN"
+    }
+  ],
+  "object": [
+    {
+      "name": "keys / values",
+      "libraries": ["lodash", "radashi", "ramda"],
+      "native": "Object.keys() / Object.values()",
+      "since": "ES2017",
+      "example": "Object.keys(obj)\nObject.values(obj)",
+      "notes": "TypeScript types keys as string[]"
+    },
+    {
+      "name": "toPairs / fromPairs",
+      "libraries": ["lodash", "ramda"],
+      "native": "Object.entries() / Object.fromEntries()",
+      "since": "ES2019",
+      "example": "Object.entries(obj)\nObject.fromEntries(entries)"
+    },
+    {
+      "name": "has",
+      "libraries": ["lodash", "ramda"],
+      "native": "Object.hasOwn(obj, key)",
+      "since": "ES2022",
+      "example": "Object.hasOwn(obj, 'key')",
+      "notes": "Replaces obj.hasOwnProperty(key)"
+    },
+    {
+      "name": "merge (shallow)",
+      "libraries": ["lodash", "radashi", "ramda"],
+      "native": "{ ...a, ...b } or Object.assign({}, a, b)",
+      "since": "ES2015",
+      "example": "const merged = { ...defaults, ...options }",
+      "notes": "For deep merge, use deepMerge from helpers4"
+    }
+  ],
+  "string": [
+    {
+      "name": "trim / trimStart / trimEnd",
+      "libraries": ["lodash", "radashi", "ramda"],
+      "native": "String.prototype.trim() / trimStart() / trimEnd()",
+      "since": "ES2019",
+      "example": "'  hello  '.trim()  // 'hello'",
+      "notes": "No custom-character trim natively"
+    },
+    {
+      "name": "startsWith / endsWith",
+      "libraries": ["lodash", "ramda"],
+      "native": "String.prototype.startsWith() / endsWith()",
+      "since": "ES2015",
+      "example": "'hello'.startsWith('he')  // true"
+    },
+    {
+      "name": "padStart / padEnd",
+      "libraries": ["lodash"],
+      "native": "String.prototype.padStart() / padEnd()",
+      "since": "ES2017",
+      "example": "'5'.padStart(3, '0')  // '005'"
+    },
+    {
+      "name": "repeat",
+      "libraries": ["lodash", "ramda"],
+      "native": "String.prototype.repeat()",
+      "since": "ES2015",
+      "example": "'abc'.repeat(3)  // 'abcabcabc'"
+    }
+  ],
+  "type": [
+    {
+      "name": "isUndefined",
+      "libraries": ["lodash", "radashi"],
+      "native": "value === undefined",
+      "since": "ES1",
+      "example": "if (value === undefined) { ... }",
+      "notes": "Or typeof value === 'undefined' for safety in older envs"
+    },
+    {
+      "name": "isNull",
+      "libraries": ["lodash"],
+      "native": "value === null",
+      "since": "ES1",
+      "example": "if (value === null) { ... }"
+    },
+    {
+      "name": "isError",
+      "libraries": ["lodash", "radashi"],
+      "native": "value instanceof Error",
+      "since": "ES1",
+      "example": "if (value instanceof Error) { ... }"
+    },
+    {
+      "name": "isPromise",
+      "libraries": ["radashi"],
+      "native": "value instanceof Promise",
+      "since": "ES2015",
+      "example": "if (value instanceof Promise) { ... }",
+      "notes": "Does not detect thenables"
+    },
+    {
+      "name": "isRegExp",
+      "libraries": ["lodash", "radashi"],
+      "native": "value instanceof RegExp",
+      "since": "ES1",
+      "example": "if (value instanceof RegExp) { ... }"
+    },
+    {
+      "name": "isMap / isWeakMap",
+      "libraries": ["lodash", "radashi"],
+      "native": "value instanceof Map / instanceof WeakMap",
+      "since": "ES2015",
+      "example": "if (value instanceof Map) { ... }"
+    }
+  ],
+  "promise": [
+    {
+      "name": "withResolvers",
+      "libraries": ["radashi"],
+      "native": "Promise.withResolvers()",
+      "since": "ES2024",
+      "example": "const { promise, resolve, reject } = Promise.withResolvers()"
+    }
+  ],
+  "random": [
+    {
+      "name": "uid",
+      "libraries": ["radashi"],
+      "native": "crypto.randomUUID()",
+      "since": "Web API",
+      "example": "crypto.randomUUID()  // 'f47ac10b-58cc-...'",
+      "notes": "Generates UUID v4; Radashi uid is shorter and customizable"
     }
   ]
 }
