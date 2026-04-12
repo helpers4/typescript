@@ -12,7 +12,7 @@ import dts from 'rollup-plugin-dts';
 /**
  * External dependencies that should not be bundled
  */
-const EXTERNAL_DEPS = ['radashi', 'simple-deepcompare', 'rxjs'];
+const EXTERNAL_DEPS = ['radashi', 'rxjs'];
 
 /**
  * Compile a TypeScript file using Vite/Rollup build with rollup-plugin-dts for .d.ts generation.
