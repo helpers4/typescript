@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+const isCI = !!process.env.CI;
+
 /** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */
 export default {
   testRunner: 'vitest',
@@ -14,14 +16,16 @@ export default {
   mutate: [
     'helpers/**/!(*.test|*.spec|*.bench|*.example|index).ts',
   ],
-  reporters: ['clear-text', 'html', 'progress', 'dashboard'],
+  reporters: ['clear-text', 'html', 'progress', ...(isCI ? ['dashboard'] : [])],
   htmlReporter: {
     fileName: 'reports/mutation/index.html',
   },
-  dashboard: {
-    project: 'github.com/helpers4/typescript',
-    reportType: 'full',
-  },
+  ...(isCI && {
+    dashboard: {
+      project: 'github.com/helpers4/typescript',
+      reportType: 'full',
+    },
+  }),
   thresholds: {
     high: 90,
     low: 70,

@@ -274,6 +274,8 @@ jobs:
                 `| ${s.icon} | **Mutation Score** | ${createProgressBar(num)} | **${score}%** |`,
                 '',
                 '> 🧬 *Mutation testing is informational only and does not block the PR*',
+                '',
+                `> 📊 [View full mutation report on Stryker Dashboard](https://dashboard.stryker-mutator.io/reports/github.com/helpers4/typescript/PR-${context.issue.number})`,
               ].join('\n');
             };
 
