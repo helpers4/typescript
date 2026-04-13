@@ -59,7 +59,7 @@
   },
   "type": "module",
   "dependencies": {
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.0.0"
   },
   "devDependencies": {
     "@stryker-mutator/core": "^9.6.1",
