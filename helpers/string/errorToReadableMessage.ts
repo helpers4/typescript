@@ -9,7 +9,7 @@
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 
-import { isObject } from "radashi";
+import { isObject } from '../type/typeChecks';
 
 /**
  * Convert an error to a readable message.
@@ -56,6 +56,11 @@ export function errorToReadableMessage(error?: unknown, stringify?: boolean | st
     // Pre-requisite: not a string
     if (typeof error === "string") {
         return error;
+    }
+
+    // Handle Error instances early (before isObject check)
+    if (error instanceof Error) {
+        return String(error);
     }
 
     // Pre-requisite: an object

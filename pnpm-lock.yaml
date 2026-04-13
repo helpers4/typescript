@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      radashi:
-        specifier: ^12.7.2
-        version: 12.7.2
       rxjs:
         specifier: ^7.8.2
         version: 7.8.2
@@ -45,6 +42,9 @@ importers:
       oxlint:
         specifier: ^1.59.0
         version: 1.59.0
+      radashi:
+        specifier: ^12.7.2
+        version: 12.7.2
       rollup:
         specifier: ^4.60.1
         version: 4.60.1
