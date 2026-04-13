@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { isDefinedAndNotNull } from './isDefinedAndNotNull';
+import { isNotNullish } from './isNotNullish';
 
 /**
- * Return a value or throw an error is null or undefined.
+ * Return a value or throw an error if null or undefined.
  *
  * @param value A possible non-defined value.
  * @param error The error message to throw.
@@ -15,9 +15,8 @@ import { isDefinedAndNotNull } from './isDefinedAndNotNull';
  * @since 1.0.0
  */
 export function returnOrThrowError<T>(value: T | undefined | null, error: string): T {
-    if (isDefinedAndNotNull(value)) {
-        return value!;
-    } else {
-        throw new Error(error);
-    }
+  if (isNotNullish(value)) {
+    return value;
+  }
+  throw new Error(error);
 }
