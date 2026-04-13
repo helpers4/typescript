@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { shallowEquals } from "../object/shallowEquals";
-import { isArray, isObject } from "radashi";
+import { shallowEquals } from '../object/shallowEquals';
+import { isArray, isObject } from '../type/typeChecks';
 
 /**
  * Simple helper that checks if two lists are identical.

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { isNullish } from "radashi";
+import { isNullish } from '../type/isNullish';
 
 /**
  * Remove null and undefined values from an object.
