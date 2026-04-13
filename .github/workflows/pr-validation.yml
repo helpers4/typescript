@@ -105,6 +105,72 @@ jobs:
             echo "status=failure" >> $GITHUB_OUTPUT
           fi
 
+  # Runtime compatibility (Node, Deno, Bun)
+  runtime-compat:
+    needs: version-calculation
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    outputs:
+      node-status: ${{ steps.test-node.outputs.status }}
+      deno-status: ${{ steps.test-deno.outputs.status }}
+      bun-status: ${{ steps.test-bun.outputs.status }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: "2.x"
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "latest"
+
+      - name: Test with Node
+        id: test-node
+        if: always()
+        run: |
+          if npx vitest run; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Test with Deno
+        id: test-deno
+        if: always()
+        run: |
+          if deno run -A ./node_modules/vitest/vitest.mjs run; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Test with Bun
+        id: test-bun
+        if: always()
+        run: |
+          if bun run vitest run; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+          fi
+
   # Verification job (depends on build for artifacts)
   verification:
     needs: [build, test]
@@ -181,6 +247,7 @@ jobs:
         conventional-commits,
         verification,
         mutation,
+        runtime-compat,
       ]
     if: always()
 
@@ -300,6 +367,37 @@ jobs:
             const mutationScore = "${{ needs.mutation.outputs.score || 'N/A' }}";
             const mutationStatus = "${{ needs.mutation.outputs.status || 'unknown' }}";
 
+            const runtimes = {
+              'Node.js': "${{ needs.runtime-compat.outputs.node-status || 'unknown' }}",
+              'Deno': "${{ needs.runtime-compat.outputs.deno-status || 'unknown' }}",
+              'Bun': "${{ needs.runtime-compat.outputs.bun-status || 'unknown' }}",
+            };
+
+            const createRuntimeSection = (runtimes) => {
+              const icons = { 'Node.js': '🟩', 'Deno': '🦕', 'Bun': '🍞' };
+              const rows = Object.entries(runtimes).map(([runtime, status]) => {
+                const icon = status === 'success' ? '✅' : status === 'failure' ? '❌' : '⬜';
+                return `| ${icons[runtime]} | **${runtime}** | ${icon} |`;
+              }).join('\n');
+
+              const passed = Object.values(runtimes).filter(s => s === 'success').length;
+              const total = Object.keys(runtimes).length;
+              const allOk = passed === total;
+              const header = allOk
+                ? `> ✅ **Runtime Compatibility: ${passed}/${total}** — All runtimes passed!`
+                : `> ⚠️ **Runtime Compatibility: ${passed}/${total}**`;
+
+              return [
+                header,
+                '',
+                '| | Runtime | Status |',
+                '|:---:|---------|:------:|',
+                rows,
+                '',
+                '> 🔄 *Runtime compatibility is informational only and does not block the PR*',
+              ].join('\n');
+            };
+
             const passedCount = Object.values(jobs).filter(s => s === 'success').length;
             const totalJobs = Object.keys(jobs).length;
             const allPassed = passedCount === totalJobs;
@@ -331,6 +429,12 @@ jobs:
             ### 🧬 Mutation Testing
 
             ${createMutationSection(mutationScore, mutationStatus)}
+
+            ---
+
+            ### 🌐 Runtime Compatibility
+
+            ${createRuntimeSection(runtimes)}
 
             ---
 
