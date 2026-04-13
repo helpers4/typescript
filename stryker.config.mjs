@@ -14,9 +14,13 @@ export default {
   mutate: [
     'helpers/**/!(*.test|*.spec|*.bench|*.example|index).ts',
   ],
-  reporters: ['clear-text', 'html', 'progress'],
+  reporters: ['clear-text', 'html', 'progress', 'dashboard'],
   htmlReporter: {
     fileName: 'reports/mutation/index.html',
+  },
+  dashboard: {
+    project: 'github.com/helpers4/typescript',
+    reportType: 'full',
   },
   thresholds: {
     high: 90,

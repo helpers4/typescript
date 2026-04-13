@@ -15,7 +15,7 @@
   <a href="https://github.com/helpers4/typescript/blob/main/LICENSE"><img src="https://img.shields.io/github/license/helpers4/typescript?color=blue" alt="license" /></a>
   <img src="https://img.shields.io/badge/tsgo-7-blue?logo=typescript&logoColor=white" alt="tsgo" />
   <img src="https://img.shields.io/badge/coverage-100%25-brightgreen" alt="coverage" />
-  <img src="https://img.shields.io/badge/mutation-91%25-brightgreen?logo=stryker&logoColor=white" alt="mutation score" />
+  <a href="https://dashboard.stryker-mutator.io/reports/github.com/helpers4/typescript/main"><img src="https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fhelpers4%2Ftypescript%2Fmain" alt="mutation score" /></a>
   <img src="https://img.shields.io/badge/tree--shakable-✓-green" alt="tree-shakable" />
 </p>
 
