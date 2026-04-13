@@ -97,9 +97,9 @@ export function errorToReadableMessage(error?: unknown, stringify?: boolean | st
         return `${errOAuth.type}: ${errOAuth.reason}`;
     }
 
-    // Handle generic Error objects
-    if (error instanceof Error || "message" in errObj) {
-        return (error as Error).message;
+    // Handle objects with a message property
+    if ("message" in errObj) {
+        return String((errObj as { message: unknown }).message);
     }
 
     // Nothing found
