@@ -63,23 +63,23 @@
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
-    "@stryker-mutator/core": "^9.6.0",
-    "@stryker-mutator/vitest-runner": "^9.6.0",
+    "@stryker-mutator/core": "^9.6.1",
+    "@stryker-mutator/vitest-runner": "^9.6.1",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^25.5.2",
+    "@types/node": "^25.6.0",
     "@typescript/native-preview": "7.0.0-dev.20260407.1",
-    "@vitest/coverage-v8": "^4.1.2",
+    "@vitest/coverage-v8": "^4.1.4",
     "fs-extra": "^11.3.4",
     "glob": "^13.0.6",
     "happy-dom": "^20.8.9",
-    "oxlint": "^1.58.0",
+    "oxlint": "^1.59.0",
     "rollup": "^4.60.1",
     "rollup-plugin-dts": "^6.4.1",
     "tsx": "^4.19.2",
-    "typedoc": "^0.28.18",
+    "typedoc": "^0.28.19",
     "typescript": "^6.0.2",
-    "vite": "^8.0.7",
-    "vitest": "^4.1.2"
+    "vite": "^8.0.8",
+    "vitest": "^4.1.4"
   },
   "packageManager": "pnpm@10.28.2+sha512.41872f037ad22f7348e3b1debbaf7e867cfd448f2726d9cf74c08f19507c31d2c8e7a11525b983febc2df640b5438dee6023ebb1f84ed43cc2d654d2bc326264",
   "engines": {
