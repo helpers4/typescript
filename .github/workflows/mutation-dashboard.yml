@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: "24" # keep in sync with pr-validation.yml NODE_LATEST_LTS
 
       - name: Enable corepack
         run: corepack enable
