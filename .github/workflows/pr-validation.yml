@@ -13,6 +13,12 @@ permissions:
   issues: write
 
 env:
+  # Runtime versions — update these when new LTS versions are released
+  NODE_OLDEST_LTS: "20"
+  NODE_LATEST_LTS: "24"
+  DENO_LATEST: "2.x"
+  BUN_LATEST: "latest"
+
   WORKFLOW_ID: ${{ github.run_id }}
   ARTIFACT_PACKAGE: package-json-${{ github.run_id }}
   ARTIFACT_BUILD: build-${{ github.run_id }}
@@ -36,7 +42,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: ${{ env.NODE_LATEST_LTS }}
 
       - name: Enable corepack
         run: corepack enable
@@ -57,7 +63,7 @@ jobs:
     needs: version-calculation
     uses: ./.github/workflows/job-build.yml
     with:
-      node-version: "24"
+      node-version: ${{ env.NODE_LATEST_LTS }}
       upload-artifact: true
       artifact-name: build-${{ github.run_id }}
 
@@ -66,23 +72,23 @@ jobs:
     needs: version-calculation
     uses: ./.github/workflows/job-tests.yml
     with:
-      node-version: "24"
+      node-version: ${{ env.NODE_OLDEST_LTS }}
       coverage: true
 
   lint:
     uses: ./.github/workflows/job-lint.yml
     with:
-      node-version: "24"
+      node-version: ${{ env.NODE_LATEST_LTS }}
 
   type-check:
     uses: ./.github/workflows/job-typecheck.yml
     with:
-      node-version: "24"
+      node-version: ${{ env.NODE_LATEST_LTS }}
 
   security:
     uses: ./.github/workflows/job-security.yml
     with:
-      node-version: "24"
+      node-version: ${{ env.NODE_LATEST_LTS }}
       audit-level: "low"
 
   conventional-commits:
@@ -113,8 +119,11 @@ jobs:
 
     outputs:
       node-status: ${{ steps.test-node.outputs.status }}
+      node-version: ${{ steps.test-node.outputs.version }}
       deno-status: ${{ steps.test-deno.outputs.status }}
+      deno-version: ${{ steps.test-deno.outputs.version }}
       bun-status: ${{ steps.test-bun.outputs.status }}
+      bun-version: ${{ steps.test-bun.outputs.version }}
 
     steps:
       - name: Checkout code
@@ -123,7 +132,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: ${{ env.NODE_LATEST_LTS }}
 
       - name: Enable corepack
         run: corepack enable
@@ -134,17 +143,18 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: "2.x"
+          deno-version: ${{ env.DENO_LATEST }}
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "latest"
+          bun-version: ${{ env.BUN_LATEST }}
 
       - name: Test with Node
         id: test-node
         if: always()
         run: |
+          echo "version=$(node --version)" >> $GITHUB_OUTPUT
           if npx vitest run; then
             echo "status=success" >> $GITHUB_OUTPUT
           else
@@ -155,6 +165,7 @@ jobs:
         id: test-deno
         if: always()
         run: |
+          echo "version=$(deno --version | head -1 | awk '{print $2}')" >> $GITHUB_OUTPUT
           if deno run -A ./node_modules/vitest/vitest.mjs run; then
             echo "status=success" >> $GITHUB_OUTPUT
           else
@@ -165,6 +176,7 @@ jobs:
         id: test-bun
         if: always()
         run: |
+          echo "version=$(bun --version)" >> $GITHUB_OUTPUT
           if bun run vitest run; then
             echo "status=success" >> $GITHUB_OUTPUT
           else
@@ -176,7 +188,7 @@ jobs:
     needs: [build, test]
     uses: ./.github/workflows/job-verification.yml
     with:
-      node-version: "24"
+      node-version: ${{ env.NODE_LATEST_LTS }}
       build-artifact: build-${{ github.run_id }}
 
   # Mutation testing (non-blocking, informational only)
@@ -197,7 +209,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "24"
+          node-version: ${{ env.NODE_LATEST_LTS }}
 
       - name: Enable corepack
         run: corepack enable
@@ -368,20 +380,22 @@ jobs:
             const mutationStatus = "${{ needs.mutation.outputs.status || 'unknown' }}";
 
             const runtimes = {
-              'Node.js': "${{ needs.runtime-compat.outputs.node-status || 'unknown' }}",
-              'Deno': "${{ needs.runtime-compat.outputs.deno-status || 'unknown' }}",
-              'Bun': "${{ needs.runtime-compat.outputs.bun-status || 'unknown' }}",
+              'Node.js ${{ env.NODE_LATEST_LTS }} (LTS)': { status: "${{ needs.runtime-compat.outputs.node-status || 'unknown' }}", version: "${{ needs.runtime-compat.outputs.node-version || '' }}" },
+              'Deno': { status: "${{ needs.runtime-compat.outputs.deno-status || 'unknown' }}", version: "${{ needs.runtime-compat.outputs.deno-version || '' }}" },
+              'Bun': { status: "${{ needs.runtime-compat.outputs.bun-status || 'unknown' }}", version: "${{ needs.runtime-compat.outputs.bun-version || '' }}" },
             };
 
             const createRuntimeSection = (runtimes) => {
-              const icons = { 'Node.js': '🟩', 'Deno': '🦕', 'Bun': '🍞' };
-              const rows = Object.entries(runtimes).map(([runtime, status]) => {
+              const icons = { 'Node.js ${{ env.NODE_LATEST_LTS }} (LTS)': '🟩', 'Deno': '🦕', 'Bun': '🍞' };
+              const rows = Object.entries(runtimes).map(([runtime, { status, version }]) => {
                 const icon = status === 'success' ? '✅' : status === 'failure' ? '❌' : '⬜';
-                return `| ${icons[runtime]} | **${runtime}** | ${icon} |`;
+                const ver = version ? ` \`${version}\`` : '';
+                return `| ${icons[runtime]} | **${runtime}**${ver} | ${icon} |`;
               }).join('\n');
 
-              const passed = Object.values(runtimes).filter(s => s === 'success').length;
-              const total = Object.keys(runtimes).length;
+              const statuses = Object.values(runtimes).map(r => r.status);
+              const passed = statuses.filter(s => s === 'success').length;
+              const total = statuses.length;
               const allOk = passed === total;
               const header = allOk
                 ? `> ✅ **Runtime Compatibility: ${passed}/${total}** — All runtimes passed!`
