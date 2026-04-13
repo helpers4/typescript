@@ -20,7 +20,7 @@ export function pick<T extends Record<string, unknown>, K extends keyof T>(
 ): Pick<T, K> {
   const result = {} as Pick<T, K>;
   for (const key of keys) {
-    if (key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       result[key] = obj[key];
     }
   }
