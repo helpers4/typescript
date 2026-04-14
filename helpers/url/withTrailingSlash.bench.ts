@@ -4,7 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { withTrailingSlash } from 'radashi'
+import { describe, bench } from 'vitest'
+
+import { withTrailingSlash } from './withTrailingSlash'
 
 describe('withTrailingSlash', () => {
   bench('with no input', () => {

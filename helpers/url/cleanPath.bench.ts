@@ -4,7 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { cleanPath } from 'radashi'
+import { describe, bench } from 'vitest'
+
+import { cleanPath } from './cleanPath'
 
 describe('cleanPath', () => {
   bench('with no input', () => {

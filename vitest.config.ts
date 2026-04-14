@@ -21,6 +21,9 @@ export default defineConfig({
         branches: 100,
         statements: 100
       }
+    },
+    benchmark: {
+      include: ['helpers/**/*.bench.ts']
     }
   }
 });

@@ -42,9 +42,6 @@ importers:
       oxlint:
         specifier: ^1.59.0
         version: 1.59.0
-      radashi:
-        specifier: ^12.7.2
-        version: 12.7.2
       rollup:
         specifier: ^4.60.1
         version: 4.60.1
@@ -1584,10 +1581,6 @@ packages:
   qs@6.15.1:
     resolution: {integrity: sha512-6YHEFRL9mfgcAvql/XhwTvf5jKcOiiupt2FiJxHkiX1z4j7WL8J/jRHYLluORvc1XxB5rV20KoeK00gVJamspg==}
     engines: {node: '>=0.6'}
-
-  radashi@12.7.2:
-    resolution: {integrity: sha512-BfoN4XJll34ok3rCHjVlRypymJvD3cE+M3UATC8519wUgHl1/AXt2dEEIFv5865gO6t0ENAU6qEOqjr/NcIRyQ==}
-    engines: {node: '>=16.0.0'}
 
   require-from-string@2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
@@ -3233,8 +3226,6 @@ snapshots:
   qs@6.15.1:
     dependencies:
       side-channel: 1.1.0
-
-  radashi@12.7.2: {}
 
   require-from-string@2.0.2: {}
 

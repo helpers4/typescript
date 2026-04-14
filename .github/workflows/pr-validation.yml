@@ -245,6 +245,13 @@ jobs:
             echo "status=failure" >> $GITHUB_OUTPUT
           fi
 
+  # Benchmarks (non-blocking, informational only)
+  bench:
+    needs: version-calculation
+    uses: ./.github/workflows/job-bench.yml
+    with:
+      node-version: ${{ env.NODE_LATEST_LTS }}
+
   # PR comment with results
   pr-comment:
     runs-on: ubuntu-latest
@@ -260,6 +267,7 @@ jobs:
         verification,
         mutation,
         runtime-compat,
+        bench,
       ]
     if: always()
 
@@ -379,6 +387,9 @@ jobs:
             const mutationScore = "${{ needs.mutation.outputs.score || 'N/A' }}";
             const mutationStatus = "${{ needs.mutation.outputs.status || 'unknown' }}";
 
+            const benchStatus = "${{ needs.bench.outputs.status || 'unknown' }}";
+            const benchSuites = "${{ needs.bench.outputs.total-suites || '0' }}";
+
             const runtimes = {
               'Node.js ${{ env.NODE_LATEST_LTS }} (LTS)': { status: "${{ needs.runtime-compat.outputs.node-status || 'unknown' }}", version: "${{ needs.runtime-compat.outputs.node-version || '' }}" },
               'Deno': { status: "${{ needs.runtime-compat.outputs.deno-status || 'unknown' }}", version: "${{ needs.runtime-compat.outputs.deno-version || '' }}" },
@@ -409,6 +420,21 @@ jobs:
                 rows,
                 '',
                 '> 🔄 *Runtime compatibility is informational only and does not block the PR*',
+              ].join('\n');
+            };
+
+            const createBenchSection = (status, suites) => {
+              if (status === 'unknown' || status === 'skipped') {
+                return '> ⏭️ **Benchmarks**: skipped';
+              }
+
+              const icon = status === 'success' ? '✅' : '⚠️';
+              const label = status === 'success' ? 'completed' : 'had issues';
+
+              return [
+                `> ${icon} **Benchmarks: ${suites} suites** — ${label}`,
+                '',
+                '> ⏱️ *Benchmarks are informational only and do not block the PR*',
               ].join('\n');
             };
 
@@ -452,11 +478,18 @@ jobs:
 
             ---
 
+            ### ⏱️ Benchmarks
+
+            ${createBenchSection(benchStatus, benchSuites)}
+
+            ---
+
             <details>
             <summary>ℹ️ <b>About this report</b></summary>
 
             - 🎯 **Coverage Target**: 100% for all metrics
             - 🧬 **Mutation Testing**: powered by [Stryker](https://stryker-mutator.io/) (non-blocking)
+            - ⏱️ **Benchmarks**: powered by [Vitest Bench](https://vitest.dev/guide/features.html#benchmarking) (non-blocking)
             - 🔄 This comment updates automatically with each push
             - 📈 Coverage is measured using Vitest + v8
 

@@ -51,6 +51,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) with a gitmo
 - **Package Manager:** pnpm
 - **Build:** Vite 7.x + Rollup (ES modules + declarations)
 - **Testing:** Vitest (100% coverage enforced)
+- **Benchmarking:** Vitest Bench (non-blocking, informational)
 - **Linting:** oxlint
 
 ### Project Structure
@@ -94,6 +95,10 @@ pnpm test:coverage            # Detailed coverage
 
 # Building
 pnpm build                    # Full build with category bundling
+
+# Benchmarking
+pnpm bench                    # Run all benchmarks (single run)
+pnpm bench:watch              # Watch mode
 
 # Quality
 pnpm lint                     # oxlint --fix
