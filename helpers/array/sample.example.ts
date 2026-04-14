@@ -23,9 +23,9 @@ const examples: HelperExamples = {
     },
     {
       title: 'Pick multiple random elements',
-      description: 'With a count, returns an array of unique random elements.',
+      description: 'With a count, returns an array of random elements sampled without replacement.',
       code: `sample([1, 2, 3, 4, 5], 3)
-// => [2, 5, 1] (3 random unique elements)`,
+// => [2, 5, 1] (3 random elements, without replacement)`,
       assert: () => {
         const result = sample([1, 2, 3, 4, 5], 3);
         if (result.length !== 3) throw new Error(`Expected 3 elements, got ${result.length}`);
