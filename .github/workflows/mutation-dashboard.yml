@@ -7,6 +7,9 @@ on:
 permissions:
   contents: read
 
+env:
+  NODE_LATEST_LTS: "24"
+
 jobs:
   mutation:
     runs-on: ubuntu-latest
@@ -19,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: "24" # keep in sync with pr-validation.yml NODE_LATEST_LTS
+          node-version: ${{ env.NODE_LATEST_LTS }}
 
       - name: Enable corepack
         run: corepack enable

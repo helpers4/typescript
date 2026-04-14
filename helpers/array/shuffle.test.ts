@@ -46,28 +46,45 @@ describe('shuffle', () => {
     expect(result.sort()).toEqual(['a', 'b', 'c']);
   });
 
-  it('should produce different orderings (statistical)', () => {
-    const original = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    const results = new Set<string>();
-    for (let i = 0; i < 50; i++) {
-      results.add(JSON.stringify(shuffle(original)));
+  it('should produce different orderings (deterministic)', () => {
+    const mockRandom = vi.spyOn(Math, 'random');
+    try {
+      // First call: specific shuffle
+      mockRandom
+        .mockReturnValueOnce(0.1)
+        .mockReturnValueOnce(0.2)
+        .mockReturnValueOnce(0.3)
+        .mockReturnValueOnce(0.4);
+      const result1 = shuffle([1, 2, 3, 4, 5]);
+
+      // Second call: different random values produce different order
+      mockRandom
+        .mockReturnValueOnce(0.9)
+        .mockReturnValueOnce(0.8)
+        .mockReturnValueOnce(0.7)
+        .mockReturnValueOnce(0.6);
+      const result2 = shuffle([1, 2, 3, 4, 5]);
+
+      expect(JSON.stringify(result1)).not.toBe(JSON.stringify(result2));
+    } finally {
+      mockRandom.mockRestore();
     }
-    expect(results.size).toBeGreaterThan(1);
   });
 
   it('should use Fisher-Yates algorithm correctly', () => {
     const mockRandom = vi.spyOn(Math, 'random');
-    mockRandom
-      .mockReturnValueOnce(0.5)
-      .mockReturnValueOnce(0.3)
-      .mockReturnValueOnce(0.7)
-      .mockReturnValueOnce(0.1);
+    try {
+      // For array [1, 2, 3]: i=2 → j=floor(0.5*3)=1, swap [2],[1] → [1,3,2]
+      //                       i=1 → j=floor(0.0*2)=0, swap [1],[0] → [3,1,2]
+      mockRandom
+        .mockReturnValueOnce(0.5)
+        .mockReturnValueOnce(0.0);
 
-    const result = shuffle([1, 2, 3, 4, 5]);
-
-    expect(result).toHaveLength(5);
-    expect(result.sort()).toEqual([1, 2, 3, 4, 5]);
-    mockRandom.mockRestore();
+      const result = shuffle([1, 2, 3]);
+      expect(result).toEqual([3, 1, 2]);
+    } finally {
+      mockRandom.mockRestore();
+    }
   });
 
   it('should handle duplicate values', () => {

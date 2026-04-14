@@ -37,11 +37,15 @@ describe('sample', () => {
     });
 
     it('should use Math.random for selection', () => {
-      const mockRandom = vi.spyOn(Math, 'random').mockReturnValue(0);
-      expect(sample([10, 20, 30])).toBe(10);
-      mockRandom.mockReturnValue(0.999);
-      expect(sample([10, 20, 30])).toBe(30);
-      mockRandom.mockRestore();
+      const mockRandom = vi.spyOn(Math, 'random');
+      try {
+        mockRandom.mockReturnValue(0);
+        expect(sample([10, 20, 30])).toBe(10);
+        mockRandom.mockReturnValue(0.999);
+        expect(sample([10, 20, 30])).toBe(30);
+      } finally {
+        mockRandom.mockRestore();
+      }
     });
   });
 
@@ -109,13 +113,29 @@ describe('sample', () => {
       }
     });
 
-    it('should produce varied results (statistical)', () => {
-      const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-      const results = new Set<string>();
-      for (let i = 0; i < 50; i++) {
-        results.add(JSON.stringify(sample(array, 5).sort()));
+    it('should produce varied results (deterministic)', () => {
+      const mockRandom = vi.spyOn(Math, 'random');
+      try {
+        // First call with one set of random values
+        mockRandom
+          .mockReturnValueOnce(0.1)
+          .mockReturnValueOnce(0.2)
+          .mockReturnValueOnce(0.3)
+          .mockReturnValueOnce(0.4);
+        const result1 = sample([1, 2, 3, 4, 5], 3);
+
+        // Second call with different random values
+        mockRandom
+          .mockReturnValueOnce(0.9)
+          .mockReturnValueOnce(0.8)
+          .mockReturnValueOnce(0.7)
+          .mockReturnValueOnce(0.6);
+        const result2 = sample([1, 2, 3, 4, 5], 3);
+
+        expect(JSON.stringify(result1)).not.toBe(JSON.stringify(result2));
+      } finally {
+        mockRandom.mockRestore();
       }
-      expect(results.size).toBeGreaterThan(1);
     });
   });
 });
