@@ -22,7 +22,7 @@ export async function parallel<T>(
   limit: number,
 ): Promise<T[]> {
   const results: T[] = new Array(functions.length);
-  const clampedLimit = Math.max(1, Math.floor(limit));
+  const clampedLimit = Number.isFinite(limit) ? Math.max(1, Math.floor(limit)) : 1;
   let nextIndex = 0;
 
   async function runNext(): Promise<void> {

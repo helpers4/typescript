@@ -102,4 +102,16 @@ describe('parallel', () => {
     expect(result).toEqual([1, 2, 3, 4]);
     expect(maxRunning).toBeLessThanOrEqual(2);
   });
+
+  it('should fallback to 1 for NaN limit', async () => {
+    const fns = [() => Promise.resolve(1), () => Promise.resolve(2)];
+    const result = await parallel(fns, NaN);
+    expect(result).toEqual([1, 2]);
+  });
+
+  it('should fallback to 1 for Infinity limit', async () => {
+    const fns = [() => Promise.resolve(1), () => Promise.resolve(2)];
+    const result = await parallel(fns, Infinity);
+    expect(result).toEqual([1, 2]);
+  });
 });

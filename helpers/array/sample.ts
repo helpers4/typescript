@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { shuffle } from './shuffle';
+
 /**
  * Picks one or more random elements from an array.
  * When called without a count, returns a single element or `undefined` if the array is empty.
@@ -31,10 +33,5 @@ export function sample<T>(array: readonly T[], count?: number): T | undefined | 
   }
 
   const clamped = Math.max(0, Math.min(count, array.length));
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled.slice(0, clamped);
+  return shuffle(array).slice(0, clamped);
 }
