@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { isPlainObject } from '../type/isPlainObject';
+
 /**
  * Merges two or more objects deeply
  * @param target - The target object
@@ -25,7 +27,7 @@ export function deepMerge<T extends Record<string, any>>(target: T | undefined |
     const targetValue = target[key];
     const sourceValue = source[key];
 
-    if (isObject(targetValue) && isObject(sourceValue)) {
+    if (isPlainObject(targetValue) && isPlainObject(sourceValue)) {
       (target as any)[key] = deepMerge(targetValue, sourceValue);
     } else if (sourceValue !== undefined) {
       (target as any)[key] = sourceValue;
@@ -33,8 +35,4 @@ export function deepMerge<T extends Record<string, any>>(target: T | undefined |
   }
 
   return deepMerge(target, ...sources);
-}
-
-function isObject(item: any): item is object {
-  return item && typeof item === 'object' && !Array.isArray(item);
 }

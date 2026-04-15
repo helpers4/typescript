@@ -14,7 +14,7 @@
  * isNullish(0)         // => false
  * isNullish('')        // => false
  *
- * @see {@link isSet} for the inverse check (`!isNullish`)
+ * @see {@link isDefined} for the inverse check (`!isNullish`)
  * @see {@link isFalsy} to also catch `0`, `""`, `false`, and `NaN`
  * @since 2.0.0
  */
