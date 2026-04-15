@@ -11,9 +11,26 @@
 export type Maybe<T> = T | undefined | null;
 
 /**
- * Checks if a value is set (not undefined nor null)
+ * Checks if a value is set (not undefined nor null).
+ * This is the inverse of {@link isNullish}.
+ *
+ * Use as a type-safe filter callback to remove `null`/`undefined` from arrays:
  * @param value - The value to check
  * @returns True if value is not undefined nor null
+ * @example
+ * isSet(42)        // => true
+ * isSet('')        // => true (empty string is set)
+ * isSet(null)      // => false
+ * isSet(undefined) // => false
+ *
+ * @example
+ * // Type-safe alternative to filter out null/undefined
+ * const items: (string | null | undefined)[] = ['a', null, 'b', undefined];
+ * const result = items.filter(isSet);
+ * // => ['a', 'b'] with type string[]
+ *
+ * @see {@link isNullish} for the inverse check
+ * @see {@link isTruthy} to also filter out `0`, `""`, `false`, and `NaN`
  * @since 1.9.0
  */
 export function isSet<T>(value: Maybe<T>): value is T {

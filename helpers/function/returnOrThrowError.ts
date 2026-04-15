@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { isNotNullish } from './isNotNullish';
+import { isNullish } from '../type/isNullish';
 
 /**
  * Return a value or throw an error if null or undefined.
@@ -15,8 +15,8 @@ import { isNotNullish } from './isNotNullish';
  * @since 1.0.0
  */
 export function returnOrThrowError<T>(value: T | undefined | null, error: string): T {
-  if (isNotNullish(value)) {
-    return value;
+  if (isNullish(value)) {
+    throw new Error(error);
   }
-  throw new Error(error);
+  return value;
 }
