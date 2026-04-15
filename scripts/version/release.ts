@@ -83,44 +83,53 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
       newVersion = 'x.x.x-dry-run';
     }
 
-    // Step 4: Build packages
+    // Step 4: Generate changelog
+    console.log('\n📋 Step 4: Generating changelog');
+    if (!options.dryRun) {
+      await execAsync('pnpm run changelog');
+    } else {
+      console.log('[DRY RUN] Would regenerate CHANGELOG.md');
+    }
+    console.log('✅ Changelog generated');
+
+    // Step 5: Build packages
     if (!options.skipBuild) {
-      console.log('\n🏗️  Step 4: Building packages');
+      console.log('\n🏗️  Step 5: Building packages');
       if (!options.dryRun) {
         await execAsync('pnpm run build');
       }
       console.log('✅ Build completed');
     } else {
-      console.log('\n⏭️  Step 4: Skipping build');
+      console.log('\n⏭️  Step 5: Skipping build');
     }
 
-    // Step 5: Run coherency tests
+    // Step 6: Run coherency tests
     if (!options.skipCoherency) {
-      console.log('\n🔍 Step 5: Running coherency tests');
+      console.log('\n🔍 Step 6: Running coherency tests');
       if (!options.dryRun) {
         await execAsync('pnpm run coherency');
       }
       console.log('✅ Coherency tests passed');
     } else {
-      console.log('\n⏭️  Step 5: Skipping coherency tests');
+      console.log('\n⏭️  Step 6: Skipping coherency tests');
     }
 
-    // Step 6: Create commit and push
+    // Step 7: Create commit and push
     // Tags are created by the CI workflow via the GitHub API (verified signatures)
-    console.log('\n📝 Step 6: Creating version commit');
+    console.log('\n📝 Step 7: Creating version commit');
     if (!options.dryRun) {
       await createVersionCommitAndTag({
         message: `chore: release v${newVersion}`,
-        files: ['package.json', 'build/'],
+        files: ['package.json', 'build/', 'CHANGELOG.md'],
         pushBranch: targetBranch
       });
     } else {
       console.log(`[DRY RUN] Would create commit for v${newVersion}`);
     }
 
-    // Step 7: Publish packages
+    // Step 8: Publish packages
     if (!options.skipPublish) {
-      console.log('\n📦 Step 7: Publishing packages');
+      console.log('\n📦 Step 8: Publishing packages');
       if (!options.dryRun) {
         await execAsync('pnpm run publish:packages');
       } else {
@@ -128,7 +137,7 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
       }
       console.log('✅ Packages published');
     } else {
-      console.log('\n⏭️  Step 7: Skipping publish');
+      console.log('\n⏭️  Step 8: Skipping publish');
     }
 
     console.log('\n🎉 Release process completed successfully!');

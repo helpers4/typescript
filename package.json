@@ -56,6 +56,8 @@
     "publish:dry-run": "tsx scripts/publish/index.ts --dry-run",
     "examples": "tsx scripts/examples/index.ts",
     "smoke": "tsx scripts/examples/smoke.ts",
+    "changelog": "git-cliff -o CHANGELOG.md && sed -i 's/^## \\[/\\n## \\[/' CHANGELOG.md && sed -i '1{/^$/d}' CHANGELOG.md",
+    "changelog:unreleased": "git-cliff --unreleased",
     "mutation": "stryker run",
     "mutation:category": "stryker run --mutate"
   },
@@ -71,6 +73,7 @@
     "@typescript/native-preview": "7.0.0-dev.20260413.1",
     "@vitest/coverage-v8": "^4.1.4",
     "fs-extra": "^11.3.4",
+    "git-cliff": "^2.12.0",
     "glob": "^13.0.6",
     "happy-dom": "^20.8.9",
     "oxlint": "^1.59.0",
