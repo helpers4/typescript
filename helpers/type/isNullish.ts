@@ -13,6 +13,9 @@
  * isNullish(undefined) // => true
  * isNullish(0)         // => false
  * isNullish('')        // => false
+ *
+ * @see {@link isSet} for the inverse check (`!isNullish`)
+ * @see {@link isFalsy} to also catch `0`, `""`, `false`, and `NaN`
  * @since 2.0.0
  */
 export function isNullish(value: unknown): value is null | undefined {

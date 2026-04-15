@@ -20,6 +20,9 @@ export type Falsy = false | null | undefined | 0 | '';
  * isFalsy('')        // => true
  * isFalsy(null)      // => true
  * isFalsy('hello')   // => false
+ *
+ * @see {@link isTruthy} for the inverse check (type-safe `filter(Boolean)` alternative)
+ * @see {@link isNullish} to check specifically for `null` or `undefined`
  * @since 2.0.0
  */
 export function isFalsy(value: unknown): value is Falsy {
