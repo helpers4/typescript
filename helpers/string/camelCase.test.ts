@@ -31,4 +31,12 @@ describe("camelCase", () => {
   it("should handle leading dash", () => {
     expect(camelCase("-leading")).toBe("Leading");
   });
+
+  it('should return null when given null', () => {
+    expect(camelCase(null)).toBeNull();
+  });
+
+  it('should return undefined when given undefined', () => {
+    expect(camelCase(undefined)).toBeUndefined();
+  });
 });

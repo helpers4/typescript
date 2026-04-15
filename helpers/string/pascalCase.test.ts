@@ -48,4 +48,12 @@ describe('pascalCase', () => {
   it('should handle consecutive uppercase', () => {
     expect(pascalCase('getHTTPResponse')).toBe('GetHttpResponse');
   });
+
+  it('should return null when given null', () => {
+    expect(pascalCase(null)).toBeNull();
+  });
+
+  it('should return undefined when given undefined', () => {
+    expect(pascalCase(undefined)).toBeUndefined();
+  });
 });

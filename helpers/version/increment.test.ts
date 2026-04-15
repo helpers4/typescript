@@ -31,4 +31,12 @@ describe("increment", () => {
   it("should throw for invalid increment type", () => {
     expect(() => increment("1.0.0", "invalid" as any)).toThrow();
   });
+
+  it('should return null when given null', () => {
+    expect(increment(null, 'patch')).toBeNull();
+  });
+
+  it('should return undefined when given undefined', () => {
+    expect(increment(undefined, 'patch')).toBeUndefined();
+  });
 });

@@ -35,4 +35,12 @@ describe('compact', () => {
   it('should keep arrays and objects as truthy values', () => {
     expect(compact({ a: [], b: {}, c: null })).toEqual({ a: [], b: {} });
   });
+
+  it('should return null when given null', () => {
+    expect(compact(null)).toBeNull();
+  });
+
+  it('should return undefined when given undefined', () => {
+    expect(compact(undefined)).toBeUndefined();
+  });
 });

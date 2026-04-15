@@ -11,10 +11,14 @@
  * @returns Incremented version string
  * @since 1.9.0
  */
+export function increment(version: string, type: 'major' | 'minor' | 'patch'): string;
+export function increment(version: undefined, type: 'major' | 'minor' | 'patch'): undefined;
+export function increment(version: null, type: 'major' | 'minor' | 'patch'): null;
 export function increment(
-  version: string,
+  version: string | undefined | null,
   type: 'major' | 'minor' | 'patch'
-): string {
+): string | undefined | null {
+  if (version === undefined || version === null) return version;
   const normalize = (v: string) => v.replace(/^v/, '');
   const hasV = version.startsWith('v');
   const normalizedVersion = normalize(version);

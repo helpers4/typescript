@@ -27,4 +27,12 @@ describe("capitalize", () => {
   it("should handle already capitalized", () => {
     expect(capitalize("Hello")).toBe("Hello");
   });
+
+  it('should return null when given null', () => {
+    expect(capitalize(null)).toBeNull();
+  });
+
+  it('should return undefined when given undefined', () => {
+    expect(capitalize(undefined)).toBeUndefined();
+  });
 });

@@ -48,4 +48,12 @@ describe('snakeCase', () => {
   it('should handle consecutive uppercase', () => {
     expect(snakeCase('getHTTPResponse')).toBe('get_http_response');
   });
+
+  it('should return null when given null', () => {
+    expect(snakeCase(null)).toBeNull();
+  });
+
+  it('should return undefined when given undefined', () => {
+    expect(snakeCase(undefined)).toBeUndefined();
+  });
 });

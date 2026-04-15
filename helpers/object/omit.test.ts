@@ -42,4 +42,12 @@ describe('omit', () => {
     omit(obj, ['a']);
     expect(obj).toEqual({ a: 1, b: 2, c: 3 });
   });
+
+  it('should return null when given null', () => {
+    expect(omit(null, ['a'])).toBeNull();
+  });
+
+  it('should return undefined when given undefined', () => {
+    expect(omit(undefined, ['a'])).toBeUndefined();
+  });
 });

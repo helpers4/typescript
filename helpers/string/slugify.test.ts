@@ -74,4 +74,12 @@ describe('slugify', () => {
     expect(result).toBe('hello-world');
     expect(result).not.toBe('helloworld');
   });
+
+  it('should return null when given null', () => {
+    expect(slugify(null)).toBeNull();
+  });
+
+  it('should return undefined when given undefined', () => {
+    expect(slugify(undefined)).toBeUndefined();
+  });
 });
