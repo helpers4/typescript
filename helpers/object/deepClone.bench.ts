@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, bench } from 'vitest'
+import { bench, describe } from 'vitest'
 
 import { deepClone } from './deepClone'
 

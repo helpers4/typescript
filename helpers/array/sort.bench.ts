@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, bench } from 'vitest'
+import { bench, describe } from 'vitest'
 
-import { sortNumberAscFn, sortStringAscFn, createSortByStringFn } from './sort'
+import { createSortByStringFn, sortNumberAscFn, sortStringAscFn } from './sort'
 
 const numbers = [5, 3, 8, 1, 9, 2, 7, 4, 6, 10]
 const strings = ['banana', 'apple', 'cherry', 'date', 'elderberry', 'fig', 'grape']
