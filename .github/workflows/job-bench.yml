@@ -12,7 +12,7 @@ on:
         description: "Benchmark execution status"
         value: ${{ jobs.bench.outputs.status }}
       summary:
-        description: "Benchmark summary (top slowest functions)"
+        description: "Benchmark summary (comma-separated list of benchmarked suites)"
         value: ${{ jobs.bench.outputs.summary }}
       total-suites:
         description: "Total benchmark suites"
@@ -21,6 +21,8 @@ on:
 jobs:
   bench:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     outputs:
       status: ${{ steps.status.outputs.status }}
       summary: ${{ steps.extract.outputs.summary }}
@@ -51,11 +53,11 @@ jobs:
         id: extract
         if: always()
         run: |
-          TOTAL_SUITES=$(grep -c '^ ✓' bench-output.txt || echo '0')
+          TOTAL_SUITES=$(grep -c '^ ✓' bench-output.txt || true)
           echo "total-suites=$TOTAL_SUITES" >> $GITHUB_OUTPUT
 
-          # Extract category summaries: category name + fastest bench per suite
-          SUMMARY=$(grep '^ ✓' bench-output.txt | sed 's/^ ✓ //' | sed 's/ >.*//' | sort -u | tr '\n' ', ' | sed 's/,$//')
+          # Extract benchmarked suite names
+          SUMMARY=$( (grep '^ ✓' bench-output.txt | sed 's/^ ✓ //' | sed 's/ >.*//' | sort -u | tr '\n' ', ' | sed 's/,[[:space:]]*$//') || true )
           echo "summary=$SUMMARY" >> $GITHUB_OUTPUT
 
       - name: Set status
