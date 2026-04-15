@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { timeout, TimeoutError } from './timeout';
+import { TimeoutError, timeout } from './timeout';
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {

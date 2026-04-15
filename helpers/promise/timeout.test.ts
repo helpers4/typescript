@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { timeout, TimeoutError } from './timeout';
+import { TimeoutError, timeout } from './timeout';
 
 describe('timeout', () => {
   it('should resolve if promise completes before timeout', async () => {
