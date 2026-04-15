@@ -9,7 +9,7 @@
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 
-import { isObject } from '../type/typeChecks';
+import { isPlainObject } from '../type/isPlainObject';
 
 /**
  * Convert an error to a readable message.
@@ -64,7 +64,7 @@ export function errorToReadableMessage(error?: unknown, stringify?: boolean | st
     }
 
     // Pre-requisite: an object
-    if (!isObject(error)) {
+    if (!isPlainObject(error)) {
         return controlReturn(String(error));
     }
 

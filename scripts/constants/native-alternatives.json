@@ -2,14 +2,22 @@
   "array": [
     {
       "name": "flatten / flat",
-      "libraries": ["lodash", "radashi", "ramda"],
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
       "native": "Array.prototype.flat(depth?)",
       "since": "ES2019",
       "example": "arr.flat()  // one level\narr.flat(Infinity)  // full flatten"
     },
     {
       "name": "groupBy / group",
-      "libraries": ["lodash", "radashi", "ramda"],
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
       "native": "Object.groupBy(arr, fn)",
       "since": "ES2024",
       "example": "Object.groupBy(users, u => u.role)",
@@ -17,21 +25,30 @@
     },
     {
       "name": "find / findIndex",
-      "libraries": ["lodash", "ramda"],
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
       "native": "Array.prototype.find() / findIndex()",
       "since": "ES2015",
       "example": "arr.find(x => x > 5)\narr.findIndex(x => x > 5)"
     },
     {
       "name": "includes",
-      "libraries": ["lodash", "ramda"],
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
       "native": "Array.prototype.includes()",
       "since": "ES2016",
       "example": "arr.includes(value)"
     },
     {
       "name": "reverse",
-      "libraries": ["lodash", "ramda"],
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
       "native": "Array.prototype.toReversed()",
       "since": "ES2023",
       "example": "const reversed = arr.toReversed()",
@@ -39,7 +56,11 @@
     },
     {
       "name": "head / first",
-      "libraries": ["lodash", "radashi", "ramda"],
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
       "native": "Array.prototype.at(0)",
       "since": "ES2022",
       "example": "arr.at(0)  // or arr[0]",
@@ -47,28 +68,41 @@
     },
     {
       "name": "last",
-      "libraries": ["lodash", "radashi", "ramda"],
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
       "native": "Array.prototype.at(-1)",
       "since": "ES2022",
       "example": "arr.at(-1)"
     },
     {
       "name": "tail",
-      "libraries": ["lodash", "ramda"],
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
       "native": "Array.prototype.slice(1)",
       "since": "ES3",
       "example": "arr.slice(1)"
     },
     {
       "name": "take",
-      "libraries": ["lodash", "ramda"],
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
       "native": "Array.prototype.slice(0, n)",
       "since": "ES3",
       "example": "arr.slice(0, n)"
     },
     {
       "name": "drop",
-      "libraries": ["lodash", "ramda"],
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
       "native": "Array.prototype.slice(n)",
       "since": "ES3",
       "example": "arr.slice(n)"
@@ -77,7 +111,11 @@
   "number": [
     {
       "name": "min / max",
-      "libraries": ["lodash", "radashi", "ramda"],
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
       "native": "Math.min(...arr) / Math.max(...arr)",
       "since": "ES1",
       "example": "Math.min(...numbers)\nMath.max(...numbers)",
@@ -85,7 +123,9 @@
     },
     {
       "name": "ceil / floor",
-      "libraries": ["lodash"],
+      "libraries": [
+        "lodash"
+      ],
       "native": "Math.ceil() / Math.floor()",
       "since": "ES1",
       "example": "Math.ceil(4.2)  // 5\nMath.floor(4.8)  // 4",
@@ -93,7 +133,9 @@
     },
     {
       "name": "toInt / toFloat",
-      "libraries": ["radashi"],
+      "libraries": [
+        "radashi"
+      ],
       "native": "parseInt(str, 10) / parseFloat(str)",
       "since": "ES1",
       "example": "parseInt('42px', 10)  // 42\nparseFloat('3.14')  // 3.14",
@@ -103,7 +145,11 @@
   "object": [
     {
       "name": "keys / values",
-      "libraries": ["lodash", "radashi", "ramda"],
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
       "native": "Object.keys() / Object.values()",
       "since": "ES2017",
       "example": "Object.keys(obj)\nObject.values(obj)",
@@ -111,14 +157,20 @@
     },
     {
       "name": "toPairs / fromPairs",
-      "libraries": ["lodash", "ramda"],
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
       "native": "Object.entries() / Object.fromEntries()",
       "since": "ES2019",
       "example": "Object.entries(obj)\nObject.fromEntries(entries)"
     },
     {
       "name": "has",
-      "libraries": ["lodash", "ramda"],
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
       "native": "Object.hasOwn(obj, key)",
       "since": "ES2022",
       "example": "Object.hasOwn(obj, 'key')",
@@ -126,7 +178,11 @@
     },
     {
       "name": "merge (shallow)",
-      "libraries": ["lodash", "radashi", "ramda"],
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
       "native": "{ ...a, ...b } or Object.assign({}, a, b)",
       "since": "ES2015",
       "example": "const merged = { ...defaults, ...options }",
@@ -136,7 +192,11 @@
   "string": [
     {
       "name": "trim / trimStart / trimEnd",
-      "libraries": ["lodash", "radashi", "ramda"],
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
       "native": "String.prototype.trim() / trimStart() / trimEnd()",
       "since": "ES2019",
       "example": "'  hello  '.trim()  // 'hello'",
@@ -144,21 +204,29 @@
     },
     {
       "name": "startsWith / endsWith",
-      "libraries": ["lodash", "ramda"],
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
       "native": "String.prototype.startsWith() / endsWith()",
       "since": "ES2015",
       "example": "'hello'.startsWith('he')  // true"
     },
     {
       "name": "padStart / padEnd",
-      "libraries": ["lodash"],
+      "libraries": [
+        "lodash"
+      ],
       "native": "String.prototype.padStart() / padEnd()",
       "since": "ES2017",
       "example": "'5'.padStart(3, '0')  // '005'"
     },
     {
       "name": "repeat",
-      "libraries": ["lodash", "ramda"],
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
       "native": "String.prototype.repeat()",
       "since": "ES2015",
       "example": "'abc'.repeat(3)  // 'abcabcabc'"
@@ -166,54 +234,112 @@
   ],
   "type": [
     {
-      "name": "isUndefined",
-      "libraries": ["lodash", "radashi"],
-      "native": "value === undefined",
-      "since": "ES1",
-      "example": "if (value === undefined) { ... }",
-      "notes": "Or typeof value === 'undefined' for safety in older envs"
-    },
-    {
-      "name": "isNull",
-      "libraries": ["lodash"],
-      "native": "value === null",
-      "since": "ES1",
-      "example": "if (value === null) { ... }"
-    },
-    {
-      "name": "isError",
-      "libraries": ["lodash", "radashi"],
-      "native": "value instanceof Error",
-      "since": "ES1",
-      "example": "if (value instanceof Error) { ... }"
-    },
-    {
-      "name": "isPromise",
-      "libraries": ["radashi"],
-      "native": "value instanceof Promise",
+      "name": "isNaN",
+      "libraries": [
+        "lodash",
+        "radashi"
+      ],
+      "native": "Number.isNaN(value)",
       "since": "ES2015",
-      "example": "if (value instanceof Promise) { ... }",
-      "notes": "Does not detect thenables"
+      "example": "Number.isNaN(value)",
+      "notes": "Prefer Number.isNaN() over global isNaN() which coerces"
     },
     {
-      "name": "isRegExp",
-      "libraries": ["lodash", "radashi"],
-      "native": "value instanceof RegExp",
-      "since": "ES1",
-      "example": "if (value instanceof RegExp) { ... }"
-    },
-    {
-      "name": "isMap / isWeakMap",
-      "libraries": ["lodash", "radashi"],
-      "native": "value instanceof Map / instanceof WeakMap",
+      "name": "isSafeInteger",
+      "libraries": [
+        "lodash"
+      ],
+      "native": "Number.isSafeInteger(value)",
       "since": "ES2015",
-      "example": "if (value instanceof Map) { ... }"
+      "example": "Number.isSafeInteger(value)"
+    },
+    {
+      "name": "isInteger",
+      "libraries": [
+        "lodash"
+      ],
+      "native": "Number.isInteger(value)",
+      "since": "ES2015",
+      "example": "Number.isInteger(value)"
+    },
+    {
+      "name": "isFinite / isFiniteNumber",
+      "libraries": [
+        "lodash"
+      ],
+      "native": "Number.isFinite(value)",
+      "since": "ES2015",
+      "example": "Number.isFinite(value)",
+      "notes": "Prefer Number.isFinite() over global isFinite() which coerces"
+    },
+    {
+      "name": "isSet (Set data structure)",
+      "libraries": [
+        "lodash",
+        "radashi"
+      ],
+      "native": "value instanceof Set",
+      "since": "ES2015",
+      "example": "if (value instanceof Set) { ... }",
+      "notes": "Not implemented to avoid confusion with the former isSet (now isDefined)"
+    },
+    {
+      "name": "isWeakMap / isWeakSet / isWeakRef",
+      "libraries": [
+        "lodash"
+      ],
+      "native": "value instanceof WeakMap / WeakSet / WeakRef",
+      "since": "ES2015 / ES2021",
+      "example": "if (value instanceof WeakMap) { ... }",
+      "notes": "Too niche, use instanceof directly"
+    },
+    {
+      "name": "isDirectInstanceOf",
+      "libraries": [
+        "sindresorhus/is"
+      ],
+      "native": "value.constructor === Foo",
+      "since": "ES1",
+      "example": "value.constructor === MyClass"
+    },
+    {
+      "name": "TypedArrays (isInt8Array, isFloat32Array, ...)",
+      "libraries": [
+        "lodash"
+      ],
+      "native": "value instanceof Int8Array / Float32Array / ...",
+      "since": "ES2015",
+      "example": "if (value instanceof Uint8Array) { ... }",
+      "notes": "Too niche, use instanceof directly"
+    },
+    {
+      "name": "isArrayBuffer / isBlob / isBuffer / isFormData",
+      "libraries": [
+        "lodash",
+        "sindresorhus/is"
+      ],
+      "native": "value instanceof ArrayBuffer / Blob / Buffer / FormData",
+      "since": "ES2015 / Web API",
+      "example": "if (value instanceof ArrayBuffer) { ... }",
+      "notes": "Platform-specific, use instanceof directly"
+    },
+    {
+      "name": "isHtmlElement / isUrlInstance / isUrlSearchParams",
+      "libraries": [
+        "sindresorhus/is"
+      ],
+      "native": "value instanceof HTMLElement / URL / URLSearchParams",
+      "since": "Web API",
+      "example": "if (value instanceof HTMLElement) { ... }",
+      "notes": "Platform-specific, use instanceof directly"
     }
   ],
   "promise": [
     {
       "name": "withResolvers",
-      "libraries": ["radashi"],
+      "libraries": [
+        "radashi"
+      ],
       "native": "Promise.withResolvers()",
       "since": "ES2024",
       "example": "const { promise, resolve, reject } = Promise.withResolvers()"
@@ -222,7 +348,9 @@
   "random": [
     {
       "name": "uid",
-      "libraries": ["radashi"],
+      "libraries": [
+        "radashi"
+      ],
       "native": "crypto.randomUUID()",
       "since": "Web API",
       "example": "crypto.randomUUID()  // 'f47ac10b-58cc-...'",
