@@ -19,11 +19,11 @@
  * isPromise(42)                      // => false
  * @since 2.0.0
  */
-export function isPromise(value: unknown): value is Promise<unknown> {
+export function isPromise(value: unknown): value is PromiseLike<unknown> {
   return (
     value !== null &&
     typeof value === 'object' &&
-    typeof (value as Promise<unknown>).then === 'function' &&
-    typeof (value as Promise<unknown>).catch === 'function'
+    typeof (value as PromiseLike<unknown>).then === 'function' &&
+    typeof (value as Record<string, unknown>).catch === 'function'
   );
 }
