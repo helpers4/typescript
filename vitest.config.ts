@@ -23,7 +23,8 @@ export default defineConfig({
       }
     },
     benchmark: {
-      include: ['helpers/**/*.bench.ts']
+      include: ['helpers/**/*.bench.ts'],
+      exclude: ['**/.stryker-tmp/**']
     }
   }
 });
