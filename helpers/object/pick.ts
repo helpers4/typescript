@@ -14,10 +14,14 @@
  * // => { a: 1, c: 3 }
  * @since 2.0.0
  */
+export function pick<T extends Record<string, unknown>, K extends keyof T>(obj: T, keys: readonly K[]): Pick<T, K>;
+export function pick(obj: undefined, keys: readonly string[]): undefined;
+export function pick(obj: null, keys: readonly string[]): null;
 export function pick<T extends Record<string, unknown>, K extends keyof T>(
-  obj: T,
+  obj: T | undefined | null,
   keys: readonly K[]
-): Pick<T, K> {
+): Pick<T, K> | undefined | null {
+  if (obj === undefined || obj === null) return obj;
   const result = {} as Pick<T, K>;
   for (const key of keys) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {

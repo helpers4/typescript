@@ -13,7 +13,11 @@
  * // => { a: 1, e: 'hello' }
  * @since 2.0.0
  */
-export function compact<T extends Record<string, unknown>>(obj: T): Partial<T> {
+export function compact<T extends Record<string, unknown>>(obj: T): Partial<T>;
+export function compact(obj: undefined): undefined;
+export function compact(obj: null): null;
+export function compact<T extends Record<string, unknown>>(obj: T | undefined | null): Partial<T> | undefined | null {
+  if (obj === undefined || obj === null) return obj;
   const result: Partial<T> = {};
   for (const key of Object.keys(obj) as (keyof T)[]) {
     if (obj[key]) {

@@ -14,7 +14,11 @@
  * // => 'camel_case'
  * @since 2.0.0
  */
-export function snakeCase(str: string): string {
+export function snakeCase(str: string): string;
+export function snakeCase(str: undefined): undefined;
+export function snakeCase(str: null): null;
+export function snakeCase(str: string | undefined | null): string | undefined | null {
+  if (str === undefined || str === null) return str;
   return str
     .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
     .replace(/([A-Z])([A-Z][a-z])/g, '$1_$2')

@@ -11,7 +11,11 @@
  * @returns The merged object
  * @since 1.9.0
  */
-export function deepMerge<T extends Record<string, any>>(target: T, ...sources: Record<string, any>[]): T {
+export function deepMerge<T extends Record<string, any>>(target: T, ...sources: Record<string, any>[]): T;
+export function deepMerge(target: undefined, ...sources: Record<string, any>[]): undefined;
+export function deepMerge(target: null, ...sources: Record<string, any>[]): null;
+export function deepMerge<T extends Record<string, any>>(target: T | undefined | null, ...sources: Record<string, any>[]): T | undefined | null {
+  if (target === undefined || target === null) return target;
   if (!sources.length) return target;
   const source = sources.shift();
 

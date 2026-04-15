@@ -17,7 +17,11 @@
  * // => 'Query Items'
  * @since 2.0.0
  */
-export function titleCase(str: string): string {
+export function titleCase(str: string): string;
+export function titleCase(str: undefined): undefined;
+export function titleCase(str: null): null;
+export function titleCase(str: string | undefined | null): string | undefined | null {
+  if (str === undefined || str === null) return str;
   return str
     .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
     .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2')

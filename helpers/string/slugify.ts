@@ -15,7 +15,11 @@
  * // 'hello-world'
  * @since 2.0.0
  */
-export function slugify(str: string): string {
+export function slugify(str: string): string;
+export function slugify(str: undefined): undefined;
+export function slugify(str: null): null;
+export function slugify(str: string | undefined | null): string | undefined | null {
+  if (str === undefined || str === null) return str;
   return str
     .normalize('NFKD')
     .replace(/[\u0300-\u036f]/g, '')

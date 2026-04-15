@@ -39,7 +39,11 @@ export interface ParsedVersion {
  * parse('1.0.0-beta+exp.sha.5114f85') // { major: 1, minor: 0, patch: 0, prerelease: ['beta'], build: ['exp', 'sha', '5114f85'] }
  * @since 2.0.0
  */
-export function parse(version: string): ParsedVersion {
+export function parse(version: string): ParsedVersion;
+export function parse(version: undefined): undefined;
+export function parse(version: null): null;
+export function parse(version: string | undefined | null): ParsedVersion | undefined | null {
+  if (version === undefined || version === null) return version;
   // Remove optional 'v' prefix
   const normalized = version.replace(/^v/, '');
 

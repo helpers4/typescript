@@ -32,4 +32,12 @@ describe("kebabCase", () => {
     expect(kebabCase("hello")).toBe("hello");
     expect(kebabCase("Hello")).toBe("hello");
   });
+
+  it('should return null when given null', () => {
+    expect(kebabCase(null)).toBeNull();
+  });
+
+  it('should return undefined when given undefined', () => {
+    expect(kebabCase(undefined)).toBeUndefined();
+  });
 });

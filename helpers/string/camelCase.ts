@@ -10,6 +10,10 @@
  * @returns String in camelCase
  * @since 1.9.0
  */
-export function camelCase(str: string): string {
+export function camelCase(str: string): string;
+export function camelCase(str: undefined): undefined;
+export function camelCase(str: null): null;
+export function camelCase(str: string | undefined | null): string | undefined | null {
+  if (str === undefined || str === null) return str;
   return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
 }

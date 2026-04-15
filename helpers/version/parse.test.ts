@@ -233,4 +233,12 @@ describe('parse', () => {
       });
     });
   });
+
+  it('should return null when given null', () => {
+    expect(parse(null)).toBeNull();
+  });
+
+  it('should return undefined when given undefined', () => {
+    expect(parse(undefined)).toBeUndefined();
+  });
 });

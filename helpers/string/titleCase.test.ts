@@ -53,4 +53,12 @@ describe('titleCase', () => {
     expect(titleCase('hello')).toBe('Hello');
     expect(titleCase('HELLO')).toBe('Hello');
   });
+
+  it('should return null when given null', () => {
+    expect(titleCase(null)).toBeNull();
+  });
+
+  it('should return undefined when given undefined', () => {
+    expect(titleCase(undefined)).toBeUndefined();
+  });
 });

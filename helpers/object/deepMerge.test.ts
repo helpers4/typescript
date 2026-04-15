@@ -108,4 +108,12 @@ describe("deepMerge", () => {
     const result = deepMerge(target, null as any, undefined as any, { b: 2 });
     expect(result).toEqual({ a: 1, b: 2 });
   });
+
+  it('should return null when target is null', () => {
+    expect(deepMerge(null)).toBeNull();
+  });
+
+  it('should return undefined when target is undefined', () => {
+    expect(deepMerge(undefined)).toBeUndefined();
+  });
 });
