@@ -14,11 +14,13 @@ describe('isPromise', () => {
   });
 
   it('should return true for thenables with catch', () => {
+    // eslint-disable-next-line unicorn/no-thenable -- Testing thenable detection
     const thenable = { then: () => { }, catch: () => { } };
     expect(isPromise(thenable)).toBe(true);
   });
 
   it('should return false for partial thenables', () => {
+    // eslint-disable-next-line unicorn/no-thenable -- Testing thenable detection
     expect(isPromise({ then: () => { } })).toBe(false);
     expect(isPromise({ catch: () => { } })).toBe(false);
   });
