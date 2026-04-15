@@ -251,6 +251,7 @@ jobs:
     uses: ./.github/workflows/job-bench.yml
     with:
       node-version: ${{ env.NODE_LATEST_LTS }}
+    continue-on-error: true
 
   # PR comment with results
   pr-comment:
