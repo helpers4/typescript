@@ -42,7 +42,9 @@ jobs:
           echo "Running strict security audit..."
           echo "Audit level: ${{ inputs.audit-level }}"
 
-          if pnpm audit --audit-level "${{ inputs.audit-level }}"; then
+          # TODO: Remove --ignore-registry-errors once pnpm supports the new bulk advisory endpoint
+          # Tracked upstream: https://github.com/pnpm/pnpm/issues/11265
+          if pnpm audit --audit-level "${{ inputs.audit-level }}" --ignore-registry-errors; then
             echo "status=success" >> $GITHUB_OUTPUT
           else
             echo "status=failure" >> $GITHUB_OUTPUT
