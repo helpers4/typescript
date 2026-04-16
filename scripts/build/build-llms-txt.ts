@@ -75,7 +75,8 @@ function renderFunction(fn: ApiFunction, packageName: string): string {
   // Signatures
   for (const sig of fn.signatures) {
     lines.push('```typescript');
-    lines.push(`import { ${fn.name} } from '${packageName}';`);
+    const importKeyword = fn.kind === 'type' || fn.kind === 'interface' ? 'import type' : 'import';
+    lines.push(`${importKeyword} { ${fn.name} } from '${packageName}';`);
     lines.push('');
     lines.push(sig.signature);
     lines.push('```');
@@ -149,9 +150,11 @@ function renderCategoryLlmsTxt(
   lines.push('');
   lines.push('## Usage');
   lines.push('');
-  lines.push('```typescript');
-  lines.push(`import { ${functions.slice(0, 3).map(f => f.name).join(', ')}${functions.length > 3 ? ', ...' : ''} } from '${packageName}';`);
-  lines.push('```');
+  if (functions.length > 0) {
+    lines.push('```typescript');
+    lines.push(`import { ${functions.slice(0, 3).map(f => f.name).join(', ')}${functions.length > 3 ? ', ...' : ''} } from '${packageName}';`);
+    lines.push('```');
+  }
   lines.push('');
   lines.push('## Functions');
   lines.push('');

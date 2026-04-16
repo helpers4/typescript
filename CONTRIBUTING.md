@@ -23,7 +23,7 @@ helpers/
     functionName.test.ts       # Tests (colocated, 100% coverage required)
     functionName.bench.ts      # Benchmark (optional)
     functionName.example.ts    # Usage examples (required)
-    index.ts                   # Re-exports all helpers in the category
+    index.ts                   # Auto-generated category re-exports (build output, ignored by Git)
     config.json                # Category metadata
 ```
 
