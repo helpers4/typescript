@@ -17,6 +17,7 @@
   <img src="https://img.shields.io/badge/coverage-100%25-brightgreen" alt="coverage" />
   <a href="https://dashboard.stryker-mutator.io/reports/github.com/helpers4/typescript/main"><img src="https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fhelpers4%2Ftypescript%2Fmain" alt="mutation score" /></a>
   <img src="https://img.shields.io/badge/tree--shakable-✓-green" alt="tree-shakable" />
+  <a href="https://securityscorecards.dev/viewer/?uri=github.com/helpers4/typescript"><img src="https://api.securityscorecards.dev/projects/github.com/helpers4/typescript/badge" alt="OpenSSF Scorecard" /></a>
 </p>
 
 ---
