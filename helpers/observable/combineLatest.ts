@@ -23,7 +23,7 @@ export function combineLatest<A extends readonly unknown[]>(
 ): Observable<A>;
 
 // combineLatest({a, b, c})
-export function combineLatest<T extends Record<string, ObservableInput<any>>>(
+export function combineLatest<T extends Record<string, ObservableInput<unknown>>>(
   sourcesObject: T
 ): Observable<{ [K in keyof T]: ObservedValueOf<T[K]> }>;
 
@@ -52,13 +52,13 @@ export function combineLatest<T extends Record<string, ObservableInput<any>>>(
  * each input Observable.
  * @since 1.0.0
  */
-export function combineLatest(input: any): any {
+export function combineLatest(input: readonly ObservableInput<unknown>[] | Record<string, ObservableInput<unknown>>): Observable<unknown> {
   if (Array.isArray(input)) {
-    input = input.filter((a) => !!a);
-    return input.length ? combineLatestOperator(...input) : of([]);
+    const filtered = input.filter((a) => !!a);
+    return filtered.length ? combineLatestOperator(...filtered) : of([]);
   } else {
     return Object.entries(input).filter(([_, v]) => !!v).length
-      ? combineLatestOperator(input)
+      ? combineLatestOperator(input as Record<string, ObservableInput<never>>)
       : of({});
   }
 }

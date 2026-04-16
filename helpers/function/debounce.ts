@@ -11,13 +11,13 @@
  * @returns The debounced function
  * @since 1.9.0
  */
-export function debounce<T extends (...args: any[]) => any>(
-  func: T,
+export function debounce<A extends unknown[], R>(
+  func: (...args: A) => R,
   delay: number
-): (...args: Parameters<T>) => void {
+): (...args: A) => void {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  return (...args: Parameters<T>) => {
+  return (...args: A) => {
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
