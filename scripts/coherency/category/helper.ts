@@ -32,7 +32,15 @@ export async function testCategoryPackages(): Promise<void> {
     console.log(`  📦 Checking category: ${categoryDir}`);
 
     // Check required files exist
-    const requiredFiles = ['package.json', 'README.md', 'LICENSE.md'];
+    const requiredFiles = [
+      'package.json',
+      'README.md',
+      'LICENSE.md',
+      'llms.txt',
+      'meta/api.json',
+      'meta/examples.json',
+      'meta/licenses.json',
+    ];
     for (const file of requiredFiles) {
       const filePath = path.join(categoryPath, file);
       if (!await fs.pathExists(filePath)) {
