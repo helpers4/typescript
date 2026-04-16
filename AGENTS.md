@@ -50,7 +50,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) with a gitmo
 - **TypeScript** 5.7.2 (strict mode, no `any`)
 - **Package Manager:** pnpm
 - **Build:** Vite 7.x + Rollup (ES modules + declarations)
-- **Testing:** Vitest (100% coverage enforced)
+- **Testing:** Vitest (100% coverage enforced) + fast-check (property-based)
 - **Benchmarking:** Vitest Bench (non-blocking, informational)
 - **Linting:** oxlint
 
@@ -124,7 +124,8 @@ pnpm release:validate
 ```
 helpers/<category>/
 ├── functionName.ts            # One function per file
-├── functionName.test.ts       # Colocated test
+├── functionName.test.ts       # Colocated unit tests (100% coverage required)
+├── functionName.spec.ts       # Property-based + contract tests (fast-check)
 ├── functionName.bench.ts      # Optional benchmark
 ├── index.ts                   # Re-exports all helpers
 └── config.json                # Category metadata
