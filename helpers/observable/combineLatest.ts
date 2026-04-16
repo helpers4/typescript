@@ -57,8 +57,11 @@ export function combineLatest(input: readonly ObservableInput<unknown>[] | Recor
     const filtered = input.filter((a) => !!a);
     return filtered.length ? combineLatestOperator(...filtered) : of([]);
   } else {
-    return Object.entries(input).filter(([_, v]) => !!v).length
-      ? combineLatestOperator(input as Record<string, ObservableInput<never>>)
+    const filtered = Object.fromEntries(
+      Object.entries(input).filter(([_, v]) => !!v),
+    );
+    return Object.keys(filtered).length
+      ? combineLatestOperator(filtered)
       : of({});
   }
 }
