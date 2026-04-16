@@ -51,7 +51,10 @@ const examples: HelperExamples = {
 // => [1, [2, 3], 4]`,
       assert: () => {
         const result = ensureArray([[1, [2, 3]], [4]], 1);
-        if (result.length !== 3 || result[0] !== 1 || result[2] !== 4)
+        if (
+          result.length !== 3 ||
+          JSON.stringify(result) !== JSON.stringify([1, [2, 3], 4])
+        )
           throw new Error('Unexpected flattened result');
       },
     },
