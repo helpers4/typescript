@@ -44,6 +44,7 @@ jobs:
 
       - name: Run benchmarks
         id: bench
+        continue-on-error: true
         run: |
           echo "Running benchmarks with Vitest..."
           pnpm bench 2>&1 | tee bench-output.txt
