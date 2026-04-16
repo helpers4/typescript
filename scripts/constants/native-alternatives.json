@@ -354,7 +354,18 @@
       "native": "crypto.randomUUID()",
       "since": "Web API",
       "example": "crypto.randomUUID()  // 'f47ac10b-58cc-...'",
-      "notes": "Generates UUID v4; Radashi uid is shorter and customizable"
+      "notes": "Generates UUID v4; Radashi uid is shorter and customizable. For UUID v7, use uuid7 from helpers4/math"
+    },
+    {
+      "name": "uuid",
+      "libraries": [
+        "uuid",
+        "nanoid"
+      ],
+      "native": "crypto.randomUUID()",
+      "since": "Web API",
+      "example": "crypto.randomUUID()  // 'f47ac10b-58cc-4372-a567-0e02b2c3d479'",
+      "notes": "UUID v4 only; for UUID v7 (sortable, timestamped) use uuid7 from helpers4/math"
     }
   ]
 }
