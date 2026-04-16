@@ -3,7 +3,8 @@
   "image": "mcr.microsoft.com/devcontainers/typescript-node:24",
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {},
-    "ghcr.io/helpers4/devcontainer/local-mounts:1": {},
+    // Disabled for now, due to Codespace limitations
+    //"ghcr.io/helpers4/devcontainer/local-mounts:1": {},
     "ghcr.io/helpers4/devcontainer/shell-history-per-project:1": {},
     "ghcr.io/helpers4/devcontainer/git-absorb:1": {},
     "ghcr.io/helpers4/devcontainer/essential-dev:1": {},
@@ -12,7 +13,8 @@
     "ghcr.io/helpers4/devcontainer/peon-ping:1": {
       "packs": "peasant_fr,peon_fr,warcraft-peon"
     },
-    "ghcr.io/joshuanianji/devcontainer-features/mount-pnpm-store:1": {},
+    // Disabled for now, due to Codespace limitations
+    //"ghcr.io/joshuanianji/devcontainer-features/mount-pnpm-store:1": {},
     "ghcr.io/helpers4/devcontainer/package-auto-install:1": {},
     "ghcr.io/helpers4/devcontainer/auto-header:1": {
       "projectName": "helpers4",
