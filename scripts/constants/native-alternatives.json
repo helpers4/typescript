@@ -106,6 +106,18 @@
       "native": "Array.prototype.slice(n)",
       "since": "ES3",
       "example": "arr.slice(n)"
+    },
+    {
+      "name": "sortBy / orderBy",
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
+      "native": "Array.prototype.toSorted(fn?)",
+      "since": "ES2023",
+      "example": "arr.toSorted((a, b) => a.name.localeCompare(b.name))",
+      "notes": "Immutable version of .sort(); helpers4/array provides createSortByStringFn/NumberFn/DateFn comparator factories"
     }
   ],
   "number": [
