@@ -65,7 +65,7 @@ chunk([1, 2, 3, 4, 5], 2); // [[1, 2], [3, 4], [5]]
 - **TypeScript-first** — full type safety with generics
 - **Individually packaged** — install one category or all of them
 - **Consistent API** — uniform naming conventions across all modules (e.g., `shallowEquals`, `deepCompare`, `compare`)
-- **Fully tested** — comprehensive test suite with mutation testing via Stryker
+- **Fully tested** — comprehensive test suite with 100% coverage, property-based testing via fast-check, and mutation testing via Stryker
 
 ## Documentation
 

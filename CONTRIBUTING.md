@@ -20,7 +20,8 @@ pnpm install
 helpers/
   <category>/
     functionName.ts            # Implementation (one function per file)
-    functionName.test.ts       # Tests (colocated, 100% coverage required)
+    functionName.test.ts       # Unit tests (colocated, 100% coverage required)
+    functionName.spec.ts       # Property-based + contract tests (fast-check)
     functionName.bench.ts      # Benchmark (optional)
     functionName.example.ts    # Usage examples (required)
     index.ts                   # Auto-generated category re-exports (build output, ignored by Git)
@@ -126,6 +127,67 @@ pnpm test:watch                                       # Watch mode
 pnpm test:coverage                                    # With detailed coverage
 ```
 
+### Step 2b — Property-based & contract tests
+
+Create `helpers/<category>/functionName.spec.ts` alongside the unit test file:
+
+```typescript
+/**
+ * This file is part of helpers4.
+ * Copyright (C) 2025 <Your Name>
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ */
+
+import { describe, expect, it } from 'vitest';
+import * as fc from 'fast-check';
+import { clamp } from './clamp';
+
+describe('clamp — property-based', () => {
+  it('result is always within [min, max]', () => {
+    fc.assert(
+      fc.property(
+        fc.float({ noNaN: true }),
+        fc.float({ noNaN: true }),
+        fc.float({ noNaN: true }),
+        (a, b, value) => {
+          const [min, max] = a <= b ? [a, b] : [b, a];
+          const result = clamp(value, min, max);
+          expect(result).toBeGreaterThanOrEqual(min);
+          expect(result).toBeLessThanOrEqual(max);
+        },
+      ),
+    );
+  });
+});
+
+describe('clamp — contract', () => {
+  it('should handle -Infinity as value', () => {
+    expect(clamp(-Infinity, 0, 10)).toBe(0);
+  });
+
+  it('should handle +Infinity as value', () => {
+    expect(clamp(Infinity, 0, 10)).toBe(10);
+  });
+});
+```
+
+**Two types of tests live in `.spec.ts`:**
+
+1. **Property-based tests** (using `fast-check`) — verify invariants that hold for any input, using randomly generated data. Think of them as "for all inputs, this property must hold".
+2. **Contract/boundary tests** — explicit tests on adversarial or boundary inputs (empty strings, `null`, `undefined`, `Infinity`, `NaN`, path traversal sequences, scheme abuse...) that document the function's behavior at its limits.
+
+**Guidelines:**
+- Use `fc.assert(fc.property(...))` for property-based tests
+- Group them under `describe('functionName — property-based')` and `describe('functionName — contract')`
+- Contract tests are especially important for `string/*`, `url/*`, and `version/*`
+- `.spec.ts` files are **excluded from coverage measurement** — they test properties, not code branches
+
+Run spec files:
+
+```bash
+npx vitest run helpers/<category>/functionName.spec.ts # Single spec file
+```
+
 ### Step 3 — Examples
 
 Create `helpers/<category>/functionName.example.ts`:
@@ -178,13 +240,12 @@ Run examples: `pnpm examples`
 
 ### Step 4 — Export
 
-Add your function to `helpers/<category>/index.ts`:
+You do **not** need to manually edit `helpers/<category>/index.ts`.
+That file is auto-generated during the build and ignored by Git.
 
-```typescript
-export * from './functionName';
-```
-
-Keep exports in **alphabetical order**.
+To make your helper available, simply add your implementation as
+`helpers/<category>/functionName.ts` — the build will discover it and
+generate the category re-exports automatically.
 
 ### Step 5 — Benchmark (optional)
 
@@ -262,9 +323,9 @@ Before opening a PR, make sure:
 - [ ] License header present on all new files
 - [ ] JSDoc with `@param`, `@returns`, `@example`, `@since`
 - [ ] No `any` — use `unknown` or specific types
-- [ ] Tests with **100% coverage** (lines, functions, branches, statements)
+  - [ ] Tests with **100% coverage** (lines, functions, branches, statements)
+  - [ ] Property-based + contract spec file (`functionName.spec.ts`)
 - [ ] Example file with at least 2 examples and `assert` functions
-- [ ] Export added to `index.ts` (alphabetical order)
 - [ ] `pnpm test` passes
 - [ ] `pnpm typecheck` passes
 - [ ] `pnpm lint` passes
@@ -282,7 +343,7 @@ If your helper doesn't fit any existing category:
      "description": "Brief description of the category"
    }
    ```
-3. Create `index.ts` with your exports
+3. The build will auto-generate `index.ts` for the new category
 4. Add the scope to the commit convention
 
 ## For AI contributors
