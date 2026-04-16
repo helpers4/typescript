@@ -253,7 +253,6 @@ jobs:
     uses: ./.github/workflows/job-bench.yml
     with:
       node-version: "24"
-    continue-on-error: true
 
   # PR comment with results
   pr-comment:
