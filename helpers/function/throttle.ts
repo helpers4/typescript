@@ -11,14 +11,14 @@
  * @returns The throttled function
  * @since 1.9.0
  */
-export function throttle<T extends (...args: any[]) => any>(
-  func: T,
+export function throttle<A extends unknown[], R>(
+  func: (...args: A) => R,
   wait: number
-): (...args: Parameters<T>) => void {
+): (...args: A) => void {
   let lastCallTime = 0;
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  return (...args: Parameters<T>) => {
+  return (...args: A) => {
     const now = Date.now();
 
     if (now - lastCallTime >= wait) {

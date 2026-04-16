@@ -70,8 +70,8 @@ export function deepCompare(objA: object | undefined | null, objB: object | unde
       differences[key] = "onlyA";
     } else {
       // Both objects have this key - compare values
-      const valueA = (objA as any)[key];
-      const valueB = (objB as any)[key];
+      const valueA = (objA as Record<string, unknown>)[key];
+      const valueB = (objB as Record<string, unknown>)[key];
 
       // For arrays, use shallowEquals
       if (Array.isArray(valueA) && Array.isArray(valueB)) {

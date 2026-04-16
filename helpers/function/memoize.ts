@@ -10,10 +10,10 @@
  * @returns The memoized function
  * @since 1.9.0
  */
-export function memoize<T extends (...args: any[]) => any>(func: T): T {
-  const cache = new Map<string, ReturnType<T>>();
+export function memoize<A extends unknown[], R>(func: (...args: A) => R): (...args: A) => R {
+  const cache = new Map<string, R>();
 
-  return ((...args: Parameters<T>): ReturnType<T> => {
+  return (...args: A): R => {
     const key = JSON.stringify(args);
 
     if (cache.has(key)) {
@@ -23,5 +23,5 @@ export function memoize<T extends (...args: any[]) => any>(func: T): T {
     const result = func(...args);
     cache.set(key, result);
     return result;
-  }) as T;
+  };
 }
