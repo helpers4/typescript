@@ -83,12 +83,14 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
       newVersion = 'x.x.x-dry-run';
     }
 
+    const releaseTag = `v${newVersion}`;
+
     // Step 4: Generate changelog
     console.log('\n📋 Step 4: Generating changelog');
     if (!options.dryRun) {
-      await execAsync('pnpm run changelog');
+      await execAsync(`pnpm run changelog -- --tag ${releaseTag}`);
     } else {
-      console.log('[DRY RUN] Would regenerate CHANGELOG.md');
+      console.log(`[DRY RUN] Would regenerate CHANGELOG.md for ${releaseTag}`);
     }
     console.log('✅ Changelog generated');
 
