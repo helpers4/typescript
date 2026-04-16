@@ -31,6 +31,7 @@ async function testBundle() {
     "package.json",
     "README.md",
     "LICENSE.md",
+    "llms.txt",
     "meta/build.json",
     "meta/packages.json"
   ];
