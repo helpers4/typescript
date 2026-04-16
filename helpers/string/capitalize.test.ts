@@ -35,4 +35,21 @@ describe("capitalize", () => {
   it('should return undefined when given undefined', () => {
     expect(capitalize(undefined)).toBeUndefined();
   });
+
+  // --- Mutation-killing tests ---
+
+  // L13: ConditionalExpression -> false (str.charAt(0).toUpperCase() + str.slice(1).toLowerCase())
+  // If the expression is replaced with false, capitalize would return false instead of string
+  it('should return a string, not false', () => {
+    const result = capitalize('test');
+    expect(result).toBe('Test');
+    expect(typeof result).toBe('string');
+    expect(result).not.toBe(false);
+  });
+
+  it('should capitalize and lowercase correctly', () => {
+    expect(capitalize('tEST')).toBe('Test');
+    expect(capitalize('TEST')).toBe('Test');
+    expect(capitalize('test')).toBe('Test');
+  });
 });

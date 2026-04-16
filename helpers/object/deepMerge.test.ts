@@ -116,4 +116,35 @@ describe("deepMerge", () => {
   it('should return undefined when target is undefined', () => {
     expect(deepMerge(undefined)).toBeUndefined();
   });
+
+  // --- Mutation-killing tests ---
+
+  // L17: ConditionalExpression -> false (isPlainObject check on targetValue)
+  // If false, nested plain objects would NOT be deeply merged
+  it('should deeply merge nested objects (not just overwrite)', () => {
+    const target = { a: { x: 1, y: 2 } };
+    const source = { a: { z: 3 } };
+    const result = deepMerge(target, source);
+    // Deep merge: a should have x, y, AND z
+    expect(result.a).toEqual({ x: 1, y: 2, z: 3 });
+    // If ConditionalExpression false, a would just be { z: 3 } (overwritten)
+    expect(result.a.x).toBe(1);
+  });
+
+  // L23: isPlainObject(targetValue) && isPlainObject(sourceValue) -> ||
+  // If ||, one being plain object would trigger deep merge on non-object
+  it('should overwrite when target value is not plain object', () => {
+    const target = { a: 'string' };
+    const source = { a: { nested: true } };
+    const result = deepMerge(target, source);
+    // Should overwrite, not deeply merge string+object
+    expect(result.a).toEqual({ nested: true });
+  });
+
+  it('should overwrite when source value is not plain object', () => {
+    const target = { a: { nested: true } };
+    const source = { a: 'string' };
+    const result = deepMerge(target, source);
+    expect(result.a).toBe('string');
+  });
 });

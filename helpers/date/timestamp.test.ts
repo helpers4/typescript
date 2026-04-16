@@ -21,4 +21,19 @@ describe("timestamp utilities", () => {
       expect(normalizeTimestamp(1642694400000)).toBe(1642694400000);
     });
   });
+
+  // --- Mutation-killing tests ---
+
+  // L14: timestamp < 10000000000 -> timestamp <= 10000000000
+  // If <=, the boundary value 10000000000 would be treated as seconds
+  it("should treat 10000000000 as milliseconds (not seconds)", () => {
+    // 10000000000 is the boundary; with <, it's milliseconds; with <=, it would be seconds
+    expect(isTimestampInSeconds(10000000000)).toBe(false);
+    expect(normalizeTimestamp(10000000000)).toBe(10000000000); // Already ms
+  });
+
+  it("should treat 9999999999 as seconds", () => {
+    expect(isTimestampInSeconds(9999999999)).toBe(true);
+    expect(normalizeTimestamp(9999999999)).toBe(9999999999000);
+  });
 });

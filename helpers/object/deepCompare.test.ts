@@ -255,7 +255,119 @@ describe('deepCompare', () => {
     expect(result).toEqual({ level1: { level2: { y: false } } });
   });
 
-  // --- Mutation-killing tests ---
+  // --- Mutation-killing tests for LogicalOperator && -> || ---
+
+  // L37: objA instanceof Date && objB instanceof Date -> ||
+  // If mutated to ||, then Date + non-Date would enter the Date comparison branch incorrectly
+  it('should not treat Date + non-Date as two Dates at root', () => {
+    const date = new Date('2023-01-01');
+    const obj = { a: 1 };
+    // With ||, this would try compareDate(date, obj) which is wrong
+    expect(deepCompare(date, obj)).toBe(false);
+    expect(deepCompare(obj, date)).toBe(false);
+  });
+
+  // L42: Array.isArray(objA) && Array.isArray(objB) -> ||
+  // If mutated to ||, then Array + non-Array would enter shallowEquals branch
+  it('should not treat Array + non-Array as two Arrays at root', () => {
+    const arr = [1, 2, 3];
+    const obj = { length: 3, '0': 1 };
+    expect(deepCompare(arr, obj)).toBe(false);
+    expect(deepCompare(obj, arr)).toBe(false);
+  });
+
+  // L53: isSpecialObject(objA) || isSpecialObject(objB) -> false
+  // Need a test where one root arg is special and other is plain
+  it('should return false when one root is special object and other is not', () => {
+    const regex = /test/;
+    const plain = { a: 1 };
+    expect(deepCompare(regex, plain)).toBe(false);
+    expect(deepCompare(plain, regex)).toBe(false);
+  });
+
+  // L75: Array.isArray(valueA) && Array.isArray(valueB) -> ||
+  // If mutated to ||, then property with Array + non-Array would enter shallowEquals branch
+  it('should handle property where one value is array and other is not', () => {
+    // This kills the || mutation: with ||, one array triggers array comparison
+    expect(deepCompare({ x: [1, 2] }, { x: 'not-array' })).toEqual({ x: false });
+    expect(deepCompare({ x: 'not-array' }, { x: [1, 2] })).toEqual({ x: false });
+  });
+
+  // L81: valueA instanceof Date && valueB instanceof Date -> ||
+  // If mutated to ||, Date + non-Date property would enter compareDate
+  it('should handle property where one value is Date and other is not', () => {
+    expect(deepCompare({ d: new Date() }, { d: 42 })).toEqual({ d: false });
+    expect(deepCompare({ d: 42 }, { d: new Date() })).toEqual({ d: false });
+  });
+
+  // L87: isSpecialObject(valueA) || isSpecialObject(valueB) -> &&
+  // If mutated to &&, only both-special triggers special comparison; one-special falls through
+  it('should compare by reference when only one value is special object', () => {
+    const fn = () => {};
+    // With && mutation, fn + plain would NOT enter special branch, might deeply compare
+    expect(deepCompare({ a: fn }, { a: { x: 1 } })).toEqual({ a: false });
+    expect(deepCompare({ a: { x: 1 } }, { a: fn })).toEqual({ a: false });
+  });
+
+  // L87: isSpecialObject(valueA) || isSpecialObject(valueB) -> false
+  // Need case where both are special and different -> should be false
+  it('should return false for different special objects in properties', () => {
+    const fn1 = () => {};
+    const fn2 = () => {};
+    expect(deepCompare({ a: fn1 }, { a: fn2 })).toEqual({ a: false });
+  });
+
+  // L94: Complex condition with &&/|| mutations and ConditionalExpression -> true
+  // The condition checks: both non-null, non-undefined, objects, non-special
+  // If mutated to true, non-object primitives would try to recurse
+  it('should handle property with null vs object (kills L94 || mutations)', () => {
+    // When valueA is null and valueB is object, should NOT enter recursion
+    expect(deepCompare({ a: null }, { a: { x: 1 } })).toEqual({ a: false });
+    expect(deepCompare({ a: { x: 1 } }, { a: null })).toEqual({ a: false });
+  });
+
+  it('should handle property with undefined vs object (kills L94 mutations)', () => {
+    expect(deepCompare({ a: undefined }, { a: { x: 1 } })).toEqual({ a: false });
+    expect(deepCompare({ a: { x: 1 } }, { a: undefined })).toEqual({ a: false });
+  });
+
+  // L94: valueA !== null && valueB !== null -> valueA !== null || valueB !== null
+  // If ||, then one-null pair would pass the null check and enter recursion
+  it('should not recurse when one value is null and other is object', () => {
+    const result1 = deepCompare({ key: null }, { key: { nested: true } });
+    expect(result1).toEqual({ key: false });
+    const result2 = deepCompare({ key: { nested: true } }, { key: null });
+    expect(result2).toEqual({ key: false });
+  });
+
+  // L95: typeof valueA === 'object' && typeof valueB === 'object' -> true
+  // If mutated, primitives would be treated as objects for recursion
+  it('should not recurse when values are primitives (kills L95 true)', () => {
+    // string vs string: primitive, should use === comparison
+    expect(deepCompare({ a: 'hello' }, { a: 'world' })).toEqual({ a: false });
+    expect(deepCompare({ a: 'same' }, { a: 'same' })).toBe(true);
+    // number vs number: primitive
+    expect(deepCompare({ a: 1 }, { a: 2 })).toEqual({ a: false });
+    expect(deepCompare({ a: 1 }, { a: 1 })).toBe(true);
+  });
+
+  // L101: return false -> true (BooleanLiteral) and ConditionalExpression -> false
+  // Object.keys(differences).length > 0 ? differences : true
+  // If false returned instead of true when no differences, identical objects would return false
+  it('should return true (not false) when objects have identical properties', () => {
+    const result = deepCompare({ a: 1, b: 'str', c: true }, { a: 1, b: 'str', c: true });
+    expect(result).toBe(true);
+    expect(result).not.toBe(false);
+  });
+
+  // L101: ConditionalExpression -> false: length > 0 ? differences : true -> false
+  // When there ARE differences, should return the differences object, not false
+  it('should return differences object (not false) when objects differ', () => {
+    const result = deepCompare({ a: 1 }, { a: 2 });
+    expect(result).toEqual({ a: false });
+    expect(result).not.toBe(false); // It should be an object, not the boolean false
+    expect(typeof result).toBe('object');
+  });
 
   it('should return false when objA is valid object and objB is null', () => {
     expect(deepCompare({ a: 1 }, null)).toBe(false);

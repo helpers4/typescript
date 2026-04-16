@@ -133,5 +133,58 @@ describe("safe date utilities", () => {
       expect(safeDate(true as any)).toBe(null);
       expect(safeDate(false as any)).toBe(null);
     });
+
+    // --- Mutation-killing tests for L15 guard condition ---
+
+    // Each null/undefined/empty/zero must individually return null (not a valid Date)
+    // These ensure that removing any single condition from the || chain is detected
+
+    it("should return null for null and NOT a Date (kills ConditionalExpression false)", () => {
+      const result = safeDate(null);
+      expect(result).toBeNull();
+      expect(result).not.toBeInstanceOf(Date);
+    });
+
+    it("should return null for undefined and NOT a Date", () => {
+      const result = safeDate(undefined);
+      expect(result).toBeNull();
+      expect(result).not.toBeInstanceOf(Date);
+    });
+
+    it("should return null for empty string and NOT a Date", () => {
+      const result = safeDate("");
+      expect(result).toBeNull();
+    });
+
+    it("should return null for 0 and NOT epoch date", () => {
+      // If `input === 0` check is removed, normalizeTimestamp(0) would be called
+      // normalizeTimestamp(0) returns 0 (since 0 < 10^10), new Date(0) = epoch
+      const result = safeDate(0);
+      expect(result).toBeNull();
+      // Explicitly verify it's not the Unix epoch
+      expect(result).not.toEqual(new Date(0));
+    });
+
+    // Verify that non-null/undefined/empty/zero inputs DO return valid dates
+    // This kills && mutations: if || changed to &&, valid inputs would be wrongly checked
+    it("should return a valid Date for non-zero number (not null)", () => {
+      const result = safeDate(1);
+      expect(result).toBeInstanceOf(Date);
+      expect(result).not.toBeNull();
+    });
+
+    it("should return a valid Date for non-empty string (not null)", () => {
+      const result = safeDate("2023-01-01");
+      expect(result).toBeInstanceOf(Date);
+      expect(result).not.toBeNull();
+    });
+
+    it("should return a valid Date for valid Date object (not null)", () => {
+      const d = new Date("2023-06-15");
+      const result = safeDate(d);
+      expect(result).toBeInstanceOf(Date);
+      expect(result).not.toBeNull();
+      expect(result).toBe(d);
+    });
   });
 });

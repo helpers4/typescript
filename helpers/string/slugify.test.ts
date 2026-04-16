@@ -82,4 +82,52 @@ describe('slugify', () => {
   it('should return undefined when given undefined', () => {
     expect(slugify(undefined)).toBeUndefined();
   });
+
+  // --- Mutation-killing tests ---
+
+  // L18: .trim() removed — whitespace-only input should produce empty string
+  it('should trim whitespace to produce empty slug', () => {
+    expect(slugify('   ')).toBe('');
+    expect(slugify('\t\n ')).toBe('');
+  });
+
+  // L25: /^-+|-+$/g -> /^-|-+$/g (only removes single leading hyphen)
+  it('should remove multiple leading hyphens (not just one)', () => {
+    const result = slugify('---test');
+    expect(result).toBe('test');
+    expect(result).not.toBe('--test');
+  });
+
+  // L25: /^-+|-+$/g -> /^-+|-$/g (only removes single trailing hyphen)
+  it('should remove multiple trailing hyphens (not just one)', () => {
+    const result = slugify('test---');
+    expect(result).toBe('test');
+    expect(result).not.toBe('test--');
+  });
+
+  // L24: /[^a-z0-9]+/g -> /[^a-z0-9]/g (removes + quantifier)
+  // Without +, each non-alphanum char is separately replaced with '-'
+  // 'a!!b' -> 'a--b' instead of 'a-b'
+  it('should replace consecutive non-alphanumeric chars with single hyphen', () => {
+    const result = slugify('a!!b');
+    expect(result).toBe('a-b');
+    expect(result).not.toBe('a--b');
+  });
+
+  // L26: /-{2,}/g with '' → would remove hyphens entirely
+  // L26: /-{2,}/g → /-/g would replace single hyphens too
+  it('should keep single hyphens and only collapse doubles', () => {
+    // 'a-b' should stay 'a-b' (single hyphen preserved)
+    expect(slugify('a-b')).toBe('a-b');
+    // 'a--b' should become 'a-b' (double hyphen collapsed)
+    expect(slugify('a - b')).toBe('a-b');
+  });
+
+  // L26: StringLiteral '-' -> '' (replacement is empty instead of hyphen)
+  it('should collapse double hyphens to single hyphen, not remove them', () => {
+    // Input that produces double hyphens internally
+    const result = slugify('hello   world');
+    expect(result).toBe('hello-world');
+    expect(result).not.toBe('helloworld');
+  });
 });

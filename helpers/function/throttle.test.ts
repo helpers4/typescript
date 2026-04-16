@@ -71,4 +71,41 @@ describe("throttle", () => {
     vi.advanceTimersByTime(70);
     expect(callCount).toBe(2);
   });
+
+  // --- Mutation-killing tests ---
+
+  // L23: now - lastCallTime >= wait -> now - lastCallTime > wait
+  // If >, calling exactly at the wait boundary would NOT fire immediately
+  it("should fire immediately when called exactly at the wait boundary (>= not >)", () => {
+    let callCount = 0;
+    const wait = 100;
+    const throttledFunc = throttle(() => callCount++, wait);
+
+    throttledFunc(); // t=0, fires immediately
+    expect(callCount).toBe(1);
+
+    vi.advanceTimersByTime(100); // t=100, exactly at boundary
+    throttledFunc(); // Should fire immediately with >=, not with >
+    expect(callCount).toBe(2);
+  });
+
+  // L31: wait - (now - lastCallTime) -> wait + (now - lastCallTime) (ArithmeticOperator)
+  // If +, the timeout delay would be wait + elapsed instead of wait - elapsed
+  it("should use correct remaining delay for trailing call (subtraction not addition)", () => {
+    let callCount = 0;
+    const wait = 100;
+    const throttledFunc = throttle(() => callCount++, wait);
+
+    throttledFunc(); // t=0, fires immediately
+    expect(callCount).toBe(1);
+
+    vi.advanceTimersByTime(60); // t=60
+    throttledFunc(); // Schedules trailing at wait - 60 = 40ms
+    expect(callCount).toBe(1);
+
+    // With subtraction: fires at 60+40=100ms
+    // With addition: would fire at 60+160=220ms
+    vi.advanceTimersByTime(40); // t=100
+    expect(callCount).toBe(2); // Should fire now with correct delay
+  });
 });
