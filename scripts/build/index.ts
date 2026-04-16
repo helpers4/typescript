@@ -9,6 +9,7 @@ import { DIR } from "../constants";
 import { buildCategories } from "./build-categories";
 import { buildBundle } from "./build-bundle";
 import { buildWebsiteMetadata } from "./build-website-metadata";
+import { buildLlmsTxt } from "./build-llms-txt";
 
 async function main() {
   // Create or empty the /build directory
@@ -24,6 +25,9 @@ async function main() {
 
   // Build the bundle package with all valid categories
   await buildBundle(validCategories);
+
+  // Generate llms.txt files for AI coding assistants (after bundle dir is created)
+  await buildLlmsTxt(validCategories);
 }
 
 main().catch(error => {
