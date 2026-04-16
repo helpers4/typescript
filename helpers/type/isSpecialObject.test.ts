@@ -121,4 +121,51 @@ describe('isSpecialObject', () => {
     const customObj = { constructor: { name: 'CustomClass' } };
     expect(isSpecialObject(customObj)).toBe(false);
   });
+
+  // --- Mutation-killing tests ---
+
+  // L15: typeof value === 'function' -> false
+  // If mutated, functions would not be detected as special
+  it('should identify functions as special objects (not false)', () => {
+    const fn = () => {};
+    expect(isSpecialObject(fn)).toBe(true);
+    expect(isSpecialObject(function named() {})).toBe(true);
+    // Verify it's truly the function check, not some other path
+    expect(typeof fn).toBe('function');
+  });
+
+  // L30: typeof value !== 'object' -> false / BlockStatement {}
+  // If mutated, non-objects (numbers, strings, booleans, symbols, bigints) would pass through
+  // and could be wrongly detected as special objects
+  it('should return false for non-object non-function primitives', () => {
+    expect(isSpecialObject(42)).toBe(false);
+    expect(isSpecialObject('string')).toBe(false);
+    expect(isSpecialObject(true)).toBe(false);
+    expect(isSpecialObject(Symbol('s'))).toBe(false);
+    expect(isSpecialObject(BigInt(123))).toBe(false);
+  });
+
+  // L56: value.constructor?.name === 'Observable' -> true
+  // If true, any object with a constructor would be treated as special
+  it('should NOT treat plain objects with constructor as Observable', () => {
+    const plainObj = { a: 1, b: 2 };
+    expect(isSpecialObject(plainObj)).toBe(false);
+    // Plain object has constructor.name === 'Object'
+    expect(plainObj.constructor?.name).toBe('Object');
+  });
+
+  // L56: StringLiteral 'Observable' -> ''
+  // If '' is used, constructor.name === '' would match objects with empty constructor name
+  it('should only match Observable constructor name, not empty string', () => {
+    const obj = { constructor: { name: '' } };
+    expect(isSpecialObject(obj)).toBe(false);
+  });
+
+  it('should correctly identify Observable mock', () => {
+    const mockObs = { constructor: { name: 'Observable' } };
+    expect(isSpecialObject(mockObs)).toBe(true);
+    // Non-Observable should not match
+    const notObs = { constructor: { name: 'NotObservable' } };
+    expect(isSpecialObject(notObs)).toBe(false);
+  });
 });

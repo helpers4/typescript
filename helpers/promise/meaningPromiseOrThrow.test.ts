@@ -42,3 +42,27 @@ import { meaningPromiseOrThrow } from "./meaningPromiseOrThrow";
         return expect(result).toBe(value);
     });
 });
+
+// --- Mutation-killing tests ---
+
+// L42: Object.getPrototypeOf(obj) === Object.prototype -> true
+// If true, empty class instances would be considered empty objects and throw
+test("meaningPromiseOrThrow should NOT throw for empty class instance", async () => {
+    class MyClass {}
+    const instance = new MyClass();
+    // instance has no keys but prototype !== Object.prototype
+    const message = "should not throw";
+    const result = await Promise.resolve(instance)
+        .then(meaningPromiseOrThrow(message));
+    expect(result).toBe(instance);
+});
+
+test("meaningPromiseOrThrow should NOT throw for Object.create(custom) with no keys", async () => {
+    const proto = { custom: true };
+    const obj = Object.create(proto);
+    // obj has no own keys but prototype !== Object.prototype
+    const message = "should not throw";
+    const result = await Promise.resolve(obj)
+        .then(meaningPromiseOrThrow(message));
+    expect(result).toBe(obj);
+});

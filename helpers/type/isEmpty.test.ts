@@ -54,4 +54,34 @@ describe('isEmpty', () => {
     expect(isEmpty(false)).toBe(false);
     expect(isEmpty(() => undefined)).toBe(false);
   });
+
+  // --- Mutation-killing tests ---
+
+  // L46: ConditionalExpression -> false (isSpecialObject check skipped)
+  // If false, special objects would fall through to Object.keys check
+  it('should return false for special objects (not check keys)', () => {
+    // Date has no own enumerable keys by default
+    // If isSpecialObject check is false, isEmpty(new Date()) would check Object.keys
+    // which returns [] -> isEmpty would return true, which is wrong
+    expect(isEmpty(new Date())).toBe(false);
+    expect(isEmpty(/regex/)).toBe(false);
+    expect(isEmpty(new Error('test'))).toBe(false);
+  });
+
+  // L45: ConditionalExpression -> true (typeof value === 'object' always true)
+  // If true, non-objects like numbers would enter the object branch
+  it('should return false for numbers (not enter object branch)', () => {
+    expect(isEmpty(42)).toBe(false);
+    expect(isEmpty(0)).toBe(false);
+    expect(isEmpty(-1)).toBe(false);
+  });
+
+  // L46: BlockStatement {} (removes return false for special objects)
+  // Special objects would fall through to prototype check
+  it('should return false for special objects regardless of prototype', () => {
+    const promise = Promise.resolve();
+    expect(isEmpty(promise)).toBe(false);
+    expect(isEmpty(new Map())).toBe(true); // Map/Set are handled earlier
+    expect(isEmpty(new Set())).toBe(true); // Map/Set are handled earlier
+  });
 });

@@ -194,5 +194,65 @@ describe("compare", () => {
       expect(compare("1.0.0-alpha.1", "1.0.0-alpha.1")).toBe(0); // alpha==alpha (continue), 1==1 (continue), no more identifiers, equal
       expect(compare("1.0.0-a.b.c", "1.0.0-a.b.c")).toBe(0); // a==a, b==b, c==c, equal
     });
+
+    // --- Mutation-killing tests for regex /^\d+$/ ---
+    // Mutations: /^\d+/ (no end anchor), /\d+$/ (no start anchor), /^\d$/ (single digit)
+
+    it("should treat mixed alphanumeric identifiers like '1abc' as alphanumeric, not numeric", () => {
+      // /^\d+/ would match "1abc" (starts with digit), /^\d+$/ won't
+      // If regex mutated to /^\d+/, "1abc" wrongly treated as numeric
+      expect(compare("1.0.0-1abc", "1.0.0-2abc")).toBe(-1); // lexical: "1abc" < "2abc"
+      expect(compare("1.0.0-1abc", "1.0.0-10")).toBe(1); // alphanumeric > numeric
+    });
+
+    it("should treat identifiers like 'abc1' as alphanumeric, not numeric", () => {
+      // /\d+$/ would match "abc1" (ends with digit), /^\d+$/ won't
+      expect(compare("1.0.0-abc1", "1.0.0-abc2")).toBe(-1); // lexical
+      expect(compare("1.0.0-abc1", "1.0.0-1")).toBe(1); // alphanumeric > numeric
+    });
+
+    it("should handle multi-digit numeric identifiers correctly", () => {
+      // /^\d$/ only matches single digit, /^\d+$/ matches multi-digit
+      // If mutated to /^\d$/, "10" wrongly treated as alphanumeric
+      expect(compare("1.0.0-10", "1.0.0-9")).toBe(1); // 10 > 9 numerically
+      expect(compare("1.0.0-100", "1.0.0-99")).toBe(1); // 100 > 99 numerically
+      expect(compare("1.0.0-99", "1.0.0-100")).toBe(-1); // 99 < 100 numerically (not lexical)
+    });
+
+    // --- Mutation-killing tests for ConditionalExpression -> false (L49, L51) ---
+    // L49: if (num1 < num2) return -1 -> false means never returns -1 for numeric
+    // L51: if (num1 > num2) return 1 -> false means never returns 1 for numeric
+
+    it("should return -1 when first numeric identifier is smaller", () => {
+      expect(compare("1.0.0-1", "1.0.0-2")).toBe(-1);
+      expect(compare("1.0.0-0", "1.0.0-1")).toBe(-1);
+    });
+
+    it("should return 1 when first numeric identifier is larger", () => {
+      expect(compare("1.0.0-2", "1.0.0-1")).toBe(1);
+      expect(compare("1.0.0-1", "1.0.0-0")).toBe(1);
+    });
+
+    // --- Mutation-killing tests for EqualityOperator (L89-91) ---
+    // v1.major < v2.major -> v1.major <= v2.major
+    // If mutated to <=, equal majors would wrongly return -1
+
+    it("should return 0 when major versions are equal but not less (kills <= mutation)", () => {
+      // With <=, compare("2.0.0", "2.0.0") would return -1 instead of 0
+      expect(compare("2.0.0", "2.0.0")).toBe(0);
+      expect(compare("5.0.0", "5.0.0")).toBe(0);
+    });
+
+    it("should return 0 when minor versions are equal but not less (kills <= mutation)", () => {
+      // With <=, compare("1.3.0", "1.3.0") would return -1 instead of 0
+      expect(compare("1.3.0", "1.3.0")).toBe(0);
+      expect(compare("1.5.0", "1.5.0")).toBe(0);
+    });
+
+    it("should return 0 when patch versions are equal but not less (kills <= mutation)", () => {
+      // With <=, compare("1.0.3", "1.0.3") would return -1 instead of 0
+      expect(compare("1.0.3", "1.0.3")).toBe(0);
+      expect(compare("1.0.5", "1.0.5")).toBe(0);
+    });
   });
 });

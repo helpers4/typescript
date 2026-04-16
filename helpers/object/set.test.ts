@@ -46,4 +46,39 @@ describe("set", () => {
 
     expect(result).toBe(obj);
   });
+
+  // --- Mutation-killing tests ---
+
+  // L21: ConditionalExpression -> false (skips creating intermediate objects)
+  // If false, deeply nested paths with missing intermediates would fail
+  it("should create intermediate objects for deep paths", () => {
+    const obj: Record<string, any> = {};
+    set(obj, 'a.b.c.d', 'deep');
+    expect(obj.a.b.c.d).toBe('deep');
+    expect(typeof obj.a).toBe('object');
+    expect(typeof obj.a.b).toBe('object');
+    expect(typeof obj.a.b.c).toBe('object');
+  });
+
+  // L21: LogicalOperator !(key in current) || typeof current[key] !== 'object' -> &&
+  // If &&, existing non-object values would NOT be overwritten with {}
+  it("should overwrite non-object intermediate values", () => {
+    const obj: Record<string, any> = { a: 'string-value' };
+    set(obj, 'a.b', 'nested');
+    // 'a' was a string, should now be an object with 'b'
+    expect(obj.a.b).toBe('nested');
+    expect(typeof obj.a).toBe('object');
+  });
+
+  it("should overwrite null intermediate values", () => {
+    const obj: Record<string, any> = { a: null };
+    set(obj, 'a.b', 'value');
+    expect(obj.a.b).toBe('value');
+  });
+
+  it("should handle single-level path", () => {
+    const obj: Record<string, any> = {};
+    set(obj, 'key', 'value');
+    expect(obj.key).toBe('value');
+  });
 });

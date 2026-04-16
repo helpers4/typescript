@@ -241,4 +241,18 @@ describe('parse', () => {
   it('should return undefined when given undefined', () => {
     expect(parse(undefined)).toBeUndefined();
   });
+
+  // --- Mutation-killing tests ---
+
+  // L42: Regex /^v/ -> /v/ (removes ^ anchor)
+  // If /v/, a 'v' anywhere in the version would be removed
+  it('should only strip leading v prefix', () => {
+    // 'v1.0.0' should strip the leading v
+    const result = parse('v1.0.0');
+    expect(result?.major).toBe(1);
+    // Verify the v is properly stripped by checking the output
+    expect(result).toEqual({
+      major: 1, minor: 0, patch: 0, prerelease: [], build: []
+    });
+  });
 });

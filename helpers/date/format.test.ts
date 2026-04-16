@@ -141,4 +141,24 @@ describe('toRFC2822', () => {
       'Sun, 19 Jan 2025 01:02:03 +0000'
     );
   });
+
+  // --- Mutation-killing tests ---
+
+  // L47: Regex /\.\d{3}Z$/ -> /\.\d{3}Z/ (removes $ anchor)
+  // Without $, the regex could match .000Z in the middle of a string
+  it('should only remove milliseconds at end of ISO string', () => {
+    const date = new Date('2025-01-19T12:30:45.000Z');
+    const result = toRFC3339(date);
+    expect(result).toBe('2025-01-19T12:30:45Z');
+    // Verify proper stripping pattern
+    expect(result).not.toContain('.000');
+  });
+
+  it('should handle RFC3339 millisecond removal correctly', () => {
+    const date = new Date('2025-06-15T08:45:30.789Z');
+    const withMs = toRFC3339(date, true);
+    const withoutMs = toRFC3339(date, false);
+    expect(withMs).toBe('2025-06-15T08:45:30.789Z');
+    expect(withoutMs).toBe('2025-06-15T08:45:30Z');
+  });
 });

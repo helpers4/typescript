@@ -124,5 +124,36 @@ describe('compare', () => {
       expect(compare(null as any, date1 as any)).toBe(false);
       expect(compare(date1 as any, null as any)).toBe(false);
     });
+
+    // --- Mutation-killing tests ---
+
+    // L31: StringLiteral 'milliseconds' -> ''
+    // If default precision is mutated to '', the switch default case should still work
+    it('should use milliseconds precision by default (not empty string)', () => {
+      const a = new Date('2023-01-01T12:30:45.100Z');
+      const b = new Date('2023-01-01T12:30:45.200Z');
+      // Default precision is milliseconds, so different ms -> false
+      expect(compare(a, b)).toBe(false);
+      // Same ms -> true
+      expect(compare(a, new Date(a.getTime()))).toBe(true);
+    });
+
+    // L38: isNaN(dateA.getTime()) || isNaN(dateB.getTime()) -> &&
+    // If &&, one-invalid + one-valid would NOT enter the NaN handler
+    it('should return false when only one date is invalid (not skip NaN check)', () => {
+      const valid = new Date('2023-01-01');
+      const invalid = new Date('invalid');
+      expect(compare(valid, invalid)).toBe(false);
+      expect(compare(invalid, valid)).toBe(false);
+    });
+
+    // L61: StringLiteral '' in switch case -> different value would break switch matching
+    it('should correctly match days precision in switch', () => {
+      const a = new Date('2023-01-01T00:00:00Z');
+      const b = new Date('2023-01-01T23:59:59Z');
+      expect(compare(a, b, { precision: 'days' })).toBe(true);
+      const c = new Date('2023-01-02T00:00:00Z');
+      expect(compare(a, c, { precision: 'days' })).toBe(false);
+    });
   });
 });

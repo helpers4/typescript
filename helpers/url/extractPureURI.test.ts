@@ -40,4 +40,30 @@ describe('extractPureURI', () => {
         expect(extractPureURI(null)).toBe(null));
     test("should handle URL with only fragment and query together", () =>
         expect(extractPureURI("path#anchor?query")).toBe("path"));
+
+    // --- Mutation-killing tests ---
+
+    // L38: ConditionalExpression -> true (queryIndex !== -1 && fragmentIndex !== -1 always true)
+    // If true, URLs with only query OR only fragment would enter the Math.min branch
+    test("should handle URL with only query (no fragment)", () => {
+        expect(extractPureURI("path?query")).toBe("path");
+        expect(extractPureURI("www.example.com/page?x=1")).toBe("www.example.com/page");
+    });
+
+    test("should handle URL with only fragment (no query)", () => {
+        expect(extractPureURI("path#section")).toBe("path");
+        expect(extractPureURI("www.example.com/page#top")).toBe("www.example.com/page");
+    });
+
+    // L38: UnaryOperator: -1 -> +1 (cutIndex set incorrectly)
+    // If Math.min returns wrong index due to +1, the substring would be off
+    test("should cut at earliest of query and fragment", () => {
+        // Query before fragment
+        expect(extractPureURI("a?b#c")).toBe("a");
+        // Fragment before query
+        expect(extractPureURI("a#b?c")).toBe("a");
+        // Verify the cut is at index 1 (the 'a' only)
+        expect(extractPureURI("ab?c#d")).toBe("ab");
+        expect(extractPureURI("ab#c?d")).toBe("ab");
+    });
 });
