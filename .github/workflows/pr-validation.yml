@@ -2,8 +2,8 @@ name: Pull Request Validation
 
 on:
   pull_request:
-    branches: [main, develop]
-    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [ main, develop ]
+    types: [ opened, synchronize, reopened, ready_for_review ]
 
 permissions:
   contents: read
@@ -117,7 +117,6 @@ jobs:
   runtime-compat:
     needs: version-calculation
     runs-on: ubuntu-latest
-    continue-on-error: true
 
     outputs:
       node-status: ${{ steps.test-node.outputs.status }}
@@ -187,7 +186,7 @@ jobs:
 
   # Verification job (depends on build for artifacts)
   verification:
-    needs: [build, test]
+    needs: [ build, test ]
     uses: ./.github/workflows/job-verification.yml
     with:
       node-version: "24"
@@ -197,7 +196,6 @@ jobs:
   mutation:
     needs: version-calculation
     runs-on: ubuntu-latest
-    continue-on-error: true
     timeout-minutes: 30
 
     outputs:
@@ -224,8 +222,10 @@ jobs:
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         run: |
-          pnpm mutation 2>&1 | tee mutation-output.txt
-          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+          EXIT_CODE=0
+          pnpm mutation 2>&1 | tee mutation-output.txt || EXIT_CODE=$?
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          exit $EXIT_CODE
 
       - name: Extract mutation score
         id: score
