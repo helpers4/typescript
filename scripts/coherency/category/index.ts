@@ -10,13 +10,14 @@
  * Category Packages coherency test
  */
 
-import { testCategoryPackages } from "./helper";
+import { testCategoryPackages, testCategoryConfigs } from "./helper";
 
 async function runCategoryPackagesTest() {
   try {
     console.log("🧪 Category Packages:");
     console.log("   Validates category packages structure and content");
 
+    await testCategoryConfigs();
     await testCategoryPackages();
 
     console.log("✅ Category Packages passed");
