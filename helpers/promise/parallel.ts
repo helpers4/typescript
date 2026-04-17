@@ -26,11 +26,10 @@ export async function parallel<T>(
   let nextIndex = 0;
 
   async function runNext(): Promise<void> {
-    while (nextIndex < functions.length) {
-      const currentIndex = nextIndex++;
-      // oxlint-disable-next-line no-await-in-loop -- intentional sequential execution per worker
-      results[currentIndex] = await functions[currentIndex]();
-    }
+    if (nextIndex >= functions.length) return;
+    const currentIndex = nextIndex++;
+    results[currentIndex] = await functions[currentIndex]();
+    return runNext();
   }
 
   const workers = Array.from(
