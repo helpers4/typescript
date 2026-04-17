@@ -28,6 +28,7 @@ export async function parallel<T>(
   async function runNext(): Promise<void> {
     while (nextIndex < functions.length) {
       const currentIndex = nextIndex++;
+      // oxlint-disable-next-line no-await-in-loop -- intentional sequential execution per worker
       results[currentIndex] = await functions[currentIndex]();
     }
   }

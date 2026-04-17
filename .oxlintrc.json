@@ -8,11 +8,19 @@
     "oxc"
   ],
   "categories": {
-    "correctness": "error"
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "error"
   },
   "rules": {
-    "no-explicit-any": "warn",
-    "sort-imports": ["error", { "ignoreDeclarationSort": true }],
+    "no-explicit-any": "error",
+    "unicorn/no-useless-undefined": "off",
+    "sort-imports": [
+      "error",
+      {
+        "ignoreDeclarationSort": true
+      }
+    ],
     "no-unused-vars": [
       "error",
       {
@@ -20,19 +28,39 @@
         "varsIgnorePattern": "^_"
       }
     ],
-    "typescript/array-type": ["error", { "default": "array" }]
+    "typescript/array-type": [
+      "error",
+      {
+        "default": "array"
+      }
+    ]
   },
   "overrides": [
     {
-      "files": ["**/*.test.ts", "**/*.spec.ts", "**/*.bench.ts", "**/*.example.ts"],
+      "files": [
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        "**/*.bench.ts",
+        "**/*.example.ts"
+      ],
       "rules": {
-        "no-explicit-any": "off"
+        "no-explicit-any": "off",
+        "unicorn/consistent-function-scoping": "off",
+        "unicorn/no-array-sort": "off",
+        "typescript/no-extraneous-class": "off",
+        "no-new": "off",
+        "no-shadow": "off",
+        "oxc/approx-constant": "off",
+        "preserve-caught-error": "off"
       }
     },
     {
-      "files": ["scripts/**/*.ts"],
+      "files": [
+        "scripts/**/*.ts"
+      ],
       "rules": {
-        "no-explicit-any": "off"
+        "no-explicit-any": "off",
+        "no-await-in-loop": "off"
       }
     }
   ],

@@ -12,41 +12,40 @@
  * @since 1.9.0
  */
 export function satisfiesRange(version: string, range: string): boolean {
-  const normalize = (v: string) => v.replace(/^v/, '');
-  const normalizedVersion = normalize(version);
+  const normalizedVersion = version.replace(/^v/, '');
 
   // Handle exact match
   if (!range.match(/[~^<>=]/)) {
-    return normalizedVersion === normalize(range);
+    return normalizedVersion === range.replace(/^v/, '');
   }
 
   // Handle >= operator
   if (range.startsWith('>=')) {
-    const targetVersion = normalize(range.slice(2));
+    const targetVersion = range.slice(2).replace(/^v/, '');
     return compareVersionsSimple(normalizedVersion, targetVersion) >= 0;
   }
 
   // Handle > operator
   if (range.startsWith('>')) {
-    const targetVersion = normalize(range.slice(1));
+    const targetVersion = range.slice(1).replace(/^v/, '');
     return compareVersionsSimple(normalizedVersion, targetVersion) > 0;
   }
 
   // Handle <= operator
   if (range.startsWith('<=')) {
-    const targetVersion = normalize(range.slice(2));
+    const targetVersion = range.slice(2).replace(/^v/, '');
     return compareVersionsSimple(normalizedVersion, targetVersion) <= 0;
   }
 
   // Handle < operator
   if (range.startsWith('<')) {
-    const targetVersion = normalize(range.slice(1));
+    const targetVersion = range.slice(1).replace(/^v/, '');
     return compareVersionsSimple(normalizedVersion, targetVersion) < 0;
   }
 
   // Handle caret range (^1.2.3 allows patch and minor updates)
   if (range.startsWith('^')) {
-    const targetVersion = normalize(range.slice(1));
+    const targetVersion = range.slice(1).replace(/^v/, '');
     const [targetMajor] = targetVersion.split('.').map(Number);
     const [versionMajor] = normalizedVersion.split('.').map(Number);
 
@@ -56,7 +55,7 @@ export function satisfiesRange(version: string, range: string): boolean {
 
   // Handle tilde range (~1.2.3 allows patch updates)
   if (range.startsWith('~')) {
-    const targetVersion = normalize(range.slice(1));
+    const targetVersion = range.slice(1).replace(/^v/, '');
     const [targetMajor, targetMinor] = targetVersion.split('.').map(Number);
     const [versionMajor, versionMinor] = normalizedVersion.split('.').map(Number);
 

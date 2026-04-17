@@ -12,16 +12,16 @@
  * @returns The value at the path or default value
  * @since 1.9.0
  */
-export function get<T = any>(obj: any, path: string, defaultValue?: T): T | undefined {
+export function get<T = unknown>(obj: unknown, path: string, defaultValue?: T): T | undefined {
   const keys = path.split('.');
-  let result = obj;
+  let result: unknown = obj;
 
   for (const key of keys) {
     if (result == null || typeof result !== 'object') {
       return defaultValue;
     }
-    result = result[key];
+    result = (result as Record<string, unknown>)[key];
   }
 
-  return result !== undefined ? result : defaultValue;
+  return result !== undefined ? result as T | undefined : defaultValue;
 }

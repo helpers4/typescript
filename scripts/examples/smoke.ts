@@ -38,7 +38,7 @@ async function runSmokeTests(): Promise<void> {
     process.exit(1);
   }
 
-  const categories = (await readdir(DIR.HELPERS)).sort();
+  const categories = (await readdir(DIR.HELPERS)).toSorted();
   const results: SmokeResult[] = [];
   let failures = 0;
 
@@ -46,7 +46,7 @@ async function runSmokeTests(): Promise<void> {
 
   for (const category of categories) {
     const builtLib = join(buildDir, category, 'lib', 'index.js');
-    if (!existsSync(builtLib)) continue;
+    if (!existsSync(builtLib)) {continue;}
 
     // Import the built package
     const builtModule = await import(resolve(builtLib)) as Record<string, unknown>;
@@ -54,9 +54,9 @@ async function runSmokeTests(): Promise<void> {
     // Discover example files from source
     const categoryPath = join(DIR.HELPERS, category);
     const files = await readdir(categoryPath);
-    const exampleFiles = files.filter(f => f.endsWith('.example.ts')).sort();
+    const exampleFiles = files.filter(f => f.endsWith('.example.ts')).toSorted();
 
-    if (exampleFiles.length === 0) continue;
+    if (exampleFiles.length === 0) {continue;}
 
     console.info(`📂 ${category}/`);
 
@@ -79,7 +79,7 @@ async function runSmokeTests(): Promise<void> {
       if (!(helperName in builtModule)) {
         failures++;
         const msg = `"${helperName}" not exported from build/${category}/lib/index.js`;
-        results.push({ category, helper: helperName, title: 'Export check', success: false, error: msg });
+        results.push({ category, error: msg, helper: helperName, success: false, title: 'Export check' });
         console.error(`   ❌ ${helperName} — Export check`);
         console.error(`      ${msg}`);
         continue;
@@ -88,12 +88,12 @@ async function runSmokeTests(): Promise<void> {
       for (const example of helperExamples.examples) {
         try {
           await example.assert();
-          results.push({ category, helper: helperName, title: example.title, success: true });
+          results.push({ category, helper: helperName, success: true, title: example.title });
           console.info(`   ✅ ${helperName} — ${example.title}`);
-        } catch (err) {
+        } catch (error) {
           failures++;
-          const errorMessage = err instanceof Error ? err.message : String(err);
-          results.push({ category, helper: helperName, title: example.title, success: false, error: errorMessage });
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          results.push({ category, error: errorMessage, helper: helperName, success: false, title: example.title });
           console.error(`   ❌ ${helperName} — ${example.title}`);
           console.error(`      ${errorMessage}`);
         }

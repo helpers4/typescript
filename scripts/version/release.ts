@@ -6,11 +6,11 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { exec } from 'child_process';
-import { promisify } from 'util';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 import { updateAllPackageVersions } from './version-manager';
 import { createVersionCommitAndTag, getCurrentBranch, isWorkingDirectoryClean } from './git-utils';
-import { VersionType } from './commit-analyzer';
+import type { VersionType } from './commit-analyzer';
 
 const execAsync = promisify(exec);
 
@@ -70,10 +70,10 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
     if (!options.dryRun) {
       const updateOptions = options.autoCalculate
         ? { autoCalculate: true, dryRun: false }
-        : { versionType: options.versionType, dryRun: false };
+        : { dryRun: false, versionType: options.versionType };
 
       const result = await updateAllPackageVersions(updateOptions);
-      newVersion = result.newVersion;
+      ({ newVersion } = result);
     } else {
       // Simulate version calculation for dry run
       const fs = await import('fs-extra');
@@ -121,8 +121,8 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
     console.log('\n📝 Step 7: Creating version commit');
     if (!options.dryRun) {
       await createVersionCommitAndTag({
-        message: `chore: release v${newVersion}`,
         files: ['package.json', 'build/', 'CHANGELOG.md'],
+        message: `chore: release v${newVersion}`,
         pushBranch: targetBranch
       });
     } else {
@@ -201,13 +201,13 @@ if (import.meta.url.endsWith(process.argv[1])) {
   }
 
   const options: ReleaseOptions = {
-    versionType,
     autoCalculate,
     dryRun: args.includes('--dry-run'),
-    skipTests: args.includes('--skip-tests'),
     skipBuild: args.includes('--skip-build'),
     skipCoherency: args.includes('--skip-coherency'),
     skipPublish: args.includes('--skip-publish'),
+    skipTests: args.includes('--skip-tests'),
+    versionType,
   };
 
   const branchIndex = args.indexOf('--branch');

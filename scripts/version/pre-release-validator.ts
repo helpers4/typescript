@@ -7,9 +7,9 @@
  */
 
 import fs from 'fs-extra';
-import path from 'path';
-import { exec } from 'child_process';
-import { promisify } from 'util';
+import path from 'node:path';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 
 const execAsync = promisify(exec);
 
@@ -58,14 +58,14 @@ class PreReleaseValidator {
       const { stdout } = await execAsync('node --version');
       const version = stdout.trim();
       suite.results.push({
-        passed: true,
-        message: `Node.js version: ${version}`
+        message: `Node.js version: ${version}`,
+        passed: true
       });
     } catch {
       suite.results.push({
-        passed: false,
+        details: 'Node.js is required for the build process',
         message: 'Node.js not found',
-        details: 'Node.js is required for the build process'
+        passed: false
       });
     }
 
@@ -74,14 +74,14 @@ class PreReleaseValidator {
       const { stdout } = await execAsync('npm --version');
       const version = stdout.trim();
       suite.results.push({
-        passed: true,
-        message: `npm version: ${version}`
+        message: `npm version: ${version}`,
+        passed: true
       });
     } catch {
       suite.results.push({
-        passed: false,
+        details: 'npm is required as the package manager',
         message: 'npm not found',
-        details: 'npm is required as the package manager'
+        passed: false
       });
     }
 
@@ -90,14 +90,14 @@ class PreReleaseValidator {
       const { stdout } = await execAsync('git --version');
       const version = stdout.trim();
       suite.results.push({
-        passed: true,
-        message: `Git version: ${version}`
+        message: `Git version: ${version}`,
+        passed: true
       });
     } catch {
       suite.results.push({
-        passed: false,
+        details: 'Git is required for version control operations',
         message: 'Git not found',
-        details: 'Git is required for version control operations'
+        passed: false
       });
     }
 
@@ -111,14 +111,14 @@ class PreReleaseValidator {
     try {
       await execAsync('git status');
       suite.results.push({
-        passed: true,
-        message: 'Git repository detected'
+        message: 'Git repository detected',
+        passed: true
       });
     } catch {
       suite.results.push({
-        passed: false,
+        details: 'Release process requires a git repository',
         message: 'Not in a git repository',
-        details: 'Release process requires a git repository'
+        passed: false
       });
       this.suites.push(suite);
       return;
@@ -129,15 +129,15 @@ class PreReleaseValidator {
       const { stdout } = await execAsync('git status --porcelain');
       const isClean = stdout.trim() === '';
       suite.results.push({
-        passed: isClean,
+        details: isClean ? undefined : 'Commit or stash changes before release',
         message: isClean ? 'Working directory is clean' : 'Working directory has uncommitted changes',
-        details: isClean ? undefined : 'Commit or stash changes before release'
+        passed: isClean
       });
     } catch (error) {
       suite.results.push({
-        passed: false,
+        details: String(error),
         message: 'Could not check git status',
-        details: String(error)
+        passed: false
       });
     }
 
@@ -146,14 +146,14 @@ class PreReleaseValidator {
       const { stdout } = await execAsync('git branch --show-current');
       const branch = stdout.trim();
       suite.results.push({
-        passed: true,
-        message: `Current branch: ${branch}`
+        message: `Current branch: ${branch}`,
+        passed: true
       });
     } catch (error) {
       suite.results.push({
-        passed: false,
+        details: String(error),
         message: 'Could not determine current branch',
-        details: String(error)
+        passed: false
       });
     }
 
@@ -161,14 +161,14 @@ class PreReleaseValidator {
     try {
       await execAsync('git remote show origin');
       suite.results.push({
-        passed: true,
-        message: 'Remote origin is accessible'
+        message: 'Remote origin is accessible',
+        passed: true
       });
     } catch {
       suite.results.push({
-        passed: false,
+        details: 'Ensure you can push to the remote repository',
         message: 'Remote origin not accessible',
-        details: 'Ensure you can push to the remote repository'
+        passed: false
       });
     }
 
@@ -182,8 +182,8 @@ class PreReleaseValidator {
     const packageJsonPath = path.resolve('package.json');
     if (await fs.pathExists(packageJsonPath)) {
       suite.results.push({
-        passed: true,
-        message: 'package.json found'
+        message: 'package.json found',
+        passed: true
       });
 
       try {
@@ -194,29 +194,29 @@ class PreReleaseValidator {
         for (const field of requiredFields) {
           if (packageJson[field]) {
             suite.results.push({
-              passed: true,
-              message: `package.json has ${field}`
+              message: `package.json has ${field}`,
+              passed: true
             });
           } else {
             suite.results.push({
-              passed: false,
+              details: `Required field: ${field}`,
               message: `package.json missing ${field}`,
-              details: `Required field: ${field}`
+              passed: false
             });
           }
         }
       } catch (error) {
         suite.results.push({
-          passed: false,
+          details: String(error),
           message: 'Could not parse package.json',
-          details: String(error)
+          passed: false
         });
       }
     } else {
       suite.results.push({
-        passed: false,
+        details: 'package.json is required for version management',
         message: 'package.json not found',
-        details: 'package.json is required for version management'
+        passed: false
       });
     }
 
@@ -224,14 +224,14 @@ class PreReleaseValidator {
     const nodeModulesPath = path.resolve('node_modules');
     if (await fs.pathExists(nodeModulesPath)) {
       suite.results.push({
-        passed: true,
-        message: 'node_modules found'
+        message: 'node_modules found',
+        passed: true
       });
     } else {
       suite.results.push({
-        passed: false,
+        details: 'Run: pnpm install',
         message: 'node_modules not found',
-        details: 'Run: pnpm install'
+        passed: false
       });
     }
 
@@ -242,24 +242,24 @@ class PreReleaseValidator {
     const suite: ValidationSuite = { name: 'Scripts', results: [] };
 
     const requiredScripts = [
-      { script: 'scripts/build/index.ts', name: 'Build script' },
-      { script: 'scripts/publish/index.ts', name: 'Publish script' },
-      { script: 'scripts/coherency/index.ts', name: 'Coherency script' },
-      { script: 'scripts/version/release.ts', name: 'Release script' }
+      { name: 'Build script', script: 'scripts/build/index.ts' },
+      { name: 'Publish script', script: 'scripts/publish/index.ts' },
+      { name: 'Coherency script', script: 'scripts/coherency/index.ts' },
+      { name: 'Release script', script: 'scripts/version/release.ts' }
     ];
 
     for (const { script, name } of requiredScripts) {
       const scriptPath = path.resolve(script);
       if (await fs.pathExists(scriptPath)) {
         suite.results.push({
-          passed: true,
-          message: `${name} found`
+          message: `${name} found`,
+          passed: true
         });
       } else {
         suite.results.push({
-          passed: false,
+          details: `Missing: ${script}`,
           message: `${name} not found`,
-          details: `Missing: ${script}`
+          passed: false
         });
       }
     }
@@ -273,26 +273,26 @@ class PreReleaseValidator {
     // Check if we can run tests
     try {
       console.log('   🧪 Testing test command...');
-      await execAsync('pnpm test', { timeout: 30000 });
+      await execAsync('pnpm test', { timeout: 30_000 });
       suite.results.push({
-        passed: true,
-        message: 'Tests run successfully'
+        message: 'Tests run successfully',
+        passed: true
       });
     } catch {
       suite.results.push({
-        passed: false,
+        details: 'Fix test failures before release',
         message: 'Tests failed',
-        details: 'Fix test failures before release'
+        passed: false
       });
     }
 
     // Check if we can build
     try {
       console.log('   🏗️ Testing build command...');
-      await execAsync('pnpm run build', { timeout: 60000 });
+      await execAsync('pnpm run build', { timeout: 60_000 });
       suite.results.push({
-        passed: true,
-        message: 'Build completed successfully'
+        message: 'Build completed successfully',
+        passed: true
       });
 
       // Check build output
@@ -300,32 +300,32 @@ class PreReleaseValidator {
       if (await fs.pathExists(buildPath)) {
         const buildDirs = await fs.readdir(buildPath);
         suite.results.push({
-          passed: buildDirs.length > 0,
+          details: buildDirs.length === 0 ? 'No packages were built' : undefined,
           message: `Build output: ${buildDirs.length} packages`,
-          details: buildDirs.length === 0 ? 'No packages were built' : undefined
+          passed: buildDirs.length > 0
         });
       }
     } catch {
       suite.results.push({
-        passed: false,
+        details: 'Fix build errors before release',
         message: 'Build failed',
-        details: 'Fix build errors before release'
+        passed: false
       });
     }
 
     // Check coherency tests
     try {
       console.log('   🔍 Testing coherency...');
-      await execAsync('pnpm run coherency', { timeout: 30000 });
+      await execAsync('pnpm run coherency', { timeout: 30_000 });
       suite.results.push({
-        passed: true,
-        message: 'Coherency tests passed'
+        message: 'Coherency tests passed',
+        passed: true
       });
     } catch {
       suite.results.push({
-        passed: false,
+        details: 'Fix coherency issues before release',
         message: 'Coherency tests failed',
-        details: 'Fix coherency issues before release'
+        passed: false
       });
     }
 

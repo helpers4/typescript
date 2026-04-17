@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { exec } from 'child_process';
-import { promisify } from 'util';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 
 const execAsync = promisify(exec);
 
@@ -106,10 +106,10 @@ export async function publishPackage(
     if (exists) {
       return {
         packageName: packageInfo.name,
-        version: packageInfo.version,
-        success: true,
+        skipReason: 'Version already published',
         skipped: true,
-        skipReason: 'Version already published'
+        success: true,
+        version: packageInfo.version
       };
     }
 
@@ -150,7 +150,7 @@ export async function publishPackage(
         } else {
           const { stdout, stderr } = await execAsync(command, {
             cwd: packagePath,
-            timeout: 120000 // 2 minutes timeout
+            timeout: 120_000 // 2 minutes timeout
           });
 
           if (stderr && !stderr.includes('npm notice')) {
@@ -164,8 +164,8 @@ export async function publishPackage(
 
         return {
           packageName: packageInfo.name,
-          version: packageInfo.version,
-          success: true
+          success: true,
+          version: packageInfo.version
         };
 
       } catch (error) {
@@ -180,18 +180,18 @@ export async function publishPackage(
     }
 
     return {
+      error: lastError || new Error('Unknown publish error'),
       packageName: packageInfo.name,
-      version: packageInfo.version,
       success: false,
-      error: lastError || new Error('Unknown publish error')
+      version: packageInfo.version
     };
 
   } catch (error) {
     return {
+      error: error as Error,
       packageName: 'unknown',
-      version: 'unknown',
       success: false,
-      error: error as Error
+      version: 'unknown'
     };
   }
 }

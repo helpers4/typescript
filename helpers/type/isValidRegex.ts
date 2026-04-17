@@ -16,7 +16,7 @@
  */
 export function isValidRegex(value: string): boolean {
   try {
-    new RegExp(value);
+    RegExp(value);
     return true;
   } catch {
     return false;

@@ -41,8 +41,11 @@ export function removeUndefinedNull(obj: undefined): undefined;
  * @since 1.0.0
  */
 export function removeUndefinedNull<T extends Record<string, string | number | boolean | null | undefined>>(obj: T | null | undefined): Partial<T> | null | undefined {
-  return obj ? Object.entries(obj)
-    .filter(([_, v]) => !isNullish(v))
-    .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {} as Partial<T>) : obj;
+  if (!obj) return obj;
+  const result: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(obj)) {
+    if (!isNullish(v)) { result[k] = v; }
+  }
+  return result as Partial<T>;
 }
 

@@ -18,8 +18,8 @@
  * - Consistent with psioniq.psi-header extension behavior
  */
 
-import { readFile, writeFile } from "fs/promises";
-import { resolve } from "path";
+import { readFile, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import { globSync } from "glob";
 
 interface VsCodeSettings {
@@ -44,13 +44,13 @@ interface VsCodeSettings {
 async function loadLicenseHeaderFromVsCode(): Promise<string> {
   const projectRoot = process.env.PROJECT_ROOT || process.cwd();
   const settingsPath = resolve(projectRoot, '.vscode/settings.json');
-  const settingsContent = await readFile(settingsPath, 'utf-8');
+  const settingsContent = await readFile(settingsPath, 'utf8');
 
   // More careful JSON cleanup - preserve structure
   const cleanedContent = settingsContent
-    .replace(/\/\*[\s\S]*?\*\//g, '') // Remove block comments
-    .replace(/\/\/.*$/gm, '') // Remove line comments
-    .replace(/,(\s*[}\]])/g, '$1'); // Remove trailing commas
+    .replaceAll(/\/\*[\s\S]*?\*\//g, '') // Remove block comments
+    .replaceAll(/\/\/.*$/gm, '') // Remove line comments
+    .replaceAll(/,(\s*[}\]])/g, '$1'); // Remove trailing commas
   const settings: VsCodeSettings = JSON.parse(cleanedContent);
 
   // Find TypeScript template and lang config
@@ -62,12 +62,10 @@ async function loadLicenseHeaderFromVsCode(): Promise<string> {
   }
 
   // Build header from template
-  const templateLines = tsTemplate.template.map(line => {
-    return line
+  const templateLines = tsTemplate.template.map(line => line
       .replace("<<yeartoyear>>", "2025")
       .replace("<<copyrightHolder>>", config.copyrightHolder || "baxyz")
-      .replace("<<spdxid>>", config.license || "LGPL-3.0-or-later");
-  });
+      .replace("<<spdxid>>", config.license || "LGPL-3.0-or-later"));
 
   // Use hardcoded comment format since lang-config parsing seems broken
   let header = '/**\n';
@@ -91,7 +89,7 @@ async function addLicenseHeader() {
   const patterns = [
     "helpers/**/*.ts",
     "scripts/**/*.ts",
-    "*.ts"  // root files like add-license-headers.ts
+    "*.ts"  // Root files like add-license-headers.ts
   ];
 
   let totalProcessed = 0;
@@ -115,7 +113,7 @@ async function addLicenseHeader() {
       const fullPath = resolve(projectRoot, file);
 
       try {
-        const content = await readFile(fullPath, "utf-8");
+        const content = await readFile(fullPath, "utf8");
 
         // Check if header already exists
         if (content.includes("This file is part of helpers4")) {

@@ -13,10 +13,10 @@ import { isPlainObject } from '../type/isPlainObject';
  * @returns The merged object
  * @since 1.9.0
  */
-export function deepMerge<T extends Record<string, any>>(target: T, ...sources: Record<string, any>[]): T;
-export function deepMerge(target: undefined, ...sources: Record<string, any>[]): undefined;
-export function deepMerge(target: null, ...sources: Record<string, any>[]): null;
-export function deepMerge<T extends Record<string, any>>(target: T | undefined | null, ...sources: Record<string, any>[]): T | undefined | null {
+export function deepMerge<T extends Record<string, unknown>>(target: T, ...sources: Record<string, unknown>[]): T;
+export function deepMerge(target: undefined, ...sources: Record<string, unknown>[]): undefined;
+export function deepMerge(target: null, ...sources: Record<string, unknown>[]): null;
+export function deepMerge<T extends Record<string, unknown>>(target: T | undefined | null, ...sources: Record<string, unknown>[]): T | undefined | null {
   if (target === undefined || target === null) return target;
   if (!sources.length) return target;
   const source = sources.shift();
@@ -28,9 +28,9 @@ export function deepMerge<T extends Record<string, any>>(target: T | undefined |
     const sourceValue = source[key];
 
     if (isPlainObject(targetValue) && isPlainObject(sourceValue)) {
-      (target as any)[key] = deepMerge(targetValue, sourceValue);
+      (target as Record<string, unknown>)[key] = deepMerge(targetValue as Record<string, unknown>, sourceValue as Record<string, unknown>);
     } else if (sourceValue !== undefined) {
-      (target as any)[key] = sourceValue;
+      (target as Record<string, unknown>)[key] = sourceValue;
     }
   }
 

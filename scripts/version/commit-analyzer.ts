@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { exec } from 'child_process';
-import { promisify } from 'util';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 import { getLatestTag } from './git-utils';
 
 const execAsync = promisify(exec);
@@ -46,15 +46,15 @@ export async function getCommitsSince(since: string): Promise<CommitInfo[]> {
     return commitLines.map(line => {
       const [hash, subject, body, author, date] = line.split('|||');
       return {
-        hash,
-        subject,
-        body: body || '',
         author,
-        date: new Date(date)
+        body: body || '',
+        date: new Date(date),
+        hash,
+        subject
       };
     });
   } catch (error) {
-    throw new Error(`Failed to get commits since ${since}: ${error}`);
+    throw new Error(`Failed to get commits since ${since}: ${error}`, { cause: error });
   }
 }
 
@@ -113,12 +113,12 @@ export function analyzeCommits(commits: CommitInfo[]): VersionCalculationResult 
   }
 
   return {
-    suggestedType,
-    reason,
     commits,
     hasBreakingChanges,
     hasFeatures,
-    hasFixes
+    hasFixes,
+    reason,
+    suggestedType
   };
 }
 
@@ -136,7 +136,7 @@ export async function calculateVersionFromCommits(): Promise<VersionCalculationR
     // If no tags, analyze last 50 commits or all commits
     try {
       const { stdout } = await execAsync('git rev-list --count HEAD');
-      const totalCommits = parseInt(stdout.trim(), 10);
+      const totalCommits = Number.parseInt(stdout.trim(), 10);
       const limit = Math.min(totalCommits, 50);
       const { stdout: commitStdout } = await execAsync(
         `git log -${limit} --pretty=format:"%H|||%s|||%b|||%an|||%ad" --date=iso`
@@ -146,11 +146,11 @@ export async function calculateVersionFromCommits(): Promise<VersionCalculationR
       const commits = commitLines.map(line => {
         const [hash, subject, body, author, date] = line.split('|||');
         return {
-          hash,
-          subject,
-          body: body || '',
           author,
-          date: new Date(date)
+          body: body || '',
+          date: new Date(date),
+          hash,
+          subject
         };
       });
 
@@ -158,7 +158,7 @@ export async function calculateVersionFromCommits(): Promise<VersionCalculationR
       console.log(`📊 Analyzed ${commits.length} commits (no previous tags)`);
       return result;
     } catch (error) {
-      throw new Error(`Failed to analyze commits: ${error}`);
+      throw new Error(`Failed to analyze commits: ${error}`, { cause: error });
     }
   }
 
@@ -180,7 +180,7 @@ export async function calculateVersionFromCommits(): Promise<VersionCalculationR
     if (process.env.VERBOSE) {
       console.log('\n📋 Recent commits:');
       commits.slice(0, 5).forEach(commit => {
-        console.log(`   - ${commit.subject.substring(0, 50)}... (${commit.hash.substring(0, 7)})`);
+        console.log(`   - ${commit.subject.slice(0, 50)}... (${commit.hash.slice(0, 7)})`);
       });
 
       if (commits.length > 5) {

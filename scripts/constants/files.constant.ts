@@ -10,8 +10,8 @@
  */
 export const TEMPLATE_CATEGORY_FILES = {
   LICENSE: "LICENSE.md",
-  README: "README.md",
-  PACKAGE_JSON: "package.json"
+  PACKAGE_JSON: "package.json",
+  README: "README.md"
 };
 
 /**

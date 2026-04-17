@@ -8,23 +8,23 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    environment: 'happy-dom',
-    include: ['helpers/**/*.{test,spec}.ts'],
+    benchmark: {
+      exclude: ['**/.stryker-tmp/**'],
+      include: ['helpers/**/*.bench.ts']
+    },
     coverage: {
+      exclude: ['helpers/**/*.{test,spec,bench,example}.ts', 'helpers/**/index.ts'],
+      include: ['helpers/**/*.ts'],
       provider: 'v8',
       reporter: ['text', 'json', 'json-summary', 'html'],
-      include: ['helpers/**/*.ts'],
-      exclude: ['helpers/**/*.{test,spec,bench,example}.ts', 'helpers/**/index.ts'],
       thresholds: {
-        lines: 100,
-        functions: 100,
         branches: 100,
+        functions: 100,
+        lines: 100,
         statements: 100
       }
     },
-    benchmark: {
-      include: ['helpers/**/*.bench.ts'],
-      exclude: ['**/.stryker-tmp/**']
-    }
+    environment: 'happy-dom',
+    include: ['helpers/**/*.{test,spec}.ts']
   }
 });
