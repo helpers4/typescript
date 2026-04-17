@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-const isCI = !!process.env.CI;
+const isCI = Boolean(process.env.CI);
 
 /** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */
 export default {
@@ -27,9 +27,9 @@ export default {
     },
   }),
   thresholds: {
+    break: 60,
     high: 90,
     low: 70,
-    break: 60,
   },
   tempDirName: '.stryker-tmp',
   cleanTempDir: 'always',

@@ -5,7 +5,7 @@
  */
 
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 import { getPackageInfo } from './npm-utils';
 
 export interface PackageMetadata {
@@ -46,15 +46,15 @@ export async function discoverPackages(buildDir: string): Promise<PackageMetadat
       const packageJson = await fs.readJson(packageJsonPath);
 
       packages.push({
-        name: packageInfo.name,
-        version: packageInfo.version,
-        path: entryPath,
-        isCategory: entry !== 'all',
-        isBundle: entry === 'all',
         dependencies: Object.keys({
           ...packageJson.dependencies,
           ...packageJson.peerDependencies
-        })
+        }),
+        isBundle: entry === 'all',
+        isCategory: entry !== 'all',
+        name: packageInfo.name,
+        path: entryPath,
+        version: packageInfo.version
       });
     } catch (error) {
       console.warn(`⚠️  Skipping invalid package at ${entryPath}:`, error);
@@ -69,10 +69,10 @@ export async function discoverPackages(buildDir: string): Promise<PackageMetadat
  * Categories first, bundle last
  */
 export function sortPackagesForPublishing(packages: PackageMetadata[]): PackageMetadata[] {
-  return packages.sort((a, b) => {
+  return packages.toSorted((a, b) => {
     // Bundle packages go last
-    if (a.isBundle && !b.isBundle) return 1;
-    if (!a.isBundle && b.isBundle) return -1;
+    if (a.isBundle && !b.isBundle) {return 1;}
+    if (!a.isBundle && b.isBundle) {return -1;}
 
     // Otherwise, sort alphabetically
     return a.name.localeCompare(b.name);
@@ -97,7 +97,7 @@ export function groupPackagesByType(packages: PackageMetadata[]): {
     }
   }
 
-  return { categories, bundles };
+  return { bundles, categories };
 }
 
 /**

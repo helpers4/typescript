@@ -6,10 +6,11 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import path from 'path';
-import {
+import path from 'node:path';
+import type {
   PublishOptions,
-  PublishResult,
+  PublishResult} from './helpers/npm-utils';
+import {
   checkNpmAuth,
   publishPackage
 } from './helpers/npm-utils';
@@ -31,7 +32,7 @@ interface PublishConfig {
   registry?: string;
   provenance: boolean;
   skipValidation: boolean;
-  categoryDelay: number; // ms to wait between category and bundle publishing
+  categoryDelay: number; // Ms to wait between category and bundle publishing
   retries: number;
   retryDelay: number;
   verbose: boolean;
@@ -48,9 +49,9 @@ function parseArgs(): PublishConfig {
     dryRun: false,
     access: 'public',
     tag: 'latest',
-    provenance: !!process.env.CI,
+    provenance: Boolean(process.env.CI),
     skipValidation: false,
-    categoryDelay: 60000, // 60 seconds
+    categoryDelay: 60_000, // 60 seconds
     retries: 3,
     retryDelay: 5000, // 5 seconds
     verbose: false
@@ -60,48 +61,62 @@ function parseArgs(): PublishConfig {
     const arg = args[i];
 
     switch (arg) {
-      case '--dry-run':
+      case '--dry-run': {
         config.dryRun = true;
         break;
-      case '--access':
+      }
+      case '--access': {
         config.access = args[++i] as 'public' | 'restricted';
         break;
-      case '--tag':
+      }
+      case '--tag': {
         config.tag = args[++i];
         break;
-      case '--registry':
+      }
+      case '--registry': {
         config.registry = args[++i];
         break;
-      case '--provenance':
+      }
+      case '--provenance': {
         config.provenance = true;
         break;
-      case '--no-provenance':
+      }
+      case '--no-provenance': {
         config.provenance = false;
         break;
-      case '--skip-validation':
+      }
+      case '--skip-validation': {
         config.skipValidation = true;
         break;
-      case '--category-delay':
-        config.categoryDelay = parseInt(args[++i], 10) * 1000; // convert seconds to ms
+      }
+      case '--category-delay': {
+        config.categoryDelay = Number.parseInt(args[++i], 10) * 1000; // Convert seconds to ms
         break;
-      case '--retries':
-        config.retries = parseInt(args[++i], 10);
+      }
+      case '--retries': {
+        config.retries = Number.parseInt(args[++i], 10);
         break;
-      case '--retry-delay':
-        config.retryDelay = parseInt(args[++i], 10) * 1000; // convert seconds to ms
+      }
+      case '--retry-delay': {
+        config.retryDelay = Number.parseInt(args[++i], 10) * 1000; // Convert seconds to ms
         break;
-      case '--verbose':
+      }
+      case '--verbose': {
         config.verbose = true;
         break;
-      case '--build-dir':
+      }
+      case '--build-dir': {
         config.buildDir = path.resolve(args[++i]);
         break;
-      case '--help':
+      }
+      case '--help': {
         printHelp();
         process.exit(0);
-      default:
+      }
+      default: {
         console.error(`Unknown argument: ${arg}`);
         process.exit(1);
+      }
     }
   }
 
@@ -224,12 +239,12 @@ async function publishPackages(config: PublishConfig): Promise<void> {
 
     const publishOptions: PublishOptions = {
       access: config.access,
-      tag: config.tag,
-      registry: config.registry,
-      provenance: config.provenance,
       dryRun: config.dryRun,
+      provenance: config.provenance,
+      registry: config.registry,
       retries: config.retries,
-      retryDelay: config.retryDelay
+      retryDelay: config.retryDelay,
+      tag: config.tag
     };
 
     const results: PublishResult[] = [];

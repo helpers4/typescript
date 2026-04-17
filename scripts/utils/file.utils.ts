@@ -10,14 +10,14 @@ import { readFileSync, writeFileSync } from "node:fs";
  * Read a file and return its content as text
  */
 export function readFileText(filePath: string): string {
-  return readFileSync(filePath, 'utf-8');
+  return readFileSync(filePath, 'utf8');
 }
 
 /**
  * Read a file and parse it as JSON
  */
 export function readFileJson<T = unknown>(filePath: string): T {
-  const content = readFileSync(filePath, 'utf-8');
+  const content = readFileSync(filePath, 'utf8');
   return JSON.parse(content) as T;
 }
 
@@ -25,5 +25,5 @@ export function readFileJson<T = unknown>(filePath: string): T {
  * Write content to a file
  */
 export function writeFile(filePath: string, content: string): void {
-  writeFileSync(filePath, content, 'utf-8');
+  writeFileSync(filePath, content, 'utf8');
 }

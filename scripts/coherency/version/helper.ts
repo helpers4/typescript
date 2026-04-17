@@ -5,7 +5,7 @@
  */
 
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
 
 /**
  * Test version consistency across all packages

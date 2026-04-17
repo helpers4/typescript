@@ -7,8 +7,9 @@
  */
 
 import fs from 'fs-extra';
-import path from 'path';
-import { VersionType, calculateVersionFromCommits, promptVersionType } from './commit-analyzer';
+import path from 'node:path';
+import type { VersionType} from './commit-analyzer';
+import { calculateVersionFromCommits, promptVersionType } from './commit-analyzer';
 
 interface VersionComponents {
   major: number;
@@ -36,12 +37,12 @@ function parseVersion(version: string): VersionComponents {
   const prereleaseMatch = version.match(/^(\d+)\.(\d+)\.(\d+)-(\w+)\.(\d+)$/);
   if (prereleaseMatch) {
     return {
-      major: parseInt(prereleaseMatch[1], 10),
-      minor: parseInt(prereleaseMatch[2], 10),
-      patch: parseInt(prereleaseMatch[3], 10),
+      major: Number.parseInt(prereleaseMatch[1], 10),
+      minor: Number.parseInt(prereleaseMatch[2], 10),
+      patch: Number.parseInt(prereleaseMatch[3], 10),
       prerelease: {
         type: prereleaseMatch[4] as 'alpha' | 'beta' | 'rc',
-        version: parseInt(prereleaseMatch[5], 10)
+        version: Number.parseInt(prereleaseMatch[5], 10)
       }
     };
   }
@@ -49,9 +50,9 @@ function parseVersion(version: string): VersionComponents {
   const stableMatch = version.match(/^(\d+)\.(\d+)\.(\d+)$/);
   if (stableMatch) {
     return {
-      major: parseInt(stableMatch[1], 10),
-      minor: parseInt(stableMatch[2], 10),
-      patch: parseInt(stableMatch[3], 10)
+      major: Number.parseInt(stableMatch[1], 10),
+      minor: Number.parseInt(stableMatch[2], 10),
+      patch: Number.parseInt(stableMatch[3], 10)
     };
   }
 
@@ -76,20 +77,22 @@ function incrementVersion(currentVersion: string, versionType: VersionType, prer
   const components = parseVersion(currentVersion);
 
   switch (versionType) {
-    case 'major':
+    case 'major': {
       components.major++;
       components.minor = 0;
       components.patch = 0;
       delete components.prerelease;
       break;
+    }
 
-    case 'minor':
+    case 'minor': {
       components.minor++;
       components.patch = 0;
       delete components.prerelease;
       break;
+    }
 
-    case 'patch':
+    case 'patch': {
       if (components.prerelease) {
         // Remove prerelease for patch bump
         delete components.prerelease;
@@ -97,6 +100,7 @@ function incrementVersion(currentVersion: string, versionType: VersionType, prer
         components.patch++;
       }
       break;
+    }
 
     case 'prerelease': {
       const targetId = prereleaseId ?? 'alpha';
@@ -115,8 +119,9 @@ function incrementVersion(currentVersion: string, versionType: VersionType, prer
       break;
     }
 
-    default:
+    default: {
       throw new Error(`Invalid version type: ${versionType}`);
+    }
   }
 
   return stringifyVersion(components);
@@ -272,8 +277,8 @@ function parseArgs(): VersionUpdateOptions & { help?: boolean } {
   const args = process.argv.slice(2);
   const options: VersionUpdateOptions & { help?: boolean } = {
     autoCalculate: false,
-    updateBuildPackages: true,
-    dryRun: false
+    dryRun: false,
+    updateBuildPackages: true
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -283,7 +288,7 @@ function parseArgs(): VersionUpdateOptions & { help?: boolean } {
       case 'major':
       case 'minor':
       case 'patch':
-      case 'prerelease':
+      case 'prerelease': {
         if (!options.versionType) {
           options.versionType = arg as VersionType;
         } else {
@@ -291,16 +296,20 @@ function parseArgs(): VersionUpdateOptions & { help?: boolean } {
           process.exit(1);
         }
         break;
+      }
       case '--auto':
-      case '--auto-calculate':
+      case '--auto-calculate': {
         options.autoCalculate = true;
         break;
-      case '--dry-run':
+      }
+      case '--dry-run': {
         options.dryRun = true;
         break;
-      case '--no-build':
+      }
+      case '--no-build': {
         options.updateBuildPackages = false;
         break;
+      }
       case '--prerelease-id': {
         const id = args[++i];
         if (id !== 'alpha' && id !== 'beta' && id !== 'rc') {
@@ -310,16 +319,19 @@ function parseArgs(): VersionUpdateOptions & { help?: boolean } {
         options.prereleaseId = id;
         break;
       }
-      case '--root':
+      case '--root': {
         options.rootPath = path.resolve(args[++i]);
         break;
+      }
       case '--help':
-      case '-h':
+      case '-h': {
         options.help = true;
         break;
-      default:
+      }
+      default: {
         console.error(`Unknown argument: ${arg}`);
         process.exit(1);
+      }
     }
   }
 

@@ -14,7 +14,7 @@ import { join } from "node:path";
 import { existsSync, readFileSync } from "node:fs";
 
 function readFileText(filePath: string): string {
-  return readFileSync(filePath, 'utf-8');
+  return readFileSync(filePath, 'utf8');
 }
 
 function readFileJson<T>(filePath: string): T {

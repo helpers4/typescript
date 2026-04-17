@@ -12,9 +12,9 @@
  * @returns The modified object
  * @since 1.9.0
  */
-export function set(obj: Record<string, any>, path: string, value: any): Record<string, any> {
+export function set(obj: Record<string, unknown>, path: string, value: unknown): Record<string, unknown> {
   const keys = path.split('.');
-  let current = obj;
+  let current: Record<string, unknown> = obj;
 
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
@@ -23,7 +23,7 @@ export function set(obj: Record<string, any>, path: string, value: any): Record<
       current[key] = {};
     }
 
-    current = current[key];
+    current = current[key] as Record<string, unknown>;
   }
 
   current[keys[keys.length - 1]] = value;

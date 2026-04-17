@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { PublishResult, deprecatePackage } from './npm-utils';
+import type { PublishResult} from './npm-utils';
+import { deprecatePackage } from './npm-utils';
 
 export interface TransactionState {
   publishedPackages: PublishResult[];
@@ -21,10 +22,10 @@ export class PublishTransaction {
 
   constructor() {
     this.state = {
-      publishedPackages: [],
-      startTime: new Date(),
       completed: false,
-      rolledBack: false
+      publishedPackages: [],
+      rolledBack: false,
+      startTime: new Date()
     };
   }
 
@@ -127,9 +128,9 @@ export class PublishTransaction {
     startTime: Date;
   } {
     return {
+      completed: this.state.completed,
       duration: Date.now() - this.state.startTime.getTime(),
       packagesPublished: this.state.publishedPackages.length,
-      completed: this.state.completed,
       rolledBack: this.state.rolledBack,
       startTime: this.state.startTime
     };

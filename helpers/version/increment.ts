@@ -19,9 +19,8 @@ export function increment(
   type: 'major' | 'minor' | 'patch'
 ): string | undefined | null {
   if (version === undefined || version === null) return version;
-  const normalize = (v: string) => v.replace(/^v/, '');
   const hasV = version.startsWith('v');
-  const normalizedVersion = normalize(version);
+  const normalizedVersion = version.replace(/^v/, '');
 
   const parts = normalizedVersion.split('.').map(Number);
 

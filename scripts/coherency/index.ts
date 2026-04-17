@@ -7,7 +7,7 @@
  */
 
 // Simple index that runs all coherency tests by calling their individual scripts
-import { execSync } from 'child_process';
+import { execSync } from 'node:child_process';
 
 const tests = ['bundle', 'version', 'category', 'dependencies', 'sizes'];
 
@@ -18,7 +18,7 @@ async function runAllTests() {
   const parallelCommand = commands.join(' & ') + '; wait';
 
   try {
-    execSync(parallelCommand, { stdio: 'inherit', cwd: process.cwd() });
+    execSync(parallelCommand, { cwd: process.cwd(), stdio: 'inherit' });
     console.log("\n🎉 All coherency tests completed!");
   } catch {
     console.error("\n💥 Some coherency tests failed!");

@@ -24,7 +24,7 @@ interface ExampleResult {
  * Exit code 0 = all assertions passed, 1 = at least one failure.
  */
 async function runExamples(): Promise<void> {
-  const categories = (await readdir(DIR.HELPERS)).sort();
+  const categories = (await readdir(DIR.HELPERS)).toSorted();
   const results: ExampleResult[] = [];
   let failures = 0;
 
@@ -33,9 +33,9 @@ async function runExamples(): Promise<void> {
   for (const category of categories) {
     const categoryPath = join(DIR.HELPERS, category);
     const files = await readdir(categoryPath);
-    const exampleFiles = files.filter(f => f.endsWith('.example.ts')).sort();
+    const exampleFiles = files.filter(f => f.endsWith('.example.ts')).toSorted();
 
-    if (exampleFiles.length === 0) continue;
+    if (exampleFiles.length === 0) {continue;}
 
     console.info(`📂 ${category}/`);
 
@@ -48,21 +48,21 @@ async function runExamples(): Promise<void> {
         try {
           await example.assert();
           results.push({
-            helper: helperExamples.helper,
             category: helperExamples.category,
-            title: example.title,
+            helper: helperExamples.helper,
             success: true,
+            title: example.title,
           });
           console.info(`   ✅ ${helperExamples.helper} — ${example.title}`);
-        } catch (err) {
+        } catch (error) {
           failures++;
-          const errorMessage = err instanceof Error ? err.message : String(err);
+          const errorMessage = error instanceof Error ? error.message : String(error);
           results.push({
-            helper: helperExamples.helper,
             category: helperExamples.category,
-            title: example.title,
-            success: false,
             error: errorMessage,
+            helper: helperExamples.helper,
+            success: false,
+            title: example.title,
           });
           console.error(`   ❌ ${helperExamples.helper} — ${example.title}`);
           console.error(`      ${errorMessage}`);

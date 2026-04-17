@@ -21,6 +21,7 @@ export async function retry<T>(
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
+      // oxlint-disable-next-line no-await-in-loop -- intentional sequential retry
       return await fn();
     } catch (error) {
       lastError = error as Error;
@@ -29,7 +30,7 @@ export async function retry<T>(
         break;
       }
 
-      // Wait before next attempt
+      // oxlint-disable-next-line no-await-in-loop -- intentional delay between retries
       await new Promise(resolve => setTimeout(resolve, delayMs));
     }
   }

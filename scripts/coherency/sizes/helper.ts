@@ -11,9 +11,9 @@
  * Analyzes and reports the size of each package (categories + bundle)
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
-import { execSync } from 'child_process';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { execSync } from 'node:child_process';
 
 interface PackageSize {
   name: string;
@@ -38,19 +38,19 @@ function formatSize(bytes: number): string {
 function getDirectorySize(dirPath: string): { size: string; bytes: number } {
   try {
     const output = execSync(`du -sb "${dirPath}" 2>/dev/null || echo "0\t${dirPath}"`, {
-      encoding: 'utf-8'
+      encoding: 'utf8'
     }).trim();
 
     const [sizeStr] = output.split('\t');
-    const bytes = parseInt(sizeStr, 10);
+    const bytes = Number.parseInt(sizeStr, 10);
 
     return {
-      size: formatSize(bytes),
-      bytes
+      bytes,
+      size: formatSize(bytes)
     };
   } catch (error) {
     console.log(`⚠️  Error calculating size for ${dirPath}: ${error}`);
-    return { size: 'N/A', bytes: 0 };
+    return { bytes: 0, size: 'N/A' };
   }
 }
 

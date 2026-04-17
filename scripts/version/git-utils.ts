@@ -6,8 +6,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { exec } from 'child_process';
-import { promisify } from 'util';
+import { exec } from 'node:child_process';
+import { promisify } from 'node:util';
 
 const execAsync = promisify(exec);
 
@@ -99,25 +99,29 @@ if (import.meta.url.endsWith(process.argv[1])) {
   const action = process.argv[2];
 
   switch (action) {
-    case 'current-branch':
+    case 'current-branch': {
       getCurrentBranch().then(console.log).catch(console.error);
       break;
+    }
 
-    case 'is-clean':
+    case 'is-clean': {
       isWorkingDirectoryClean().then(clean => {
         console.log(clean ? 'Clean' : 'Dirty');
         process.exit(clean ? 0 : 1);
       }).catch(console.error);
       break;
+    }
 
-    case 'latest-tag':
+    case 'latest-tag': {
       getLatestTag().then(tag => {
         console.log(tag || 'No tags found');
       }).catch(console.error);
       break;
+    }
 
-    default:
+    default: {
       console.error('Usage: pnpm exec tsx git-utils.ts <current-branch|is-clean|latest-tag>');
       process.exit(1);
+    }
   }
 }
