@@ -47,7 +47,7 @@ describe('equals — contract', () => {
     expect(equals([{ a: 1 }], [{ a: 1 }])).toBe(true);
   });
 
-  it('[[1,2]] vs [[2,1]] returns false (recursive order-independent check matches)', () => {
+  it('[[1,2]] vs [[2,1]] returns true (recursive order-independent check)', () => {
     // equals recurses for nested arrays: [1,2] vs [2,1] would be true
     expect(equals([[1, 2]], [[2, 1]])).toBe(true);
   });

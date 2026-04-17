@@ -17,7 +17,7 @@ describe("returnOrThrowError", () => {
         { label: "false", value: false },
     ].forEach(({ label, value }) => {
         it(`should return ${label}`, () => {
-            expect(returnOrThrowError(value, "an non-expected value")).toEqual(value);
+            expect(returnOrThrowError(value, "an unexpected value")).toEqual(value);
         });
     });
 
