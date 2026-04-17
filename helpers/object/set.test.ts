@@ -81,4 +81,37 @@ describe("set", () => {
     set(obj, 'key', 'value');
     expect(obj.key).toBe('value');
   });
+
+  // --- Prototype pollution protection ---
+
+  it('should not allow __proto__ pollution', () => {
+    const obj: Record<string, unknown> = {};
+    set(obj, '__proto__.polluted', 'yes');
+    expect(({} as Record<string, unknown>)['polluted']).toBeUndefined();
+  });
+
+  it('should not allow __proto__ as final key', () => {
+    const obj: Record<string, unknown> = {};
+    set(obj, '__proto__', 'value');
+    expect(Object.getOwnPropertyDescriptor(obj, '__proto__')?.value).toBeUndefined();
+  });
+
+  it('should not allow constructor pollution', () => {
+    const obj: Record<string, unknown> = {};
+    set(obj, 'constructor.polluted', 'yes');
+    expect(obj.constructor).toBe(Object);
+  });
+
+  it('should not allow prototype pollution', () => {
+    const obj: Record<string, unknown> = {};
+    set(obj, 'prototype.polluted', 'yes');
+    expect((obj as Record<string, unknown>)['prototype']).toBeUndefined();
+  });
+
+  it('should return obj unchanged for unsafe paths', () => {
+    const obj = { a: 1 };
+    const result = set(obj, '__proto__.evil', true);
+    expect(result).toBe(obj);
+    expect(result).toEqual({ a: 1 });
+  });
 });
