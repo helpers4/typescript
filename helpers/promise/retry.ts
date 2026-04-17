@@ -17,23 +17,13 @@ export async function retry<T>(
   maxAttempts: number = 3,
   delayMs: number = 1000
 ): Promise<T> {
-  let lastError: Error;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      // oxlint-disable-next-line no-await-in-loop -- intentional sequential retry
-      return await fn();
-    } catch (error) {
-      lastError = error as Error;
-
-      if (attempt === maxAttempts) {
-        break;
-      }
-
-      // oxlint-disable-next-line no-await-in-loop -- intentional delay between retries
-      await new Promise(resolve => setTimeout(resolve, delayMs));
+  try {
+    return await fn();
+  } catch (error) {
+    if (maxAttempts <= 1) {
+      throw error;
     }
+    await new Promise(resolve => setTimeout(resolve, delayMs));
+    return retry(fn, maxAttempts - 1, delayMs);
   }
-
-  throw lastError!;
 }
