@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
 /**
  * Sets a value in an object using a dot-notated path
  * @param obj - The object to set value in
@@ -14,11 +16,13 @@
  */
 export function set(obj: Record<string, unknown>, path: string, value: unknown): Record<string, unknown> {
   const keys = path.split('.');
+
+  if (keys.some((k) => UNSAFE_KEYS.has(k))) return obj;
+
   let current: Record<string, unknown> = obj;
 
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
-    if (key === '__proto__' || key === 'constructor' || key === 'prototype') return obj;
 
     if (!(key in current) || typeof current[key] !== 'object' || current[key] === null) {
       current[key] = {};
@@ -27,9 +31,6 @@ export function set(obj: Record<string, unknown>, path: string, value: unknown):
     current = current[key] as Record<string, unknown>;
   }
 
-  const lastKey = keys[keys.length - 1];
-  if (lastKey === '__proto__' || lastKey === 'constructor' || lastKey === 'prototype') return obj;
-
-  current[lastKey] = value;
+  current[keys[keys.length - 1]] = value;
   return obj;
 }
