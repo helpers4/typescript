@@ -16,6 +16,7 @@ import {
   combineLatest as combineLatestOperator,
   of,
 } from "rxjs";
+import { isDefined } from '../type/isDefined';
 
 // combineLatest([a, b, c])
 export function combineLatest<A extends readonly unknown[]>(
@@ -54,11 +55,11 @@ export function combineLatest<T extends Record<string, ObservableInput<unknown>>
  */
 export function combineLatest(input: readonly ObservableInput<unknown>[] | Record<string, ObservableInput<unknown>>): Observable<unknown> {
   if (Array.isArray(input)) {
-    const filtered = input.filter((a) => !!a);
-    return filtered.length ? combineLatestOperator(...filtered) : of([]);
+    const filtered = input.filter(isDefined);
+    return filtered.length ? combineLatestOperator(filtered) : of([]);
   } else {
     const filtered = Object.fromEntries(
-      Object.entries(input).filter(([_, v]) => !!v),
+      Object.entries(input).filter(([_, v]) => isDefined(v)),
     );
     return Object.keys(filtered).length
       ? combineLatestOperator(filtered)

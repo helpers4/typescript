@@ -52,7 +52,7 @@ describe('daysDifference — contract', () => {
     expect(daysDifference(a, b)).toBe(1);
   });
 
-  it('365 days apart → 365', () => {
+  it('366 days apart → 366 (leap year)', () => {
     const a = new Date('2024-01-01T00:00:00.000Z');
     const b = new Date('2025-01-01T00:00:00.000Z');
     expect(daysDifference(a, b)).toBe(366); // 2024 is a leap year
