@@ -6,6 +6,8 @@
 
 import { isPlainObject } from '../type/isPlainObject';
 
+const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
 /**
  * Merges two or more objects deeply
  * @param target - The target object
@@ -24,8 +26,7 @@ export function deepMerge<T extends Record<string, unknown>>(target: T | undefin
   if (!source) return deepMerge(target, ...sources);
 
   for (const key in source) {
-    if (!Object.prototype.hasOwnProperty.call(source, key)) continue;
-    if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
+    if (!Object.hasOwn(source, key) || UNSAFE_KEYS.has(key)) continue;
 
     const targetValue = target[key];
     const sourceValue = source[key];

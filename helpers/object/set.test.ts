@@ -114,4 +114,10 @@ describe("set", () => {
     expect(result).toBe(obj);
     expect(result).toEqual({ a: 1 });
   });
+
+  it('should not create intermediate objects before unsafe key', () => {
+    const obj: Record<string, unknown> = {};
+    set(obj, 'a.__proto__.x', 1);
+    expect(obj['a']).toBeUndefined();
+  });
 });
