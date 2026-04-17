@@ -9,7 +9,8 @@
 import path from 'node:path';
 import type {
   PublishOptions,
-  PublishResult} from './helpers/npm-utils';
+  PublishResult
+} from './helpers/npm-utils';
 import {
   checkNpmAuth,
   publishPackage
@@ -32,7 +33,7 @@ interface PublishConfig {
   registry?: string;
   provenance: boolean;
   skipValidation: boolean;
-  categoryDelay: number; // Ms to wait between category and bundle publishing
+  categoryDelay: number; // ms to wait between category and bundle publishing
   retries: number;
   retryDelay: number;
   verbose: boolean;
