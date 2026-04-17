@@ -31,9 +31,11 @@ describe('isPromise — property-based', () => {
 describe('isPromise — contract', () => {
   it('Promise.resolve(1) → true', () => expect(isPromise(Promise.resolve(1))).toBe(true));
   it('new Promise(r=>r(1)) → true', () => expect(isPromise(new Promise((r) => r(1)))).toBe(true));
-  it('{then:()=>{}} → false (no catch)', () => expect(isPromise({ then: () => {} })).toBe(false));
+  // eslint-disable-next-line unicorn/no-thenable
+  it('{then:()=>{}} → false (no catch)', () => expect(isPromise({ then: () => { } })).toBe(false));
   it('{then:()=>{},catch:()=>{}} → true (thenable with catch)', () => {
-    expect(isPromise({ then: () => {}, catch: () => {} })).toBe(true);
+    // eslint-disable-next-line unicorn/no-thenable
+    expect(isPromise({ then: () => { }, catch: () => { } })).toBe(true);
   });
   it('null → false', () => expect(isPromise(null)).toBe(false));
   it('42 → false', () => expect(isPromise(42)).toBe(false));

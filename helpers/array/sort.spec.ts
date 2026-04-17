@@ -7,14 +7,14 @@
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import {
+  createSortByDateFn,
+  createSortByNumberFn,
+  createSortByStringFn,
   sortNumberAscFn,
   sortNumberDescFn,
   sortStringAscFn,
-  sortStringDescFn,
   sortStringAscInsensitiveFn,
-  createSortByStringFn,
-  createSortByNumberFn,
-  createSortByDateFn,
+  sortStringDescFn,
 } from './sort';
 
 describe('sort — property-based', () => {

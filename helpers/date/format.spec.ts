@@ -6,7 +6,7 @@
 
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { toISO8601, toRFC3339, toRFC2822 } from './format';
+import { toISO8601, toRFC2822, toRFC3339 } from './format';
 
 // Constrain dates to 4-digit year range to avoid ISO string edge cases (negative years, <1000 years)
 const YEAR_1000 = new Date('1000-01-01T00:00:00.000Z').getTime();

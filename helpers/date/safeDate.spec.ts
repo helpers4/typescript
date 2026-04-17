@@ -6,7 +6,7 @@
 
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { safeDate, dateToISOString } from './safeDate';
+import { dateToISOString, safeDate } from './safeDate';
 
 describe('safeDate — property-based', () => {
   it('valid Date inputs always return a Date (or null for invalid dates)', () => {
