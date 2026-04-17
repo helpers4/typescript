@@ -18,6 +18,7 @@ export function set(obj: Record<string, unknown>, path: string, value: unknown):
 
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') return obj;
 
     if (!(key in current) || typeof current[key] !== 'object' || current[key] === null) {
       current[key] = {};
@@ -26,6 +27,9 @@ export function set(obj: Record<string, unknown>, path: string, value: unknown):
     current = current[key] as Record<string, unknown>;
   }
 
-  current[keys[keys.length - 1]] = value;
+  const lastKey = keys[keys.length - 1];
+  if (lastKey === '__proto__' || lastKey === 'constructor' || lastKey === 'prototype') return obj;
+
+  current[lastKey] = value;
   return obj;
 }

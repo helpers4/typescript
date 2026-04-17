@@ -11,9 +11,12 @@ import { get } from './get';
 
 describe('set — property-based', () => {
   it('get(set(obj, path, value), path) === value for single-level paths', () => {
+    const safeKey = fc.string({ minLength: 1, maxLength: 10 }).filter(
+      (s) => !s.includes('.') && s !== '__proto__' && s !== 'constructor' && s !== 'prototype'
+    );
     fc.assert(
       fc.property(
-        fc.string({ minLength: 1, maxLength: 10 }).filter((s) => !s.includes('.')),
+        safeKey,
         fc.integer(),
         (key, value) => {
           const obj: Record<string, unknown> = {};
@@ -25,9 +28,12 @@ describe('set — property-based', () => {
   });
 
   it('set mutates and returns the same object reference', () => {
+    const safeKey = fc.string({ minLength: 1, maxLength: 10 }).filter(
+      (s) => !s.includes('.') && s !== '__proto__' && s !== 'constructor' && s !== 'prototype'
+    );
     fc.assert(
       fc.property(
-        fc.string({ minLength: 1, maxLength: 10 }).filter((s) => !s.includes('.')),
+        safeKey,
         fc.integer(),
         (key, value) => {
           const obj: Record<string, unknown> = {};
@@ -76,5 +82,14 @@ describe('set — contract', () => {
     const obj: Record<string, unknown> = {};
     set(obj, 'x.y.z.w', true);
     expect(get(obj, 'x.y.z.w')).toBe(true);
+  });
+
+  it('ignores unsafe keys (__proto__, constructor, prototype)', () => {
+    const obj: Record<string, unknown> = {};
+    set(obj, '__proto__.polluted', 'yes');
+    set(obj, 'constructor.polluted', 'yes');
+    set(obj, 'prototype.polluted', 'yes');
+    expect(({} as Record<string, unknown>)['polluted']).toBeUndefined();
+    expect(obj.constructor).toBe(Object);
   });
 });
