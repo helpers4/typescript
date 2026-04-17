@@ -18,7 +18,7 @@ const examples: HelperExamples = {
 // => { a: { b: { c: 42 } } }`,
       assert: () => {
         const result = set({}, 'a.b.c', 42);
-        if (result.a?.b?.c !== 42) throw new Error('Unexpected result');
+        if ((result as { a: { b: { c: number } } }).a?.b?.c !== 42) throw new Error('Unexpected result');
       },
     },
   ],
