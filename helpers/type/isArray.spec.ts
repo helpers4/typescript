@@ -33,6 +33,7 @@ describe('isArray — property-based', () => {
 describe('isArray — contract', () => {
   it('[] → true', () => expect(isArray([])).toBe(true));
   it('[1,2,3] → true', () => expect(isArray([1, 2, 3])).toBe(true));
+  // eslint-disable-next-line unicorn/no-new-array
   it('new Array(3) → true', () => expect(isArray(new Array(3))).toBe(true));
   it('{} → false', () => expect(isArray({})).toBe(false));
   it("'string' → false", () => expect(isArray('string')).toBe(false));

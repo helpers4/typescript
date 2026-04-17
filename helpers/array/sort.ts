@@ -63,7 +63,7 @@ export const sortStringAscInsensitiveFn: SortFn<string> = (a: string, b: string)
  * @returns Sort function
  * @since 1.9.0
  */
-export function createSortByStringFn<T extends Record<string, any>>(
+export function createSortByStringFn<T extends Record<string, unknown>>(
   property?: keyof T,
   caseInsensitive: boolean = false
 ): SortFn<T> {
@@ -97,7 +97,7 @@ export function createSortByStringFn<T extends Record<string, any>>(
  * @returns Sort function
  * @since 1.9.0
  */
-export function createSortByNumberFn<T extends Record<string, any>>(
+export function createSortByNumberFn<T extends Record<string, unknown>>(
   property?: keyof T
 ): SortFn<T> {
   const prop = property || 'value';
@@ -114,13 +114,13 @@ export function createSortByNumberFn<T extends Record<string, any>>(
  * @returns Sort function
  * @since 1.9.0
  */
-export function createSortByDateFn<T extends Record<string, any>>(
+export function createSortByDateFn<T extends Record<string, unknown>>(
   property?: keyof T
 ): SortFn<T> {
   const prop = property || 'date';
   return (a: T, b: T) => {
-    const aVal = new Date(a[prop] as any).getTime();
-    const bVal = new Date(b[prop] as any).getTime();
+    const aVal = new Date(a[prop] as string | number | Date).getTime();
+    const bVal = new Date(b[prop] as string | number | Date).getTime();
     return aVal - bVal;
   };
 }
