@@ -91,7 +91,7 @@ jobs:
         id: app_token
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.PUSHINATOR_ID }}
+          client-id: ${{ vars.PUSHINATOR_ID }}
           private-key: ${{ secrets.PUSHINATOR_KEY }}
 
       - name: Checkout code
@@ -180,7 +180,7 @@ jobs:
         id: app_token
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.PUSHINATOR_ID }}
+          client-id: ${{ vars.PUSHINATOR_ID }}
           private-key: ${{ secrets.PUSHINATOR_KEY }}
 
       - name: Checkout code
@@ -237,7 +237,8 @@ jobs:
 
       - name: Publish to npm (dry-run)
         if: ${{ inputs.dry-run }}
-        run: pnpm publish:packages --tag "${{ steps.version.outputs.npm-tag }}" --dry-run
+        run: pnpm publish:packages --tag "${{ steps.version.outputs.npm-tag }}"
+          --dry-run
 
       - name: Package build metadata for website
         if: ${{ !inputs.dry-run }}
@@ -308,7 +309,7 @@ jobs:
         if: ${{ !inputs.dry-run }}
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.TRIGGANATOR_ID }}
+          client-id: ${{ vars.TRIGGANATOR_ID }}
           private-key: ${{ secrets.TRIGGANATOR_KEY }}
           owner: helpers4
           repositories: website
