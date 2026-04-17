@@ -394,6 +394,15 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
     const licensesJson: WebsiteLicensesJson = { category, dependencies };
     writeFile(join(metaDir, 'licenses.json'), JSON.stringify(licensesJson, null, 2));
 
+    // --- Category metadata (label, descriptions for the website) ---
+    const categoryConfig = readFileJson<Record<string, string>>(
+      join(DIR.HELPERS, category, 'config.json')
+    );
+    writeFile(
+      join(metaDir, 'category.json'),
+      JSON.stringify({ category, ...categoryConfig }, null, 2)
+    );
+
     // --- Native alternatives (filtered for this category) ---
     const categoryAlternatives = nativeAlternatives[category];
     if (categoryAlternatives) {

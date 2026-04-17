@@ -38,6 +38,7 @@ export async function testCategoryPackages(): Promise<void> {
       'LICENSE.md',
       'llms.txt',
       'meta/api.json',
+      'meta/category.json',
       'meta/examples.json',
       'meta/licenses.json',
     ];
@@ -45,6 +46,17 @@ export async function testCategoryPackages(): Promise<void> {
       const filePath = path.join(categoryPath, file);
       if (!await fs.pathExists(filePath)) {
         throw new Error(`Missing required file: ${file} in category ${categoryDir}`);
+      }
+    }
+
+    // Check category.json structure
+    const categoryJsonPath = path.join(categoryPath, 'meta', 'category.json');
+    const categoryJson = await fs.readJson(categoryJsonPath);
+
+    const requiredCategoryFields = ['category', 'label', 'smallDescription', 'description'];
+    for (const field of requiredCategoryFields) {
+      if (!categoryJson[field] || typeof categoryJson[field] !== 'string') {
+        throw new Error(`Missing or invalid field '${field}' in ${categoryDir}/meta/category.json`);
       }
     }
 
@@ -83,4 +95,38 @@ export async function testCategoryPackages(): Promise<void> {
   }
 
   console.log(`  ✅ Category packages integrity test passed (${categoryDirs.length} categories)`);
+}
+
+/**
+ * Test source config.json files have consistent format
+ */
+export async function testCategoryConfigs(): Promise<void> {
+  console.log("  📋 Checking source config.json consistency...");
+
+  const helpersDir = path.resolve(process.cwd(), 'helpers');
+  const categories = await fs.readdir(helpersDir);
+
+  for (const category of categories) {
+    const categoryPath = path.join(helpersDir, category);
+    const stat = await fs.stat(categoryPath);
+    if (!stat.isDirectory()) continue;
+
+    const configPath = path.join(categoryPath, 'config.json');
+    if (!await fs.pathExists(configPath)) {
+      throw new Error(`Missing config.json in helpers/${category}`);
+    }
+
+    const config = await fs.readJson(configPath);
+
+    const requiredFields = ['label', 'smallDescription', 'description'];
+    for (const field of requiredFields) {
+      if (!config[field] || typeof config[field] !== 'string') {
+        throw new Error(`Missing or invalid field '${field}' in helpers/${category}/config.json`);
+      }
+    }
+
+    console.log(`  ✅ helpers/${category}/config.json: Valid`);
+  }
+
+  console.log(`  ✅ Source config.json consistency check passed`);
 }

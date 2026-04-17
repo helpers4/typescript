@@ -1,4 +1,5 @@
 {
-  "name": "number",
-  "description": "Number utility functions and mathematical calculations"
+  "label": "Number",
+  "smallDescription": "Number utility functions and validation",
+  "description": "Utilities for working with numbers including clamping, parity checks, and numeric validation"
 }
