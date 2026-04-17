@@ -147,4 +147,38 @@ describe("deepMerge", () => {
     const result = deepMerge(target, source);
     expect(result.a).toBe('string');
   });
+
+  // --- Prototype pollution protection ---
+
+  it('should not allow __proto__ pollution', () => {
+    const target = {};
+    const malicious = JSON.parse('{"__proto__":{"polluted":"yes"}}');
+    deepMerge(target, malicious);
+    expect(({} as Record<string, unknown>)['polluted']).toBeUndefined();
+    expect('polluted' in target).toBe(false);
+  });
+
+  it('should not allow constructor pollution', () => {
+    const target = {};
+    const malicious = { constructor: { polluted: 'yes' } };
+    deepMerge(target, malicious);
+    expect(target.constructor).toBe(Object);
+  });
+
+  it('should not allow prototype pollution', () => {
+    const target = {};
+    const malicious = { prototype: { polluted: 'yes' } };
+    deepMerge(target, malicious);
+    expect((target as Record<string, unknown>)['prototype']).toBeUndefined();
+  });
+
+  it('should skip inherited properties from source', () => {
+    const proto = { inherited: 'value' };
+    const source = Object.create(proto) as Record<string, unknown>;
+    source['own'] = 'yes';
+    const target: Record<string, unknown> = {};
+    deepMerge(target, source);
+    expect(target['own']).toBe('yes');
+    expect(target['inherited']).toBeUndefined();
+  });
 });

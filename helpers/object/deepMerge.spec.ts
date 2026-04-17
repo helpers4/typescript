@@ -87,4 +87,11 @@ describe('deepMerge — contract', () => {
       a: { b: { c: 1, d: 2 } },
     });
   });
+
+  it('should not pollute prototype via __proto__', () => {
+    const target = {};
+    const malicious = JSON.parse('{"__proto__":{"polluted":"yes"}}');
+    deepMerge(target, malicious);
+    expect(({} as Record<string, unknown>)['polluted']).toBeUndefined();
+  });
 });
