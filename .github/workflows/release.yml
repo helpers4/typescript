@@ -80,7 +80,7 @@ jobs:
   # Step 5: Build, bump version and verify
   build-and-verify:
     runs-on: ubuntu-latest
-    needs: [lint, type-check, tests, security]
+    needs: [ lint, type-check, tests, security ]
     outputs:
       new-version: ${{ steps.version.outputs.new-version }}
       npm-tag: ${{ steps.version.outputs.npm-tag }}
@@ -322,7 +322,7 @@ jobs:
           token: ${{ steps.trigganator.outputs.token }}
           repository: helpers4/website
           event-type: typescript-release
-          client-payload: '{"version": "${{ steps.version.outputs.new-version }}"}'
+          client-payload: "{\"version\": \"${{ steps.version.outputs.new-version }}\"}"
 
       - name: Release summary
         run: |
