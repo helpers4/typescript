@@ -4,46 +4,30 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { normalizeTimestamp } from './timestamp';
+import { ensureDate } from './ensureDate';
+import type { DateLike } from './types';
 
 /**
- * Safely creates a Date object from various input types
+ * Safely creates a Date object from various input types.
+ *
  * @param input - String, number, or Date input
  * @returns Valid Date object or null if invalid
+ * @deprecated Use {@link ensureDate} instead. `safeDate` will be removed in v3.
  * @since 1.9.0
  */
-export function safeDate(input: string | number | Date | null | undefined): Date | null {
-  if (input === null || input === undefined || input === '' || input === 0) {
-    return null;
-  }
-
-  if (input instanceof Date) {
-    return isNaN(input.getTime()) ? null : input;
-  }
-
-  if (typeof input === 'number') {
-    const normalized = normalizeTimestamp(input);
-    const date = new Date(normalized);
-    return isNaN(date.getTime()) ? null : date;
-  }
-
-  if (typeof input === 'string') {
-    const date = new Date(input);
-    return isNaN(date.getTime()) ? null : date;
-  }
-
-  // All valid input types are handled above
-  // This point should never be reached with proper TypeScript types
-  return null;
+export function safeDate(input: DateLike | null | undefined): Date | null {
+  return ensureDate(input);
 }
 
 /**
- * Formats a date to ISO string or returns null
+ * Formats a date to ISO string or returns null.
+ *
  * @param input - Date input
  * @returns ISO string or null
+ * @deprecated Use {@link toISO8601} from `format.ts` instead. `dateToISOString` will be removed in v3.
  * @since 1.9.0
  */
-export function dateToISOString(input: string | number | Date | null | undefined): string | null {
-  const date = safeDate(input);
+export function dateToISOString(input: DateLike | null | undefined): string | null {
+  const date = ensureDate(input);
   return date ? date.toISOString() : null;
 }

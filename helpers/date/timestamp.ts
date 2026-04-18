@@ -12,7 +12,8 @@
  */
 export function isTimestampInSeconds(timestamp: number): boolean {
   // Timestamps before year 2001 in milliseconds are less than 10^10
-  return timestamp < 10000000000;
+  // Use Math.abs to correctly handle negative timestamps (before epoch)
+  return Math.abs(timestamp) < 10000000000;
 }
 
 /**

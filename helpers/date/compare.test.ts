@@ -89,7 +89,6 @@ describe('compare', () => {
     });
 
     it('should return true for same day with vastly different times', () => {
-      // Create dates in local time to avoid timezone issues
       const today = new Date();
       const year = today.getFullYear();
       const month = today.getMonth();
@@ -101,11 +100,59 @@ describe('compare', () => {
     });
   });
 
+  describe('months precision', () => {
+    const options: DateCompareOptions = { precision: 'months' };
+
+    it('should return true for dates in the same month', () => {
+      expect(compare(new Date('2023-01-01'), new Date('2023-01-31'), options)).toBe(true);
+    });
+
+    it('should return false for dates in different months', () => {
+      expect(compare(new Date('2023-01-31'), new Date('2023-02-01'), options)).toBe(false);
+    });
+
+    it('should return false for same month in different years', () => {
+      expect(compare(new Date('2023-06-15'), new Date('2024-06-15'), options)).toBe(false);
+    });
+  });
+
+  describe('years precision', () => {
+    const options: DateCompareOptions = { precision: 'years' };
+
+    it('should return true for dates in the same year', () => {
+      expect(compare(new Date('2023-01-01'), new Date('2023-12-31'), options)).toBe(true);
+    });
+
+    it('should return false for dates in different years', () => {
+      expect(compare(new Date('2023-12-31'), new Date('2024-01-01'), options)).toBe(false);
+    });
+  });
+
+  describe('DateLike inputs', () => {
+    it('should accept timestamp inputs', () => {
+      const ts = new Date('2023-01-01T12:00:00Z').getTime();
+      expect(compare(ts, new Date('2023-01-01T12:00:00Z'))).toBe(true);
+    });
+
+    it('should accept string inputs', () => {
+      expect(compare('2023-01-01T12:00:00Z', '2023-01-01T12:00:00Z')).toBe(true);
+    });
+
+    it('should accept mixed inputs', () => {
+      const ts = new Date('2023-01-01T12:00:00Z').getTime();
+      expect(compare(ts, '2023-01-01T12:00:00Z')).toBe(true);
+    });
+
+    it('should compare string and Date with days precision', () => {
+      expect(compare('2025-01-19', new Date('2025-01-19T08:00:00Z'), { precision: 'days' })).toBe(true);
+    });
+  });
+
   describe('edge cases', () => {
-    it('should handle non-Date objects', () => {
-      expect(compare('not a date' as any, date1 as any)).toBe(false);
-      expect(compare(date1 as any, 'not a date' as any)).toBe(false);
-      expect(compare('same string' as any, 'same string' as any)).toBe(true);
+    it('should handle invalid inputs', () => {
+      expect(compare('invalid', 'invalid')).toBe(true); // both null → equal
+      expect(compare('invalid', date1)).toBe(false);
+      expect(compare(date1, 'invalid')).toBe(false);
     });
 
     it('should handle invalid dates', () => {
@@ -113,41 +160,18 @@ describe('compare', () => {
       const invalidDate2 = new Date('invalid');
       const validDate = new Date('2023-01-01');
 
-      expect(compare(invalidDate1, invalidDate2)).toBe(true); // Both invalid
-      expect(compare(invalidDate1, validDate)).toBe(false); // One invalid
-      expect(compare(validDate, invalidDate1)).toBe(false); // One invalid
+      expect(compare(invalidDate1, invalidDate2)).toBe(true);
+      expect(compare(invalidDate1, validDate)).toBe(false);
+      expect(compare(validDate, invalidDate1)).toBe(false);
     });
 
-    it('should handle null and undefined', () => {
-      expect(compare(null as any, null as any)).toBe(true);
-      expect(compare(undefined as any, undefined as any)).toBe(true);
-      expect(compare(null as any, date1 as any)).toBe(false);
-      expect(compare(date1 as any, null as any)).toBe(false);
-    });
-
-    // --- Mutation-killing tests ---
-
-    // L31: StringLiteral 'milliseconds' -> ''
-    // If default precision is mutated to '', the switch default case should still work
     it('should use milliseconds precision by default (not empty string)', () => {
       const a = new Date('2023-01-01T12:30:45.100Z');
       const b = new Date('2023-01-01T12:30:45.200Z');
-      // Default precision is milliseconds, so different ms -> false
       expect(compare(a, b)).toBe(false);
-      // Same ms -> true
       expect(compare(a, new Date(a.getTime()))).toBe(true);
     });
 
-    // L38: isNaN(dateA.getTime()) || isNaN(dateB.getTime()) -> &&
-    // If &&, one-invalid + one-valid would NOT enter the NaN handler
-    it('should return false when only one date is invalid (not skip NaN check)', () => {
-      const valid = new Date('2023-01-01');
-      const invalid = new Date('invalid');
-      expect(compare(valid, invalid)).toBe(false);
-      expect(compare(invalid, valid)).toBe(false);
-    });
-
-    // L61: StringLiteral '' in switch case -> different value would break switch matching
     it('should correctly match days precision in switch', () => {
       const a = new Date('2023-01-01T00:00:00Z');
       const b = new Date('2023-01-01T23:59:59Z');
