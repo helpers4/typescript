@@ -1,4 +1,5 @@
 export * from './add';
+export * from './calendar';
 export * from './compare';
 export * from './difference';
 export * from './ensureDate';
@@ -12,3 +13,5 @@ export * from './timeAgo';
 export * from './timestamp';
 export * from './timezone';
 export * from './types';
+export * from './validate';
+export * from './weekday';
