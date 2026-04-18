@@ -379,5 +379,109 @@
       "example": "crypto.randomUUID()  // 'f47ac10b-58cc-4372-a567-0e02b2c3d479'",
       "notes": "UUID v4 only; for UUID v7 (sortable, timestamped) use uuid7 from helpers4/math"
     }
+  ],
+  "date": [
+    {
+      "name": "toTemporalInstant",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon"
+      ],
+      "native": "Date.prototype.toTemporalInstant()",
+      "since": "Temporal (Stage 3)",
+      "example": "const instant = new Date().toTemporalInstant()",
+      "notes": "Converts a Date to Temporal.Instant. Requires --harmony-temporal flag in Node 24"
+    },
+    {
+      "name": "toZonedDateTime",
+      "libraries": [
+        "date-fns-tz",
+        "dayjs",
+        "luxon",
+        "moment-timezone"
+      ],
+      "native": "Temporal.Instant.prototype.toZonedDateTimeISO(tz)",
+      "since": "Temporal (Stage 3)",
+      "example": "instant.toZonedDateTimeISO('Europe/Paris')",
+      "notes": "Also Temporal.Now.zonedDateTimeISO(tz) for current time"
+    },
+    {
+      "name": "toPlainDate / toPlainDateTime / toPlainTime",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon"
+      ],
+      "native": "Temporal.ZonedDateTime.prototype.toPlainDate() / toPlainDateTime() / toPlainTime()",
+      "since": "Temporal (Stage 3)",
+      "example": "zdt.toPlainDate()  // 2025-01-19\nzdt.toPlainTime()  // 13:00:00",
+      "notes": "Extracts date-only or time-only from a ZonedDateTime"
+    },
+    {
+      "name": "now (date/time/instant)",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon",
+        "moment"
+      ],
+      "native": "Temporal.Now.instant() / .zonedDateTimeISO() / .plainDateISO() / .plainTimeISO()",
+      "since": "Temporal (Stage 3)",
+      "example": "Temporal.Now.instant()\nTemporal.Now.plainDateISO()\nTemporal.Now.zonedDateTimeISO('Europe/Paris')",
+      "notes": "Replaces new Date() for Temporal contexts"
+    },
+    {
+      "name": "from (parse temporal string)",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon",
+        "moment"
+      ],
+      "native": "Temporal.Instant.from(str) / Temporal.PlainDate.from(str) / etc.",
+      "since": "Temporal (Stage 3)",
+      "example": "Temporal.Instant.from('2025-01-19T12:00:00Z')\nTemporal.PlainDate.from('2025-01-19')",
+      "notes": "Each Temporal type has a static .from() method for strict parsing"
+    },
+    {
+      "name": "add / subtract (date arithmetic)",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon",
+        "moment"
+      ],
+      "native": "Temporal.PlainDate.prototype.add(duration) / .subtract(duration)",
+      "since": "Temporal (Stage 3)",
+      "example": "Temporal.PlainDate.from('2025-01-19').add({ months: 1 })  // 2025-02-19",
+      "notes": "Works on PlainDate, PlainDateTime, ZonedDateTime, Instant. Duration can be object or Temporal.Duration"
+    },
+    {
+      "name": "until / since (difference)",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon",
+        "moment"
+      ],
+      "native": "Temporal.PlainDate.prototype.until(other) / .since(other)",
+      "since": "Temporal (Stage 3)",
+      "example": "date1.until(date2, { largestUnit: 'year' })  // P1Y2M3D",
+      "notes": "Returns a Temporal.Duration; available on all Temporal date/time types"
+    },
+    {
+      "name": "compare (ordering)",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon",
+        "moment"
+      ],
+      "native": "Temporal.PlainDate.compare(a, b) / Temporal.Instant.compare(a, b)",
+      "since": "Temporal (Stage 3)",
+      "example": "Temporal.PlainDate.compare(date1, date2)  // -1, 0, or 1",
+      "notes": "Static method on each Temporal type; returns -1, 0, 1 — ideal for .sort()"
+    }
   ]
 }
