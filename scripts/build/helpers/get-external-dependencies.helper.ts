@@ -69,6 +69,11 @@ export async function getExternalDependencies(categoryName: string): Promise<str
         continue;
       }
 
+      // Skip internal @helpers4/* cross-references (e.g. in JSDoc @example blocks)
+      if (packageName.startsWith('@helpers4/')) {
+        continue;
+      }
+
       externalPackages.add(packageName);
     }
   }
