@@ -29,8 +29,8 @@ describe('withoutTrailingSlash', () => {
       'text-without-slash',
     )
   });
-  test('should remove last slash if input is a string of slashes', () => {
-    expect(withoutTrailingSlash('/////////')).toBe('////////')
+  test('should remove all trailing slashes if input is a string of slashes', () => {
+    expect(withoutTrailingSlash('/////////')).toBe('')
   });
   test('should return an empty string if input is a single slash', () => {
     expect(withoutTrailingSlash('/')).toBe('')
