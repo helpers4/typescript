@@ -25,6 +25,7 @@ export default defineConfig({
       }
     },
     environment: 'happy-dom',
+    execArgv: ['--harmony-temporal'],
     include: ['helpers/**/*.{test,spec}.ts']
   }
 });
