@@ -2,7 +2,9 @@ name: Mutation Dashboard
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
+  release:
+    types: [ published ]
 
 permissions:
   contents: read
@@ -34,4 +36,5 @@ jobs:
         env:
           CI: "true"
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+          STRYKER_DASHBOARD_VERSION: ${{ github.event.release.tag_name || 'main' }}
         run: pnpm mutation

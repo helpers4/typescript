@@ -23,6 +23,7 @@ export default {
   ...(isCI && {
     dashboard: {
       project: 'github.com/helpers4/typescript',
+      version: process.env.STRYKER_DASHBOARD_VERSION || 'main',
       reportType: 'full',
     },
   }),
