@@ -6,7 +6,14 @@
 
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { isTimestampInSeconds, normalizeTimestamp } from './timestamp';
+import {
+  fromMillis,
+  fromSeconds,
+  isTimestampInSeconds,
+  normalizeTimestamp,
+  toMillis,
+  toSeconds,
+} from './timestamp';
 
 const SECONDS_BOUNDARY = 10_000_000_000;
 
@@ -121,6 +128,90 @@ describe('negative timestamps — property-based', () => {
     fc.assert(
       fc.property(fc.integer({ min: -2_000_000_000_000, max: -SECONDS_BOUNDARY }), (ts) => {
         expect(normalizeTimestamp(ts)).toBe(ts);
+      })
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// toSeconds / toMillis — property-based
+// ---------------------------------------------------------------------------
+
+describe('toSeconds / toMillis — property-based', () => {
+  const validDate = fc.date({
+    min: new Date('1970-01-01'),
+    max: new Date('2099-12-31'),
+    noInvalidDate: true,
+  });
+
+  it('toMillis returns the same value as Date.getTime()', () => {
+    fc.assert(
+      fc.property(validDate, (d) => {
+        expect(toMillis(d)).toBe(d.getTime());
+      })
+    );
+  });
+
+  it('toSeconds × 1000 ≤ toMillis (floor truncation)', () => {
+    fc.assert(
+      fc.property(validDate, (d) => {
+        const s = toSeconds(d)!;
+        const ms = toMillis(d)!;
+        expect(s * 1000).toBeLessThanOrEqual(ms);
+        expect(s * 1000).toBeGreaterThan(ms - 1000);
+      })
+    );
+  });
+
+  it('toSeconds is always an integer', () => {
+    fc.assert(
+      fc.property(validDate, (d) => {
+        expect(Number.isInteger(toSeconds(d))).toBe(true);
+      })
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// fromSeconds / fromMillis — property-based
+// ---------------------------------------------------------------------------
+
+describe('fromSeconds / fromMillis — property-based', () => {
+  it('fromSeconds round-trips with toSeconds', () => {
+    // Use integer seconds to avoid sub-second loss
+    fc.assert(
+      fc.property(fc.integer({ min: 0, max: 4_102_444_800 }), (s) => {
+        const date = fromSeconds(s);
+        expect(date).not.toBeNull();
+        expect(toSeconds(date!)).toBe(s);
+      })
+    );
+  });
+
+  it('fromMillis round-trips with toMillis', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: 0, max: 4_102_444_800_000 }), (ms) => {
+        const date = fromMillis(ms);
+        expect(date).not.toBeNull();
+        expect(toMillis(date!)).toBe(ms);
+      })
+    );
+  });
+
+  it('fromSeconds(s).getTime() === s * 1000', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: -2_000_000_000, max: 2_000_000_000 }), (s) => {
+        const date = fromSeconds(s)!;
+        expect(date.getTime()).toBe(s * 1000);
+      })
+    );
+  });
+
+  it('fromMillis(ms).getTime() === ms', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: -2_000_000_000_000, max: 2_000_000_000_000 }), (ms) => {
+        const date = fromMillis(ms)!;
+        expect(date.getTime()).toBe(ms);
       })
     );
   });
