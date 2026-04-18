@@ -51,7 +51,7 @@ describe('withoutTrailingSlash — contract', () => {
     expect(withoutTrailingSlash('foo')).toBe('foo');
   });
 
-  it('double trailing slash: removes only last slash', () => {
-    expect(withoutTrailingSlash('foo//')).toBe('foo/');
+  it('double trailing slash: removes all trailing slashes', () => {
+    expect(withoutTrailingSlash('foo//')).toBe('foo');
   });
 });

@@ -108,5 +108,5 @@ export function withoutTrailingSlash(
   if (url === undefined || url === null) {
     return url
   }
-  return url[url.length - 1] === '/' ? url.slice(0, -1) : url
+  return url.replace(/\/+$/, '')
 }
