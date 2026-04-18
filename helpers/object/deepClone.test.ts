@@ -122,5 +122,15 @@ describe("deepClone", () => {
       expect(cloned.name).toBe('test');
       expect(cloned.value).toBe(42);
     });
+
+    it('should handle Object.create(null) without throwing', () => {
+      const obj = Object.create(null) as Record<string, unknown>;
+      obj.a = 1;
+      obj.b = 'hello';
+      const cloned = deepClone(obj);
+
+      expect(cloned.a).toBe(1);
+      expect(cloned.b).toBe('hello');
+    });
   });
 });

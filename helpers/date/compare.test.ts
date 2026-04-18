@@ -150,7 +150,7 @@ describe('compare', () => {
 
   describe('edge cases', () => {
     it('should handle invalid inputs', () => {
-      expect(compare('invalid', 'invalid')).toBe(true); // both null → equal
+      expect(compare('invalid', 'invalid')).toBe(false);
       expect(compare('invalid', date1)).toBe(false);
       expect(compare(date1, 'invalid')).toBe(false);
     });
@@ -160,7 +160,7 @@ describe('compare', () => {
       const invalidDate2 = new Date('invalid');
       const validDate = new Date('2023-01-01');
 
-      expect(compare(invalidDate1, invalidDate2)).toBe(true);
+      expect(compare(invalidDate1, invalidDate2)).toBe(false);
       expect(compare(invalidDate1, validDate)).toBe(false);
       expect(compare(validDate, invalidDate1)).toBe(false);
     });
