@@ -23,4 +23,26 @@ describe("unique", () => {
   it("should preserve order for first occurrence", () => {
     expect(unique([3, 1, 2, 1, 3])).toEqual([3, 1, 2]);
   });
+
+  describe('security edge cases', () => {
+    it('should deduplicate NaN values (Set uses SameValueZero)', () => {
+      expect(unique([NaN, NaN, NaN])).toEqual([NaN]);
+    });
+
+    it('should handle __proto__ as string value', () => {
+      expect(unique(['__proto__', '__proto__', 'safe'])).toEqual(['__proto__', 'safe']);
+    });
+
+    it('should handle constructor as string value', () => {
+      expect(unique(['constructor', 'constructor'])).toEqual(['constructor']);
+    });
+
+    it('should handle null and undefined values', () => {
+      expect(unique([null, null, undefined, undefined])).toEqual([null, undefined]);
+    });
+
+    it('should handle -0 and +0 (Set treats them as same)', () => {
+      expect(unique([0, -0, 0])).toEqual([0]);
+    });
+  });
 });

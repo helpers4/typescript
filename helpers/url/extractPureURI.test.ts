@@ -66,4 +66,30 @@ describe('extractPureURI', () => {
         expect(extractPureURI("ab?c#d")).toBe("ab");
         expect(extractPureURI("ab#c?d")).toBe("ab");
     });
+
+    describe('security edge cases', () => {
+        test('should handle javascript: protocol URI', () => {
+            expect(extractPureURI('javascript:alert(1)')).toBe('javascript:alert(1)');
+        });
+
+        test('should handle data: URI', () => {
+            expect(extractPureURI('data:text/html,<script>alert(1)</script>')).toBe('data:text/html,<script>alert(1)</script>');
+        });
+
+        test('should handle URL with credentials', () => {
+            expect(extractPureURI('https://user:pass@evil.com/path?q=1')).toBe('https://user:pass@evil.com/path');
+        });
+
+        test('should handle double-encoded characters', () => {
+            expect(extractPureURI('/path%252F..%252F..%252Fetc%252Fpasswd?x=1')).toBe('/path%252F..%252F..%252Fetc%252Fpasswd');
+        });
+
+        test('should handle null bytes in URL', () => {
+            expect(extractPureURI('/path%00evil?q=1')).toBe('/path%00evil');
+        });
+
+        test('should handle protocol-relative URL', () => {
+            expect(extractPureURI('//evil.com/path?q=1')).toBe('//evil.com/path');
+        });
+    });
 });

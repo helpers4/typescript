@@ -35,4 +35,22 @@ describe('withoutTrailingSlash', () => {
   test('should return an empty string if input is a single slash', () => {
     expect(withoutTrailingSlash('/')).toBe('')
   });
+
+  describe('security edge cases', () => {
+    test('should handle javascript: protocol', () => {
+      expect(withoutTrailingSlash('javascript:alert(1)/')).toBe('javascript:alert(1)');
+    });
+
+    test('should handle data: URI with trailing slash', () => {
+      expect(withoutTrailingSlash('data:text/html,payload/')).toBe('data:text/html,payload');
+    });
+
+    test('should handle URL with credentials', () => {
+      expect(withoutTrailingSlash('https://user:pass@host.com/')).toBe('https://user:pass@host.com');
+    });
+
+    test('should handle null bytes in path', () => {
+      expect(withoutTrailingSlash('/path%00evil/')).toBe('/path%00evil');
+    });
+  });
 });

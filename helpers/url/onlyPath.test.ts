@@ -30,4 +30,26 @@ describe('onlyPath', () => {
   test('should return null if input is null', () => {
     expect(onlyPath(null)).toBe(null)
   });
+
+  describe('security edge cases', () => {
+    test('should handle javascript: protocol', () => {
+      expect(onlyPath('javascript:alert(1)')).toBe('javascript:alert(1)');
+    });
+
+    test('should handle data: URI with query', () => {
+      expect(onlyPath('data:text/html,payload?x=1')).toBe('data:text/html,payload');
+    });
+
+    test('should handle URL with credentials', () => {
+      expect(onlyPath('https://user:pass@host.com/path?q=1')).toBe('https://user:pass@host.com/path');
+    });
+
+    test('should handle double-encoded characters', () => {
+      expect(onlyPath('/path%252F..%252Fetc?x=1')).toBe('/path%252F..%252Fetc');
+    });
+
+    test('should handle null bytes', () => {
+      expect(onlyPath('/path%00evil#frag')).toBe('/path%00evil');
+    });
+  });
 });

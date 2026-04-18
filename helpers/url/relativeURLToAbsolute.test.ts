@@ -58,4 +58,54 @@ describe('relativeURLToAbsolute', () => {
             `${document.baseURI}/test-url/test`
         );
     });
+
+    describe('security edge cases', () => {
+        test('should handle javascript: protocol in relative URL', () => {
+            global.document = {
+                ...document,
+                baseURI: "https://www.example.com",
+            };
+            // javascript: in relative URL should be treated as path segment
+            const result = relativeURLToAbsolute('javascript:alert(1)');
+            expect(result).toContain('https://www.example.com');
+            // It should be prefixed with the base URI, not execute as js
+            expect(result).toBe('https://www.example.com/javascript:alert(1)');
+        });
+
+        test('should handle path traversal in relative URL', () => {
+            global.document = {
+                ...document,
+                baseURI: "https://www.example.com",
+            };
+            const result = relativeURLToAbsolute('/../../../etc/passwd');
+            expect(result).toContain('https://www.example.com');
+        });
+
+        test('should handle protocol-relative URL as path', () => {
+            global.document = {
+                ...document,
+                baseURI: "https://www.example.com",
+            };
+            const result = relativeURLToAbsolute('//evil.com/steal');
+            expect(result).toContain('https://www.example.com');
+        });
+
+        test('should handle data: URI in relative URL', () => {
+            global.document = {
+                ...document,
+                baseURI: "https://www.example.com",
+            };
+            const result = relativeURLToAbsolute('data:text/html,<script>alert(1)</script>');
+            expect(result).toContain('https://www.example.com');
+        });
+
+        test('should handle URL with null bytes', () => {
+            global.document = {
+                ...document,
+                baseURI: "https://www.example.com",
+            };
+            const result = relativeURLToAbsolute('/path%00evil');
+            expect(result).toBe('https://www.example.com/path%00evil');
+        });
+    });
 });

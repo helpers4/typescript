@@ -39,4 +39,34 @@ describe("camelCase", () => {
   it('should return undefined when given undefined', () => {
     expect(camelCase(undefined)).toBeUndefined();
   });
+
+  describe('security edge cases', () => {
+    it('should handle XSS payload in input without throwing', () => {
+      const result = camelCase('<script>alert(1)</script>');
+      expect(result).toBeDefined();
+      expect(typeof result).toBe('string');
+    });
+
+    it('should handle HTML injection payload', () => {
+      const result = camelCase('<img onerror="alert(1)" src=x>');
+      expect(result).toBeDefined();
+      expect(typeof result).toBe('string');
+    });
+
+    it('should handle extremely long input without hanging', () => {
+      const long = 'a-'.repeat(10000) + 'b';
+      const result = camelCase(long);
+      expect(result).toBeDefined();
+    });
+
+    it('should handle null bytes in input', () => {
+      const result = camelCase('hello\0world');
+      expect(result).toBeDefined();
+    });
+
+    it('should handle unicode injection', () => {
+      const result = camelCase('hello\u200Bworld');
+      expect(result).toBeDefined();
+    });
+  });
 });

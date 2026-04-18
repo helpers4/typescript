@@ -56,4 +56,28 @@ describe('pascalCase', () => {
   it('should return undefined when given undefined', () => {
     expect(pascalCase(undefined)).toBeUndefined();
   });
+
+  describe('security edge cases', () => {
+    it('should handle XSS payload in input', () => {
+      const result = pascalCase('<script>alert(1)</script>');
+      expect(result).toBeDefined();
+      expect(typeof result).toBe('string');
+    });
+
+    it('should handle HTML injection payload', () => {
+      const result = pascalCase('<img onerror="alert(1)" src=x>');
+      expect(result).toBeDefined();
+    });
+
+    it('should handle extremely long input without hanging', () => {
+      const long = 'hello-world-'.repeat(5000);
+      const result = pascalCase(long);
+      expect(result).toBeDefined();
+    });
+
+    it('should handle null bytes in input', () => {
+      const result = pascalCase('hello\0world');
+      expect(result).toBeDefined();
+    });
+  });
 });
