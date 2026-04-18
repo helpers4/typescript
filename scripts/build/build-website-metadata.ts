@@ -320,7 +320,7 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
 
   // Load native alternatives once (keyed by category)
   const nativeAlternatives = readFileJson<Record<string, unknown[]>>(
-    join(DIR.ROOT, 'scripts', 'constants', 'native-alternatives.json')
+    join(DIR.ROOT, 'docs', 'native-alternatives.json')
   );
 
   for (const category of validCategories) {

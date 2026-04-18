@@ -355,7 +355,7 @@ If you are an AI coding agent contributing to this repo:
 - All code, comments, commits, and documentation must be in **English**
 - Follow the exact file structure shown above
 - Do **not** push directly — the maintainer will review and push
-- Check `scripts/constants/native-alternatives.json` before creating a helper that duplicates a native API
+- Check `docs/native-alternatives.json` before creating a helper that duplicates a native API
 
 ## Getting help
 
