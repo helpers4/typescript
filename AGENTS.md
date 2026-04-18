@@ -72,6 +72,8 @@ typescript/
 │   ├── url/                   # cleanPath, extractPureURI, onlyPath, ...
 │   └── version/               # semver comparison utilities
 ├── build/                     # Compiled output (one dir per category + all/)
+├── docs/
+│   └── native-alternatives.json  # Native JS/TS equivalents — check before adding helpers
 ├── scripts/
 │   ├── build/                 # Build orchestrator
 │   ├── coherency/             # Consistency checks (bundle, version, category, deps, sizes)
