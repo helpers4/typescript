@@ -36,4 +36,25 @@ describe("timestamp utilities", () => {
     expect(isTimestampInSeconds(9999999999)).toBe(true);
     expect(normalizeTimestamp(9999999999)).toBe(9999999999000);
   });
+
+  // Negative timestamps (before Unix epoch)
+  it("should treat negative seconds-range as seconds", () => {
+    expect(isTimestampInSeconds(-1642694400)).toBe(true);
+    expect(normalizeTimestamp(-1642694400)).toBe(-1642694400000);
+  });
+
+  it("should treat negative ms-range as milliseconds", () => {
+    expect(isTimestampInSeconds(-1642694400000)).toBe(false);
+    expect(normalizeTimestamp(-1642694400000)).toBe(-1642694400000);
+  });
+
+  it("should treat -10000000000 as milliseconds (boundary)", () => {
+    expect(isTimestampInSeconds(-10000000000)).toBe(false);
+    expect(normalizeTimestamp(-10000000000)).toBe(-10000000000);
+  });
+
+  it("should treat -9999999999 as seconds", () => {
+    expect(isTimestampInSeconds(-9999999999)).toBe(true);
+    expect(normalizeTimestamp(-9999999999)).toBe(-9999999999000);
+  });
 });

@@ -6,7 +6,7 @@
 
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { daysDifference } from './difference';
+import { daysDifference, difference } from './difference';
 
 const validDate = () => fc.date().filter((d) => !isNaN(d.getTime()));
 
@@ -38,9 +38,6 @@ describe('daysDifference — property-based', () => {
 
 describe('daysDifference — contract', () => {
   it('same day → 0 (within 12h of same UTC point)', () => {
-    // daysDifference uses getTime() diff / ms-per-day with Math.round.
-    // 23:59:59.999 apart is ~0.9999 days, which rounds to 1.
-    // Use dates well within the same 12-hour window to guarantee rounding to 0.
     const a = new Date('2025-06-15T10:00:00.000Z');
     const b = new Date('2025-06-15T11:00:00.000Z');
     expect(daysDifference(a, b)).toBe(0);
@@ -55,7 +52,7 @@ describe('daysDifference — contract', () => {
   it('366 days apart → 366 (leap year)', () => {
     const a = new Date('2024-01-01T00:00:00.000Z');
     const b = new Date('2025-01-01T00:00:00.000Z');
-    expect(daysDifference(a, b)).toBe(366); // 2024 is a leap year
+    expect(daysDifference(a, b)).toBe(366);
   });
 
   it('large date range — epoch to 2025', () => {
@@ -63,5 +60,54 @@ describe('daysDifference — contract', () => {
     const y2025 = new Date('2025-01-01T00:00:00.000Z');
     const diff = daysDifference(epoch, y2025);
     expect(diff).toBeGreaterThan(20000);
+  });
+});
+
+describe('difference — property-based', () => {
+  it('difference(d, d) === 0 for all units', () => {
+    const units = ['milliseconds', 'seconds', 'minutes', 'hours', 'days'] as const;
+    fc.assert(
+      fc.property(validDate(), (d) => {
+        for (const unit of units) {
+          expect(difference(d, d, { unit })).toBe(0);
+        }
+      })
+    );
+  });
+
+  it('is symmetric when absolute is true (default)', () => {
+    fc.assert(
+      fc.property(validDate(), validDate(), (a, b) => {
+        expect(difference(a, b)).toBe(difference(b, a));
+      })
+    );
+  });
+
+  it('absolute=false is antisymmetric: diff(a,b) === -diff(b,a)', () => {
+    fc.assert(
+      fc.property(validDate(), validDate(), (a, b) => {
+        const ab = difference(a, b, { absolute: false });
+        const ba = difference(b, a, { absolute: false });
+        expect(ab).toBeCloseTo(-ba, 5);
+      })
+    );
+  });
+});
+
+describe('difference — contract', () => {
+  it('1 hour in hours → 1', () => {
+    expect(difference('2025-01-01T00:00:00Z', '2025-01-01T01:00:00Z', { unit: 'hours' })).toBe(1);
+  });
+
+  it('1 minute in seconds → 60', () => {
+    expect(difference('2025-01-01T00:00:00Z', '2025-01-01T00:01:00Z', { unit: 'seconds' })).toBe(60);
+  });
+
+  it('invalid input → NaN', () => {
+    expect(difference('invalid', '2025-01-01')).toBeNaN();
+  });
+
+  it('absolute=false with a > b → negative', () => {
+    expect(difference('2025-01-10', '2025-01-01', { absolute: false })).toBeLessThan(0);
   });
 });

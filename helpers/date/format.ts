@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { safeDate } from './safeDate';
+import { ensureDate } from './ensureDate';
+import type { DateLike } from './types';
 
 /**
  * Converts a date to ISO 8601 format
@@ -16,8 +17,8 @@ import { safeDate } from './safeDate';
  * toISO8601(1737290400000) // '2025-01-19T12:00:00.000Z'
  * @since 2.0.0
  */
-export function toISO8601(date: Date | number | string): string | null {
-  const d = safeDate(date);
+export function toISO8601(date: DateLike): string | null {
+  const d = ensureDate(date);
   if (!d) return null;
   return d.toISOString();
 }
@@ -35,10 +36,10 @@ export function toISO8601(date: Date | number | string): string | null {
  * @since 2.0.0
  */
 export function toRFC3339(
-  date: Date | number | string,
+  date: DateLike,
   includeMilliseconds = false
 ): string | null {
-  const d = safeDate(date);
+  const d = ensureDate(date);
   if (!d) return null;
 
   const iso = d.toISOString();
@@ -59,8 +60,8 @@ export function toRFC3339(
  * toRFC2822(new Date('2025-01-19T12:30:00Z')) // 'Sun, 19 Jan 2025 12:30:00 +0000'
  * @since 2.0.0
  */
-export function toRFC2822(date: Date | number | string): string | null {
-  const d = safeDate(date);
+export function toRFC2822(date: DateLike): string | null {
+  const d = ensureDate(date);
   if (!d) return null;
 
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

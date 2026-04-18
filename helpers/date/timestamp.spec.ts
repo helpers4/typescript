@@ -82,4 +82,46 @@ describe('isTimestampInSeconds — contract', () => {
   it('1_737_290_400_000 → false', () => {
     expect(isTimestampInSeconds(1_737_290_400_000)).toBe(false);
   });
+
+  it('-1_642_694_400 → true (negative seconds)', () => {
+    expect(isTimestampInSeconds(-1_642_694_400)).toBe(true);
+  });
+
+  it('-1_642_694_400_000 → false (negative ms)', () => {
+    expect(isTimestampInSeconds(-1_642_694_400_000)).toBe(false);
+  });
+});
+
+describe('negative timestamps — property-based', () => {
+  it('negative seconds-range values are detected as seconds', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: -(SECONDS_BOUNDARY - 1), max: -1 }), (ts) => {
+        expect(isTimestampInSeconds(ts)).toBe(true);
+      })
+    );
+  });
+
+  it('negative ms-range values are detected as milliseconds', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: -2_000_000_000_000, max: -SECONDS_BOUNDARY }), (ts) => {
+        expect(isTimestampInSeconds(ts)).toBe(false);
+      })
+    );
+  });
+
+  it('negative seconds are multiplied by 1000', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: -(SECONDS_BOUNDARY - 1), max: -1 }), (ts) => {
+        expect(normalizeTimestamp(ts)).toBe(ts * 1000);
+      })
+    );
+  });
+
+  it('negative ms values are returned unchanged', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: -2_000_000_000_000, max: -SECONDS_BOUNDARY }), (ts) => {
+        expect(normalizeTimestamp(ts)).toBe(ts);
+      })
+    );
+  });
 });

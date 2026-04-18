@@ -8,7 +8,7 @@ import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
 import { compare } from './compare';
 
-const precisions = ['milliseconds', 'seconds', 'minutes', 'hours', 'days'] as const;
+const precisions = ['milliseconds', 'seconds', 'minutes', 'hours', 'days', 'months', 'years'] as const;
 
 describe('compare — property-based', () => {
   it('is reflexive for all precisions with valid dates', () => {
@@ -34,14 +34,12 @@ describe('compare — property-based', () => {
   it('days precision: same calendar day is always true regardless of time', () => {
     fc.assert(
       fc.property(fc.date(), (d) => {
-        // Create another date on the same day but different time
         const same = new Date(d);
         same.setMilliseconds(0);
         same.setSeconds(0);
         same.setMinutes(0);
         same.setHours(0);
         const plusHour = new Date(same.getTime() + 3_600_000 * 2);
-        // Only same day if still same date string
         if (d.toDateString() === plusHour.toDateString()) {
           expect(compare(d, plusHour, { precision: 'days' })).toBe(true);
         }
@@ -55,6 +53,17 @@ describe('compare — property-based', () => {
         const copy = new Date(d.getTime());
         expect(compare(d, copy, { precision: 'milliseconds' })).toBe(true);
       })
+    );
+  });
+
+  it('reflexive with timestamps (DateLike)', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 10_000_000_000, max: 2_000_000_000_000 }),
+        (ts) => {
+          expect(compare(ts, ts)).toBe(true);
+        }
+      )
     );
   });
 });
@@ -104,11 +113,10 @@ describe('compare — contract', () => {
   });
 
   it('different days → false for precision=days', () => {
-    // Use local midnight boundary to avoid timezone-dependent behavior
     const midnight = new Date();
     midnight.setHours(0, 0, 0, 0);
-    const yesterday = new Date(midnight.getTime() - 1);  // 1ms before midnight (yesterday)
-    const today = new Date(midnight.getTime() + 1);      // 1ms after midnight (today)
+    const yesterday = new Date(midnight.getTime() - 1);
+    const today = new Date(midnight.getTime() + 1);
     expect(compare(yesterday, today, { precision: 'days' })).toBe(false);
   });
 
@@ -118,10 +126,20 @@ describe('compare — contract', () => {
     expect(compare(a, b, { precision: 'hours' })).toBe(true);
   });
 
-  it('non-Date inputs use reference equality', () => {
-    const s = 'hello' as unknown as Date;
-    expect(compare(s, s)).toBe(true);
-    expect(compare('a' as unknown as Date, 'b' as unknown as Date)).toBe(false);
+  it('same month different days → true for precision=months', () => {
+    expect(compare('2025-06-01', '2025-06-30', { precision: 'months' })).toBe(true);
+  });
+
+  it('different months → false for precision=months', () => {
+    expect(compare('2025-06-30', '2025-07-01', { precision: 'months' })).toBe(false);
+  });
+
+  it('same year different months → true for precision=years', () => {
+    expect(compare('2025-01-01', '2025-12-31', { precision: 'years' })).toBe(true);
+  });
+
+  it('different years → false for precision=years', () => {
+    expect(compare('2024-12-31', '2025-01-01', { precision: 'years' })).toBe(false);
   });
 
   it('default precision is milliseconds', () => {
@@ -129,5 +147,15 @@ describe('compare — contract', () => {
     const b = new Date('2025-06-15T10:30:45.001Z');
     expect(compare(a, b)).toBe(false);
     expect(compare(a, new Date(a.getTime()))).toBe(true);
+  });
+
+  it('string inputs are compared correctly', () => {
+    expect(compare('2025-01-19T12:00:00Z', '2025-01-19T12:00:00Z')).toBe(true);
+    expect(compare('2025-01-19T12:00:00Z', '2025-01-19T12:00:01Z')).toBe(false);
+  });
+
+  it('timestamp inputs are compared correctly', () => {
+    const ts = new Date('2025-01-19T12:00:00Z').getTime();
+    expect(compare(ts, ts)).toBe(true);
   });
 });
