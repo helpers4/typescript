@@ -10,4 +10,5 @@ export * from './sequence';
 export * from './startOf';
 export * from './timeAgo';
 export * from './timestamp';
+export * from './timezone';
 export * from './types';
