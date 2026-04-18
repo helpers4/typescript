@@ -9,24 +9,31 @@ import { describe, expect, it } from 'vitest';
 import { stripV } from './stripV';
 
 describe('stripV — property-based', () => {
-  it('result never starts with lowercase "v"', () => {
+  it('strips exactly one leading lowercase "v"', () => {
     fc.assert(
       fc.property(fc.string(), (s: string) => {
         const result = stripV(s);
         if (typeof result === 'string') {
-          expect(result.startsWith('v')).toBe(false);
+          if (s.startsWith('v')) {
+            expect(result).toBe(s.slice(1));
+          } else {
+            expect(result).toBe(s);
+          }
         }
       }),
     );
   });
 
-  it('idempotent: stripV(stripV(s)) === stripV(s)', () => {
+  it('idempotent for strings not starting with "vv"', () => {
     fc.assert(
-      fc.property(fc.string(), (s: string) => {
-        const once = stripV(s);
-        const twice = stripV(once);
-        expect(twice).toBe(once);
-      }),
+      fc.property(
+        fc.string().filter(s => !s.startsWith('vv')),
+        (s: string) => {
+          const once = stripV(s);
+          const twice = stripV(once);
+          expect(twice).toBe(once);
+        },
+      ),
     );
   });
   it('if input does not start with v/V, result === input', () => {

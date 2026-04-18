@@ -10,7 +10,7 @@
  * Category Packages coherency test
  */
 
-import { testCategoryPackages, testCategoryConfigs } from "./helper";
+import { testCategoryConfigs, testCategoryPackages } from "./helper";
 
 async function runCategoryPackagesTest() {
   try {
