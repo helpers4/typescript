@@ -4,6 +4,8 @@ export * from './difference';
 export * from './ensureDate';
 export * from './format';
 export * from './is';
+export * from './range';
+export * from './sequence';
 export * from './startOf';
 export * from './timestamp';
 export * from './types';
