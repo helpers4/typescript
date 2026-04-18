@@ -304,11 +304,13 @@ async function loadExampleFiles(
 
 /**
  * Generates enriched metadata files for the website in `build/<category>/meta/`.
- * Produces four files per category:
+ * Produces four files per category, plus an optional fifth file when native
+ * alternatives are defined for that category:
  * - `meta/api.json` — full function docs with overloads, @since, type parameters
  * - `meta/category.json` — category label and descriptions for the website
  * - `meta/examples.json` — examples per function
  * - `meta/licenses.json` — third-party dependency license metadata
+ * - `meta/native-alternatives.json` — optional native alternatives metadata
  *
  * @param validCategories - Categories that were successfully built
  */
