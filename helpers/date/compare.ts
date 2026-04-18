@@ -45,12 +45,7 @@ export function compare(dateA: DateLike, dateB: DateLike, options: DateCompareOp
   const a = ensureDate(dateA);
   const b = ensureDate(dateB);
 
-  // Both invalid → considered equal
-  if (a === null && b === null) {
-    return true;
-  }
-
-  // One invalid → not equal
+  // Any invalid → not equal
   if (a === null || b === null) {
     return false;
   }

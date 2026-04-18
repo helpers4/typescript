@@ -79,7 +79,7 @@ describe('timeAgo — edge cases', () => {
     expect(result).toBe('now');
   });
 
-  it('returns "0 seconds ago" for identical dates with numeric always', () => {
+  it('returns "in 0 seconds" for identical dates with numeric always', () => {
     const result = timeAgo(NOW, { now: NOW, numeric: 'always' });
     expect(result).toBe('in 0 seconds');
   });

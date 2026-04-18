@@ -27,7 +27,7 @@ export function deepClone<T>(obj: T): T {
 
   const cloned = {} as T;
   for (const key in obj) {
-    if (obj.hasOwnProperty(key) && !UNSAFE_KEYS.has(key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key) && !UNSAFE_KEYS.has(key)) {
       cloned[key] = deepClone(obj[key]);
     }
   }

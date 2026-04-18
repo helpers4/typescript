@@ -13,7 +13,7 @@ const precisions = ['milliseconds', 'seconds', 'minutes', 'hours', 'days', 'mont
 describe('compare — property-based', () => {
   it('is reflexive for all precisions with valid dates', () => {
     fc.assert(
-      fc.property(fc.date(), (d) => {
+      fc.property(fc.date({ noInvalidDate: true }), (d) => {
         for (const precision of precisions) {
           expect(compare(d, d, { precision })).toBe(true);
         }
@@ -23,7 +23,7 @@ describe('compare — property-based', () => {
 
   it('is symmetric for all precisions with valid dates', () => {
     fc.assert(
-      fc.property(fc.date(), fc.date(), (a, b) => {
+      fc.property(fc.date({ noInvalidDate: true }), fc.date({ noInvalidDate: true }), (a, b) => {
         for (const precision of precisions) {
           expect(compare(a, b, { precision })).toBe(compare(b, a, { precision }));
         }
@@ -100,10 +100,10 @@ describe('compare — contract', () => {
     expect(compare(a, b, { precision: 'seconds' })).toBe(false);
   });
 
-  it('both invalid dates → true', () => {
+  it('both invalid dates → false', () => {
     const a = new Date('not-a-date');
     const b = new Date('also-not-a-date');
-    expect(compare(a, b)).toBe(true);
+    expect(compare(a, b)).toBe(false);
   });
 
   it('invalid date vs valid date → false', () => {
