@@ -75,4 +75,40 @@ describe('deepEquals', () => {
     expect(deepEquals(arr1, arr2)).toBe(true);
     expect(deepEquals(arr1, arr3)).toBe(false);
   });
+
+  describe('security edge cases', () => {
+    it('should handle sparse arrays', () => {
+      // eslint-disable-next-line no-sparse-arrays
+      const sparse1 = [1, , 3];
+      // eslint-disable-next-line no-sparse-arrays
+      const sparse2 = [1, , 3];
+      expect(deepEquals(sparse1, sparse2)).toBe(true);
+    });
+
+    it('should handle arrays with __proto__ string values', () => {
+      const arr1 = ['__proto__', 'constructor', 'prototype'];
+      const arr2 = ['__proto__', 'constructor', 'prototype'];
+      expect(deepEquals(arr1, arr2)).toBe(true);
+    });
+
+    it('should handle NaN in nested arrays', () => {
+      // NaN !== NaN in strict equality, so these should differ
+      expect(deepEquals([NaN], [NaN])).toBe(false);
+      expect(deepEquals([[NaN]], [[NaN]])).toBe(false);
+    });
+
+    it('should handle very deeply nested arrays without crash', () => {
+      let deep1: unknown[] = [1];
+      let deep2: unknown[] = [1];
+      for (let i = 0; i < 100; i++) {
+        deep1 = [deep1];
+        deep2 = [deep2];
+      }
+      expect(deepEquals(deep1, deep2)).toBe(true);
+    });
+
+    it('should handle arrays with -0 and +0', () => {
+      expect(deepEquals([0], [-0])).toBe(true); // 0 === -0
+    });
+  });
 });

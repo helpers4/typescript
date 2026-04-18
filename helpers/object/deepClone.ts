@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
 /**
  * Creates a deep copy of an object or array
  * @param obj - The object to clone
@@ -25,7 +27,7 @@ export function deepClone<T>(obj: T): T {
 
   const cloned = {} as T;
   for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
+    if (obj.hasOwnProperty(key) && !UNSAFE_KEYS.has(key)) {
       cloned[key] = deepClone(obj[key]);
     }
   }

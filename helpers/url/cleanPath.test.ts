@@ -29,6 +29,36 @@ describe('cleanPath', () => {
   test('should handle path without duplicate slashes', () => {
     expect(cleanPath('/path/to/resource')).toBe('/path/to/resource')
   });
+  describe('security edge cases', () => {
+    test('should handle javascript: protocol', () => {
+      expect(cleanPath('javascript:alert(1)')).toBe('javascript:alert(1)');
+    });
+
+    test('should handle data: URI', () => {
+      expect(cleanPath('data:text/html,<script>alert(1)</script>')).toBe('data:text/html,<script>alert(1)</script>');
+    });
+
+    test('should handle path traversal sequences', () => {
+      expect(cleanPath('/path/../../etc/passwd')).toBe('/path/../../etc/passwd');
+    });
+
+    test('should handle double-encoded slashes', () => {
+      expect(cleanPath('/path%252F..%252Fetc')).toBe('/path%252F..%252Fetc');
+    });
+
+    test('should handle null bytes in path', () => {
+      expect(cleanPath('/path%00/evil')).toBe('/path%00/evil');
+    });
+
+    test('should handle URL with credentials', () => {
+      expect(cleanPath('https://user:pass@host.com//path')).toBe('https://user:pass@host.com/path');
+    });
+
+    test('should handle protocol-relative URL with duplicate slashes', () => {
+      expect(cleanPath('//evil.com//path//to')).toBe('//evil.com/path/to');
+    });
+  });
+
   test('should handle URLs with fragments and queries', () => {
     expect(cleanPath('/path//to///resource?query=thing#fragment')).toBe(
       '/path/to/resource?query=thing#fragment',

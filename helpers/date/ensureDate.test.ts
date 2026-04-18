@@ -161,4 +161,55 @@ describe('ensureDate', () => {
       expect(result).toBe(d);
     });
   });
+
+  describe('security edge cases', () => {
+    it('should return null for timestamp beyond Date range (8.64e15 + 1)', () => {
+      expect(ensureDate(8.64e15 + 1)).toBeNull();
+    });
+
+    it('should return null for negative timestamp beyond Date range', () => {
+      expect(ensureDate(-8.64e15 - 1)).toBeNull();
+    });
+
+    it('should handle MAX_SAFE_INTEGER as timestamp', () => {
+      const result = ensureDate(Number.MAX_SAFE_INTEGER);
+      // Either valid or null, should not throw
+      expect(result === null || result instanceof Date).toBe(true);
+    });
+
+    it('should return null for NaN input', () => {
+      expect(ensureDate(NaN)).toBeNull();
+    });
+
+    it('should return null for Infinity input', () => {
+      expect(ensureDate(Infinity)).toBeNull();
+    });
+
+    it('should return null for -Infinity input', () => {
+      expect(ensureDate(-Infinity)).toBeNull();
+    });
+
+    it('should handle string with null bytes without throwing', () => {
+      // Date constructor may parse up to the null byte
+      const result = ensureDate('2025-01-01\x00malicious');
+      expect(result === null || result instanceof Date).toBe(true);
+    });
+
+    it('should return null for extremely long date string', () => {
+      const long = '2025-01-01' + 'x'.repeat(10000);
+      expect(ensureDate(long)).toBeNull();
+    });
+
+    it('should handle year 0 (1 BC in ISO 8601)', () => {
+      const result = ensureDate('0000-01-01');
+      // Should not throw
+      expect(result === null || result instanceof Date).toBe(true);
+    });
+
+    it('should handle negative year', () => {
+      const result = ensureDate('-000001-01-01');
+      // Should not throw
+      expect(result === null || result instanceof Date).toBe(true);
+    });
+  });
 });

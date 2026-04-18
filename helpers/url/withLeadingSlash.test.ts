@@ -33,4 +33,22 @@ describe('withLeadingSlash', () => {
   test('should do nothing if input is a single slash', () => {
     expect(withLeadingSlash('/')).toBe('/')
   });
+
+  describe('security edge cases', () => {
+    test('should handle javascript: protocol', () => {
+      expect(withLeadingSlash('javascript:alert(1)')).toBe('/javascript:alert(1)');
+    });
+
+    test('should handle data: URI', () => {
+      expect(withLeadingSlash('data:text/html,<h1>hi</h1>')).toBe('/data:text/html,<h1>hi</h1>');
+    });
+
+    test('should handle path traversal', () => {
+      expect(withLeadingSlash('../../../etc/passwd')).toBe('/../../../etc/passwd');
+    });
+
+    test('should handle null bytes in path', () => {
+      expect(withLeadingSlash('path%00evil')).toBe('/path%00evil');
+    });
+  });
 });

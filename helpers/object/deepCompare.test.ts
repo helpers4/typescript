@@ -463,4 +463,40 @@ describe('deepCompare', () => {
     // nested is identical (true), but other differs
     expect(result).toEqual({ other: false });
   });
+
+  describe('security edge cases', () => {
+    it('should handle objects with __proto__ key from JSON.parse', () => {
+      const obj1 = JSON.parse('{"__proto__":{"polluted":"yes"},"a":1}');
+      const obj2 = JSON.parse('{"__proto__":{"polluted":"yes"},"a":1}');
+      const result = deepCompare(obj1, obj2);
+      // Should not throw or pollute prototype
+      expect(({} as Record<string, unknown>).polluted).toBeUndefined();
+      expect(result).toBeDefined();
+    });
+
+    it('should handle objects with constructor key', () => {
+      const obj1 = { constructor: { prototype: { admin: true } }, data: 1 };
+      const obj2 = { constructor: { prototype: { admin: true } }, data: 1 };
+      const result = deepCompare(obj1, obj2);
+      expect(result).toBeDefined();
+    });
+
+    it('should handle comparison between __proto__ polluted and clean objects', () => {
+      const polluted = JSON.parse('{"__proto__":{"x":1},"a":1}');
+      const clean = { a: 1 };
+      const result = deepCompare(polluted, clean);
+      expect(({} as Record<string, unknown>).x).toBeUndefined();
+      expect(result).toBeDefined();
+    });
+
+    it('should handle objects with very deep nesting without stack overflow', () => {
+      let deep1: Record<string, unknown> = { value: 'end' };
+      let deep2: Record<string, unknown> = { value: 'end' };
+      for (let i = 0; i < 100; i++) {
+        deep1 = { nested: deep1 };
+        deep2 = { nested: deep2 };
+      }
+      expect(deepCompare(deep1, deep2)).toBe(true);
+    });
+  });
 });

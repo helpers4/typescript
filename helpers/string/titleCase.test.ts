@@ -61,4 +61,28 @@ describe('titleCase', () => {
   it('should return undefined when given undefined', () => {
     expect(titleCase(undefined)).toBeUndefined();
   });
+
+  describe('security edge cases', () => {
+    it('should handle XSS payload in input', () => {
+      const result = titleCase('<script>alert(1)</script>');
+      expect(result).toBeDefined();
+      expect(typeof result).toBe('string');
+    });
+
+    it('should handle HTML injection payload', () => {
+      const result = titleCase('<img onerror="alert(1)" src=x>');
+      expect(result).toBeDefined();
+    });
+
+    it('should handle extremely long input without hanging', () => {
+      const long = 'hello world '.repeat(5000);
+      const result = titleCase(long);
+      expect(result).toBeDefined();
+    });
+
+    it('should handle null bytes in input', () => {
+      const result = titleCase('hello\0world');
+      expect(result).toBeDefined();
+    });
+  });
 });
