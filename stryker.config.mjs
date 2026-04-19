@@ -13,6 +13,12 @@ export default {
   plugins: [
     '@stryker-mutator/vitest-runner',
   ],
+  // Pass --harmony-temporal to Stryker's child test-runner processes so that
+  // Temporal API is available (Node.js 24 requires this flag). Worker threads
+  // spawned by vitest inside those processes inherit the flag automatically.
+  // vitest.config.ts detects this and skips passing it again via execArgv
+  // (ERR_WORKER_INVALID_EXEC_ARGV in Node.js 24).
+  testRunnerNodeArgs: ['--harmony-temporal'],
   mutate: [
     'helpers/**/!(*.test|*.spec|*.bench|*.example|index).ts',
   ],
