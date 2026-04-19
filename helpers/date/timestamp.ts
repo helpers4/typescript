@@ -5,7 +5,7 @@
  */
 
 import { ensureDate } from './ensureDate';
-import type { DateLike } from './types';
+import type { DateLike } from './types.model';
 
 /**
  * Checks if a timestamp is likely in seconds (Java/Unix style) vs milliseconds (JavaScript style)
@@ -87,8 +87,7 @@ export function toMillis(date: DateLike): number | null {
  */
 export function fromSeconds(seconds: number): Date | null {
   if (!Number.isFinite(seconds)) return null;
-  const date = new Date(seconds * 1000);
-  return isNaN(date.getTime()) ? null : date;
+  return new Date(seconds * 1000);
 }
 
 /**
@@ -109,6 +108,5 @@ export function fromSeconds(seconds: number): Date | null {
  */
 export function fromMillis(ms: number): Date | null {
   if (!Number.isFinite(ms)) return null;
-  const date = new Date(ms);
-  return isNaN(date.getTime()) ? null : date;
+  return new Date(ms);
 }

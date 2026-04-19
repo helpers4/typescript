@@ -5,7 +5,7 @@
  */
 
 import { normalizeTimestamp } from './timestamp';
-import type { DateLike, EpochMilliseconds } from './types';
+import type { DateLike, EpochMilliseconds } from './types.model';
 
 /**
  * Type guard that checks whether a value satisfies the {@link EpochMilliseconds}

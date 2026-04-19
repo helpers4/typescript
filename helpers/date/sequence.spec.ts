@@ -68,14 +68,19 @@ describe('eachDay — property-based', () => {
     );
   });
 
-  it('consecutive dates differ by exactly 1 day', () => {
+  it('consecutive dates differ by exactly 1 calendar day', () => {
     fc.assert(
       fc.property(validDate, validDate, (a, b) => {
         const [s, e] = ordered(a, b);
         const result = eachDay(s, e);
         for (let i = 1; i < result.length; i++) {
-          const diff = result[i].getTime() - result[i - 1].getTime();
-          expect(diff).toBe(86_400_000);
+          const prev = result[i - 1];
+          const curr = result[i];
+          const expected = new Date(prev);
+          expected.setDate(expected.getDate() + 1);
+          expect(curr.getFullYear()).toBe(expected.getFullYear());
+          expect(curr.getMonth()).toBe(expected.getMonth());
+          expect(curr.getDate()).toBe(expected.getDate());
         }
       })
     );

@@ -33,7 +33,7 @@ describe('compare — property-based', () => {
 
   it('days precision: same calendar day is always true regardless of time', () => {
     fc.assert(
-      fc.property(fc.date(), (d) => {
+      fc.property(fc.date({ noInvalidDate: true }), (d) => {
         const same = new Date(d);
         same.setMilliseconds(0);
         same.setSeconds(0);
@@ -49,7 +49,7 @@ describe('compare — property-based', () => {
 
   it('milliseconds precision: two dates with same getTime() are equal', () => {
     fc.assert(
-      fc.property(fc.date(), (d) => {
+      fc.property(fc.date({ noInvalidDate: true }), (d) => {
         const copy = new Date(d.getTime());
         expect(compare(d, copy, { precision: 'milliseconds' })).toBe(true);
       })

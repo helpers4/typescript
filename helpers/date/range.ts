@@ -5,7 +5,7 @@
  */
 
 import { ensureDate } from './ensureDate';
-import type { DateLike } from './types';
+import type { DateLike } from './types.model';
 
 /**
  * A date range represented as a pair of date-like values.

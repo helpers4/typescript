@@ -53,6 +53,8 @@ export function formatDuration(
 ): string {
   const { minUnit = 'seconds', padded = false } = options;
 
+  if (!Number.isFinite(ms)) ms = 0;
+
   const negative = ms < 0;
   let remaining = Math.abs(Math.trunc(ms));
 
@@ -84,13 +86,7 @@ export function formatDuration(
 
   // Seconds
   if (minUnit === 'seconds') {
-    if (started || seconds >= 0) {
-      parts.push(`${fmt(seconds)}s`);
-    }
-  }
-
-  if (parts.length === 0) {
-    parts.push(`${fmt(0)}${minUnit === 'hours' ? 'h' : minUnit === 'minutes' ? 'm' : 's'}`);
+    parts.push(`${fmt(seconds)}s`);
   }
 
   const result = parts.join(' ');

@@ -7,8 +7,8 @@
 /**
  * Checks whether a string can be parsed into a valid `Date`.
  *
- * Uses the native `Date` constructor. Returns `false` for empty strings,
- * `null`, `undefined`, and any string that produces an Invalid Date.
+ * Uses the native `Date` constructor. Returns `false` for empty strings
+ * and any string that produces an Invalid Date.
  *
  * > **Caveat:** The native parser is lenient and implementation-dependent
  * > for non-ISO formats. For strict format validation, prefer a dedicated

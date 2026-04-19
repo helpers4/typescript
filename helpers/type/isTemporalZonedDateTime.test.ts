@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { isTemporalZonedDateTime } from './isTemporalZonedDateTime';
 
 describe('isTemporalZonedDateTime', () => {
@@ -31,5 +31,26 @@ describe('isTemporalZonedDateTime', () => {
     expect(isTemporalZonedDateTime(undefined)).toBe(false);
     expect(isTemporalZonedDateTime({})).toBe(false);
     expect(isTemporalZonedDateTime(42)).toBe(false);
+  });
+});
+
+describe('isTemporalZonedDateTime — fallback without Temporal', () => {
+  const savedTemporal = globalThis.Temporal;
+  beforeAll(() => { (globalThis as Record<string, unknown>).Temporal = undefined; });
+  afterAll(() => { (globalThis as Record<string, unknown>).Temporal = savedTemporal; });
+
+  it('should return true for an object with matching toStringTag', () => {
+    const fake = { [Symbol.toStringTag]: 'Temporal.ZonedDateTime' };
+    expect(isTemporalZonedDateTime(fake)).toBe(true);
+  });
+
+  it('should return false for an object with wrong toStringTag', () => {
+    expect(isTemporalZonedDateTime({ [Symbol.toStringTag]: 'Temporal.Instant' })).toBe(false);
+  });
+
+  it('should return false for non-objects', () => {
+    expect(isTemporalZonedDateTime(null)).toBe(false);
+    expect(isTemporalZonedDateTime(42)).toBe(false);
+    expect(isTemporalZonedDateTime('2025-01-19T12:00:00+01:00[Europe/Paris]')).toBe(false);
   });
 });

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { isTemporalPlainDate } from './isTemporalPlainDate';
 
 describe('isTemporalPlainDate', () => {
@@ -31,5 +31,26 @@ describe('isTemporalPlainDate', () => {
     expect(isTemporalPlainDate(undefined)).toBe(false);
     expect(isTemporalPlainDate({})).toBe(false);
     expect(isTemporalPlainDate(42)).toBe(false);
+  });
+});
+
+describe('isTemporalPlainDate — fallback without Temporal', () => {
+  const savedTemporal = globalThis.Temporal;
+  beforeAll(() => { (globalThis as Record<string, unknown>).Temporal = undefined; });
+  afterAll(() => { (globalThis as Record<string, unknown>).Temporal = savedTemporal; });
+
+  it('should return true for an object with matching toStringTag', () => {
+    const fake = { [Symbol.toStringTag]: 'Temporal.PlainDate' };
+    expect(isTemporalPlainDate(fake)).toBe(true);
+  });
+
+  it('should return false for an object with wrong toStringTag', () => {
+    expect(isTemporalPlainDate({ [Symbol.toStringTag]: 'Temporal.Instant' })).toBe(false);
+  });
+
+  it('should return false for non-objects', () => {
+    expect(isTemporalPlainDate(null)).toBe(false);
+    expect(isTemporalPlainDate(42)).toBe(false);
+    expect(isTemporalPlainDate('2025-01-19')).toBe(false);
   });
 });

@@ -23,10 +23,10 @@ describe('compare — property-based', () => {
     );
   });
 
-  it('antisymmetric: compare(a, b) === -compare(b, a)', () => {
+  it('antisymmetric: compare(a, b) + compare(b, a) === 0', () => {
     fc.assert(
       fc.property(versionArb, versionArb, (a: string, b: string) => {
-        expect(compare(a, b)).toBe(-compare(b, a));
+        expect(compare(a, b) + compare(b, a)).toBe(0);
       }),
     );
   });
