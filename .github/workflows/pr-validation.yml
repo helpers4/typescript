@@ -231,9 +231,9 @@ jobs:
         id: score
         if: always()
         run: |
-          SCORE=$(grep -oP 'Final mutation score of \K[\d.]+' mutation-output.txt || echo '')
+          SCORE=$(grep -oP 'All files\s*\|\s*\K[\d.]+' mutation-output.txt | head -1 || echo '')
           if [ -z "$SCORE" ]; then
-            SCORE=$(grep -oP '% Mutation score.*?\|\s+\K[\d.]+' mutation-output.txt | head -1 || echo 'N/A')
+            SCORE=$(grep -oP 'Mutation score[:\s]+\K[\d.]+' mutation-output.txt | tail -1 || echo 'N/A')
           fi
           echo "score=$SCORE" >> $GITHUB_OUTPUT
 
