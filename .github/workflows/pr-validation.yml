@@ -219,8 +219,6 @@ jobs:
 
       - name: Run mutation tests
         id: mutation
-        env:
-          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         run: |
           EXIT_CODE=0
           pnpm mutation 2>&1 | tee mutation-output.txt || EXIT_CODE=$?

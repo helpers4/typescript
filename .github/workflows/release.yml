@@ -69,7 +69,7 @@ jobs:
     with:
       node-version: "24"
 
-  # Step 4: Security audit
+  # Step 5: Security audit
   security:
     needs: repo-guard
     uses: ./.github/workflows/job-security.yml
@@ -77,10 +77,34 @@ jobs:
       node-version: "24"
       audit-level: "low"
 
-  # Step 5: Build, bump version and verify
+  # Step 6: Mutation testing (quality gate, no dashboard reporting)
+  mutation:
+    needs: repo-guard
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run mutation tests
+        run: pnpm mutation
+
+  # Step 7: Build, bump version and verify
   build-and-verify:
     runs-on: ubuntu-latest
-    needs: [ lint, type-check, tests, security ]
+    needs: [ lint, type-check, tests, security, mutation ]
     outputs:
       new-version: ${{ steps.version.outputs.new-version }}
       npm-tag: ${{ steps.version.outputs.npm-tag }}
@@ -170,7 +194,7 @@ jobs:
           path: build/
           retention-days: 1
 
-  # Step 6: Publish release
+  # Step 8: Publish release
   publish:
     runs-on: ubuntu-latest
     needs: build-and-verify
