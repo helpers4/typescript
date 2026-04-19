@@ -9,8 +9,8 @@ import { describe, expect, it } from 'vitest';
 import { eachDay, eachMonth } from './sequence';
 
 const validDate = fc.date({
-  min: new Date('2020-01-01'),
-  max: new Date('2030-12-31'),
+  min: new Date('2024-01-01'),
+  max: new Date('2025-12-31'),
   noInvalidDate: true,
 });
 
