@@ -5,7 +5,7 @@
  */
 
 import { ensureDate } from './ensureDate';
-import type { DateLike } from './types';
+import type { DateLike } from './types.model';
 
 /**
  * Returns an array of `Date` objects for each day from `start` to `end` (inclusive).

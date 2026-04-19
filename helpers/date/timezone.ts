@@ -5,7 +5,7 @@
  */
 
 import { ensureDate } from './ensureDate';
-import type { DateLike } from './types';
+import type { DateLike } from './types.model';
 
 /**
  * Options for {@link formatInTimezone}.
@@ -78,14 +78,13 @@ export function getTimezoneOffset(
 
     const parts = formatter.formatToParts(d);
     const get = (type: Intl.DateTimeFormatPartTypes): string =>
-      parts.find((p) => p.type === type)?.value ?? '0';
+      parts.find((p) => p.type === type)!.value;
 
     const year = Number(get('year'));
     const month = Number(get('month'));
     const day = Number(get('day'));
     // hour12:false + en-US can produce "24" for midnight → normalise
-    const rawHour = Number(get('hour'));
-    const hour = rawHour === 24 ? 0 : rawHour;
+    const hour = Number(get('hour')) % 24;
     const minute = Number(get('minute'));
     const second = Number(get('second'));
 

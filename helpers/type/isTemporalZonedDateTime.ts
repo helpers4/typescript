@@ -8,7 +8,7 @@
  * Checks if a value is a `Temporal.ZonedDateTime`.
  *
  * Uses `instanceof` when `Temporal` is available globally, and falls back
- * to `Symbol.toStringTag` for cross-realm safety.
+ * to `Symbol.toStringTag` for environments without Temporal (e.g. browsers).
  *
  * @param value - The value to check
  * @returns True if value is a `Temporal.ZonedDateTime`

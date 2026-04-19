@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { isTemporalInstant } from './isTemporalInstant';
 
 describe('isTemporalInstant', () => {
@@ -32,5 +32,26 @@ describe('isTemporalInstant', () => {
     expect(isTemporalInstant(undefined)).toBe(false);
     expect(isTemporalInstant({})).toBe(false);
     expect(isTemporalInstant(42)).toBe(false);
+  });
+});
+
+describe('isTemporalInstant — fallback without Temporal', () => {
+  const savedTemporal = globalThis.Temporal;
+  beforeAll(() => { (globalThis as Record<string, unknown>).Temporal = undefined; });
+  afterAll(() => { (globalThis as Record<string, unknown>).Temporal = savedTemporal; });
+
+  it('should return true for an object with matching toStringTag', () => {
+    const fake = { [Symbol.toStringTag]: 'Temporal.Instant' };
+    expect(isTemporalInstant(fake)).toBe(true);
+  });
+
+  it('should return false for an object with wrong toStringTag', () => {
+    expect(isTemporalInstant({ [Symbol.toStringTag]: 'Temporal.Duration' })).toBe(false);
+  });
+
+  it('should return false for non-objects', () => {
+    expect(isTemporalInstant(null)).toBe(false);
+    expect(isTemporalInstant(42)).toBe(false);
+    expect(isTemporalInstant('2025-01-19T12:00:00Z')).toBe(false);
   });
 });

@@ -13,7 +13,7 @@ export default defineConfig({
       include: ['helpers/**/*.bench.ts']
     },
     coverage: {
-      exclude: ['helpers/**/*.{test,spec,bench,example}.ts', 'helpers/**/index.ts'],
+      exclude: ['helpers/**/*.{test,spec,bench,example,model}.ts', 'helpers/**/index.ts'],
       include: ['helpers/**/*.ts'],
       provider: 'v8',
       reporter: ['text', 'json', 'json-summary', 'html'],
