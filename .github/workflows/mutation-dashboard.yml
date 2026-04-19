@@ -3,8 +3,6 @@ name: Mutation Dashboard
 on:
   push:
     branches: [ main ]
-  release:
-    types: [ published ]
 
 permissions:
   contents: read
@@ -15,6 +13,7 @@ env:
 jobs:
   mutation:
     runs-on: ubuntu-latest
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
     timeout-minutes: 30
 
     steps:
@@ -36,5 +35,5 @@ jobs:
         env:
           CI: "true"
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-          STRYKER_DASHBOARD_VERSION: ${{ github.event.release.tag_name || 'main' }}
+          STRYKER_DASHBOARD_VERSION: main
         run: pnpm mutation

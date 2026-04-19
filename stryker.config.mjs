@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-const isCI = Boolean(process.env.CI);
+const hasDashboardKey = Boolean(process.env.STRYKER_DASHBOARD_API_KEY);
 
 /** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */
 export default {
@@ -16,11 +16,11 @@ export default {
   mutate: [
     'helpers/**/!(*.test|*.spec|*.bench|*.example|index).ts',
   ],
-  reporters: ['clear-text', 'html', 'progress', ...(isCI ? ['dashboard'] : [])],
+  reporters: ['clear-text', 'html', 'progress', ...(hasDashboardKey ? ['dashboard'] : [])],
   htmlReporter: {
     fileName: 'reports/mutation/index.html',
   },
-  ...(isCI && {
+  ...(hasDashboardKey && {
     dashboard: {
       project: 'github.com/helpers4/typescript',
       version: process.env.STRYKER_DASHBOARD_VERSION || 'main',
