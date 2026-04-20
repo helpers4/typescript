@@ -46,8 +46,14 @@ export async function createBundleMetadata(
   const rootPackage = readFileJson<Record<string, unknown>>(join(DIR.ROOT, "package.json"));
 
   const version = stripV(rootPackage.version as string);
+
+  // Derive the Stryker project slug from package.json repository.url so the URL
+  // stays correct after any repo rename or fork without touching this file.
+  // Expected format: "git+https://github.com/<owner>/<repo>.git"
+  const repoUrl = (rootPackage.repository as Record<string, string> | undefined)?.url ?? '';
+  const repoSlug = repoUrl.replace(/^git\+https:\/\/github\.com\//, '').replace(/\.git$/, '');
   const mutationDashboardUrl =
-    `https://dashboard.stryker-mutator.io/reports/github.com/helpers4/typescript/v${version}`;
+    `https://dashboard.stryker-mutator.io/reports/github.com/${repoSlug}/v${version}`;
 
   // Runtime compatibility — read from package.json engines field.
   // Deno and Bun are structurally compatible (ESM-only, no native addons) with no per-version constraints.
