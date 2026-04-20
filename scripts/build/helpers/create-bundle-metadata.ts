@@ -45,10 +45,15 @@ export async function createBundleMetadata(
   // Read root package.json to get version and other info
   const rootPackage = readFileJson<Record<string, unknown>>(join(DIR.ROOT, "package.json"));
 
+  const version = stripV(rootPackage.version as string);
+  const mutationDashboardUrl =
+    `https://dashboard.stryker-mutator.io/reports/github.com/helpers4/typescript/v${version}`;
+
   // Create build.json with build metadata
   const buildMetadata = {
     buildDate: new Date().toISOString(),
-    version: stripV(rootPackage.version as string),
+    version,
+    mutationDashboardUrl,
     categories: categories.sort(),
     totalCategories: categories.length,
     buildTool: "vite",
