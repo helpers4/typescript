@@ -99,7 +99,28 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run mutation tests
+        env:
+          # Prevent vitest from flooding the step summary with one report per mutant
+          GITHUB_STEP_SUMMARY: /dev/null
         run: pnpm mutation
+
+      - name: Mutation summary
+        if: always()
+        run: |
+          node -e "
+            const fs = require('fs');
+            const f = 'reports/mutation/mutation.json';
+            if (!fs.existsSync(f)) process.exit(0);
+            const report = JSON.parse(fs.readFileSync(f, 'utf8'));
+            const mutants = Object.values(report.files).flatMap(f => f.mutants);
+            const killed = mutants.filter(m => ['Killed','Timeout'].includes(m.status)).length;
+            const total  = mutants.filter(m => ['Killed','Survived','Timeout','NoCoverage'].includes(m.status)).length;
+            const score  = total ? (killed / total * 100) : 0;
+            const t = { break: 60, high: 90, low: 70, ...report.thresholds };
+            const icon = score >= t.high ? '\u2705' : score >= t.low ? '\u26a0\ufe0f' : '\u274c';
+            const line = \`## Mutation tests\n\n\${icon} Score: \${score.toFixed(2)}% (\${killed}/\${total})\n\`;
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, line);
+          "
 
   # Step 7: Build, bump version and verify
   build-and-verify:
