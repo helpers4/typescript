@@ -29,6 +29,39 @@ import { readFileJson, writeFile } from "../../utils";
 import { stripV } from "../../../helpers/version/stripV";
 
 /**
+ * Derive a GitHub `<owner>/<repo>` slug from a package.json `repository` field.
+ * Handles both string and object forms, as well as common URL patterns:
+ * - `git+https://github.com/<owner>/<repo>.git`
+ * - `https://github.com/<owner>/<repo>`
+ * - `git://github.com/<owner>/<repo>.git`
+ * - `git@github.com:<owner>/<repo>.git` (SSH)
+ * - `git+ssh://git@github.com/<owner>/<repo>.git`
+ * - `github:<owner>/<repo>` (npm shorthand)
+ * - `<owner>/<repo>` (bare shorthand)
+ *
+ * @param repository - The `repository` field from package.json.
+ * @returns The `<owner>/<repo>` slug, or `undefined` when it cannot be derived.
+ */
+function extractGitHubSlug(repository: unknown): string | undefined {
+  const raw =
+    typeof repository === 'string'
+      ? repository
+      : (repository as Record<string, string> | undefined)?.url;
+
+  if (!raw) return undefined;
+
+  // npm shorthands: "github:<owner>/<repo>" or bare "<owner>/<repo>"
+  const shorthand = /^(?:github:)?([\w.-]+\/[\w.-]+)$/.exec(raw);
+  if (shorthand) return shorthand[1];
+
+  // URL-based formats — match the `github.com` hostname followed by the slug
+  const urlMatch = /github\.com[/:]([\w.-]+\/[\w.-]+?)(?:\.git)?(?:[/#?].*)?$/.exec(raw);
+  if (urlMatch) return urlMatch[1];
+
+  return undefined;
+}
+
+/**
  * Create metadata files for the bundle.
  * @param buildBundleDir - The build bundle directory.
  * @param categories - The list of available categories.
@@ -47,13 +80,14 @@ export async function createBundleMetadata(
 
   const version = stripV(rootPackage.version as string);
 
-  // Derive the Stryker project slug from package.json repository.url so the URL
+  // Derive the Stryker project slug from package.json repository field so the URL
   // stays correct after any repo rename or fork without touching this file.
-  // Expected format: "git+https://github.com/<owner>/<repo>.git"
-  const repoUrl = (rootPackage.repository as Record<string, string> | undefined)?.url ?? '';
-  const repoSlug = repoUrl.replace(/^git\+https:\/\/github\.com\//, '').replace(/\.git$/, '');
-  const mutationDashboardUrl =
-    `https://dashboard.stryker-mutator.io/reports/github.com/${repoSlug}/v${version}`;
+  // Supports both string and object forms, and multiple URL patterns.
+  const mutationDashboardUrl = (() => {
+    const repoSlug = extractGitHubSlug(rootPackage.repository);
+    if (!repoSlug) return undefined;
+    return `https://dashboard.stryker-mutator.io/reports/github.com/${repoSlug}/v${version}`;
+  })();
 
   // Runtime compatibility — read from package.json engines field.
   // Deno and Bun are structurally compatible (ESM-only, no native addons) with no per-version constraints.
