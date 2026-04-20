@@ -22,9 +22,12 @@ export default {
   mutate: [
     'helpers/**/!(*.test|*.spec|*.bench|*.example|index).ts',
   ],
-  reporters: ['clear-text', 'html', 'progress', ...(hasDashboardKey ? ['dashboard'] : [])],
+  reporters: ['clear-text', 'html', 'json', 'progress', ...(hasDashboardKey ? ['dashboard'] : [])],
   htmlReporter: {
     fileName: 'reports/mutation/index.html',
+  },
+  jsonReporter: {
+    fileName: 'reports/mutation/mutation.json',
   },
   ...(hasDashboardKey && {
     dashboard: {
