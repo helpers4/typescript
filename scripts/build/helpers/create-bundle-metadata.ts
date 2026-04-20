@@ -49,13 +49,14 @@ export async function createBundleMetadata(
   const mutationDashboardUrl =
     `https://dashboard.stryker-mutator.io/reports/github.com/helpers4/typescript/v${version}`;
 
-  // Runtime compatibility — Node.js from engines.node, Deno and Bun are structurally
-  // compatible (ESM-only, no native addons) and have no per-version constraints.
+  // Runtime compatibility — read from package.json engines field.
+  // Deno and Bun are structurally compatible (ESM-only, no native addons) with no per-version constraints.
   const engines = (rootPackage.engines as Record<string, string> | undefined) ?? {};
   const runtimes = {
     node: engines.node ?? '>=24.0.0',
     deno: 'compatible',
     bun: 'compatible',
+    browser: engines.browser ?? 'ES2022+',
   };
 
   // Create build.json with build metadata
