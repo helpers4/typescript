@@ -135,7 +135,7 @@ helpers/<category>/
 
 **TypeScript rules:**
 - `any` is **FORBIDDEN** — use `unknown` or specific types
-- JSDoc required on all exports: `@param`, `@returns`, `@example`
+- JSDoc required on all exports: `@param`, `@returns`, `@example`, `@since next`
 - 2-space indentation, single quotes
 - Tree-shakable exports only (no side effects)
 

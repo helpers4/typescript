@@ -325,17 +325,6 @@
       "notes": "Too niche, use instanceof directly"
     },
     {
-      "name": "isArrayBuffer / isBlob / isBuffer / isFormData",
-      "libraries": [
-        "lodash",
-        "sindresorhus/is"
-      ],
-      "native": "value instanceof ArrayBuffer / Blob / Buffer / FormData",
-      "since": "ES2015 / Web API",
-      "example": "if (value instanceof ArrayBuffer) { ... }",
-      "notes": "Platform-specific, use instanceof directly"
-    },
-    {
       "name": "isHtmlElement / isUrlInstance / isUrlSearchParams",
       "libraries": [
         "sindresorhus/is"
