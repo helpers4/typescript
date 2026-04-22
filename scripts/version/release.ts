@@ -9,6 +9,7 @@
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import { updateAllPackageVersions } from './version-manager';
+import { injectSinceVersion, isPrerelease } from './inject-since';
 import { createVersionCommitAndTag, getCurrentBranch, isWorkingDirectoryClean } from './git-utils';
 import type { VersionType } from './commit-analyzer';
 
@@ -84,6 +85,18 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
     }
 
     const releaseTag = `v${newVersion}`;
+    const stableRelease = !isPrerelease(newVersion);
+
+    // Step 3b: Inject @since next → @since <version> (stable releases only)
+    if (stableRelease) {
+      if (!options.dryRun) {
+        await injectSinceVersion(newVersion);
+      } else {
+        console.log(`[DRY RUN] Would inject @since ${newVersion} into helper files with @since next`);
+      }
+    } else {
+      console.log(`\n🔖 Step 3b: Skipping @since injection — prerelease (${newVersion}), keeping @since next`);
+    }
 
     // Step 4: Generate changelog
     console.log('\n📋 Step 4: Generating changelog');
@@ -121,7 +134,12 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
     console.log('\n📝 Step 7: Creating version commit');
     if (!options.dryRun) {
       await createVersionCommitAndTag({
-        files: ['package.json', 'build/', 'CHANGELOG.md'],
+        files: [
+          'package.json',
+          'build/',
+          'CHANGELOG.md',
+          ...(stableRelease ? ['helpers/'] : []),
+        ],
         message: `chore: release v${newVersion}`,
         pushBranch: targetBranch
       });

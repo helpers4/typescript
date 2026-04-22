@@ -9,7 +9,7 @@
 // Simple index that runs all coherency tests by calling their individual scripts
 import { execSync } from 'node:child_process';
 
-const tests = ['bundle', 'version', 'category', 'dependencies', 'sizes'];
+const tests = ['bundle', 'version', 'category', 'dependencies', 'sizes', 'jsdoc-since'];
 
 async function runAllTests() {
   console.log("🔍 Running coherency tests in parallel...\n");

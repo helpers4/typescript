@@ -52,7 +52,7 @@ Create `helpers/<category>/functionName.ts`:
  * @example
  * clamp(15, 0, 10)
  * // => 10
- * @since 2.0.0
+ * @since next
  */
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -68,7 +68,8 @@ export function clamp(value: number, min: number, max: number): number {
 - **No side effects** — pure functions only
 - Use `readonly` arrays in parameters when the function does not mutate
 - 2-space indentation, single quotes
-- Target the current version for `@since` (check `package.json`)
+- Always use `@since next` — the real version is injected automatically at stable release time
+  (prerelease builds keep `next` so the tag retains its semantic meaning)
 
 ### Step 2 — Tests
 
@@ -321,7 +322,7 @@ Before opening a PR, make sure:
 
 - [ ] One function per file, in the correct category
 - [ ] License header present on all new files
-- [ ] JSDoc with `@param`, `@returns`, `@example`, `@since`
+- [ ] JSDoc with `@param`, `@returns`, `@example`, `@since next`
 - [ ] No `any` — use `unknown` or specific types
   - [ ] Tests with **100% coverage** (lines, functions, branches, statements)
   - [ ] Property-based + contract spec file (`functionName.spec.ts`)
