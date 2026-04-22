@@ -40,6 +40,7 @@
     "coherency:category": "tsx scripts/coherency/category/index.ts",
     "coherency:dependencies": "tsx scripts/coherency/dependencies/index.ts",
     "coherency:sizes": "tsx scripts/coherency/sizes/index.ts",
+    "coherency:jsdoc-since": "tsx scripts/coherency/jsdoc-since/index.ts",
     "version:patch": "tsx scripts/version/version-manager.ts patch",
     "version:minor": "tsx scripts/version/version-manager.ts minor",
     "version:major": "tsx scripts/version/version-manager.ts major",

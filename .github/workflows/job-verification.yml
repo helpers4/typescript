@@ -91,6 +91,16 @@ jobs:
             exit 1
           fi
 
+      - name: Run JSDoc @since test
+        id: jsdoc-since-test
+        run: |
+          if pnpm run coherency:jsdoc-since; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
       - name: Run post-build smoke tests
         id: smoke-test
         run: |
@@ -109,6 +119,7 @@ jobs:
                 "${{ steps.category-test.outputs.status }}" == "success" && \
                 "${{ steps.dependencies-test.outputs.status }}" == "success" && \
                 "${{ steps.bundle-sizes-test.outputs.status }}" == "success" && \
+                "${{ steps.jsdoc-since-test.outputs.status }}" == "success" && \
                 "${{ steps.smoke-test.outputs.status }}" == "success" ]]; then
             echo "status=success" >> $GITHUB_OUTPUT
           else
