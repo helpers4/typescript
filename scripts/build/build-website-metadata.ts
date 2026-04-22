@@ -143,6 +143,11 @@ function serializeType(type: unknown): string {
     const target = serializeType(t.target);
     return `${op} ${target}`;
   }
+  if (t.type === 'predicate') {
+    const name = t.name as string;
+    if (t.targetType) return `${name} is ${serializeType(t.targetType)}`;
+    return name;
+  }
   return String(t.name || t.type || 'unknown');
 }
 
