@@ -58,6 +58,12 @@ interface WebsiteExample {
   readonly code: string;
 }
 
+interface WebsiteRelatedType {
+  readonly name: string;
+  readonly description: string;
+  readonly typeDefinition: string;
+}
+
 interface WebsiteFunction {
   readonly name: string;
   readonly kind: 'function' | 'type' | 'interface' | 'variable';
@@ -66,6 +72,7 @@ interface WebsiteFunction {
   readonly signatures: readonly WebsiteSignature[];
   readonly examples: readonly WebsiteExample[];
   readonly sourceFile: string;
+  readonly relatedTypes?: readonly WebsiteRelatedType[];
 }
 
 interface WebsiteDependency {
@@ -129,6 +136,11 @@ function serializeType(type: unknown): string {
   if (t.type === 'union') return (t.types as unknown[]).map(serializeType).join(' | ');
   if (t.type === 'intersection') return (t.types as unknown[]).map(serializeType).join(' & ');
   if (t.type === 'literal') return JSON.stringify(t.value);
+  if (t.type === 'namedTupleMember') {
+    const memberName = t.name as string;
+    const isOptional = (t.isOptional as boolean | undefined) ? '?' : '';
+    return `${memberName}${isOptional}: ${serializeType(t.element)}`;
+  }
   if (t.type === 'tuple') {
     const elems = (t.elements as unknown[]) ?? [];
     return `[${elems.map(serializeType).join(', ')}]`;
@@ -224,6 +236,23 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
   const since = extractTagText(comment?.blockTags as CommentTag[] | undefined, '@since') ?? 'unknown';
   const examples = extractExamples(comment?.blockTags as CommentTag[] | undefined);
 
+  // For type aliases: build the `type Name<T> = ...` definition string
+  let typeDefinition: string | undefined;
+  if (kind === 'type' && (child as unknown as Record<string, unknown>).type) {
+    const rawType = (child as unknown as Record<string, unknown>).type;
+    const typeStr = serializeType(rawType);
+    const typeParams = child.typeParameters
+      ?.map((tp: TypeParameterReflection) => {
+        let s = tp.name;
+        if (tp.type) s += ` extends ${serializeType(tp.type)}`;
+        if (tp.default) s += ` = ${serializeType(tp.default)}`;
+        return s;
+      })
+      .join(', ');
+    const generics = typeParams ? `<${typeParams}>` : '';
+    typeDefinition = `type ${child.name}${generics} = ${typeStr}`;
+  }
+
   // Source file name
   const sourceFile = child.sources?.[0]?.fileName
     ?? `${child.name}.ts`;
@@ -243,7 +272,8 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
       code,
     })),
     sourceFile: fileName,
-  };
+    ...(typeDefinition ? { typeDefinition } : {}),
+  } as WebsiteFunction & { typeDefinition?: string };
 }
 
 function readDependencyLicense(packageName: string): WebsiteDependency {
@@ -367,13 +397,50 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
 
     // Merge .example.ts examples into functions (richer than JSDoc @example)
     const exampleMap = await loadExampleFiles(category);
-    const enrichedFunctions = functions.map(fn => {
-      const fileExamples = exampleMap.get(fn.name);
-      if (fileExamples?.length) {
-        return { ...fn, examples: fileExamples };
+
+    // --- Detect 1:1 companion types (type that shares sourceFile with exactly one function) ---
+    // These will be embedded in their companion function's page instead of having a standalone page.
+    const funcNamesBySourceFile = new Map<string, string[]>();
+    for (const fn of functions) {
+      if (fn.kind === 'function') {
+        const list = funcNamesBySourceFile.get(fn.sourceFile) ?? [];
+        list.push(fn.name);
+        funcNamesBySourceFile.set(fn.sourceFile, list);
       }
-      return fn;
-    });
+    }
+
+    // companion types indexed by their companion function name
+    const companionTypesMap = new Map<string, WebsiteRelatedType[]>();
+    const companionTypeNames = new Set<string>();
+    for (const fn of functions) {
+      if (fn.kind !== 'type') continue;
+      const sharedWithFunctions = funcNamesBySourceFile.get(fn.sourceFile) ?? [];
+      if (sharedWithFunctions.length === 1) {
+        // 1:1 companion — embed in the function
+        companionTypeNames.add(fn.name);
+        const companionFnName = sharedWithFunctions[0];
+        const list = companionTypesMap.get(companionFnName) ?? [];
+        list.push({
+          name: fn.name,
+          description: fn.description,
+          typeDefinition: (fn as WebsiteFunction & { typeDefinition?: string }).typeDefinition ?? fn.name,
+        });
+        companionTypesMap.set(companionFnName, list);
+      }
+      // 1:N companions keep their standalone page — no action needed
+    }
+
+    const enrichedFunctions = functions
+      .filter(fn => !companionTypeNames.has(fn.name)) // exclude 1:1 companion types
+      .map(fn => {
+        const fileExamples = exampleMap.get(fn.name);
+        const relatedTypes = companionTypesMap.get(fn.name) ?? [];
+        return {
+          ...fn,
+          ...(fileExamples?.length ? { examples: fileExamples } : {}),
+          ...(relatedTypes.length ? { relatedTypes } : {}),
+        };
+      });
 
     enrichedFunctions.sort((a, b) => a.name.localeCompare(b.name));
 
