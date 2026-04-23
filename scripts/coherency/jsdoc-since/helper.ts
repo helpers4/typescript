@@ -49,7 +49,9 @@ export async function checkJsDocSince(): Promise<void> {
       const content = await fs.readFile(filePath, 'utf-8');
       const relative = path.relative(process.cwd(), filePath);
 
-      if (!/@since\s+\S+/.test(content)) {
+      const jsDocBlocks = [...content.matchAll(/\/\*\*[\s\S]*?\*\//g)];
+      const hasSince = jsDocBlocks.some(([block]) => /@since\s+\S+/.test(block));
+      if (!hasSince) {
         errors.push(`  ❌ Missing @since tag: ${relative}`);
       } else {
         console.log(`  ✅ ${relative}`);
