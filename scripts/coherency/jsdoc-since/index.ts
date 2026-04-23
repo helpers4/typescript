@@ -10,8 +10,8 @@
  * JSDoc @since coherency test
  *
  * Rules enforced:
- *   - Every helper source file must contain a @since JSDoc tag.
- *   - The expected value for new helpers is `@since next` (see CONTRIBUTING.md).
+ *   - Every helper source file must contain a @since JSDoc tag inside a JSDoc block.
+ *   - Convention: use `@since next` for new helpers (injected at stable release time).
  */
 
 import { checkJsDocSince } from './helper';
@@ -19,7 +19,7 @@ import { checkJsDocSince } from './helper';
 async function runJsDocSinceTest() {
   try {
     console.log('🧪 JSDoc @since:');
-    console.log('   Ensures every helper has a @since tag and new files use @since next');
+    console.log('   Ensures every helper source file contains a @since tag in a JSDoc block');
 
     await checkJsDocSince();
 
