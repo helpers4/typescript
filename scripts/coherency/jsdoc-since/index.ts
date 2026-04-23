@@ -11,9 +11,7 @@
  *
  * Rules enforced:
  *   - Every helper source file must contain a @since JSDoc tag.
- *   - New files (vs origin/main) must use `@since next`.
- *   - A real version on a new file is flagged as a likely copy-paste mistake.
- *   - Existing files must not carry `@since next`.
+ *   - The expected value for new helpers is `@since next` (see CONTRIBUTING.md).
  */
 
 import { checkJsDocSince } from './helper';

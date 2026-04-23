@@ -19,5 +19,5 @@
  * @since next
  */
 export function isBlob(value: unknown): value is Blob {
-  return value instanceof Blob;
+  return typeof Blob !== 'undefined' && value instanceof Blob;
 }

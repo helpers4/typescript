@@ -72,6 +72,7 @@ interface WebsiteFunction {
   readonly signatures: readonly WebsiteSignature[];
   readonly examples: readonly WebsiteExample[];
   readonly sourceFile: string;
+  readonly typeDefinition?: string;
   readonly relatedTypes?: readonly WebsiteRelatedType[];
 }
 
@@ -273,7 +274,7 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
     })),
     sourceFile: fileName,
     ...(typeDefinition ? { typeDefinition } : {}),
-  } as WebsiteFunction & { typeDefinition?: string };
+  };
 }
 
 function readDependencyLicense(packageName: string): WebsiteDependency {
@@ -423,7 +424,7 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
         list.push({
           name: fn.name,
           description: fn.description,
-          typeDefinition: (fn as WebsiteFunction & { typeDefinition?: string }).typeDefinition ?? fn.name,
+          typeDefinition: fn.typeDefinition ?? fn.name,
         });
         companionTypesMap.set(companionFnName, list);
       }
