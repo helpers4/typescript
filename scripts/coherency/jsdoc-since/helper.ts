@@ -8,12 +8,12 @@ import fs from 'fs-extra';
 import path from 'node:path';
 
 /** File suffixes that are not helper implementations */
-const SKIP_SUFFIXES = ['.test.ts', '.spec.ts', '.bench.ts', '.example.ts'];
+export const SKIP_SUFFIXES = ['.test.ts', '.spec.ts', '.bench.ts', '.example.ts'];
 
 /** Filenames that are never helper implementations */
-const SKIP_FILENAMES = new Set(['index.ts']);
+export const SKIP_FILENAMES = new Set(['index.ts']);
 
-function isHelperSourceFile(filename: string): boolean {
+export function isHelperSourceFile(filename: string): boolean {
   if (SKIP_FILENAMES.has(filename)) return false;
   for (const suffix of SKIP_SUFFIXES) {
     if (filename.endsWith(suffix)) return false;
