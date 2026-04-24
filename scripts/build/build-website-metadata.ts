@@ -238,6 +238,7 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
   const examples = extractExamples(comment?.blockTags as CommentTag[] | undefined);
 
   // For type aliases: build the `type Name<T> = ...` definition string
+  // For interfaces: build the `interface Name { ... }` definition string
   let typeDefinition: string | undefined;
   if (kind === 'type' && (child as unknown as Record<string, unknown>).type) {
     const rawType = (child as unknown as Record<string, unknown>).type;
@@ -252,6 +253,15 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
       .join(', ');
     const generics = typeParams ? `<${typeParams}>` : '';
     typeDefinition = `type ${child.name}${generics} = ${typeStr}`;
+  } else if (kind === 'interface') {
+    const members = ((child as unknown as Record<string, unknown>).children as DeclarationReflection[] | undefined) ?? [];
+    const props = members.map(m => {
+      const opt = (m.flags as unknown as Record<string, unknown>)?.isOptional ? '?' : '';
+      return `  ${m.name}${opt}: ${serializeType(m.type)}`;
+    }).join(';\n');
+    typeDefinition = members.length > 0
+      ? `interface ${child.name} {\n${props};\n}`
+      : `interface ${child.name} {}`;
   }
 
   // Source file name
@@ -414,7 +424,7 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
     const companionTypesMap = new Map<string, WebsiteRelatedType[]>();
     const companionTypeNames = new Set<string>();
     for (const fn of functions) {
-      if (fn.kind !== 'type') continue;
+      if (fn.kind !== 'type' && fn.kind !== 'interface') continue;
       const sharedWithFunctions = funcNamesBySourceFile.get(fn.sourceFile) ?? [];
       if (sharedWithFunctions.length === 1) {
         // 1:1 companion — embed in the function
