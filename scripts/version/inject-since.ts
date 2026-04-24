@@ -9,14 +9,7 @@
 import fs from 'fs-extra';
 import path from 'node:path';
 import { isHelperSourceFile } from '../coherency/jsdoc-since/helper';
-
-/**
- * Returns true when the version string has a prerelease suffix
- * (e.g. `2.0.0-alpha.19`, `2.1.0-beta.0`, `3.0.0-rc.1`).
- */
-export function isPrerelease(version: string): boolean {
-  return version.includes('-');
-}
+import { isPrerelease } from '../../helpers/version/isPrerelease';
 
 /**
  * Inject the real version into every helper source file that carries `@since next`.
