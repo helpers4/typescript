@@ -9,7 +9,8 @@
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import { updateAllPackageVersions } from './version-manager';
-import { injectSinceVersion, isPrerelease } from './inject-since';
+import { injectSinceVersion } from './inject-since';
+import { isPrerelease } from '../../helpers/version/isPrerelease';
 import { createVersionCommitAndTag, getCurrentBranch, isWorkingDirectoryClean } from './git-utils';
 import type { VersionType } from './commit-analyzer';
 
