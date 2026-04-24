@@ -83,3 +83,26 @@ export async function injectSinceVersion(
 
   return modified;
 }
+
+// CLI entry point: tsx scripts/version/inject-since.ts <version> [--dry-run]
+const _executedScript = process.argv[1] ? path.resolve(process.argv[1]).replaceAll(path.sep, '/') : '';
+if (_executedScript !== '' && import.meta.url.endsWith(_executedScript)) {
+  const args = process.argv.slice(2);
+  const version = args.find(a => !a.startsWith('--'));
+  const dryRun = args.includes('--dry-run');
+
+  if (!version) {
+    console.error('Usage: tsx scripts/version/inject-since.ts <version> [--dry-run]');
+    process.exit(1);
+  }
+
+  if (isPrerelease(version)) {
+    console.log(`ℹ️  Skipping @since injection — prerelease version (${version}), keeping @since next`);
+    process.exit(0);
+  }
+
+  injectSinceVersion(version, dryRun).catch((err) => {
+    console.error('❌', err instanceof Error ? err.message : err);
+    process.exit(1);
+  });
+}
