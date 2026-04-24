@@ -76,12 +76,13 @@ export async function performRelease(options: ReleaseOptions): Promise<void> {
       const result = await updateAllPackageVersions(updateOptions);
       ({ newVersion } = result);
     } else {
-      // Simulate version calculation for dry run
-      const fs = await import('fs-extra');
-      const packageJson = await fs.readJson('./package.json');
-      const typeInfo = options.autoCalculate ? 'auto-calculated' : options.versionType;
-      console.log(`[DRY RUN] Would update version from ${packageJson.version} (${typeInfo})`);
-      newVersion = 'x.x.x-dry-run';
+      // Compute the real new version in dry-run mode (no files written)
+      // so that stableRelease is correctly derived even in dry-run
+      const updateOptions = options.autoCalculate
+        ? { autoCalculate: true, dryRun: true }
+        : { dryRun: true, versionType: options.versionType };
+      const result = await updateAllPackageVersions(updateOptions);
+      ({ newVersion } = result);
     }
 
     const releaseTag = `v${newVersion}`;
