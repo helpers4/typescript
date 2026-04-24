@@ -1,17 +1,17 @@
 /**
  * helpers4 - A collection of TypeScript/JavaScript utilities
  * Copyright (C) 2025 baxyz
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
@@ -27,39 +27,7 @@ import { ensureDir } from "fs-extra";
 import { DIR } from "../../constants";
 import { readFileJson, writeFile } from "../../utils";
 import { stripV } from "../../../helpers/version/stripV";
-
-/**
- * Derive a GitHub `<owner>/<repo>` slug from a package.json `repository` field.
- * Handles both string and object forms, as well as common URL patterns:
- * - `git+https://github.com/<owner>/<repo>.git`
- * - `https://github.com/<owner>/<repo>`
- * - `git://github.com/<owner>/<repo>.git`
- * - `git@github.com:<owner>/<repo>.git` (SSH)
- * - `git+ssh://git@github.com/<owner>/<repo>.git`
- * - `github:<owner>/<repo>` (npm shorthand)
- * - `<owner>/<repo>` (bare shorthand)
- *
- * @param repository - The `repository` field from package.json.
- * @returns The `<owner>/<repo>` slug, or `undefined` when it cannot be derived.
- */
-function extractGitHubSlug(repository: unknown): string | undefined {
-  const raw =
-    typeof repository === 'string'
-      ? repository
-      : (repository as Record<string, string> | undefined)?.url;
-
-  if (!raw) return undefined;
-
-  // npm shorthands: "github:<owner>/<repo>" or bare "<owner>/<repo>"
-  const shorthand = /^(?:github:)?([\w.-]+\/[\w.-]+)$/.exec(raw);
-  if (shorthand) return shorthand[1];
-
-  // URL-based formats — match the `github.com` hostname followed by the slug
-  const urlMatch = /github\.com[/:]([\w.-]+\/[\w.-]+?)(?:\.git)?(?:[/#?].*)?$/.exec(raw);
-  if (urlMatch) return urlMatch[1];
-
-  return undefined;
-}
+import { parsePackageRepository } from "../../../helpers/url/parsePackageRepository";
 
 /**
  * Create metadata files for the bundle.
@@ -84,9 +52,9 @@ export async function createBundleMetadata(
   // stays correct after any repo rename or fork without touching this file.
   // Supports both string and object forms, and multiple URL patterns.
   const mutationDashboardUrl = (() => {
-    const repoSlug = extractGitHubSlug(rootPackage.repository);
-    if (!repoSlug) return undefined;
-    return `https://dashboard.stryker-mutator.io/reports/github.com/${repoSlug}/v${version}`;
+    const parsed = parsePackageRepository(rootPackage.repository);
+    if (parsed?.host !== 'github' || !parsed.slug) return undefined;
+    return `https://dashboard.stryker-mutator.io/reports/github.com/${parsed.slug}/v${version}`;
   })();
 
   // Runtime compatibility — read from package.json engines field.
