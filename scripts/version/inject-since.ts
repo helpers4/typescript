@@ -8,6 +8,7 @@
 
 import fs from 'fs-extra';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { isHelperSourceFile } from '../coherency/jsdoc-since/helper';
 import { isPrerelease } from '../../helpers/version/isPrerelease';
 
@@ -78,8 +79,7 @@ export async function injectSinceVersion(
 }
 
 // CLI entry point: tsx scripts/version/inject-since.ts <version> [--dry-run]
-const _executedScript = process.argv[1] ? path.resolve(process.argv[1]).replaceAll(path.sep, '/') : '';
-if (_executedScript !== '' && import.meta.url.endsWith(_executedScript)) {
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
   const version = args.find(a => !a.startsWith('--'));
   const dryRun = args.includes('--dry-run');
