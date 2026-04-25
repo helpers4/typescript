@@ -20,6 +20,8 @@ on:
         description: "Build execution status"
         value: ${{ jobs.build.outputs.status }}
 
+permissions: read-all
+
 jobs:
   build:
     runs-on: ubuntu-latest

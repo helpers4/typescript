@@ -7,10 +7,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
-  checks: write
-  statuses: write
-  issues: write
 
 env:
   # Runtime versions — update these when new LTS versions are released
@@ -95,6 +91,9 @@ jobs:
 
   conventional-commits:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     outputs:
       status: ${{ steps.status.outputs.status }}
     steps:
@@ -255,6 +254,9 @@ jobs:
   # PR comment with results
   pr-comment:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
     needs:
       [
         version-calculation,

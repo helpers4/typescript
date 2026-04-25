@@ -16,6 +16,8 @@ on:
         description: "Security audit status"
         value: ${{ jobs.security.outputs.status }}
 
+permissions: read-all
+
 jobs:
   security:
     runs-on: ubuntu-latest

@@ -12,6 +12,8 @@ on:
         description: "TypeCheck execution status"
         value: ${{ jobs.typecheck.outputs.status }}
 
+permissions: read-all
+
 jobs:
   typecheck:
     runs-on: ubuntu-latest

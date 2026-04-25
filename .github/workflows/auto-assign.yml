@@ -1,9 +1,12 @@
 name: Auto Assign
 on:
   issues:
-    types: [opened]
+    types: [ opened ]
   pull_request:
-    types: [opened]
+    types: [ opened ]
+
+permissions: read-all
+
 jobs:
   run:
     uses: helpers4/.github/.github/workflows/reusable-auto-assign.yml@main

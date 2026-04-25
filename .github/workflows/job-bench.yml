@@ -18,6 +18,8 @@ on:
         description: "Total benchmark suites"
         value: ${{ jobs.bench.outputs.total-suites }}
 
+permissions: read-all
+
 jobs:
   bench:
     runs-on: ubuntu-latest
