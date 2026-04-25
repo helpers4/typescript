@@ -82,10 +82,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -121,7 +121,7 @@ jobs:
 
       - name: Upload mutation reports
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: mutation-reports
           path: reports/mutation/
@@ -140,19 +140,19 @@ jobs:
     steps:
       - name: Get GitHub App Token
         id: app_token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3
         with:
           client-id: ${{ vars.PUSHINATOR_ID }}
           private-key: ${{ secrets.PUSHINATOR_KEY }}
 
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
           token: ${{ steps.app_token.outputs.token }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -213,14 +213,14 @@ jobs:
         run: pnpm coherency
 
       - name: Upload package.json with new version
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: updated-package
           path: package.json
           retention-days: 1
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: release-build
           path: build/
@@ -228,7 +228,7 @@ jobs:
 
       - name: Upload modified helpers (stable releases only)
         if: steps.version.outputs.is-prerelease == 'false'
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: release-helpers
           path: helpers/
@@ -246,19 +246,19 @@ jobs:
     steps:
       - name: Get GitHub App Token
         id: app_token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3
         with:
           client-id: ${{ vars.PUSHINATOR_ID }}
           private-key: ${{ secrets.PUSHINATOR_KEY }}
 
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
           token: ${{ steps.app_token.outputs.token }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: ${{ env.NODE_VERSION }}
           registry-url: "https://registry.npmjs.org"
@@ -270,20 +270,20 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Download updated package
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: updated-package
           path: .
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: release-build
           path: build/
 
       - name: Download modified helpers (stable releases only)
         if: needs.build-and-verify.outputs.is-prerelease == 'false'
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: release-helpers
           path: helpers/
@@ -328,7 +328,7 @@ jobs:
 
       - name: Create verified tag and GitHub Release
         if: inputs.dry-run == false
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         with:
           github-token: ${{ steps.app_token.outputs.token }}
           script: |
@@ -404,13 +404,13 @@ jobs:
     steps:
       - name: Get GitHub App Token
         id: app_token
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3
         with:
           client-id: ${{ vars.PUSHINATOR_ID }}
           private-key: ${{ secrets.PUSHINATOR_KEY }}
 
       - name: Download mutation reports artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: mutation-reports
           path: /tmp/mutation-reports
@@ -443,7 +443,7 @@ jobs:
     steps:
       - name: Get Trigganator token
         id: trigganator
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3
         with:
           client-id: ${{ vars.TRIGGANATOR_ID }}
           private-key: ${{ secrets.TRIGGANATOR_KEY }}
@@ -454,7 +454,7 @@ jobs:
       - name: Trigger website docs update
         id: trigger_docs_primary
         continue-on-error: true
-        uses: peter-evans/repository-dispatch@v4
+        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697
         with:
           token: ${{ steps.trigganator.outputs.token }}
           repository: helpers4/website
@@ -464,7 +464,7 @@ jobs:
       - name: Get Pushinator token fallback
         if: steps.trigger_docs_primary.outcome != 'success'
         id: pushinator_fallback
-        uses: actions/create-github-app-token@v3
+        uses: actions/create-github-app-token@1b10c78c7865c340bc4f6099eb2f838309f1e8c3
         with:
           client-id: ${{ vars.PUSHINATOR_ID }}
           private-key: ${{ secrets.PUSHINATOR_KEY }}
@@ -476,7 +476,7 @@ jobs:
         if: steps.trigger_docs_primary.outcome != 'success'
         id: trigger_docs_fallback
         continue-on-error: true
-        uses: peter-evans/repository-dispatch@v4
+        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697
         with:
           token: ${{ steps.pushinator_fallback.outputs.token }}
           repository: helpers4/website
