@@ -25,6 +25,11 @@ describe('isConventionalCommit', () => {
     expect(isConventionalCommit('garbage\nfeat: x')).toBe(false);
   });
 
+  it('handles CRLF line endings (Windows)', () => {
+    expect(isConventionalCommit('feat: x\r\nbody')).toBe(true);
+    expect(isConventionalCommit('garbage\r\nfeat: x')).toBe(false);
+  });
+
   it('returns false for non-string inputs', () => {
     // @ts-expect-error testing runtime guard
     expect(isConventionalCommit(undefined)).toBe(false);
