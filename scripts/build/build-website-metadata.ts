@@ -255,12 +255,19 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
     typeDefinition = `type ${child.name}${generics} = ${typeStr}`;
   } else if (kind === 'interface') {
     const members = ((child as unknown as Record<string, unknown>).children as DeclarationReflection[] | undefined) ?? [];
-    const props = members.map(m => {
-      const opt = (m.flags as unknown as Record<string, unknown>)?.isOptional ? '?' : '';
-      return `  ${m.name}${opt}: ${serializeType(m.type)}`;
-    }).join(';\n');
-    typeDefinition = members.length > 0
-      ? `interface ${child.name} {\n${props};\n}`
+    const memberDefinitions = members.flatMap(m => {
+      if (m.kind === ReflectionKind.Property) {
+        const opt = (m.flags as unknown as Record<string, unknown>)?.isOptional ? '?' : '';
+        return [`  ${m.name}${opt}: ${serializeType(m.type)}`];
+      }
+      if (m.signatures?.length) {
+        return m.signatures.map((sig: SignatureReflection) => `  ${buildSignatureString(sig)}`);
+      }
+      return [];
+    });
+    const body = memberDefinitions.join(';\n');
+    typeDefinition = memberDefinitions.length > 0
+      ? `interface ${child.name} {\n${body};\n}`
       : `interface ${child.name} {}`;
   }
 
