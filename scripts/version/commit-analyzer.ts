@@ -6,6 +6,7 @@
 
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
+import { analyzeCommits as analyzeCommitsHelper } from '../../helpers/commit';
 import { getLatestTag } from './git-utils';
 
 const execAsync = promisify(exec);
@@ -59,66 +60,25 @@ export async function getCommitsSince(since: string): Promise<CommitInfo[]> {
 }
 
 /**
- * Analyze commit messages using conventional commits format
+ * Analyze commit messages using conventional commits format.
+ *
+ * Thin adapter around `analyzeCommits` from `helpers/commit` that preserves
+ * this script's `VersionCalculationResult` shape (carrying the original
+ * `CommitInfo[]` for downstream logging).
  */
 export function analyzeCommits(commits: CommitInfo[]): VersionCalculationResult {
-  let hasBreakingChanges = false;
-  let hasFeatures = false;
-  let hasFixes = false;
-
-  // Conventional commit patterns
-  const breakingPattern = /^(\w+)(\(.+\))?!:/;
-  const featurePattern = /^feat(\(.+\))?:/;
-  const fixPattern = /^fix(\(.+\))?:/;
-  const breakingBodyPattern = /BREAKING CHANGE:/i;
-
-  for (const commit of commits) {
-    const fullMessage = `${commit.subject}\n${commit.body}`;
-
-    // Check for breaking changes
-    if (breakingPattern.test(commit.subject) || breakingBodyPattern.test(fullMessage)) {
-      hasBreakingChanges = true;
-    }
-
-    // Check for features
-    if (featurePattern.test(commit.subject)) {
-      hasFeatures = true;
-    }
-
-    // Check for fixes
-    if (fixPattern.test(commit.subject)) {
-      hasFixes = true;
-    }
-  }
-
-  // Determine version type
-  let suggestedType: VersionType;
-  let reason: string;
-
-  if (hasBreakingChanges) {
-    suggestedType = 'major';
-    reason = 'Breaking changes detected in commits';
-  } else if (hasFeatures) {
-    suggestedType = 'minor';
-    reason = 'New features detected in commits';
-  } else if (hasFixes) {
-    suggestedType = 'patch';
-    reason = 'Bug fixes detected in commits';
-  } else if (commits.length > 0) {
-    suggestedType = 'patch';
-    reason = 'Changes detected but no conventional commit types found';
-  } else {
-    suggestedType = 'patch';
-    reason = 'No commits since last tag';
-  }
+  const analysis = analyzeCommitsHelper(commits);
+  const reason = commits.length === 0
+    ? 'No commits since last tag'
+    : analysis.reason;
 
   return {
     commits,
-    hasBreakingChanges,
-    hasFeatures,
-    hasFixes,
+    hasBreakingChanges: analysis.hasBreakingChanges,
+    hasFeatures: analysis.hasFeatures,
+    hasFixes: analysis.hasFixes,
     reason,
-    suggestedType
+    suggestedType: analysis.suggestedBump,
   };
 }
 
