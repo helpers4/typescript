@@ -40,13 +40,16 @@ on:
         required: true
         type: string
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   comment:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: write
+      issues: write
     steps:
       - name: Post PR comment
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3

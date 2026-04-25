@@ -18,7 +18,8 @@ on:
         description: "Total benchmark suites"
         value: ${{ jobs.bench.outputs.total-suites }}
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   bench:

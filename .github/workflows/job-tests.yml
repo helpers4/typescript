@@ -28,7 +28,8 @@ on:
         description: "Statements coverage percentage"
         value: ${{ jobs.tests.outputs.coverage-statements }}
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   tests:
