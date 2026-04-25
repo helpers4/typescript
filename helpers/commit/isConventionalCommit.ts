@@ -27,7 +27,8 @@ export function isConventionalCommit(
   options?: ConventionalCommitOptions,
 ): boolean {
   if (typeof message !== 'string' || message.length === 0) return false;
-  const newlineIndex = message.indexOf('\n');
-  const subject = newlineIndex === -1 ? message : message.slice(0, newlineIndex);
+  const normalized = message.replace(/\r\n/g, '\n');
+  const newlineIndex = normalized.indexOf('\n');
+  const subject = newlineIndex === -1 ? normalized : normalized.slice(0, newlineIndex);
   return buildConventionalCommitRegex(options).test(subject);
 }
