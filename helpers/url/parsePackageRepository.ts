@@ -52,7 +52,6 @@ const DOMAIN_TO_HOST: Record<string, string> = {
   'github.com': 'github',
   'gitlab.com': 'gitlab',
   'bitbucket.org': 'bitbucket',
-  'gist.github.com': 'gist',
 };
 
 /** SCP-style SSH URL: `git@github.com:owner/repo.git` */
