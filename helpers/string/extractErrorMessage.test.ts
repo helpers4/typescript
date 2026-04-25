@@ -9,59 +9,59 @@
  * The full license information can be found in LICENSE in the root directory of this project.
  */
 import { describe, expect, test } from "vitest";
-import { errorToReadableMessage } from "./errorToReadableMessage";
+import { extractErrorMessage } from "./extractErrorMessage";
 
-describe('errorToReadableMessage', () => {
+describe('extractErrorMessage', () => {
   // Basic cases
   test("should return undefined when error is null", () =>
-    expect(errorToReadableMessage(null)).toBeUndefined());
+    expect(extractErrorMessage(null)).toBeUndefined());
 
   test("should return undefined when error is undefined", () =>
-    expect(errorToReadableMessage(undefined)).toBeUndefined());
+    expect(extractErrorMessage(undefined)).toBeUndefined());
 
   test("should return error when type is string", () =>
-    expect(errorToReadableMessage("unexpected error")).toBe("unexpected error"));
+    expect(extractErrorMessage("unexpected error")).toBe("unexpected error"));
 
   test("should return string for number error", () =>
-    expect(errorToReadableMessage(123)).toBe("123"));
+    expect(extractErrorMessage(123)).toBe("123"));
 
   test("should return string for boolean error", () =>
-    expect(errorToReadableMessage(true)).toBe("true"));
+    expect(extractErrorMessage(true)).toBe("true"));
 
   // Nested error - errorMessage
   test("should return errorMessage when present in nested error", () =>
-    expect(errorToReadableMessage({ error: { errorMessage: "keycloak error" } })).toBe(
+    expect(extractErrorMessage({ error: { errorMessage: "keycloak error" } })).toBe(
       "keycloak error"
     ));
 
   // Nested error - direct string
   test("should return error when present in error as string", () =>
-    expect(errorToReadableMessage({ error: "direct error" })).toBe(
+    expect(extractErrorMessage({ error: "direct error" })).toBe(
       "direct error"
     ));
 
   // Nested error - deep nesting
   test("should handle deeply nested errors", () =>
-    expect(errorToReadableMessage({ error: { error: { error: "deep error" } } })).toBe(
+    expect(extractErrorMessage({ error: { error: { error: "deep error" } } })).toBe(
       "deep error"
     ));
 
   // Message field
   test("should return message when present in error", () =>
-    expect(errorToReadableMessage({ message: "error message" })).toBe(
+    expect(extractErrorMessage({ message: "error message" })).toBe(
       "error message"
     ));
 
   // Error instance
   test("should return message from Error instance", () => {
     const err = new Error("error instance message");
-    expect(errorToReadableMessage(err)).toBe("Error: error instance message");
+    expect(extractErrorMessage(err)).toBe("Error: error instance message");
   });
 
   // TypeError instance
   test("should return message from TypeError instance", () => {
     const err = new TypeError("type error message");
-    expect(errorToReadableMessage(err)).toBe("TypeError: type error message");
+    expect(extractErrorMessage(err)).toBe("TypeError: type error message");
   });
 
   // OAuth errors - code_error
@@ -74,7 +74,7 @@ describe('errorToReadableMessage', () => {
         error_description: "Invalid credentials"
       }
     };
-    expect(errorToReadableMessage(oauthError)).toBe(
+    expect(extractErrorMessage(oauthError)).toBe(
       "invalid_grant: Invalid credentials"
     );
   });
@@ -89,30 +89,30 @@ describe('errorToReadableMessage', () => {
         error_description: "Session expired"
       }
     };
-    expect(errorToReadableMessage(oauthError)).toBe(
+    expect(extractErrorMessage(oauthError)).toBe(
       "auth_error: session_expired"
     );
   });
 
   // Stringify parameter - true
   test("should stringify error when stringify is true", () =>
-    expect(errorToReadableMessage({ customError: "value" }, true)).toBe(
+    expect(extractErrorMessage({ customError: "value" }, true)).toBe(
       '{"customError":"value"}'
     ));
 
   // Stringify parameter - false (default)
   test("should return undefined with unknown error object and stringify false", () =>
-    expect(errorToReadableMessage({ customError: "value" }, false)).toBeUndefined());
+    expect(extractErrorMessage({ customError: "value" }, false)).toBeUndefined());
 
   // Stringify parameter - custom string
   test("should return custom fallback when provided", () =>
-    expect(errorToReadableMessage({ unknownError: true }, "default message")).toBe(
+    expect(extractErrorMessage({ unknownError: true }, "default message")).toBe(
       "default message"
     ));
 
   // Complex custom object with custom stringify
   test("should stringify complex object with custom message", () => {
-    const result = errorToReadableMessage(
+    const result = extractErrorMessage(
       { code: 500, details: { nested: true } },
       true
     );
@@ -126,7 +126,7 @@ describe('errorToReadableMessage', () => {
   // If mutated, string errors would NOT be returned directly, they'd fall through to isPlainObject
   test("should return string error directly without modification", () => {
     const msg = "plain string error";
-    const result = errorToReadableMessage(msg);
+    const result = extractErrorMessage(msg);
     // Must be the exact same string, not String(msg) or something else
     expect(result).toBe(msg);
     expect(typeof result).toBe("string");
@@ -137,9 +137,9 @@ describe('errorToReadableMessage', () => {
     // and then controlReturn(String(error)) — which happens to be the same string
     // But we need to verify it returns the EXACT input string
     const str = "test error";
-    expect(errorToReadableMessage(str)).toBe(str);
+    expect(extractErrorMessage(str)).toBe(str);
     // Verify it's not going through String() conversion (same for strings, but matters for type)
-    expect(errorToReadableMessage("")).toBeUndefined();
+    expect(extractErrorMessage("")).toBeUndefined();
   });
 
   // L76: "reason" in errObj && "params" in errObj -> ||
@@ -148,14 +148,14 @@ describe('errorToReadableMessage', () => {
     const obj = { reason: "some reason" };
     // With ||, this would enter OAuth path and try to access type/reason
     // Without "params", it should fall through to "message" check or controlReturn
-    expect(errorToReadableMessage(obj)).toBeUndefined();
+    expect(extractErrorMessage(obj)).toBeUndefined();
   });
 
   test("should NOT enter OAuth path when only params is present (no reason)", () => {
     const obj = { params: { error: "err", error_description: "desc" } };
     // With ||, this would enter OAuth path
     // Without "reason", it should fall through
-    expect(errorToReadableMessage(obj)).toBeUndefined();
+    expect(extractErrorMessage(obj)).toBeUndefined();
   });
 
   // L82: ConditionalExpression -> true (always enters code_error branch)
@@ -171,7 +171,7 @@ describe('errorToReadableMessage', () => {
     };
     // With ConditionalExpression true, would always enter the code_error branch
     // and return "should_not_use: should not appear"
-    expect(errorToReadableMessage(obj)).toBe("other_type: some_reason");
+    expect(extractErrorMessage(obj)).toBe("other_type: some_reason");
   });
 
   test("should use type:reason format when params is missing error fields", () => {
@@ -181,6 +181,6 @@ describe('errorToReadableMessage', () => {
       params: {} // No error or error_description
     };
     // Even though type is code_error, params lacks required fields
-    expect(errorToReadableMessage(obj)).toBe("code_error: auth_failed");
+    expect(extractErrorMessage(obj)).toBe("code_error: auth_failed");
   });
 });

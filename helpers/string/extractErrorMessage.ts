@@ -19,7 +19,7 @@ import { isPlainObject } from '../type/isPlainObject';
  * @returns a readable message or a stringified error if stringify is true, otherwise undefined
  * @since 1.0.0
  */
-export function errorToReadableMessage(error: unknown, stringify: true | string): string;
+export function extractErrorMessage(error: unknown, stringify: true | string): string;
 
 /**
  * Convert an error to a readable message.
@@ -29,7 +29,7 @@ export function errorToReadableMessage(error: unknown, stringify: true | string)
  * @returns a readable message or a stringified error if stringify is true, otherwise undefined
  * @since 1.0.0
  */
-export function errorToReadableMessage(error?: unknown, stringify?: boolean | string): string | undefined;
+export function extractErrorMessage(error?: unknown, stringify?: boolean | string): string | undefined;
 
 /**
  * Convert an error to a readable message.
@@ -39,7 +39,7 @@ export function errorToReadableMessage(error?: unknown, stringify?: boolean | st
  * @returns a readable message or a stringified error if stringify is true, otherwise undefined
  * @since 1.0.0
  */
-export function errorToReadableMessage(error?: unknown, stringify?: boolean | string): string | undefined {
+export function extractErrorMessage(error?: unknown, stringify?: boolean | string): string | undefined {
     // Create a control return
     const controlReturn: (message: string | undefined) => string | undefined =
         stringify === true
@@ -72,7 +72,7 @@ export function errorToReadableMessage(error?: unknown, stringify?: boolean | st
 
     // Handle nested errors
     if ("error" in errObj) {
-        return errorToReadableMessage(errObj.error, stringify);
+        return extractErrorMessage(errObj.error, stringify);
     }
 
     // Handle Keycloak specific errors
