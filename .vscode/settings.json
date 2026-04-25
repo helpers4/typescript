@@ -56,6 +56,8 @@
   ],
   "conventionalCommits.scopes": [
     "array",
+    "CI-CD",
+    "commit",
     "date",
     "function",
     "math",
@@ -66,8 +68,7 @@
     "string",
     "type",
     "url",
-    "version",
-    "CI-CD"
+    "version"
   ],
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
