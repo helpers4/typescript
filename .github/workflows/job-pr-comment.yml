@@ -40,6 +40,8 @@ on:
         required: true
         type: string
 
+permissions: read-all
+
 jobs:
   comment:
     runs-on: ubuntu-latest
@@ -78,7 +80,7 @@ jobs:
               return badges[status] || 'unknown'
             }
 
-            const jobRows = jobs.map(([name, status]) => 
+            const jobRows = jobs.map(([name, status]) =>
               '| ' + icon(status) + ' | **' + name + '** | ' + badge(status) + ' |'
             ).join('\n')
 

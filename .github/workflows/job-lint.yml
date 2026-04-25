@@ -12,6 +12,8 @@ on:
         description: "Lint execution status"
         value: ${{ jobs.lint.outputs.status }}
 
+permissions: read-all
+
 jobs:
   lint:
     runs-on: ubuntu-latest

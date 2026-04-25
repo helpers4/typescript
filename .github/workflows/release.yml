@@ -22,10 +22,7 @@ on:
         default: false
         type: boolean
 
-permissions:
-  contents: write
-  packages: write
-  id-token: write
+permissions: read-all
 
 env:
   NODE_VERSION: "24"
@@ -121,6 +118,15 @@ jobs:
             const line = \`## Mutation tests\n\n\${icon} Score: \${score.toFixed(2)}% (\${killed}/\${total})\n\`;
             fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, line);
           "
+
+      - name: Upload mutation reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mutation-reports
+          path: reports/mutation/
+          if-no-files-found: warn
+          retention-days: 7
 
   # Step 7: Build, bump version and verify
   build-and-verify:
@@ -232,6 +238,8 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: build-and-verify
+    permissions:
+      id-token: write
     outputs:
       new-version: ${{ needs.build-and-verify.outputs.new-version }}
 
@@ -385,37 +393,41 @@ jobs:
         if: ${{ inputs.dry-run }}
         run: echo "⚠️  This was a DRY-RUN - no changes were published"
 
-  # Step 9: Report mutation score to Stryker dashboard with release version tag
-  # Runs after publish — the tag must exist before checkout.
+  # Step 9: Publish mutation reports generated earlier (no second mutation run)
   mutation-dashboard-report:
     runs-on: ubuntu-latest
-    needs: [ publish ]
+    needs: [ publish, mutation ]
     if: ${{ !inputs.dry-run }}
-    timeout-minutes: 30
+    permissions:
+      contents: write
 
     steps:
-      - name: Checkout release tag
-        uses: actions/checkout@v6
+      - name: Get GitHub App Token
+        id: app_token
+        uses: actions/create-github-app-token@v3
         with:
-          ref: v${{ needs.publish.outputs.new-version }}
+          client-id: ${{ vars.PUSHINATOR_ID }}
+          private-key: ${{ secrets.PUSHINATOR_KEY }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
+      - name: Download mutation reports artifact
+        uses: actions/download-artifact@v8
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          name: mutation-reports
+          path: /tmp/mutation-reports
 
-      - name: Enable corepack
-        run: corepack enable
+      - name: Package mutation reports
+        run: |
+          set -euo pipefail
+          tar -czf /tmp/mutation-reports.tar.gz -C /tmp mutation-reports
+          echo "📦 Packaged mutation reports ($(du -h /tmp/mutation-reports.tar.gz | cut -f1))"
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Report mutation score to Stryker dashboard
+      - name: Upload mutation reports to release
         env:
-          CI: "true"
-          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-          STRYKER_DASHBOARD_VERSION: v${{ needs.publish.outputs.new-version }}
-        run: pnpm mutation
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+        run: |
+          gh release upload "v${{ needs.publish.outputs.new-version }}" \
+            /tmp/mutation-reports.tar.gz \
+            --clobber
 
   # Step 10: Trigger website docs refresh
   # Runs after publish and in parallel with mutation-dashboard-report.
@@ -437,9 +449,10 @@ jobs:
           private-key: ${{ secrets.TRIGGANATOR_KEY }}
           owner: helpers4
           repositories: website
+          permission-contents: write
 
       - name: Trigger website docs update
-        id: trigger_docs
+        id: trigger_docs_primary
         continue-on-error: true
         uses: peter-evans/repository-dispatch@v4
         with:
@@ -448,9 +461,31 @@ jobs:
           event-type: typescript-release
           client-payload: "{\"version\": \"${{ needs.publish.outputs.new-version }}\"}"
 
+      - name: Get Pushinator token fallback
+        if: steps.trigger_docs_primary.outcome != 'success'
+        id: pushinator_fallback
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.PUSHINATOR_ID }}
+          private-key: ${{ secrets.PUSHINATOR_KEY }}
+          owner: helpers4
+          repositories: website
+          permission-contents: write
+
+      - name: Retry website docs update with fallback token
+        if: steps.trigger_docs_primary.outcome != 'success'
+        id: trigger_docs_fallback
+        continue-on-error: true
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ steps.pushinator_fallback.outputs.token }}
+          repository: helpers4/website
+          event-type: typescript-release
+          client-payload: "{\"version\": \"${{ needs.publish.outputs.new-version }}\"}"
+
       - name: Trigger summary
         run: |
-          if [ "${{ steps.trigger_docs.outcome }}" = "success" ]; then
+          if [ "${{ steps.trigger_docs_primary.outcome }}" = "success" ] || [ "${{ steps.trigger_docs_fallback.outcome }}" = "success" ]; then
             echo "✅ Website docs trigger dispatched for v${{ needs.publish.outputs.new-version }}"
           else
             echo "⚠️  Website docs trigger failed (non-blocking) for v${{ needs.publish.outputs.new-version }}"
