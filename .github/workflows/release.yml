@@ -195,6 +195,11 @@ jobs:
 
           echo "✅ Version bumped to $NEW_VERSION"
 
+      - name: Inject @since version (stable releases only)
+        if: steps.version.outputs.is-prerelease == 'false'
+        run: pnpm exec tsx scripts/version/inject-since.ts "${{
+          steps.version.outputs.new-version }}"
+
       - name: Build project
         run: pnpm run build
 
@@ -213,6 +218,14 @@ jobs:
         with:
           name: release-build
           path: build/
+          retention-days: 1
+
+      - name: Upload modified helpers (stable releases only)
+        if: steps.version.outputs.is-prerelease == 'false'
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-helpers
+          path: helpers/
           retention-days: 1
 
   # Step 8: Publish release
@@ -260,10 +273,12 @@ jobs:
           name: release-build
           path: build/
 
-      - name: Inject @since version (stable releases only)
+      - name: Download modified helpers (stable releases only)
         if: needs.build-and-verify.outputs.is-prerelease == 'false'
-        run: pnpm exec tsx scripts/version/inject-since.ts "${{
-          needs.build-and-verify.outputs.new-version }}"
+        uses: actions/download-artifact@v8
+        with:
+          name: release-helpers
+          path: helpers/
 
       - name: Get version
         id: version
