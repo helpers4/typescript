@@ -262,7 +262,8 @@ jobs:
 
       - name: Inject @since version (stable releases only)
         if: needs.build-and-verify.outputs.is-prerelease == 'false'
-        run: pnpm exec tsx scripts/version/inject-since.ts "${{ needs.build-and-verify.outputs.new-version }}"
+        run: pnpm exec tsx scripts/version/inject-since.ts "${{
+          needs.build-and-verify.outputs.new-version }}"
 
       - name: Get version
         id: version
@@ -407,6 +408,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ publish ]
     if: ${{ !inputs.dry-run }}
+    continue-on-error: true
     concurrency:
       group: trigger-website-docs-${{ needs.publish.outputs.new-version }}
       cancel-in-progress: false
