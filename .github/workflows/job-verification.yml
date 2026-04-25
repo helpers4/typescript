@@ -15,7 +15,8 @@ on:
         description: "Overall verification test execution status"
         value: ${{ jobs.verification.outputs.status }}
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   verification:

@@ -20,7 +20,8 @@ on:
         description: "Build execution status"
         value: ${{ jobs.build.outputs.status }}
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   build:

@@ -16,7 +16,8 @@ on:
         description: "Security audit status"
         value: ${{ jobs.security.outputs.status }}
 
-permissions: read-all
+permissions:
+  contents: read
 
 jobs:
   security:
