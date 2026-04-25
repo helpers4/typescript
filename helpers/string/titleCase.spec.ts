@@ -25,13 +25,18 @@ describe('titleCase — property-based', () => {
 
   it('result contains spaces between words (for multi-word inputs)', () => {
     fc.assert(
-      fc.property(fc.array(fc.string({ minLength: 1 }), { minLength: 2, maxLength: 5 }), (words) => {
-        const input = words.join('-');
-        const result = titleCase(input);
-        // If input had multiple non-empty word parts, result should have spaces
-        const parts = result.split(' ').filter(Boolean);
-        expect(parts.length).toBeGreaterThan(0);
-      }),
+      fc.property(
+        fc.array(
+          fc.string({ unit: fc.constantFrom(...'abcdefghijklmnopqrstuvwxyz'.split('')), minLength: 1 }),
+          { minLength: 2, maxLength: 5 },
+        ),
+        (words) => {
+          const input = words.join('-');
+          const result = titleCase(input);
+          const parts = result.split(' ').filter(Boolean);
+          expect(parts.length).toBe(words.length);
+        },
+      ),
     );
   });
 });
