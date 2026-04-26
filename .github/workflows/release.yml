@@ -426,6 +426,7 @@ jobs:
       - name: Upload mutation reports to release
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           gh release upload "v${{ needs.publish.outputs.new-version }}" \
             /tmp/mutation-reports.tar.gz \
