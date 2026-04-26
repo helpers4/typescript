@@ -430,22 +430,98 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
     // companion types indexed by their companion function name
     const companionTypesMap = new Map<string, WebsiteRelatedType[]>();
     const companionTypeNames = new Set<string>();
+
+    /** Attach a companion type to a function, deduping by type name. */
+    const attachCompanion = (fnName: string, type: WebsiteRelatedType): void => {
+      const list = companionTypesMap.get(fnName) ?? [];
+      if (!list.some(t => t.name === type.name)) list.push(type);
+      companionTypesMap.set(fnName, list);
+    };
+
+    /** Collect every text blob of a function where a type name might appear. */
+    const collectFunctionText = (fn: WebsiteFunction): string => {
+      const parts: string[] = [];
+      for (const sig of fn.signatures) {
+        parts.push(sig.signature);
+        if (sig.returns?.type) parts.push(sig.returns.type);
+        for (const p of sig.params) parts.push(p.type);
+        for (const tp of sig.typeParameters ?? []) {
+          if (tp.constraint) parts.push(tp.constraint);
+          if (tp.default) parts.push(tp.default);
+        }
+      }
+      return parts.join(' ');
+    };
+
+    /** Word-boundary match for a type identifier inside a signature blob. */
+    const referencesType = (haystack: string, typeName: string): boolean =>
+      new RegExp(`\\b${typeName.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}\\b`).test(haystack);
+
     for (const fn of functions) {
       if (fn.kind !== 'type' && fn.kind !== 'interface') continue;
+
       const sharedWithFunctions = funcNamesBySourceFile.get(fn.sourceFile) ?? [];
+      const related: WebsiteRelatedType = {
+        name: fn.name,
+        description: fn.description,
+        typeDefinition: fn.typeDefinition ?? fn.name,
+      };
+
       if (sharedWithFunctions.length === 1) {
-        // 1:1 companion — embed in the function
+        // 1:1 companion — embed in the single function of the file.
         companionTypeNames.add(fn.name);
-        const companionFnName = sharedWithFunctions[0];
-        const list = companionTypesMap.get(companionFnName) ?? [];
-        list.push({
-          name: fn.name,
-          description: fn.description,
-          typeDefinition: fn.typeDefinition ?? fn.name,
-        });
-        companionTypesMap.set(companionFnName, list);
+        attachCompanion(sharedWithFunctions[0], related);
+        continue;
       }
-      // 1:N companions keep their standalone page — no action needed
+
+      if (sharedWithFunctions.length > 1) {
+        // 1:N companion — embed in every function of the file.
+        companionTypeNames.add(fn.name);
+        for (const fnName of sharedWithFunctions) attachCompanion(fnName, related);
+        continue;
+      }
+
+      // 1:0 (orphan) — type lives alone in its file (typically *.model.ts).
+      // Attach it to every function in the category that references it in a signature.
+      const consumers = functions.filter(
+        other => other.kind === 'function' && referencesType(collectFunctionText(other), fn.name),
+      );
+      if (consumers.length > 0) {
+        companionTypeNames.add(fn.name);
+        for (const consumer of consumers) attachCompanion(consumer.name, related);
+      }
+      // If no consumer is found, keep the standalone page as a fallback.
+    }
+
+    // Transitive pass — a type referenced only inside another companion type's
+    // definition (e.g. `DateLike = ... | EpochMilliseconds`) should follow its
+    // referrer and stop being a standalone page. Iterate to fixpoint.
+    const orphanTypes = functions.filter(
+      fn => (fn.kind === 'type' || fn.kind === 'interface') && !companionTypeNames.has(fn.name),
+    );
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const orphan of orphanTypes) {
+        if (companionTypeNames.has(orphan.name)) continue;
+        // Find every function whose already-attached companions reference this orphan.
+        const referrerFns: string[] = [];
+        for (const [fnName, types] of companionTypesMap) {
+          if (types.some(t => referencesType(t.typeDefinition, orphan.name))) {
+            referrerFns.push(fnName);
+          }
+        }
+        if (referrerFns.length > 0) {
+          companionTypeNames.add(orphan.name);
+          const related: WebsiteRelatedType = {
+            name: orphan.name,
+            description: orphan.description,
+            typeDefinition: orphan.typeDefinition ?? orphan.name,
+          };
+          for (const fnName of referrerFns) attachCompanion(fnName, related);
+          changed = true;
+        }
+      }
     }
 
     const enrichedFunctions = functions
