@@ -443,7 +443,7 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
       const parts: string[] = [];
       for (const sig of fn.signatures) {
         parts.push(sig.signature);
-        if (sig.returns?.type) parts.push(sig.returns.type);
+        if (sig.returns.type) parts.push(sig.returns.type);
         for (const p of sig.params) parts.push(p.type);
         for (const tp of sig.typeParameters ?? []) {
           if (tp.constraint) parts.push(tp.constraint);
