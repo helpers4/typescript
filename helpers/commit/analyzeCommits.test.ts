@@ -39,6 +39,21 @@ describe('analyzeCommits', () => {
     expect(result.hasBreakingChanges).toBe(true);
   });
 
+  it('detects BREAKING CHANGE in body of non-conventional commits', () => {
+    const result = analyzeCommits([
+      { subject: 'random commit', body: 'BREAKING CHANGE: drops old behaviour' },
+    ]);
+    expect(result.suggestedBump).toBe('major');
+    expect(result.hasBreakingChanges).toBe(true);
+  });
+
+  it('detects BREAKING CHANGE in CRLF body of non-conventional commits', () => {
+    const result = analyzeCommits([
+      { subject: 'random commit', body: 'first line\r\nBREAKING CHANGE: drops old behaviour\r\n' },
+    ]);
+    expect(result.hasBreakingChanges).toBe(true);
+  });
+
   it('suggests minor when only features are present', () => {
     const result = analyzeCommits([
       { subject: 'feat: a' },

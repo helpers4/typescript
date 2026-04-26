@@ -7,6 +7,8 @@
 import { parseConventionalCommit } from './parseConventionalCommit';
 import type { AnalyzableCommit, CommitAnalysis, CommitVersionBump } from './types';
 
+const BREAKING_MARKER = /^BREAKING[ -]CHANGE: /m;
+
 /**
  * Analyses a list of commits to suggest a semantic version bump.
  *
@@ -45,6 +47,8 @@ export function analyzeCommits(commits: readonly AnalyzableCommit[]): CommitAnal
       if (parsed.breaking) hasBreakingChanges = true;
       if (parsed.type === 'feat') hasFeatures = true;
       if (parsed.type === 'fix') hasFixes = true;
+    } else if (commit.body && BREAKING_MARKER.test(commit.body.replace(/\r\n/g, '\n'))) {
+      hasBreakingChanges = true;
     }
   }
 
