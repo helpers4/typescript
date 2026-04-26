@@ -12,6 +12,14 @@ describe('truncate', () => {
     expect(truncate('Hello', 10)).toBe('Hello');
   });
 
+  it('returns undefined when input is undefined', () => {
+    expect(truncate(undefined, 10)).toBeUndefined();
+  });
+
+  it('returns null when input is null', () => {
+    expect(truncate(null, 10)).toBeNull();
+  });
+
   it('returns the string unchanged when exactly at limit', () => {
     expect(truncate('Hello', 5)).toBe('Hello');
   });
