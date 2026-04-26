@@ -56,6 +56,12 @@ describe('safeJsonParse', () => {
     expect(safeJsonParse('bad', null)).toBeNull();
   });
 
+  it('returns undefined when undefined is explicitly passed as fallback', () => {
+    // Runtime must agree with the typings: passing undefined explicitly
+    // should not be silently coerced into null.
+    expect(safeJsonParse<unknown>('bad', undefined)).toBeUndefined();
+  });
+
   it('returns a fallback object on failure', () => {
     const fallback = { error: true };
     expect(safeJsonParse('not-json', fallback)).toBe(fallback);
