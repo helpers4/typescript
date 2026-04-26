@@ -6,7 +6,7 @@
 
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
-import { analyzeCommits as analyzeCommitsHelper } from '../../helpers/commit';
+import { analyzeCommits as analyzeCommitsHelper } from '../../helpers/commit/analyzeCommits';
 import { getLatestTag } from './git-utils';
 
 const execAsync = promisify(exec);
