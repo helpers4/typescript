@@ -61,6 +61,7 @@
     "changelog": "tsx scripts/version/generate-changelog.ts",
     "changelog:unreleased": "git-cliff --unreleased",
     "mutation": "stryker run",
+    "mutation:fresh": "stryker run --force",
     "mutation:category": "stryker run --mutate"
   },
   "type": "module",

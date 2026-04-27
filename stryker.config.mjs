@@ -19,6 +19,13 @@ export default {
   // vitest.config.ts detects this and skips passing it again via execArgv
   // (ERR_WORKER_INVALID_EXEC_ARGV in Node.js 24).
   testRunnerNodeArgs: ['--harmony-temporal'],
+  // Skip TypeScript type-checking on each mutant: Vitest handles compilation
+  // and type errors would only be caught in the initial dry run anyway.
+  disableTypeChecks: true,
+  // Persist results between runs: only re-test mutants affected by changed
+  // files since the last run (use --force to rebuild from scratch).
+  incremental: true,
+  incrementalFile: 'reports/mutation/incremental.json',
   mutate: [
     'helpers/**/!(*.test|*.spec|*.bench|*.example|index).ts',
   ],
