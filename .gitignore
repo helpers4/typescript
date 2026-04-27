@@ -15,5 +15,8 @@
 /coverage
 
 # Stryker
-/reports
+/reports/**
+!/reports/mutation/
+/reports/mutation/**
+!/reports/mutation/incremental.json
 /.stryker-tmp
