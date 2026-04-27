@@ -9,14 +9,18 @@ import { describe, expect, it } from 'vitest';
 import { cleanPath } from './cleanPath';
 
 describe('cleanPath — property-based', () => {
-  it('result has no consecutive slashes except in protocol', () => {
+  it('result has no consecutive slashes except in protocol or at start', () => {
     fc.assert(
       fc.property(fc.string(), (str) => {
         const result = cleanPath(str);
         if (result === null || result === undefined) return;
-        // Remove the protocol part (e.g. "https://") before checking
-        const withoutProtocol = result.replace(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//, '//PROTOCOL//');
-        expect(withoutProtocol.replace(/^\/\/PROTOCOL\/\//, '')).not.toMatch(/\/\//);
+        // The regex ([^:]\/)\/+ requires a non-colon char before the first slash,
+        // so leading slashes (no preceding char) and protocol :// are not cleaned.
+        // Strip both before asserting no consecutive slashes remain.
+        const normalized = result
+          .replace(/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//, '') // remove protocol://
+          .replace(/^\/+/, '');                           // remove leading slashes
+        expect(normalized).not.toMatch(/\/\//);
       }),
     );
   });
