@@ -54,12 +54,12 @@ describe('injectWordBreaks', () => {
   });
 
   // -------------------------------------------------------------------------
-  // Spec validation table — Example 3: yieldExplorerValue
+  // Spec validation table — Example 3: getUserProfileData
   // -------------------------------------------------------------------------
 
   it('Example 3 — camelCase splits at lowercase→uppercase boundaries', () => {
-    expect(injectWordBreaks('yieldExplorerValue')).toBe(
-      `yield${ZWS}Explorer${ZWS}Value`,
+    expect(injectWordBreaks('getUserProfileData')).toBe(
+      `get${ZWS}User${ZWS}Profile${ZWS}Data`,
     );
   });
 
@@ -336,7 +336,7 @@ describe('injectWordBreaks', () => {
   });
 
   it('visible text is preserved for spec Example 3', () => {
-    expect(stripZWS(injectWordBreaks('yieldExplorerValue'))).toBe('yieldExplorerValue');
+    expect(stripZWS(injectWordBreaks('getUserProfileData'))).toBe('getUserProfileData');
   });
 
   it('visible text is preserved for spec Example 4', () => {
