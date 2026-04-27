@@ -53,3 +53,10 @@ jobs:
             echo "status=failure" >> $GITHUB_OUTPUT
             exit 1
           fi
+
+      - name: Summary
+        if: always()
+        run: |
+          [ "${{ steps.security.outcome }}" = "success" ] \
+            && echo "✅ Security — passed" >> $GITHUB_STEP_SUMMARY \
+            || echo "❌ Security — failed" >> $GITHUB_STEP_SUMMARY

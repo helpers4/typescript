@@ -106,18 +106,15 @@ jobs:
         if: always()
         run: |
           node -e "
-            const fs = require('fs');
-            const f = 'reports/mutation/mutation.json';
+            const fs = require('fs'), f = 'reports/mutation/mutation.json';
             if (!fs.existsSync(f)) process.exit(0);
-            const report = JSON.parse(fs.readFileSync(f, 'utf8'));
-            const mutants = Object.values(report.files).flatMap(fileReport => fileReport.mutants);
-            const killed = mutants.filter(m => ['Killed','Timeout'].includes(m.status)).length;
-            const total  = mutants.filter(m => ['Killed','Survived','Timeout','NoCoverage'].includes(m.status)).length;
-            const score  = total ? (killed / total * 100) : 0;
-            const t = { break: 60, high: 90, low: 70, ...report.thresholds };
-            const icon = score >= t.high ? '\u2705' : score >= t.low ? '\u26a0\ufe0f' : '\u274c';
-            const line = \`## Mutation tests\n\n\${icon} Score: \${score.toFixed(2)}% (\${killed}/\${total})\n\`;
-            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, line);
+            const { files, thresholds: t = {} } = JSON.parse(fs.readFileSync(f, 'utf8'));
+            const all    = Object.values(files).flatMap(f => f.mutants);
+            const killed = all.filter(m => ['Killed','Timeout'].includes(m.status)).length;
+            const total  = all.filter(m => ['Killed','Survived','Timeout','NoCoverage'].includes(m.status)).length;
+            const score  = total ? killed / total * 100 : 0;
+            const icon   = score >= (t.high ?? 90) ? '\u2705' : score >= (t.low ?? 70) ? '\u26a0\ufe0f' : '\u274c';
+            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, icon + ' Mutation \u2014 ' + score.toFixed(1) + '% (' + killed + '/' + total + ')\n');
           "
 
       - name: Upload mutation reports
@@ -402,14 +399,13 @@ jobs:
 
       - name: Release summary
         run: |
-          echo "✅ Release completed successfully!"
-          echo "📦 Version: ${{ steps.version.outputs.new-version }}"
-          echo "🏷️  NPM tag: ${{ steps.version.outputs.npm-tag }}"
-          echo "📚 Website docs trigger runs in dedicated post-publish job"
-
-      - name: Dry-run summary
-        if: ${{ inputs.dry-run }}
-        run: echo "⚠️  This was a DRY-RUN - no changes were published"
+          VERSION="${{ steps.version.outputs.new-version }}"
+          TAG="${{ steps.version.outputs.npm-tag }}"
+          if [ "${{ inputs.dry-run }}" = "true" ]; then
+            echo "⚠️ v${VERSION} (npm: \`${TAG}\`) — DRY-RUN" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "🚀 v${VERSION} (npm: \`${TAG}\`) — released" >> $GITHUB_STEP_SUMMARY
+          fi
 
   # Step 9: Publish mutation reports generated earlier (no second mutation run)
   mutation-dashboard-report:

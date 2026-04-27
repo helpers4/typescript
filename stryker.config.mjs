@@ -5,6 +5,7 @@
  */
 
 const hasDashboardKey = Boolean(process.env.STRYKER_DASHBOARD_API_KEY);
+const isCI = Boolean(process.env.CI);
 
 /** @type {import('@stryker-mutator/api/core').PartialStrykerOptions} */
 export default {
@@ -29,7 +30,10 @@ export default {
   mutate: [
     'helpers/**/!(*.test|*.spec|*.bench|*.example|index).ts',
   ],
-  reporters: ['clear-text', 'html', 'json', 'progress', ...(hasDashboardKey ? ['dashboard'] : [])],
+  // In CI, skip verbose reporters (clear-text per-file table, progress bar) —
+  // json + html are enough; the release workflow writes a custom summary.
+  reporters: [...(isCI ? [] : ['clear-text', 'progress']), 'html', 'json', ...(hasDashboardKey ? ['dashboard'] : [])],
+
   htmlReporter: {
     fileName: 'reports/mutation/index.html',
   },
