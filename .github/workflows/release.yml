@@ -102,21 +102,6 @@ jobs:
         # --force: always run all mutants (quality gate — no stale incremental cache)
         run: pnpm mutation:fresh
 
-      - name: Mutation summary
-        if: always()
-        run: |
-          node -e "
-            const fs = require('fs'), f = 'reports/mutation/mutation.json';
-            if (!fs.existsSync(f)) process.exit(0);
-            const { files, thresholds: t = {} } = JSON.parse(fs.readFileSync(f, 'utf8'));
-            const all    = Object.values(files).flatMap(f => f.mutants);
-            const killed = all.filter(m => ['Killed','Timeout'].includes(m.status)).length;
-            const total  = all.filter(m => ['Killed','Survived','Timeout','NoCoverage'].includes(m.status)).length;
-            const score  = total ? killed / total * 100 : 0;
-            const icon   = score >= (t.high ?? 90) ? '\u2705' : score >= (t.low ?? 70) ? '\u26a0\ufe0f' : '\u274c';
-            fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, icon + ' Mutation \u2014 ' + score.toFixed(1) + '% (' + killed + '/' + total + ')\n');
-          "
-
       - name: Upload mutation reports
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a

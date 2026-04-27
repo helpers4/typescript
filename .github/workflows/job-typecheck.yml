@@ -45,10 +45,3 @@ jobs:
             echo "status=failure" >> $GITHUB_OUTPUT
             exit 1
           fi
-
-      - name: Summary
-        if: always()
-        run: |
-          [ "${{ steps.typecheck.outcome }}" = "success" ] \
-            && echo "✅ TypeCheck — passed" >> $GITHUB_STEP_SUMMARY \
-            || echo "❌ TypeCheck — failed" >> $GITHUB_STEP_SUMMARY
