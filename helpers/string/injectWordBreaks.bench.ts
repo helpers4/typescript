@@ -10,7 +10,7 @@ import { injectWordBreaks } from './injectWordBreaks'
 
 describe('injectWordBreaks', () => {
   bench('camelCase identifier', () => {
-    injectWordBreaks('yieldExplorerValue')
+    injectWordBreaks('getUserProfileData')
   })
 
   bench('file path', () => {
@@ -34,6 +34,6 @@ describe('injectWordBreaks', () => {
   })
 
   bench('long camelCase identifier (stress)', () => {
-    injectWordBreaks('yieldExplorerValueDeltaComputedSummaryResultMetadata')
+    injectWordBreaks('getUserProfileDataWithExtendedMetadataAndContext')
   })
 })

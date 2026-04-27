@@ -15,11 +15,11 @@ const examples: HelperExamples = {
       title: 'camelCase identifier',
       description:
         'Inserts ZWS at each camelCase boundary so a long identifier can wrap in a narrow column.',
-      code: `injectWordBreaks('yieldExplorerValue')
-// => 'yield\\u200BExplorer\\u200BValue'`,
+      code: `injectWordBreaks('getUserProfileData')
+// => 'get\\u200BUser\\u200BProfile\\u200BData'`,
       assert: () => {
-        const result = injectWordBreaks('yieldExplorerValue');
-        if (result !== 'yield\u200BExplorer\u200BValue')
+        const result = injectWordBreaks('getUserProfileData');
+        if (result !== 'get\u200BUser\u200BProfile\u200BData')
           throw new Error('Unexpected result');
       },
     },

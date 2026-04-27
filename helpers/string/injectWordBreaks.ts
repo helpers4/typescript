@@ -216,7 +216,7 @@ function pass5Attach(groups: Group[]): Group[] {
 //     [a-zA-Z0-9_]+ (word) and everything else (non-word).
 //
 // P3  camelCase sub-splitting — word groups are split at every
-//     lowercase→uppercase boundary (e.g. yieldExplorerValue → 3 tokens).
+//     lowercase→uppercase boundary (e.g. getUserProfileData → 4 tokens).
 //
 // P4  Structural separators — `/` and `@` in non-word groups become their
 //     own tokens; repeated underscores (__+) in word groups likewise.
@@ -242,8 +242,8 @@ function pass5Attach(groups: Group[]): Group[] {
  * @returns The string with word-break opportunities injected at meaningful
  * boundaries.
  * @example
- * injectWordBreaks('yieldExplorerValue')
- * // => 'yield\u200BExplorer\u200BValue'
+ * injectWordBreaks('getUserProfileData')
+ * // => 'get\u200BUser\u200BProfile\u200BData'  (3 break opportunities)
  *
  * injectWordBreaks('foo,bar')
  * // => 'foo,\u200Bbar'

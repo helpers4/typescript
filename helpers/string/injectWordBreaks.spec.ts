@@ -96,9 +96,9 @@ describe('injectWordBreaks — contract', () => {
     expect(result.split(ZWS)).toHaveLength(2);
   });
 
-  it('spec Example 3: yieldExplorerValue gets exactly two ZWS', () => {
-    const result = injectWordBreaks('yieldExplorerValue');
-    expect(result.split(ZWS)).toHaveLength(3);
+  it('spec Example 3: getUserProfileData gets exactly three ZWS', () => {
+    const result = injectWordBreaks('getUserProfileData');
+    expect(result.split(ZWS)).toHaveLength(4);
   });
 
   it('spec Example 4: path/to/my_file gets four ZWS', () => {
