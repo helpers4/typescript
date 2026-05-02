@@ -1,9 +1,10 @@
 {
   "conventionalCommits.scopes": [
     "array",
+    "commit",
     "date",
     "function",
-    "math",
+    "id",
     "number",
     "object",
     "observable",

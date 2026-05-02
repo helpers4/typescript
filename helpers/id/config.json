@@ -1,0 +1,5 @@
+{
+  "label": "Id",
+  "smallDescription": "Unique identifier generation utilities",
+  "description": "Utilities for generating unique identifiers such as UUID v7 and other ID formats"
+}
