@@ -13,9 +13,10 @@
  *
  * Falls back to strict equality when either input is `null`, `undefined`
  * or not an object \u2014 so primitives match if and only if they are `===`.
- * Arrays are not handled here; use `array/shallowEquals` instead.
+ * Arrays are not supported; they always return `false` (unless identical
+ * references). Use `array/equalsShallow` instead.
  *
- * For recursive structural comparison use {@link deepEquals}. For a diff
+ * For recursive structural comparison use {@link equalsDeep}. For a diff
  * structure use {@link diff}.
  *
  * @param objA - First value to compare
@@ -23,7 +24,7 @@
  * @returns `true` if values are shallowly equal, `false` otherwise.
  * @since 2.0.0
  */
-export function shallowEquals(objA: unknown, objB: unknown): boolean {
+export function equalsShallow(objA: unknown, objB: unknown): boolean {
   if (objA === objB) {
     return true;
   }
@@ -35,6 +36,9 @@ export function shallowEquals(objA: unknown, objB: unknown): boolean {
   }
   const a = objA as Record<string, unknown>;
   const b = objB as Record<string, unknown>;
+  if (Array.isArray(objA) || Array.isArray(objB)) {
+    return false;
+  }
   const keysA = Object.keys(a);
   if (keysA.length !== Object.keys(b).length) {
     return false;

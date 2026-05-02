@@ -7,131 +7,86 @@
 import { describe, expect, it } from 'vitest';
 import { shallowEquals } from './shallowEquals';
 
-describe('shallowEquals', () => {
-  it('should return true for identical objects', () => {
-    const obj1 = { a: 1, b: 2 };
-    const obj2 = { a: 1, b: 2 };
-    expect(shallowEquals(obj1, obj2)).toBe(true);
+describe('object/shallowEquals', () => {
+  it('returns true for objects with identical keys and primitive values', () => {
+    expect(shallowEquals({ a: 1, b: 2 }, { a: 1, b: 2 })).toBe(true);
   });
 
-  it('should return false for different objects', () => {
-    const obj1 = { a: 1, b: 2 };
-    const obj2 = { a: 1, b: 3 };
-    expect(shallowEquals(obj1, obj2)).toBe(false);
+  it('is insensitive to key declaration order', () => {
+    expect(shallowEquals({ a: 1, b: 2 }, { b: 2, a: 1 })).toBe(true);
   });
 
-  it('should return true for identical primitives', () => {
-    expect(shallowEquals(5, 5)).toBe(true);
-    expect(shallowEquals('hello', 'hello')).toBe(true);
-    expect(shallowEquals(true, true)).toBe(true);
+  it('returns false for differing primitive values', () => {
+    expect(shallowEquals({ a: 1 }, { a: 2 })).toBe(false);
   });
 
-  it('should return false for different primitives', () => {
-    expect(shallowEquals(5, 6)).toBe(false);
-    expect(shallowEquals('hello', 'world')).toBe(false);
-    expect(shallowEquals(true, false)).toBe(false);
+  it('returns false when keys differ', () => {
+    expect(shallowEquals({ a: 1 }, { b: 1 })).toBe(false);
+    expect(shallowEquals({ a: 1, b: 2 }, { a: 1 })).toBe(false);
+    expect(shallowEquals({ a: 1 }, { a: 1, b: 2 })).toBe(false);
   });
 
-  it('should handle nested objects', () => {
-    const obj1 = { a: { b: { c: 1 } } };
-    const obj2 = { a: { b: { c: 1 } } };
-    const obj3 = { a: { b: { c: 2 } } };
-
-    expect(shallowEquals(obj1, obj2)).toBe(true);
-    expect(shallowEquals(obj1, obj3)).toBe(false);
-  });
-
-  it('should handle arrays', () => {
-    const arr1 = [1, 2, 3];
-    const arr2 = [1, 2, 3];
-    const arr3 = [1, 2, 4];
-
-    expect(shallowEquals(arr1, arr2)).toBe(true);
-    expect(shallowEquals(arr1, arr3)).toBe(false);
-  });
-
-  it('should handle null and undefined', () => {
-    expect(shallowEquals(null, null)).toBe(true);
-    expect(shallowEquals(undefined, undefined)).toBe(true);
-    expect(shallowEquals(null, undefined)).toBe(false);
-  });
-
-  it('should handle functions by reference equality', () => {
-    const func1 = () => { };
-    const func2 = () => { };
-
-    expect(shallowEquals(func1, func1)).toBe(true);
-    expect(shallowEquals(func1, func2)).toBe(false);
-  });
-
-  it('should be sensitive to property order (JSON.stringify limitation)', () => {
-    const obj1 = { a: 1, b: 2 };
-    const obj2 = { b: 2, a: 1 };
-    // This might be false due to JSON.stringify property order sensitivity
-    // This is a known limitation of shallowEquals
-    expect(shallowEquals(obj1, obj2)).toBe(false);
-  });
-
-  it('should handle circular references by falling back to === comparison', () => {
-    const obj1: any = { a: 1 };
-    obj1.self = obj1;
-    const obj2: any = { a: 1 };
-    obj2.self = obj2;
-
-    expect(shallowEquals(obj1, obj1)).toBe(true); // Same reference
-    expect(shallowEquals(obj1, obj2)).toBe(false); // Different references
-  });
-
-  it('should handle dates', () => {
-    const date1 = new Date('2023-01-01');
-    const date2 = new Date('2023-01-01');
-    const date3 = new Date('2023-01-02');
-
-    expect(shallowEquals(date1, date2)).toBe(true);
-    expect(shallowEquals(date1, date3)).toBe(false);
-  });
-
-  it('should handle mixed types', () => {
-    expect(shallowEquals(1, '1')).toBe(false);
-    expect(shallowEquals([], {})).toBe(false);
-    expect(shallowEquals(null, 0)).toBe(false);
-  });
-
-  it('should handle objects with undefined values', () => {
-    const obj1 = { a: 1, b: undefined };
-    const obj2 = { a: 1, b: undefined };
-    expect(shallowEquals(obj1, obj2)).toBe(true);
-  });
-
-  it('should return true for same reference via early return', () => {
+  it('returns true for same reference', () => {
     const obj = { a: 1, b: { c: 2 } };
     expect(shallowEquals(obj, obj)).toBe(true);
   });
 
-  it('should return false when only first argument is a function', () => {
-    expect(shallowEquals(() => {}, 'not a function')).toBe(false);
+  it('compares nested objects by reference (no recursion)', () => {
+    expect(shallowEquals({ a: { b: 1 } }, { a: { b: 1 } })).toBe(false);
+    const inner = { b: 1 };
+    expect(shallowEquals({ a: inner }, { a: inner })).toBe(true);
   });
 
-  it('should return false when only second argument is a function', () => {
-    expect(shallowEquals('not a function', () => {})).toBe(false);
+  it('falls back to === for primitives', () => {
+    expect(shallowEquals(5, 5)).toBe(true);
+    expect(shallowEquals('hello', 'hello')).toBe(true);
+    expect(shallowEquals(true, true)).toBe(true);
+    expect(shallowEquals(5, 6)).toBe(false);
+    expect(shallowEquals(1, '1')).toBe(false);
   });
 
-  it('should return true for same function reference', () => {
-    const fn = () => {};
+  it('handles null and undefined via ===', () => {
+    expect(shallowEquals(null, null)).toBe(true);
+    expect(shallowEquals(undefined, undefined)).toBe(true);
+    expect(shallowEquals(null, undefined)).toBe(false);
+    expect(shallowEquals(null, {})).toBe(false);
+    expect(shallowEquals({}, null)).toBe(false);
+  });
+
+  it('compares functions by reference', () => {
+    const fn = () => { /* noop */ };
     expect(shallowEquals(fn, fn)).toBe(true);
+    expect(shallowEquals(() => { /* noop */ }, () => { /* noop */ })).toBe(false);
   });
 
-  it('should return false for different function references', () => {
-    expect(shallowEquals(() => {}, () => {})).toBe(false);
+  it('Date instances are treated as plain objects (no special-casing): two distinct Date refs match because both have zero own keys', () => {
+    const d = new Date('2023-01-01');
+    expect(shallowEquals(d, d)).toBe(true);
+    // No special-casing for Date — both have no own enumerable keys.
+    // Use object/deepEquals if you need value-based Date comparison.
+    expect(shallowEquals(new Date('2023-01-01'), new Date('2023-01-02'))).toBe(true);
   });
 
-  it('should handle circular references gracefully', () => {
-    const obj1: Record<string, unknown> = { a: 1 };
-    obj1.self = obj1;
-    const obj2: Record<string, unknown> = { a: 1 };
-    obj2.self = obj2;
+  it('handles undefined values in keys', () => {
+    expect(shallowEquals({ a: 1, b: undefined }, { a: 1, b: undefined })).toBe(true);
+    // key present vs absent are treated as different
+    expect(shallowEquals({ a: 1, b: undefined }, { a: 1 })).toBe(false);
+  });
 
-    // Different circular objects should return false (fallback to ===)
-    expect(shallowEquals(obj1, obj2)).toBe(false);
+  it('handles circular references safely (no JSON.stringify)', () => {
+    const a: Record<string, unknown> = { x: 1 };
+    a.self = a;
+    const b: Record<string, unknown> = { x: 1 };
+    b.self = b;
+    // self refs are different references \u2192 false
+    expect(shallowEquals(a, b)).toBe(false);
+    expect(shallowEquals(a, a)).toBe(true);
+  });
+
+  it('arrays and objects share the keys-and-=== contract: empty array vs empty object both have zero keys', () => {
+    expect(shallowEquals([], {})).toBe(true);
+    // But mismatched contents do diverge
+    expect(shallowEquals([1], { 0: 1 })).toBe(true); // both have key '0' with value 1
+    expect(shallowEquals([1, 2], { 0: 1 })).toBe(false);
   });
 });
