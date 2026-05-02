@@ -6,52 +6,52 @@
 
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { oneInCommon } from './oneInCommon';
+import { intersects } from './intersects';
 
-describe('oneInCommon — property-based', () => {
-  it('oneInCommon(a, a) is true if a.length > 0', () => {
+describe('intersects — property-based', () => {
+  it('intersects(a, a) is true if a.length > 0', () => {
     fc.assert(
       fc.property(fc.array(fc.integer(), { minLength: 1 }), (a) => {
-        expect(oneInCommon(a, a)).toBe(true);
+        expect(intersects(a, a)).toBe(true);
       }),
     );
   });
 
-  it('oneInCommon(a, []) is false for any a', () => {
+  it('intersects(a, []) is false for any a', () => {
     fc.assert(
       fc.property(fc.array(fc.integer()), (a) => {
-        expect(oneInCommon(a, [])).toBe(false);
+        expect(intersects(a, [])).toBe(false);
       }),
     );
   });
 
-  it('symmetric: oneInCommon(a, b) === oneInCommon(b, a)', () => {
+  it('symmetric: intersects(a, b) === intersects(b, a)', () => {
     fc.assert(
       fc.property(fc.array(fc.integer()), fc.array(fc.integer()), (a, b) => {
-        expect(oneInCommon(a, b)).toBe(oneInCommon(b, a));
+        expect(intersects(a, b)).toBe(intersects(b, a));
       }),
     );
   });
 });
 
-describe('oneInCommon — contract', () => {
+describe('intersects — contract', () => {
   it('empty arrays have nothing in common', () => {
-    expect(oneInCommon([], [])).toBe(false);
+    expect(intersects([], [])).toBe(false);
   });
 
   it('[1] vs [2] returns false', () => {
-    expect(oneInCommon([1], [2])).toBe(false);
+    expect(intersects([1], [2])).toBe(false);
   });
 
   it('[1] vs [1] returns true', () => {
-    expect(oneInCommon([1], [1])).toBe(true);
+    expect(intersects([1], [1])).toBe(true);
   });
 
   it('one common element among many', () => {
-    expect(oneInCommon([1, 2, 3], [4, 5, 3])).toBe(true);
+    expect(intersects([1, 2, 3], [4, 5, 3])).toBe(true);
   });
 
   it('completely disjoint arrays return false', () => {
-    expect(oneInCommon([1, 2], [3, 4])).toBe(false);
+    expect(intersects([1, 2], [3, 4])).toBe(false);
   });
 });
