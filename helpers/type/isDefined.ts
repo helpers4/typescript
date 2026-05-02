@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import type { Maybe } from './Maybe.model';
+import type { Maybe } from './Maybe';
 
 /**
  * Checks if a value is defined (not undefined nor null).

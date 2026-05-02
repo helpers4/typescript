@@ -5,7 +5,7 @@
  */
 
 import { ensureDate } from './ensureDate';
-import type { DateLike } from './types.model';
+import type { DateLike } from './types';
 
 /**
  * Checks if two dates are the same day.
