@@ -11,14 +11,14 @@ import { isPlainObject } from '../type/isPlainObject';
  *
  * Two arrays are equal when they have the same length and each pair of
  * elements at the same index is structurally equal:
- * - Arrays recurse with `deepEquals`.
+ * - Arrays recurse with `equalsDeep`.
  * - Plain objects recurse key-by-key with structural comparison.
  * - `Date` instances are compared by their epoch value.
  * - All other values use strict equality (`===`), which means `NaN !== NaN`
  *   and special objects (Map, Set, RegExp, Promise, class instances\u2026) are
  *   compared by reference.
  *
- * For positional one-level comparison use {@link shallowEquals}. For
+ * For positional one-level comparison use {@link equalsShallow}. For
  * order-independent comparison use {@link equalsUnordered}.
  *
  * @param arrA - First array to compare
@@ -26,7 +26,7 @@ import { isPlainObject } from '../type/isPlainObject';
  * @returns `true` if arrays are deeply equal, `false` otherwise.
  * @since 2.0.0
  */
-export function deepEquals<T>(arrA: T[], arrB: T[]): boolean {
+export function equalsDeep<T>(arrA: readonly T[], arrB: readonly T[]): boolean {
   if (arrA === arrB) {
     return true;
   }
@@ -49,7 +49,7 @@ function valuesEqual(a: unknown, b: unknown): boolean {
     return true;
   }
   if (Array.isArray(a) && Array.isArray(b)) {
-    return deepEquals(a, b);
+    return equalsDeep(a, b);
   }
   if (a instanceof Date && b instanceof Date) {
     return a.getTime() === b.getTime();

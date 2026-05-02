@@ -5,38 +5,38 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { equals } from "./equals";
+import { equalsUnordered } from "./equalsUnordered";
 
-describe('equals', () => {
+describe('equalsUnordered', () => {
     it('should return true if two arrays are identical', () => {
-        expect(equals([1, 2, 3], [3, 2, 1])).toBe(true);
+        expect(equalsUnordered([1, 2, 3], [3, 2, 1])).toBe(true);
     });
 
     it('should return false if two arrays are not identical', () => {
-        expect(equals([1, 2, 3], [4, 5, 6])).toBe(false);
+        expect(equalsUnordered([1, 2, 3], [4, 5, 6])).toBe(false);
     });
 
     it('should return true for nested arrays if they are identical', () => {
-        expect(equals([[1, 2], [3, 4]], [[3, 4], [1, 2]])).toBe(true);
+        expect(equalsUnordered([[1, 2], [3, 4]], [[3, 4], [1, 2]])).toBe(true);
     });
 
     it('should return false for nested arrays if they are not identical', () => {
-        expect(equals([[1, 2], [3, 4]], [[1, 2], [4, 5]])).toBe(false);
+        expect(equalsUnordered([[1, 2], [3, 4]], [[1, 2], [4, 5]])).toBe(false);
     });
 
     it('should handle arrays with objects', () => {
-        expect(equals([{ a: 1 }, { b: 2 }], [{ b: 2 }, { a: 1 }])).toBe(true);
+        expect(equalsUnordered([{ a: 1 }, { b: 2 }], [{ b: 2 }, { a: 1 }])).toBe(true);
     });
 
     it('should handle mixed nested structures', () => {
-        expect(equals([[{ a: 1 }]], [[{ a: 1 }]])).toBe(true);
+        expect(equalsUnordered([[{ a: 1 }]], [[{ a: 1 }]])).toBe(true);
     });
 
     it('should return false for empty arrays with non-empty arrays', () => {
-        expect(equals([], [1])).toBe(false);
+        expect(equalsUnordered([], [1])).toBe(false);
     });
 
     it('should return true for empty arrays', () => {
-        expect(equals([], [])).toBe(true);
+        expect(equalsUnordered([], [])).toBe(true);
     });
 });

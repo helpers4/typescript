@@ -5,70 +5,70 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { deepEquals } from './deepEquals';
+import { equalsDeep } from './equalsDeep';
 
-describe('array/deepEquals', () => {
+describe('array/equalsDeep', () => {
   it('returns true for identical flat arrays', () => {
-    expect(deepEquals([1, 2, 3], [1, 2, 3])).toBe(true);
+    expect(equalsDeep([1, 2, 3], [1, 2, 3])).toBe(true);
   });
 
   it('returns false for arrays differing at one index', () => {
-    expect(deepEquals([1, 2, 3], [1, 2, 4])).toBe(false);
+    expect(equalsDeep([1, 2, 3], [1, 2, 4])).toBe(false);
   });
 
   it('returns true for same reference', () => {
     const arr = [1, 2, 3];
-    expect(deepEquals(arr, arr)).toBe(true);
+    expect(equalsDeep(arr, arr)).toBe(true);
   });
 
   it('recurses into nested arrays', () => {
-    expect(deepEquals([[1, 2], [3, 4]], [[1, 2], [3, 4]])).toBe(true);
-    expect(deepEquals([[1, 2], [3, 4]], [[1, 2], [3, 5]])).toBe(false);
+    expect(equalsDeep([[1, 2], [3, 4]], [[1, 2], [3, 4]])).toBe(true);
+    expect(equalsDeep([[1, 2], [3, 4]], [[1, 2], [3, 5]])).toBe(false);
   });
 
   it('recurses into nested plain objects', () => {
-    expect(deepEquals([{ a: 1 }], [{ a: 1 }])).toBe(true);
-    expect(deepEquals([{ a: 1 }], [{ a: 2 }])).toBe(false);
-    expect(deepEquals([{ a: { b: 1 } }], [{ a: { b: 1 } }])).toBe(true);
-    expect(deepEquals([{ a: { b: 1 } }], [{ a: { b: 2 } }])).toBe(false);
+    expect(equalsDeep([{ a: 1 }], [{ a: 1 }])).toBe(true);
+    expect(equalsDeep([{ a: 1 }], [{ a: 2 }])).toBe(false);
+    expect(equalsDeep([{ a: { b: 1 } }], [{ a: { b: 1 } }])).toBe(true);
+    expect(equalsDeep([{ a: { b: 1 } }], [{ a: { b: 2 } }])).toBe(false);
   });
 
   it('compares Date instances by epoch value', () => {
-    expect(deepEquals(
+    expect(equalsDeep(
       [new Date('2023-01-01')],
       [new Date('2023-01-01')],
     )).toBe(true);
-    expect(deepEquals(
+    expect(equalsDeep(
       [new Date('2023-01-01')],
       [new Date('2023-01-02')],
     )).toBe(false);
   });
 
   it('returns false for different lengths', () => {
-    expect(deepEquals([1, 2, 3], [1, 2])).toBe(false);
+    expect(equalsDeep([1, 2, 3], [1, 2])).toBe(false);
   });
 
   it('handles empty arrays', () => {
-    expect(deepEquals([], [])).toBe(true);
-    expect(deepEquals([1], [])).toBe(false);
+    expect(equalsDeep([], [])).toBe(true);
+    expect(equalsDeep([1], [])).toBe(false);
   });
 
   it('returns false when one input is not an array', () => {
-    expect(deepEquals([1, 2], 'not array' as unknown as unknown[])).toBe(false);
-    expect(deepEquals('not array' as unknown as unknown[], [1, 2])).toBe(false);
+    expect(equalsDeep([1, 2], 'not array' as unknown as unknown[])).toBe(false);
+    expect(equalsDeep('not array' as unknown as unknown[], [1, 2])).toBe(false);
   });
 
   it('compares special objects by reference', () => {
     const map = new Map();
-    expect(deepEquals([map], [map])).toBe(true);
-    expect(deepEquals([new Map()], [new Map()])).toBe(false);
+    expect(equalsDeep([map], [map])).toBe(true);
+    expect(equalsDeep([new Map()], [new Map()])).toBe(false);
   });
 
   it('handles primitive special values with === semantics', () => {
-    expect(deepEquals([null], [null])).toBe(true);
-    expect(deepEquals([undefined], [undefined])).toBe(true);
-    expect(deepEquals([NaN], [NaN])).toBe(false); // NaN !== NaN
-    expect(deepEquals([0], [-0])).toBe(true); // 0 === -0
+    expect(equalsDeep([null], [null])).toBe(true);
+    expect(equalsDeep([undefined], [undefined])).toBe(true);
+    expect(equalsDeep([NaN], [NaN])).toBe(false); // NaN !== NaN
+    expect(equalsDeep([0], [-0])).toBe(true); // 0 === -0
   });
 
   it('handles deeply nested arrays without crash', () => {
@@ -78,15 +78,15 @@ describe('array/deepEquals', () => {
       deep1 = [deep1];
       deep2 = [deep2];
     }
-    expect(deepEquals(deep1, deep2)).toBe(true);
+    expect(equalsDeep(deep1, deep2)).toBe(true);
   });
 
   it('returns false when nested objects in arrays differ in key count', () => {
-    expect(deepEquals([{ a: 1, b: 2 }], [{ a: 1 }])).toBe(false);
+    expect(equalsDeep([{ a: 1, b: 2 }], [{ a: 1 }])).toBe(false);
   });
 
   it('returns false when nested objects in arrays have same key count but different keys', () => {
-    expect(deepEquals([{ a: 1 }], [{ b: 1 }])).toBe(false);
+    expect(equalsDeep([{ a: 1 }], [{ b: 1 }])).toBe(false);
   });
 
   it('handles sparse arrays', () => {
@@ -94,6 +94,6 @@ describe('array/deepEquals', () => {
     const sparse1 = [1, , 3];
     // eslint-disable-next-line no-sparse-arrays
     const sparse2 = [1, , 3];
-    expect(deepEquals(sparse1, sparse2)).toBe(true);
+    expect(equalsDeep(sparse1, sparse2)).toBe(true);
   });
 });
