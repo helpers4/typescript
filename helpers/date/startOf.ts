@@ -5,7 +5,7 @@
  */
 
 import { ensureDate } from './ensureDate';
-import type { DateLike } from './types.model';
+import type { DateLike } from './types';
 
 /**
  * Units supported by {@link startOf} and {@link endOf}.

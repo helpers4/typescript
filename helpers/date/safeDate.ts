@@ -5,7 +5,7 @@
  */
 
 import { ensureDate } from './ensureDate';
-import type { DateLike } from './types.model';
+import type { DateLike } from './types';
 
 /**
  * Safely creates a Date object from various input types.

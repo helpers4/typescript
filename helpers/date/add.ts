@@ -5,7 +5,7 @@
  */
 
 import { ensureDate } from './ensureDate';
-import type { DateLike } from './types.model';
+import type { DateLike } from './types';
 
 /**
  * Adds days to a date.
