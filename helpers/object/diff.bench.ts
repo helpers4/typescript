@@ -6,31 +6,31 @@
 
 import { bench, describe } from 'vitest'
 
-import { deepCompare } from './deepCompare'
+import { diff } from './diff'
 
 const objA = { a: 1, b: { c: 2, d: { e: 3 } }, f: [1, 2, 3] }
 const objB = { a: 1, b: { c: 2, d: { e: 3 } }, f: [1, 2, 3] }
 const objC = { a: 1, b: { c: 99, d: { e: 3 } }, f: [1, 2, 3], g: 'extra' }
 const large = Object.fromEntries(Array.from({ length: 50 }, (_, i) => [`key${i}`, i]))
 
-describe('deepCompare', () => {
+describe('diff', () => {
   bench('identical objects', () => {
-    deepCompare(objA, objB)
+    diff(objA, objB)
   })
   bench('objects with differences', () => {
-    deepCompare(objA, objC)
+    diff(objA, objC)
   })
   bench('same reference', () => {
-    deepCompare(objA, objA)
+    diff(objA, objA)
   })
   bench('null inputs', () => {
-    deepCompare(null, null)
+    diff(null, null)
   })
   bench('large flat objects (50 keys)', () => {
-    deepCompare(large, { ...large })
+    diff(large, { ...large })
   })
   bench('with dates', () => {
     const d = new Date()
-    deepCompare({ date: d }, { date: new Date(d.getTime()) })
+    diff({ date: d }, { date: new Date(d.getTime()) })
   })
 })
