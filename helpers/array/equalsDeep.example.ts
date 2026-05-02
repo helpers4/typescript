@@ -4,29 +4,29 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { deepEquals } from './deepEquals';
+import { equalsDeep } from './equalsDeep';
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
-  helper: 'deepEquals',
+  helper: 'equalsDeep',
   category: 'array',
   examples: [
     {
       title: 'Compare nested arrays',
       description: 'Deeply compares two arrays including nested structures.',
-      code: `deepEquals([[1, 2], [3]], [[1, 2], [3]])
+      code: `equalsDeep([[1, 2], [3]], [[1, 2], [3]])
 // => true`,
       assert: () => {
-        if (!deepEquals([[1, 2], [3]], [[1, 2], [3]])) throw new Error('Expected true');
+        if (!equalsDeep([[1, 2], [3]], [[1, 2], [3]])) throw new Error('Expected true');
       },
     },
     {
       title: 'Detect nested differences',
       description: 'Returns false when nested arrays differ.',
-      code: `deepEquals([[1, 2]], [[1, 3]])
+      code: `equalsDeep([[1, 2]], [[1, 3]])
 // => false`,
       assert: () => {
-        if (deepEquals([[1, 2]], [[1, 3]])) throw new Error('Expected false');
+        if (equalsDeep([[1, 2]], [[1, 3]])) throw new Error('Expected false');
       },
     },
   ],

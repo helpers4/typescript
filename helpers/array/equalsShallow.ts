@@ -11,7 +11,7 @@
  * elements at the same index satisfies strict equality (`===`). No
  * recursion: nested arrays/objects are compared by reference.
  *
- * For recursive structural comparison use {@link deepEquals}. For
+ * For recursive structural comparison use {@link equalsDeep}. For
  * order-independent comparison use {@link equalsUnordered}.
  *
  * @param arrA - First array to compare
@@ -19,7 +19,7 @@
  * @returns `true` if every element matches by `===` at the same index, `false` otherwise.
  * @since 2.0.0
  */
-export function shallowEquals<T>(arrA: T[], arrB: T[]): boolean {
+export function equalsShallow<T>(arrA: readonly T[], arrB: readonly T[]): boolean {
   if (arrA === arrB) {
     return true;
   }

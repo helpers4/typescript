@@ -6,30 +6,30 @@
 
 import { bench, describe } from 'vitest'
 
-import { deepEquals } from './deepEquals'
+import { equalsDeep } from './equalsDeep'
 
 const small = [1, 2, 3]
 const medium = Array.from({ length: 100 }, (_, i) => i)
 const nested = [[1, 2], [3, [4, 5]], [6, [7, [8, 9]]]]
 const nestedCopy = [[1, 2], [3, [4, 5]], [6, [7, [8, 9]]]]
 
-describe('deepEquals', () => {
+describe('equalsDeep', () => {
   bench('small equal arrays', () => {
-    deepEquals(small, [1, 2, 3])
+    equalsDeep(small, [1, 2, 3])
   })
   bench('small different arrays', () => {
-    deepEquals(small, [1, 2, 4])
+    equalsDeep(small, [1, 2, 4])
   })
   bench('medium equal arrays (100 items)', () => {
-    deepEquals(medium, Array.from({ length: 100 }, (_, i) => i))
+    equalsDeep(medium, Array.from({ length: 100 }, (_, i) => i))
   })
   bench('nested arrays (3 levels)', () => {
-    deepEquals(nested, nestedCopy)
+    equalsDeep(nested, nestedCopy)
   })
   bench('same reference', () => {
-    deepEquals(small, small)
+    equalsDeep(small, small)
   })
   bench('different lengths', () => {
-    deepEquals(small, [1, 2])
+    equalsDeep(small, [1, 2])
   })
 })

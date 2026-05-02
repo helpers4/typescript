@@ -6,21 +6,21 @@
 
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { shallowEquals } from './shallowEquals';
+import { equalsShallow } from './equalsShallow';
 
-describe('shallowEquals — property-based', () => {
-  it('reflexive: shallowEquals(a, a) is always true', () => {
+describe('equalsShallow — property-based', () => {
+  it('reflexive: equalsShallow(a, a) is always true', () => {
     fc.assert(
       fc.property(fc.array(fc.integer()), (arr) => {
-        expect(shallowEquals(arr, arr)).toBe(true);
+        expect(equalsShallow(arr, arr)).toBe(true);
       }),
     );
   });
 
-  it('symmetric: shallowEquals(a, b) === shallowEquals(b, a)', () => {
+  it('symmetric: equalsShallow(a, b) === equalsShallow(b, a)', () => {
     fc.assert(
       fc.property(fc.array(fc.integer()), fc.array(fc.integer()), (a, b) => {
-        expect(shallowEquals(a, b)).toBe(shallowEquals(b, a));
+        expect(equalsShallow(a, b)).toBe(equalsShallow(b, a));
       }),
     );
   });
@@ -28,27 +28,27 @@ describe('shallowEquals — property-based', () => {
   it('equal arrays return true', () => {
     fc.assert(
       fc.property(fc.array(fc.integer()), (arr) => {
-        expect(shallowEquals([...arr], [...arr])).toBe(true);
+        expect(equalsShallow([...arr], [...arr])).toBe(true);
       }),
     );
   });
 });
 
-describe('shallowEquals — contract', () => {
+describe('equalsShallow — contract', () => {
   it('two empty arrays are equal', () => {
-    expect(shallowEquals([], [])).toBe(true);
+    expect(equalsShallow([], [])).toBe(true);
   });
 
   it('[1,2,3] vs [1,2,3] are equal', () => {
-    expect(shallowEquals([1, 2, 3], [1, 2, 3])).toBe(true);
+    expect(equalsShallow([1, 2, 3], [1, 2, 3])).toBe(true);
   });
 
   it('[1,2] vs [2,1] are not equal (order matters)', () => {
-    expect(shallowEquals([1, 2], [2, 1])).toBe(false);
+    expect(equalsShallow([1, 2], [2, 1])).toBe(false);
   });
 
   it('different lengths are not equal', () => {
-    expect(shallowEquals([1, 2, 3], [1, 2])).toBe(false);
+    expect(equalsShallow([1, 2, 3], [1, 2])).toBe(false);
   });
 
   it('arrays with functions fall back to reference equality', () => {
@@ -57,13 +57,13 @@ describe('shallowEquals — contract', () => {
     const b = [fn];
     // JSON.stringify([fn]) === JSON.stringify([fn]) since functions become undefined => "[]"
     // So both become [] in JSON and are "equal"
-    expect(shallowEquals(a, b)).toBe(true);
+    expect(equalsShallow(a, b)).toBe(true);
   });
 
   it('same reference with circular structure falls back to reference equality', () => {
     const a: unknown[] = [1, 2];
     (a as unknown[]).push(a);
-    expect(shallowEquals(a, a)).toBe(true);
+    expect(equalsShallow(a, a)).toBe(true);
   });
 
   it('two different circular references are not equal', () => {
@@ -71,6 +71,6 @@ describe('shallowEquals — contract', () => {
     const b: unknown[] = [1];
     (a as unknown[]).push(a);
     (b as unknown[]).push(b);
-    expect(shallowEquals(a, b)).toBe(false);
+    expect(equalsShallow(a, b)).toBe(false);
   });
 });
