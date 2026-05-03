@@ -18,11 +18,20 @@ describe('capitalize — property-based', () => {
     );
   });
 
-  it('rest of string (after first char) is all lowercase', () => {
+  it('rest of string (after first char) is all lowercase by default', () => {
     fc.assert(
       fc.property(fc.string({ minLength: 2 }), (str) => {
         const result = capitalize(str);
         expect(result.slice(1)).toBe(result.slice(1).toLowerCase());
+      }),
+    );
+  });
+
+  it('with lowercaseRest: false, rest is unchanged from input', () => {
+    fc.assert(
+      fc.property(fc.string({ minLength: 2 }), (str) => {
+        const result = capitalize(str, { lowercaseRest: false });
+        expect(result.slice(1)).toBe(str.slice(1));
       }),
     );
   });
