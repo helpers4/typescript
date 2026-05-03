@@ -118,6 +118,27 @@
       "since": "ES2023",
       "example": "arr.toSorted((a, b) => a.name.localeCompare(b.name))",
       "notes": "Immutable version of .sort(); helpers4/array provides createSortByStringFn/NumberFn/DateFn comparator factories"
+    },
+    {
+      "name": "union",
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
+      "native": "unique([...a, ...b])",
+      "since": "ES2015",
+      "example": "unique([...arr1, ...arr2])  // deduped union",
+      "notes": "Compose helpers4/array unique with spread; no dedicated helper needed"
+    },
+    {
+      "name": "select / filterMap",
+      "libraries": [
+        "radashi"
+      ],
+      "native": "Array.prototype.filter().map()",
+      "since": "ES5",
+      "example": "arr.filter(x => x.active).map(x => x.name)",
+      "notes": "Two-pass but readable; no performance issue at typical array sizes"
     }
   ],
   "number": [
