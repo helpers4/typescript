@@ -16,7 +16,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) with a gitmo
 
 **Format:** `<type>(<scope>): <emoji> <description>`
 
-**Scopes:** array, commit, date, function, id, number, object, observable, promise, string, type, url, version, CI-CD
+**Scopes:** defined in VSCode settings, within the `"conventionalCommits.scopes"` array (e.g. `array`, `string`, `ci`, etc.) — pick the most specific applicable scope.
 
 | Type | Primary | Alternatives (gitmoji.dev) | When to use |
 |------|---------|---------------------------|-------------|
