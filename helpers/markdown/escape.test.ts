@@ -47,4 +47,18 @@ describe('escape', () => {
   it('returns plain text unchanged', () => {
     expect(escape('hello world')).toBe('hello world');
   });
+
+  describe('cell: true', () => {
+    it('escapes pipe characters', () => {
+      expect(escape('foo | bar', { cell: true })).toBe('foo \\| bar');
+    });
+
+    it('replaces newlines with spaces', () => {
+      expect(escape('line1\nline2', { cell: true })).toBe('line1 line2');
+    });
+
+    it('escapes both markdown and pipe', () => {
+      expect(escape('**bold** | item', { cell: true })).toBe('\\*\\*bold\\*\\* \\| item');
+    });
+  });
 });
