@@ -16,7 +16,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) with a gitmo
 
 **Format:** `<type>(<scope>): <emoji> <description>`
 
-**Scopes:** array, date, function, math, number, object, observable, promise, string, type, url, version, CI-CD
+**Scopes:** array, commit, date, function, id, number, object, observable, promise, string, type, url, version, CI-CD
 
 | Type | Primary | Alternatives (gitmoji.dev) | When to use |
 |------|---------|---------------------------|-------------|
@@ -62,9 +62,10 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) with a gitmo
 typescript/
 ├── helpers/                   # 12 helper categories
 │   ├── array/                 # arrayEquals, chunk, deepCompare, difference, intersection, ...
+│   ├── id/                    # uuid7, ...
+│   ├── commit/                # commit message parsing + validation
 │   ├── date/                  # daysDifference, isSameDay, toISO8601, ...
 │   ├── function/              # debounce, throttle, ...
-│   ├── math/                  # randomBetween, randomIntBetween, ...
 │   ├── number/                # clamp, isEven, isOdd, ...
 │   ├── object/                # deepMerge, pick, omit, ...
 │   ├── observable/            # RxJS utilities
@@ -142,6 +143,8 @@ helpers/<category>/
 - Tree-shakable exports only (no side effects)
 
 **Coverage:** 100% lines, functions, branches, statements — no exceptions.
+
+**Intentional cross-category duplicates:** `compact` and `equalsShallow` exist in both `array/` and `object/`. Do **NOT** merge or deduplicate them — each category is an independent npm package and cross-package imports break tree-shaking.
 
 ### License Header (required on all source files)
 
