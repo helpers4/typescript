@@ -28,7 +28,7 @@ helpers/
     config.json                # Category metadata
 ```
 
-Categories: `array`, `date`, `function`, `math`, `number`, `object`, `observable`, `promise`, `string`, `type`, `url`, `version`.
+Categories: `array`, `commit`, `date`, `function`, `id`, `number`, `object`, `observable`, `promise`, `string`, `type`, `url`, `version`.
 
 ## Creating a new helper
 
@@ -290,13 +290,24 @@ pnpm lint          # No lint issues (uses oxlint)
 pnpm coherency     # Bundle/version/category consistency
 ```
 
+## Intentional cross-category duplicates
+
+Some helpers exist in **both `array/` and `object/`** on purpose — do **not** try to deduplicate them:
+
+| Helper | `array/` | `object/` |
+|--------|----------|-----------|
+| `compact` | removes falsy items from an array | removes falsy values from an object |
+| `equalsShallow` | positional `===` comparison | keys + `===` value comparison |
+
+**Why?** Each category is published as its own npm package (`@helpers4/array`, `@helpers4/object`). A user who imports only `@helpers4/array` must not pull in `object/` code — tree-shaking across packages requires the duplication to be explicit.
+
 ## Commit messages
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/) with a gitmoji between the scope and the description.
 
 **Format:** `<type>(<scope>): <emoji> <description>`
 
-**Scopes:** `array`, `date`, `function`, `math`, `number`, `object`, `observable`, `promise`, `string`, `type`, `url`, `version`, `CI-CD`
+**Scopes:** `array`, `commit`, `date`, `function`, `id`, `number`, `object`, `observable`, `promise`, `string`, `type`, `url`, `version`, `CI-CD`
 
 | Type | Primary | Alternatives (gitmoji.dev) | When to use |
 |------|---------|---------------------------|-------------|
