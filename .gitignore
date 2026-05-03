@@ -13,6 +13,7 @@
 
 # Vitest & Coverage
 /coverage
+/helpers/version/coverage
 
 # Stryker
 /reports/**
