@@ -52,4 +52,19 @@ describe("capitalize", () => {
     expect(capitalize('TEST')).toBe('Test');
     expect(capitalize('test')).toBe('Test');
   });
+
+  describe('lowercaseRest: false', () => {
+    it('uppercases first char without lowercasing the rest', () => {
+      expect(capitalize('hELLO', { lowercaseRest: false })).toBe('HELLO');
+    });
+
+    it('does not change rest that is already lowercase', () => {
+      expect(capitalize('hello', { lowercaseRest: false })).toBe('Hello');
+    });
+
+    it('handles null and undefined with option', () => {
+      expect(capitalize(null, { lowercaseRest: false })).toBeNull();
+      expect(capitalize(undefined, { lowercaseRest: false })).toBeUndefined();
+    });
+  });
 });
