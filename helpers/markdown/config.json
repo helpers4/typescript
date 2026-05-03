@@ -1,0 +1,5 @@
+{
+  "label": "Markdown",
+  "smallDescription": "Markdown formatting and escaping utilities",
+  "description": "Utilities for safely formatting and escaping strings for use in Markdown documents"
+}
