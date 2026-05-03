@@ -1,0 +1,5 @@
+{
+  "label": "CI",
+  "smallDescription": "CI/CD workflow status utilities",
+  "description": "Utilities for formatting CI/CD job statuses in PR comments and pipeline reports"
+}
