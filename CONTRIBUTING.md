@@ -69,7 +69,8 @@ export function clamp(value: number, min: number, max: number): number {
 - Use `readonly` arrays in parameters when the function does not mutate
 - 2-space indentation, single quotes
 - Always use `@since next` — the real version is injected automatically at stable release time
-  (prerelease builds keep `next` so the tag retains its semantic meaning)
+  (prerelease builds keep `next` so the tag retains its semantic meaning). **Never hard-code a
+  version number like `@since 2.0.0`** — the tag will be wrong the moment the release number changes.
 
 ### Step 2 — Tests
 
@@ -277,7 +278,10 @@ npx vitest bench helpers/<category>/functionName.bench.ts # Single file
 pnpm bench:watch                                        # Watch mode
 ```
 
-Benchmarks are **non-blocking** — they don't fail the CI, but they help track performance regressions.
+Benchmarks are **non-blocking** and **opt-in** — they don't fail the CI and are not required for every
+helper. Add a bench file when the function is on a hot path (tight loops, string manipulation on
+large inputs, frequent array traversals). Simple one-liners, type guards, and thin wrappers do not
+need benchmarks.
 
 ## Quality checks
 
