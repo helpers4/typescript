@@ -15,6 +15,7 @@
     "type",
     "url",
     "version",
+    "deps",
     "CI-CD"
   ]
 }
