@@ -31,6 +31,7 @@ process(3); // => "8"`,
     },
     {
       title: 'Build a validator from small predicates',
+      description: 'Compose small predicate functions into a single validator.',
       code: `const validate = compose(
   (ok: boolean) => ok || (() => { throw new Error('invalid'); })(),
   (s: string) => s.length >= 3

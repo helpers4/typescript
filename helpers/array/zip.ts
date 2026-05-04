@@ -25,7 +25,7 @@
 export function zip<A, B>(a: readonly A[], b: readonly B[]): [A, B][];
 export function zip<A, B, C>(a: readonly A[], b: readonly B[], c: readonly C[]): [A, B, C][];
 export function zip<A, B, C, D>(a: readonly A[], b: readonly B[], c: readonly C[], d: readonly D[]): [A, B, C, D][];
-export function zip(...arrays: readonly unknown[][]): unknown[][] {
+export function zip(...arrays: readonly (readonly unknown[])[]): unknown[][] {
   if (arrays.length === 0) return [];
   const length = Math.min(...arrays.map(a => a.length));
   return Array.from({ length }, (_, i) => arrays.map(a => a[i]));

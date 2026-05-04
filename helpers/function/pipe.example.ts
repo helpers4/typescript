@@ -31,6 +31,7 @@ process(3); // => "8"`,
     },
     {
       title: 'Sanitise a string',
+      description: 'Chain string transforms left-to-right with pipe.',
       code: `const sanitize = pipe(
   (s: string) => s.trim(),
   (s: string) => s.toLowerCase(),

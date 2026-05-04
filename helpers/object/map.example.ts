@@ -13,6 +13,7 @@ const examples: HelperExamples = {
   examples: [
     {
       title: 'Transform values',
+      description: 'Maps each value of an object through a transform function.',
       code: `map({ a: 1, b: 2 }, v => v * 10)
 // => { a: 10, b: 20 }`,
       assert: () => {
@@ -22,6 +23,7 @@ const examples: HelperExamples = {
     },
     {
       title: 'Transform keys',
+      description: 'Maps each key of an object through a transform function.',
       code: `map({ a: 1, b: 2 }, undefined, k => k.toUpperCase())
 // => { A: 1, B: 2 }`,
       assert: () => {
@@ -31,6 +33,7 @@ const examples: HelperExamples = {
     },
     {
       title: 'Transform both keys and values in a single pass',
+      description: 'Provide both a value mapper and a key mapper to rewrite the whole object.',
       code: `map(
   { price: 100, discount: 20 },
   v => v / 100,

@@ -15,7 +15,7 @@ describe('groupBy — property-based', () => {
         fc.array(fc.integer({ min: 0, max: 5 })),
         (items) => {
           const result = groupBy(items, n => n % 3);
-          const flat = Object.values(result).flat();
+          const flat = Object.values(result).flatMap(arr => arr ?? []);
           expect(flat).toHaveLength(items.length);
           expect(flat.sort((a, b) => a - b)).toEqual([...items].sort((a, b) => a - b));
         }

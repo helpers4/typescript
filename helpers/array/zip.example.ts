@@ -24,6 +24,7 @@ const examples: HelperExamples = {
     },
     {
       title: 'Truncates to the shorter array',
+      description: 'Stops at the end of the shorter array to avoid undefined entries.',
       code: `zip([1, 2, 3], ['x', 'y'])
 // => [[1, 'x'], [2, 'y']]`,
       assert: () => {

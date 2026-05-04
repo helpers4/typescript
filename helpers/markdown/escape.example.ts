@@ -13,6 +13,7 @@ const examples: HelperExamples = {
   examples: [
     {
       title: 'Escape special Markdown characters',
+      description: 'Prefixes every Markdown special character with a backslash.',
       code: `escape('**bold** and _italic_')
 // => '\\\\*\\\\*bold\\\\*\\\\* and \\\\_italic\\\\_'`,
       assert: () => {

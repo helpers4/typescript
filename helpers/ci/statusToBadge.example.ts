@@ -13,6 +13,7 @@ const examples: HelperExamples = {
   examples: [
     {
       title: 'Map CI status to a Markdown badge',
+      description: 'Returns a Markdown code-span badge string for the given CI status.',
       code: `statusToBadge('success')  // => '\`passing\`'
 statusToBadge('failure')  // => '\`failing\`'
 statusToBadge('skipped')  // => '\`skipped\`'

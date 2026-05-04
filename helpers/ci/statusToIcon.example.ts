@@ -13,6 +13,7 @@ const examples: HelperExamples = {
   examples: [
     {
       title: 'Map CI status to icon',
+      description: 'Returns an emoji icon matching the given CI status.',
       code: `statusToIcon('success')  // => '✅'
 statusToIcon('failure')  // => '❌'
 statusToIcon('skipped')  // => '⏭️'

@@ -16,7 +16,7 @@ describe('defer (property-based)', () => {
         await defer(async (d) => {
           for (let i = 0; i < n; i++) {
             const idx = i;
-            d(() => calls.push(idx));
+            d(() => { calls.push(idx); });
           }
         });
         expect(calls.length).toBe(n);
@@ -31,7 +31,7 @@ describe('defer (property-based)', () => {
         await defer(async (d) => {
           for (let i = 0; i < n; i++) {
             const idx = i;
-            d(() => order.push(idx));
+            d(() => { order.push(idx); });
           }
         });
         const expected = Array.from({ length: n }, (_, i) => n - 1 - i);
@@ -46,7 +46,7 @@ describe('defer (property-based)', () => {
         let callCount = 0;
         await defer(async (d) => {
           for (let i = 0; i < n; i++) {
-            d(() => callCount++);
+            d(() => { callCount++; });
           }
           throw new Error('test error');
         }).catch(() => {});

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { resolveRecord } from './resolveRecord';
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
