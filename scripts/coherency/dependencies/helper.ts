@@ -44,7 +44,7 @@ export async function testDependenciesCoherency(): Promise<void> {
 
       for (const [depName, depVersion] of Object.entries(packageDeps)) {
         if (rootDependencies[depName] && rootDependencies[depName] !== depVersion) {
-          console.warn(`  ⚠️  Version mismatch for ${depName}: ${packageJson.name} uses ${depVersion}, root uses ${rootDependencies[depName]}`);
+          throw new Error(`Dependency version mismatch for '${depName}': ${packageJson.name} declares ${depVersion}, root declares ${rootDependencies[depName]}`);
         }
       }
 
