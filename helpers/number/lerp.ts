@@ -23,5 +23,8 @@
  * @since next
  */
 export function lerp(start: number, end: number, t: number): number {
+  if (t === 0) return start;
+  if (t === 1) return end;
+  if (Object.is(start, end)) return start;
   return start + (end - start) * t;
 }

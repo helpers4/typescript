@@ -5,18 +5,34 @@
  */
 
 import { flip } from './flip';
+import type { HelperExamples } from '../../scripts/examples/types';
 
-// Swap argument order of a subtraction function
-const sub = (a: number, b: number) => a - b;
-const flippedSub = flip(sub);
-flippedSub(3, 10); // 7  (10 - 3)
-flippedSub(10, 3); // -7 (3 - 10)
+const examples: HelperExamples = {
+  helper: 'flip',
+  category: 'function',
+  examples: [
+    {
+      title: 'Swap argument order',
+      description: 'Returns a new function where the first two arguments are swapped.',
+      code: `const sub = (a: number, b: number) => a - b;
+flip(sub)(3, 10); // => 7  (10 - 3)`,
+      assert: () => {
+        const sub = (a: number, b: number) => a - b;
+        if (flip(sub)(3, 10) !== 7) throw new Error('Expected 7');
+      },
+    },
+    {
+      title: 'Adapt a divide function',
+      description: 'Useful for adapting binary callbacks in higher-order functions.',
+      code: `const divide = (a: number, b: number) => a / b;
+const divideInto = flip(divide);
+divideInto(2, 100); // => 50`,
+      assert: () => {
+        const divide = (a: number, b: number) => a / b;
+        if (flip(divide)(2, 100) !== 50) throw new Error('Expected 50');
+      },
+    },
+  ],
+};
 
-// Useful for adapting callbacks in higher-order functions
-const divide = (a: number, b: number) => a / b;
-const divideInto = flip(divide); // divideInto(divisor, dividend) = dividend / divisor
-divideInto(2, 100); // 50
-
-// Three-argument: only first two are swapped
-const fn = (a: string, b: string, c: string) => `${a}-${b}-${c}`;
-flip(fn)('B', 'A', 'C'); // 'A-B-C'
+export default examples;
