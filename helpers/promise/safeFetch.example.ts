@@ -36,6 +36,7 @@ if (repo === null) {
     },
     {
       title: 'Fetch plain text',
+      description: 'Pass { parse: "text" } to get the raw response body as a string.',
       code: `const content = await safeFetch<string>(
   'https://example.com/data.txt',
   undefined,

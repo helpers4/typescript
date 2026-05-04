@@ -13,6 +13,7 @@ const examples: HelperExamples = {
   examples: [
     {
       title: 'Swap keys and values',
+      description: 'Returns a new object with keys and values swapped.',
       code: `invert({ a: 'x', b: 'y', c: 'z' })
 // => { x: 'a', y: 'b', z: 'c' }`,
       assert: () => {
@@ -28,7 +29,7 @@ const LABEL_TO_CODE = invert(STATUS_LABELS);
 
 LABEL_TO_CODE['OK']; // => '200'`,
       assert: () => {
-        const STATUS_LABELS: Record<number, string> = { 200: 'OK', 404: 'Not Found' };
+        const STATUS_LABELS: Record<string, string> = { '200': 'OK', '404': 'Not Found' };
         const LABEL_TO_CODE = invert(STATUS_LABELS);
         if (LABEL_TO_CODE['OK'] !== '200') throw new Error(`Expected '200'`);
       },

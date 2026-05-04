@@ -13,6 +13,7 @@ const examples: HelperExamples = {
   examples: [
     {
       title: 'Extract the leading sentence',
+      description: 'Returns the first sentence, terminated by . ? or !.',
       code: `leadingSentence('Returns the sum of an array. Works with any numbers.')
 // => 'Returns the sum of an array.'`,
       assert: () => {
@@ -22,6 +23,7 @@ const examples: HelperExamples = {
     },
     {
       title: 'Works with ? and !',
+      description: 'Recognises question marks and exclamation marks as sentence terminators.',
       code: `leadingSentence('Is it done? Yes it is!')
 // => 'Is it done?'`,
       assert: () => {

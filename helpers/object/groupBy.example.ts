@@ -13,6 +13,7 @@ const examples: HelperExamples = {
   examples: [
     {
       title: 'Group numbers by parity',
+      description: 'Groups elements by the string key returned by the callback.',
       code: `groupBy([1, 2, 3, 4], n => n % 2 === 0 ? 'even' : 'odd')
 // => { odd: [1, 3], even: [2, 4] }`,
       assert: () => {
@@ -23,6 +24,7 @@ const examples: HelperExamples = {
     },
     {
       title: 'Group objects by a property',
+      description: 'Use a property accessor as the grouping key.',
       code: `const users = [
   { name: 'Alice', role: 'admin' },
   { name: 'Bob',   role: 'user'  },

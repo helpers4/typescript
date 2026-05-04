@@ -35,7 +35,7 @@ export type DeferCallback = (error?: unknown) => void | Promise<void>;
  * // releaseLock() is still called
  * @since next
  */
-export async function <T>(
+export async function defer<T>(
   fn: (defer: (callback: DeferCallback) => void) => Promise<T>,
 ): Promise<T> {
   const callbacks: DeferCallback[] = [];

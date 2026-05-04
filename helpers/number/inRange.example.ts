@@ -13,6 +13,7 @@ const examples: HelperExamples = {
   examples: [
     {
       title: 'Check if a value is within bounds (inclusive)',
+      description: 'Both min and max are included by default.',
       code: `inRange(5, 1, 10)   // => true
 inRange(0, 1, 10)   // => false
 inRange(1, 1, 10)   // => true  (min included)

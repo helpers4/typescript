@@ -13,6 +13,7 @@ const examples: HelperExamples = {
   examples: [
     {
       title: 'Average a list of numbers',
+      description: 'Returns the arithmetic mean of the array; NaN for empty arrays.',
       code: `mean([1, 2, 3, 4])  // => 2.5
 mean([10, 20, 30])  // => 20
 mean([])            // => NaN`,

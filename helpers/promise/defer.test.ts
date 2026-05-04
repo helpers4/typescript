@@ -16,7 +16,7 @@ describe('defer', () => {
   it('calls a single deferred callback after the main function', async () => {
     const log: string[] = [];
     await defer(async (d) => {
-      d(() => log.push('cleanup'));
+      d(() => { log.push('cleanup'); });
       log.push('work');
     });
     expect(log).toEqual(['work', 'cleanup']);
@@ -25,9 +25,9 @@ describe('defer', () => {
   it('calls multiple callbacks in LIFO order', async () => {
     const log: string[] = [];
     await defer(async (d) => {
-      d(() => log.push('first'));
-      d(() => log.push('second'));
-      d(() => log.push('third'));
+      d(() => { log.push('first'); });
+      d(() => { log.push('second'); });
+      d(() => { log.push('third'); });
     });
     expect(log).toEqual(['third', 'second', 'first']);
   });
@@ -36,7 +36,7 @@ describe('defer', () => {
     const log: string[] = [];
     await expect(
       defer(async (d) => {
-        d(() => log.push('cleanup'));
+        d(() => { log.push('cleanup'); });
         throw new Error('oops');
       }),
     ).rejects.toThrow('oops');
@@ -58,7 +58,7 @@ describe('defer', () => {
     const error = new Error('boom');
     await expect(
       defer(async (d) => {
-        d((err) => receivedErrors.push(err));
+        d((err) => { receivedErrors.push(err); });
         throw error;
       }),
     ).rejects.toThrow();
@@ -68,7 +68,7 @@ describe('defer', () => {
   it('passes undefined to callbacks when main function succeeds', async () => {
     const receivedErrors: unknown[] = [];
     await defer(async (d) => {
-      d((err) => receivedErrors.push(err));
+      d((err) => { receivedErrors.push(err); });
     });
     expect(receivedErrors[0]).toBeUndefined();
   });
