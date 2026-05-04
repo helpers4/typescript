@@ -92,7 +92,7 @@ export async function testBundleSizes(): Promise<void> {
   console.log(`  📊 Total build size: ${formatSize(totalSize)}`);
   console.log(`  🎯 Packages analyzed: ${packages.length}`);
 
-  // Check for unusually large packages (> 100KB)
+  // Warn for unusually large packages (> 100KB)
   const largePackages = packages.filter(pkg => pkg.sizeBytes > 100 * 1024);
   if (largePackages.length > 0) {
     console.log(`  ⚠️  Large packages (>100KB):`);
@@ -101,13 +101,13 @@ export async function testBundleSizes(): Promise<void> {
     });
   }
 
-  // Check for empty packages (< 1KB)
-  const smallPackages = packages.filter(pkg => pkg.sizeBytes < 1024);
-  if (smallPackages.length > 0) {
-    console.log(`  ⚠️  Small packages (<1KB):`);
-    smallPackages.forEach(pkg => {
-      console.log(`     - ${pkg.name}: ${pkg.size}`);
-    });
+  // Fail for suspiciously small packages (< 1KB) — likely empty or broken
+  const emptyPackages = packages.filter(pkg => pkg.sizeBytes < 1024);
+  if (emptyPackages.length > 0) {
+    throw new Error(
+      `Empty or broken packages detected (<1KB):\n` +
+      emptyPackages.map(pkg => `  - ${pkg.name}: ${pkg.size}`).join('\n')
+    );
   }
 
   console.log('  ✅ Bundle size analysis completed');
