@@ -2,8 +2,8 @@ name: Pull Request Validation
 
 on:
   pull_request:
-    branches: [ main, develop ]
-    types: [ opened, synchronize, reopened, ready_for_review ]
+    branches: [main, develop]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 permissions:
   contents: read
@@ -185,7 +185,7 @@ jobs:
 
   # Verification job (depends on build for artifacts)
   verification:
-    needs: [ build, test ]
+    needs: [build, test]
     uses: ./.github/workflows/job-verification.yml
     with:
       node-version: "24"
@@ -198,8 +198,7 @@ jobs:
     timeout-minutes: 30
 
     outputs:
-      score: ${{ steps.score.outputs.score }}
-      status: ${{ steps.status.outputs.status }}
+      status: ${{ steps.mutation.outputs.status }}
 
     steps:
       - name: Checkout code
@@ -219,29 +218,11 @@ jobs:
       - name: Run mutation tests
         id: mutation
         run: |
-          EXIT_CODE=0
-          pnpm mutation 2>&1 | tee mutation-output.txt || EXIT_CODE=$?
-          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
-          exit $EXIT_CODE
-
-      - name: Extract mutation score
-        id: score
-        if: always()
-        run: |
-          SCORE=$(grep -oP 'All files\s*\|\s*\K[\d.]+' mutation-output.txt | head -1 || echo '')
-          if [ -z "$SCORE" ]; then
-            SCORE=$(grep -oP 'Mutation score[:\s]+\K[\d.]+' mutation-output.txt | tail -1 || echo 'N/A')
-          fi
-          echo "score=$SCORE" >> $GITHUB_OUTPUT
-
-      - name: Set status
-        id: status
-        if: always()
-        run: |
-          if [ "${{ steps.mutation.outputs.exit_code }}" == "0" ]; then
+          if pnpm mutation; then
             echo "status=success" >> $GITHUB_OUTPUT
           else
             echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
           fi
 
   # Benchmarks (non-blocking, informational only)
@@ -331,40 +312,18 @@ jobs:
               return header;
             };
 
-            const createMutationSection = (score, status) => {
+            const createMutationSection = (status) => {
               if (status === 'unknown' || status === 'skipped') {
                 return '> ⏭️ **Mutation Testing**: skipped';
               }
 
-              const num = parseFloat(score);
-              if (isNaN(num)) {
-                return '> ⚠️ **Mutation Testing**: score could not be determined';
-              }
+              const icon = status === 'success' ? '✅' : '❌';
+              const label = status === 'success' ? 'passed' : 'failed';
 
-              const getStatus = (value) => {
-                if (value >= 90) return { icon: '🟢', label: 'excellent' };
-                if (value >= 80) return { icon: '🟡', label: 'good' };
-                if (value >= 70) return { icon: '🟠', label: 'acceptable' };
-                return { icon: '🔴', label: 'needs improvement' };
-              };
-
-              const createProgressBar = (value) => {
-                const filled = Math.floor(value / 5);
-                const empty = 20 - filled;
-                return '`' + '▓'.repeat(filled) + '░'.repeat(empty) + '`';
-              };
-
-              const s = getStatus(num);
               return [
-                `> ${s.icon} **Mutation Score: ${score}%** — ${s.label}`,
+                `> ${icon} **Mutation Testing** — ${label}`,
                 '',
-                `| | Metric | Progress | Score |`,
-                `|:---:|--------|:--------:|:-----:|`,
-                `| ${s.icon} | **Mutation Score** | ${createProgressBar(num)} | **${score}%** |`,
-                '',
-                '> 🧬 *Mutation testing is informational only and does not block the PR*',
-                '',
-                `> 📊 [View full mutation report on Stryker Dashboard](https://dashboard.stryker-mutator.io/reports/github.com/helpers4/typescript/PR-${context.issue.number})`,
+                '> 🧬 *Informational only, does not block the PR*',
               ].join('\n');
             };
 
@@ -386,7 +345,6 @@ jobs:
               'Statements': "${{ needs.test.outputs.coverage-statements || '0' }}",
             };
 
-            const mutationScore = "${{ needs.mutation.outputs.score || 'N/A' }}";
             const mutationStatus = "${{ needs.mutation.outputs.status || 'unknown' }}";
 
             const benchStatus = "${{ needs.bench.outputs.status || 'unknown' }}";
@@ -470,7 +428,7 @@ jobs:
 
             ### 🧬 Mutation Testing
 
-            ${createMutationSection(mutationScore, mutationStatus)}
+            ${createMutationSection(mutationStatus)}
 
             ---
 
