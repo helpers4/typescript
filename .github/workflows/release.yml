@@ -123,7 +123,7 @@ jobs:
   # Step 7: Build, bump version and verify
   build-and-verify:
     runs-on: ubuntu-latest
-    needs: [ lint, type-check, tests, security, mutation ]
+    needs: [lint, type-check, tests, security, mutation]
     outputs:
       new-version: ${{ steps.version.outputs.new-version }}
       npm-tag: ${{ steps.version.outputs.npm-tag }}
@@ -395,7 +395,7 @@ jobs:
   # Step 9: Publish mutation reports generated earlier (no second mutation run)
   mutation-dashboard-report:
     runs-on: ubuntu-latest
-    needs: [ publish, mutation ]
+    needs: [publish, mutation]
     if: ${{ !inputs.dry-run }}
     permissions:
       contents: write
@@ -434,7 +434,7 @@ jobs:
   # Runs after publish and in parallel with mutation-dashboard-report.
   trigger-website-docs:
     runs-on: ubuntu-latest
-    needs: [ publish ]
+    needs: [publish]
     if: ${{ !inputs.dry-run }}
     continue-on-error: true
     concurrency:
@@ -460,7 +460,7 @@ jobs:
           token: ${{ steps.trigganator.outputs.token }}
           repository: helpers4/website
           event-type: typescript-release
-          client-payload: "{\"version\": \"${{ needs.publish.outputs.new-version }}\"}"
+          client-payload: '{"version": "${{ needs.publish.outputs.new-version }}"}'
 
       - name: Get Pushinator token fallback
         if: steps.trigger_docs_primary.outcome != 'success'
@@ -482,7 +482,7 @@ jobs:
           token: ${{ steps.pushinator_fallback.outputs.token }}
           repository: helpers4/website
           event-type: typescript-release
-          client-payload: "{\"version\": \"${{ needs.publish.outputs.new-version }}\"}"
+          client-payload: '{"version": "${{ needs.publish.outputs.new-version }}"}'
 
       - name: Trigger summary
         run: |

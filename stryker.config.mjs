@@ -30,9 +30,12 @@ export default {
   mutate: [
     'helpers/**/!(*.test|*.spec|*.bench|*.example|index).ts',
   ],
-  // In CI, skip verbose reporters (clear-text per-file table, progress bar) —
-  // json + html are enough; the release workflow writes a custom summary.
-  reporters: [...(isCI ? [] : ['clear-text', 'progress']), 'html', 'json', ...(hasDashboardKey ? ['dashboard'] : [])],
+  // In CI, skip the verbose clear-text table but keep progress so the step
+  // produces visible output (prevents the step from appearing frozen).
+  reporters: [...(isCI ? ['progress'] : ['clear-text', 'progress']), 'html', 'json', ...(hasDashboardKey ? ['dashboard'] : [])],
+  // Cap the time allowed per mutant: initialDryRunTime × timeoutFactor + timeoutMS.
+  // Prevents a never-resolving Promise mutant from hanging a worker indefinitely.
+  timeoutMS: 10000,
 
   htmlReporter: {
     fileName: 'reports/mutation/index.html',
