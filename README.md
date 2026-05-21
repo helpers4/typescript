@@ -70,7 +70,7 @@ chunk([1, 2, 3, 4, 5], 2); // [[1, 2], [3, 4], [5]]
 
 ## Documentation
 
-Full API documentation is available at **[helpers4.dev/ts](https://helpers4.dev/ts)**.
+Full API documentation is available at **[helpers4.dev/typescript](https://helpers4.dev/typescript)**.
 
 ## Development
 
