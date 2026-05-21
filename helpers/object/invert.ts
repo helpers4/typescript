@@ -16,7 +16,7 @@
  *
  * invert({ one: 1, two: 2 })
  * // => { 1: 'one', 2: 'two' }
- * @since next
+ * @since 2.0.0
  */
 export function invert<K extends string, V extends PropertyKey>(obj: Record<K, V>): Record<V, K> {
   const result = {} as Record<V, K>;

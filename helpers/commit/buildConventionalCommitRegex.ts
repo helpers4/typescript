@@ -33,7 +33,7 @@ function buildAlternation(values: readonly string[]): string {
  * buildConventionalCommitRegex().test('feat(api): add endpoint') // true
  * buildConventionalCommitRegex({ types: ['feat', 'fix'] }).test('chore: x') // false
  * buildConventionalCommitRegex({ requireScope: true }).test('feat: no scope') // false
- * @since next
+ * @since 2.0.0
  */
 export function buildConventionalCommitRegex(
   options: ConventionalCommitOptions = {},

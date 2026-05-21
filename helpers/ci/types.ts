@@ -9,6 +9,6 @@
  * The `string & {}` intersection allows any custom status string while
  * still enabling IDE auto-completion for the known values.
  *
- * @since next
+ * @since 2.0.0
  */
 export type CiStatus = 'success' | 'failure' | 'skipped' | 'unknown' | (string & {});

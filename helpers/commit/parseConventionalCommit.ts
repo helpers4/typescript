@@ -48,7 +48,7 @@ function splitBodyAndFooter(rest: string): { body: string; footer: string } {
  * // => { type: 'feat', scope: 'api', breaking: true, description: 'add v2', body: 'Details here', footer: '' }
  *
  * parseConventionalCommit('not conventional') // => null
- * @since next
+ * @since 2.0.0
  */
 export function parseConventionalCommit(
   message: string,

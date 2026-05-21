@@ -21,7 +21,7 @@
  * words('kebab-case');         // ['kebab', 'case']
  * words('SCREAMING_SNAKE');    // ['SCREAMING', 'SNAKE']
  * words('foo123bar');          // ['foo', '123', 'bar']
- * @since next
+ * @since 2.0.0
  */
 export function words(str: string): string[] {
   return (

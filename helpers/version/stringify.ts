@@ -23,7 +23,7 @@ import type { ParsedVersion } from './parse';
  * @example
  * stringify({ major: 1, minor: 0, patch: 0, prerelease: ['beta'], build: ['exp', 'sha', '5114f85'] })
  * // => '1.0.0-beta+exp.sha.5114f85'
- * @since next
+ * @since 2.0.0
  */
 export function stringify(parsed: ParsedVersion): string;
 export function stringify(parsed: undefined): undefined;

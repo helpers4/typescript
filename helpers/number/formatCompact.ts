@@ -18,7 +18,7 @@
  * formatCompact(1_000);            // '1K'
  * formatCompact(999);              // '999'
  * formatCompact(1_500_000, 'fr'); // '1,5 M'
- * @since next
+ * @since 2.0.0
  */
 export function formatCompact(value: number, locale?: string): string {
   return new Intl.NumberFormat(locale, { notation: 'compact' }).format(value);

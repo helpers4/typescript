@@ -18,7 +18,7 @@
  * without([1, 2, 3, 2, 4], 2);       // [1, 3, 4]
  * without([1, 2, 3, 2, 4], 2, 3);    // [1, 4]
  * without(['a', 'b', 'c'], 'b');      // ['a', 'c']
- * @since next
+ * @since 2.0.0
  */
 export function without<T>(array: readonly T[], ...values: T[]): T[] {
   const excluded = new Set(values);

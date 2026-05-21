@@ -18,7 +18,7 @@
  * const add5 = add(5);
  * add5(3); // => 8
  * add5(10); // => 15
- * @since next
+ * @since 2.0.0
  */
 export function curry<A, R>(fn: (a: A) => R): (a: A) => R;
 export function curry<A, B, R>(fn: (a: A, b: B) => R): (a: A) => (b: B) => R;

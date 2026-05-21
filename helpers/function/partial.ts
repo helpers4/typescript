@@ -17,7 +17,7 @@
  * const double = partial(multiply, 2);
  * double(5); // => 10
  * double(7); // => 14
- * @since next
+ * @since 2.0.0
  */
 export function partial<A, R>(fn: (a: A) => R, a: A): () => R;
 export function partial<A, B, R>(fn: (a: A, b: B) => R, a: A): (b: B) => R;

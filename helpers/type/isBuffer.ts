@@ -20,7 +20,7 @@
  * isBuffer(Buffer.from('hello')) // => true
  * isBuffer(new Uint8Array(8))    // => false
  * isBuffer('hello')              // => false
- * @since next
+ * @since 2.0.0
  */
 export function isBuffer(value: unknown): value is Buffer {
   return typeof Buffer !== 'undefined' && value instanceof Buffer;

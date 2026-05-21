@@ -20,7 +20,7 @@
  *   String
  * );
  * process(3); // => "8"
- * @since next
+ * @since 2.0.0
  */
 export function pipe<A, B>(fn1: (a: A) => B): (a: A) => B;
 export function pipe<A, B, C>(fn1: (a: A) => B, fn2: (b: B) => C): (a: A) => C;

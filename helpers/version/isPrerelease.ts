@@ -17,7 +17,7 @@ import type { ParsedVersion } from './parse';
  * isPrerelease('1.0.0-rc.0')   // true
  * isPrerelease('1.0.0')        // false
  * isPrerelease('2.1.0')        // false
- * @since next
+ * @since 2.0.0
  */
 export function isPrerelease(version: string): boolean;
 /**
@@ -28,7 +28,7 @@ export function isPrerelease(version: string): boolean;
  * @example
  * isPrerelease(parse('2.0.0-alpha.1')) // true
  * isPrerelease(parse('1.0.0'))         // false
- * @since next
+ * @since 2.0.0
  */
 export function isPrerelease(version: ParsedVersion): boolean;
 export function isPrerelease(version: undefined): undefined;

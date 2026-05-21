@@ -18,7 +18,7 @@
  * @example
  * cartesianProduct([0, 1], [0, 1], [0, 1]);
  * // [[0,0,0],[0,0,1],[0,1,0],[0,1,1],[1,0,0],[1,0,1],[1,1,0],[1,1,1]]
- * @since next
+ * @since 2.0.0
  */
 export function cartesianProduct<T extends readonly (readonly unknown[])[]>(
   ...arrays: T

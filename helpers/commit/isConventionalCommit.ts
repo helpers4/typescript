@@ -20,7 +20,7 @@ import type { ConventionalCommitOptions } from './types';
  * isConventionalCommit('feat(api): add endpoint') // => true
  * isConventionalCommit('hello world') // => false
  * isConventionalCommit('chore: x', { types: ['feat', 'fix'] }) // => false
- * @since next
+ * @since 2.0.0
  */
 export function isConventionalCommit(
   message: string,

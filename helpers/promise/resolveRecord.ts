@@ -20,7 +20,7 @@
  *   async repo => fetchRepoStars(repo)
  * );
  * // => { 'helpers4/typescript': 42, 'helpers4/devcontainer': 17 }
- * @since next
+ * @since 2.0.0
  */
 export async function resolveRecord<K extends PropertyKey, V>(
   keys: readonly K[],

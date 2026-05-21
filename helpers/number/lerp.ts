@@ -20,7 +20,7 @@
  * lerp(0, 100, 1);    // 100
  * lerp(0, 100, 0.5);  // 50
  * lerp(0, 100, 0.25); // 25
- * @since next
+ * @since 2.0.0
  */
 export function lerp(start: number, end: number, t: number): number {
   if (t === 0) return start;

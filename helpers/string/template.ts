@@ -27,7 +27,7 @@
  * @example
  * template('Hello, {{name}}!', {});
  * // 'Hello, !'  (unknown keys become empty string)
- * @since next
+ * @since 2.0.0
  */
 export function template(str: string, data: Record<string, unknown>): string {
   return str.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key: string) => String(data[key] ?? ''));

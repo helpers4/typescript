@@ -16,7 +16,7 @@
  * isArrayBuffer(new ArrayBuffer(8)) // => true
  * isArrayBuffer(new Uint8Array(8))  // => false
  * isArrayBuffer('hello')            // => false
- * @since next
+ * @since 2.0.0
  */
 export function isArrayBuffer(value: unknown): value is ArrayBuffer {
   return value instanceof ArrayBuffer;

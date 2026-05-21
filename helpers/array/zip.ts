@@ -20,7 +20,7 @@
  *
  * zip([1, 2], ['a', 'b', 'c']) // shorter array wins
  * // => [[1, 'a'], [2, 'b']]
- * @since next
+ * @since 2.0.0
  */
 export function zip<A, B>(a: readonly A[], b: readonly B[]): [A, B][];
 export function zip<A, B, C>(a: readonly A[], b: readonly B[], c: readonly C[]): [A, B, C][];

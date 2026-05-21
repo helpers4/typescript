@@ -30,7 +30,7 @@ const BREAKING_MARKER = /^BREAKING[ -]CHANGE: /m;
  *
  * analyzeCommits([{ subject: 'feat!: drop v1' }])
  * // => { suggestedBump: 'major', hasBreakingChanges: true, ... }
- * @since next
+ * @since 2.0.0
  */
 export function analyzeCommits(commits: readonly AnalyzableCommit[]): CommitAnalysis {
   let hasBreakingChanges = false;

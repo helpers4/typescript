@@ -39,7 +39,7 @@ export interface EscapeOptions {
  *
  * escape('foo | bar', { cell: true })
  * // => 'foo \\| bar'
- * @since next
+ * @since 2.0.0
  */
 export function escape(str: string, options?: EscapeOptions): string {
   let result = str.replace(/[\\`*_{}[\]()#+\-.!]/g, '\\$&');

@@ -24,7 +24,7 @@ import type { CiStatus } from './types';
  * statusToBadge('failure')  // => '`failing`'
  * statusToBadge('skipped')  // => '`skipped`'
  * statusToBadge('pending')  // => '`unknown`'
- * @since next
+ * @since 2.0.0
  */
 export function statusToBadge(status: CiStatus): string {
   switch (status) {

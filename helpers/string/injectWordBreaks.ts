@@ -256,7 +256,7 @@ function pass5Attach(groups: Group[]): Group[] {
  *
  * injectWordBreaks('https://example.com/foo/bar')
  * // => 'https://example.com/foo/bar'  (URL — never split)
- * @since next
+ * @since 2.0.0
  */
 export function injectWordBreaks(str: string): string;
 export function injectWordBreaks(str: undefined): undefined;

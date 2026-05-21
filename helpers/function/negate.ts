@@ -17,7 +17,7 @@
  * @example
  * const isEmpty = (arr: unknown[]) => arr.length === 0;
  * [[], [1], [], [2, 3]].filter(negate(isEmpty)); // [[1], [2, 3]]
- * @since next
+ * @since 2.0.0
  */
 export function negate<T extends unknown[]>(
   predicate: (...args: T) => boolean,

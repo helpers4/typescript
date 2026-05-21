@@ -30,7 +30,7 @@ export type OnceFn<A extends unknown[], R> = ((...args: A) => R) & {
  *
  * init.reset(); // clear cache
  * init(); // runs expensiveSetup again
- * @since next
+ * @since 2.0.0
  */
 export function once<A extends unknown[], R>(fn: (...args: A) => R): OnceFn<A, R> {
   let called = false;

@@ -23,7 +23,7 @@ import { statusToIcon } from './statusToIcon';
  * @example
  * buildStatusTable({ 'Unit Tests': 'success', 'Lint': 'failure' })
  * // => '| ✅ | **Unit Tests** | `passing` |\n| ❌ | **Lint** | `failing` |'
- * @since next
+ * @since 2.0.0
  */
 export function buildStatusTable(jobs: Record<string, string>): string {
   return Object.entries(jobs)

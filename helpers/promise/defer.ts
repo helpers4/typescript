@@ -33,7 +33,7 @@ export type DeferCallback = (error?: unknown) => void | Promise<void>;
  *   throw new Error('oops');
  * }).catch(() => {});
  * // releaseLock() is still called
- * @since next
+ * @since 2.0.0
  */
 export async function defer<T>(
   fn: (defer: (callback: DeferCallback) => void) => Promise<T>,

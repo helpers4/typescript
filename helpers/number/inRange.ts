@@ -31,7 +31,7 @@ export interface InRangeOptions {
  * inRange(1, 1, 10)          // => true  (min inclusive)
  * inRange(1, 1, 10, { inclusive: 'none' })  // => false
  * inRange(10, 1, 10, { inclusive: 'max' })  // => true
- * @since next
+ * @since 2.0.0
  */
 export function inRange(value: number, min: number, max: number, options: InRangeOptions = {}): boolean {
   const { inclusive = 'both' } = options;

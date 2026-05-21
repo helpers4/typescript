@@ -17,7 +17,7 @@
  * safeJsonParse<{ a: number }>('{"a":1}')  // => { a: 1 }
  * safeJsonParse('invalid')                 // => null
  * safeJsonParse('invalid', [])             // => []
- * @since next
+ * @since 2.0.0
  */
 export function safeJsonParse<T>(input: string): T | null;
 export function safeJsonParse<T>(input: string, fallback: T): T;

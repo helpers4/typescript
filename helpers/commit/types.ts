@@ -8,7 +8,7 @@
  * Options shared by `buildConventionalCommitRegex`, `parseConventionalCommit`,
  * and `isConventionalCommit` to constrain the accepted commit format.
  *
- * @since next
+ * @since 2.0.0
  */
 export interface ConventionalCommitOptions {
   /**
@@ -30,7 +30,7 @@ export interface ConventionalCommitOptions {
 /**
  * Parsed representation of a Conventional Commit message.
  *
- * @since next
+ * @since 2.0.0
  */
 export interface ParsedConventionalCommit {
   /** Commit type (e.g. `feat`, `fix`). */
@@ -51,7 +51,7 @@ export interface ParsedConventionalCommit {
  * Minimal commit shape consumed by `analyzeCommits`. Only the subject line is
  * mandatory; the body is scanned for a `BREAKING CHANGE` footer.
  *
- * @since next
+ * @since 2.0.0
  */
 export interface AnalyzableCommit {
   readonly subject: string;
@@ -61,14 +61,14 @@ export interface AnalyzableCommit {
 /**
  * Bumping suggestion produced by `analyzeCommits`.
  *
- * @since next
+ * @since 2.0.0
  */
 export type CommitVersionBump = 'major' | 'minor' | 'patch';
 
 /**
  * Aggregated result of `analyzeCommits`.
  *
- * @since next
+ * @since 2.0.0
  */
 export interface CommitAnalysis {
   /** Suggested semantic version bump for the supplied commits. */

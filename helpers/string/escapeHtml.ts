@@ -29,7 +29,7 @@ const HTML_ESCAPE_REGEX = /[&<>"']/g;
  * @example
  * escapeHtml("It's a <test> & more");
  * // "It&#39;s a &lt;test&gt; &amp; more"
- * @since next
+ * @since 2.0.0
  */
 export function escapeHtml(str: string): string {
   return str.replace(HTML_ESCAPE_REGEX, (char) => HTML_ESCAPES[char] as string);

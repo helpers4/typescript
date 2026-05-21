@@ -24,7 +24,7 @@ import type { CiStatus } from './types';
  * statusToIcon('failure')  // => '❌'
  * statusToIcon('skipped')  // => '⏭️'
  * statusToIcon('pending')  // => '⚠️'
- * @since next
+ * @since 2.0.0
  */
 export function statusToIcon(status: CiStatus): string {
   switch (status) {

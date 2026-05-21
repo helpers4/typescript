@@ -22,7 +22,7 @@ const UNITS = ['B', 'KB', 'MB', 'GB', 'TB'] as const;
  * formatSize(1536)            // '1.5KB'
  * formatSize(1_048_576)       // '1.0MB'
  * formatSize(1_073_741_824)   // '1.0GB'
- * @since next
+ * @since 2.0.0
  */
 export function formatSize(bytes: number): string {
   let size = bytes;

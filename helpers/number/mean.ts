@@ -16,7 +16,7 @@
  * mean([1, 2, 3, 4])  // => 2.5
  * mean([10])          // => 10
  * mean([])            // => NaN
- * @since next
+ * @since 2.0.0
  */
 export function mean(array: readonly number[]): number {
   if (array.length === 0) return NaN;

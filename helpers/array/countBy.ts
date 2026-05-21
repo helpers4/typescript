@@ -17,7 +17,7 @@
  * @example
  * countBy(['foo', 'bar', 'baz', 'qux'], s => s[0]);
  * // { f: 1, b: 2, q: 1 }
- * @since next
+ * @since 2.0.0
  */
 export function countBy<T, K extends PropertyKey>(
   array: readonly T[],

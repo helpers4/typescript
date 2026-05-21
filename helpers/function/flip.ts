@@ -19,7 +19,7 @@
  * @example
  * const divide = (a: number, b: number) => a / b;
  * [2, 4, 8].map((n) => flip(divide)(n, 10)); // [5, 2.5, 1.25]
- * @since next
+ * @since 2.0.0
  */
 export function flip<A, B, Rest extends unknown[], R>(
   fn: (a: A, b: B, ...rest: Rest) => R,

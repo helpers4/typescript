@@ -15,7 +15,7 @@
  * @example
  * unzip([[1, 'a'], [2, 'b'], [3, 'c']])
  * // => [[1, 2, 3], ['a', 'b', 'c']]
- * @since next
+ * @since 2.0.0
  */
 export function unzip<A, B>(pairs: readonly [A, B][]): [A[], B[]];
 export function unzip<A, B, C>(pairs: readonly [A, B, C][]): [A[], B[], C[]];

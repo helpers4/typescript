@@ -16,7 +16,7 @@
  * @example
  * groupBy([1, 2, 3, 4], n => n % 2 === 0 ? 'even' : 'odd')
  * // => { odd: [1, 3], even: [2, 4] }
- * @since next
+ * @since 2.0.0
  */
 export function groupBy<T, K extends PropertyKey>(
   items: readonly T[],

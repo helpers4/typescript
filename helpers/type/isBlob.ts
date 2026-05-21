@@ -16,7 +16,7 @@
  * isBlob(new Blob(['hello']))        // => true
  * isBlob(new Blob([], { type: 'application/json' })) // => true
  * isBlob('hello')                    // => false
- * @since next
+ * @since 2.0.0
  */
 export function isBlob(value: unknown): value is Blob {
   return typeof Blob !== 'undefined' && value instanceof Blob;

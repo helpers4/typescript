@@ -20,7 +20,7 @@
  * truncate('Hello, world!', 8)          // => 'Hello, …'
  * truncate('Hello, world!', 8, '...')   // => 'Hello...'
  * truncate('Hi', 10)                    // => 'Hi'
- * @since next
+ * @since 2.0.0
  */
 export function truncate(input: undefined, maxLength: number, ellipsis?: string): undefined;
 export function truncate(input: null, maxLength: number, ellipsis?: string): null;

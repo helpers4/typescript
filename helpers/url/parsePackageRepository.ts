@@ -7,7 +7,7 @@
 /**
  * Structured representation of a parsed `repository` field from `package.json`.
  *
- * @since next
+ * @since 2.0.0
  */
 export interface PackageRepository {
   /**
@@ -147,7 +147,7 @@ function parseRawUrl(
  * parsePackageRepository('github:helpers4/typescript')
  * // => { type: 'git', host: 'github', slug: 'helpers4/typescript', owner: 'helpers4',
  * //      repo: 'typescript', gistId: undefined, directory: undefined }
- * @since next
+ * @since 2.0.0
  */
 export function parsePackageRepository(repository: unknown): PackageRepository | undefined {
   if (repository === null || repository === undefined) return undefined;

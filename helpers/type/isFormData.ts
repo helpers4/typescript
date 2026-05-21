@@ -16,7 +16,7 @@
  * isFormData(new FormData()) // => true
  * isFormData({})             // => false
  * isFormData(null)           // => false
- * @since next
+ * @since 2.0.0
  */
 export function isFormData(value: unknown): value is FormData {
   return typeof FormData !== 'undefined' && value instanceof FormData;

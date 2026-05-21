@@ -6,7 +6,7 @@
 
 /**
  * Options for {@link safeFetch}.
- * @since next
+ * @since 2.0.0
  */
 export interface SafeFetchOptions {
   /**
@@ -29,7 +29,7 @@ export interface SafeFetchOptions {
  * @example
  * const data = await safeFetch<{ stars: number }>('https://api.example.com/repo');
  * if (data === null) { /* handle error *\/ }
- * @since next
+ * @since 2.0.0
  */
 export async function safeFetch<T>(
   input: RequestInfo | URL,

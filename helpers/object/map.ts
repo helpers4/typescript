@@ -29,7 +29,7 @@
  *
  * map({ a: 1, b: 2 }, v => v * 10, k => k.toUpperCase())
  * // => { A: 10, B: 20 }
- * @since next
+ * @since 2.0.0
  */
 export function map<
   TObj extends Record<string, unknown>,

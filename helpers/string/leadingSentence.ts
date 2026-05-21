@@ -29,7 +29,7 @@
  *
  * leadingSentence('No terminator here')
  * // => 'No terminator here'
- * @since next
+ * @since 2.0.0
  */
 export function leadingSentence(input: string): string {
   const clean = input.replace(/\n/g, ' ').trim();
