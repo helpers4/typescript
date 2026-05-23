@@ -70,7 +70,6 @@
   },
   "devDependencies": {
     "@stryker-mutator/core": "^9.6.1",
-    "rxjs": "^7.0.0",
     "@stryker-mutator/vitest-runner": "^9.6.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.9.1",
@@ -84,6 +83,7 @@
     "oxlint": "^1.66.0",
     "rollup": "^4.60.4",
     "rollup-plugin-dts": "^6.4.1",
+    "rxjs": "^7.0.0",
     "tsx": "^4.22.3",
     "typedoc": "^0.28.19",
     "typescript": "^6.0.3",
@@ -100,6 +100,7 @@
       "postcss": ">=8.5.10",
       "fast-uri": ">=3.1.2",
       "brace-expansion": ">=5.0.6",
+      "qs": ">=6.15.2",
       "ws": ">=8.20.1"
     }
   }
