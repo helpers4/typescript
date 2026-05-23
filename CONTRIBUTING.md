@@ -387,4 +387,4 @@ If you are an AI coding agent contributing to this repo:
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the [LGPL-3.0-or-later](LICENSE) license.
+By contributing, you agree that your contributions will be licensed under the [LGPL-3.0-or-later](https://github.com/helpers4/typescript/blob/main/LICENSE) license.
