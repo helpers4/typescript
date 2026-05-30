@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isMap } from './isMap';
 
 describe('isMap — property-based', () => {
@@ -37,4 +37,17 @@ describe('isMap — contract', () => {
   it('null → false', () => expect(isMap(null)).toBe(false));
   it('undefined → false', () => expect(isMap(undefined)).toBe(false));
   it('[] → false', () => expect(isMap([])).toBe(false));
+});
+
+describe('isMap — narrowing in if/else', () => {
+  it('narrows the value to Map<unknown, unknown> in the then-branch', () => {
+    const v: unknown = new Map();
+    if (isMap(v)) {
+      expectTypeOf(v).toEqualTypeOf<Map<unknown, unknown>>();
+      expect(v.size).toBe(0);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isMap({})).toBe(false);
+  });
 });

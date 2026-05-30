@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isPlainObject } from './isPlainObject';
 import { isArray } from './isArray';
 
@@ -42,5 +42,18 @@ describe('isPlainObject — contract', () => {
   it('class instance → false', () => {
     class Foo { x = 1; }
     expect(isPlainObject(new Foo())).toBe(false);
+  });
+});
+
+describe('isPlainObject — narrowing in if/else', () => {
+  it('narrows the value to Record<string, unknown> in the then-branch', () => {
+    const v: unknown = { a: 1 };
+    if (isPlainObject(v)) {
+      expectTypeOf(v).toEqualTypeOf<Record<string, unknown>>();
+      expect(v.a).toBe(1);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isPlainObject([])).toBe(false);
   });
 });

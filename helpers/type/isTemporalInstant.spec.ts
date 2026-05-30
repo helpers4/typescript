@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isTemporalInstant } from './isTemporalInstant';
 
 describe('isTemporalInstant — property-based', () => {
@@ -43,4 +43,17 @@ describe('isTemporalInstant — contract', () => {
   it('null → false', () => expect(isTemporalInstant(null)).toBe(false));
   it('undefined → false', () => expect(isTemporalInstant(undefined)).toBe(false));
   it('plain object → false', () => expect(isTemporalInstant({})).toBe(false));
+});
+
+describe('isTemporalInstant — narrowing in if/else', () => {
+  it('narrows the value to Temporal.Instant in the then-branch', () => {
+    const v: unknown = Temporal.Now.instant();
+    if (isTemporalInstant(v)) {
+      expectTypeOf(v).toEqualTypeOf<Temporal.Instant>();
+      expect(typeof v.epochMilliseconds).toBe('number');
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isTemporalInstant(new Date())).toBe(false);
+  });
 });

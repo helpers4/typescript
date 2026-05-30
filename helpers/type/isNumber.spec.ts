@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isNumber } from './isNumber';
 
 describe('isNumber — property-based', () => {
@@ -40,4 +40,17 @@ describe('isNumber — contract', () => {
   it("'1' → false", () => expect(isNumber('1')).toBe(false));
   it('null → false', () => expect(isNumber(null)).toBe(false));
   it('undefined → false', () => expect(isNumber(undefined)).toBe(false));
+});
+
+describe('isNumber — narrowing in if/else', () => {
+  it('narrows the value to number in the then-branch', () => {
+    const v: unknown = 42;
+    if (isNumber(v)) {
+      expectTypeOf(v).toEqualTypeOf<number>();
+      expect(v.toFixed(2)).toBe('42.00');
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isNumber('42')).toBe(false);
+  });
 });

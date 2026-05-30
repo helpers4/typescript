@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isArray } from './isArray';
 
 describe('isArray — property-based', () => {
@@ -40,4 +40,17 @@ describe('isArray — contract', () => {
   it('null → false', () => expect(isArray(null)).toBe(false));
   it('undefined → false', () => expect(isArray(undefined)).toBe(false));
   it('new Map() → false', () => expect(isArray(new Map())).toBe(false));
+});
+
+describe('isArray — narrowing in if/else', () => {
+  it('narrows the value to unknown[] in the then-branch', () => {
+    const v: unknown = [1, 2, 3];
+    if (isArray(v)) {
+      expectTypeOf(v).toEqualTypeOf<unknown[]>();
+      expect(v.length).toBe(3);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isArray({})).toBe(false);
+  });
 });

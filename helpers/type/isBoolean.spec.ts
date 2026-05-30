@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isBoolean } from './isBoolean';
 
 describe('isBoolean — property-based', () => {
@@ -44,4 +44,17 @@ describe('isBoolean — contract', () => {
   it('null → false', () => expect(isBoolean(null)).toBe(false));
   it('undefined → false', () => expect(isBoolean(undefined)).toBe(false));
   it('1 → false', () => expect(isBoolean(1)).toBe(false));
+});
+
+describe('isBoolean — narrowing in if/else', () => {
+  it('narrows the value to boolean in the then-branch', () => {
+    const v: unknown = true;
+    if (isBoolean(v)) {
+      expectTypeOf(v).toEqualTypeOf<boolean>();
+      expect(v).toBe(true);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isBoolean(0)).toBe(false);
+  });
 });

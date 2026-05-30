@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isBlob } from './isBlob';
 
 describe('isBlob — property-based', () => {
@@ -34,4 +34,17 @@ describe('isBlob — contract', () => {
   it('undefined → false', () => expect(isBlob(undefined)).toBe(false));
   it('{} → false', () => expect(isBlob({})).toBe(false));
   it('"text" → false', () => expect(isBlob('text')).toBe(false));
+});
+
+describe('isBlob — narrowing in if/else', () => {
+  it('narrows the value to Blob in the then-branch', () => {
+    const v: unknown = new Blob(['x']);
+    if (isBlob(v)) {
+      expectTypeOf(v).toEqualTypeOf<Blob>();
+      expect(v.size).toBe(1);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isBlob('x')).toBe(false);
+  });
 });

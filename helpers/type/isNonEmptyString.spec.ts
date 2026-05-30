@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isNonEmptyString } from './isNonEmptyString';
 import { isString } from './isString';
 import { isEmpty } from './isEmpty';
@@ -39,4 +39,17 @@ describe('isNonEmptyString — contract', () => {
   it('undefined → false', () => expect(isNonEmptyString(undefined)).toBe(false));
   it('0 → false', () => expect(isNonEmptyString(0)).toBe(false));
   it('[] → false', () => expect(isNonEmptyString([])).toBe(false));
+});
+
+describe('isNonEmptyString — narrowing in if/else', () => {
+  it('narrows the value to string in the then-branch', () => {
+    const v: unknown = 'a';
+    if (isNonEmptyString(v)) {
+      expectTypeOf(v).toEqualTypeOf<string>();
+      expect(v.length).toBe(1);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isNonEmptyString('')).toBe(false);
+  });
 });

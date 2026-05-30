@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isNull } from './isNull';
 import { isNullish } from './isNullish';
 import { isDefined } from './isDefined';
@@ -40,4 +40,17 @@ describe('isNull — contract', () => {
   it("'' → false", () => expect(isNull('')).toBe(false));
   it('false → false', () => expect(isNull(false)).toBe(false));
   it('{} → false', () => expect(isNull({})).toBe(false));
+});
+
+describe('isNull — narrowing in if/else', () => {
+  it('narrows the value to null in the then-branch', () => {
+    const v: unknown = null;
+    if (isNull(v)) {
+      expectTypeOf(v).toEqualTypeOf<null>();
+      expect(v).toBeNull();
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isNull(undefined)).toBe(false);
+  });
 });

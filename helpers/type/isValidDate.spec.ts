@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isValidDate } from './isValidDate';
 import { isDate } from './isDate';
 
@@ -40,4 +40,17 @@ describe('isValidDate — contract', () => {
   it('null → false', () => expect(isValidDate(null)).toBe(false));
   it('undefined → false', () => expect(isValidDate(undefined)).toBe(false));
   it('Date.now() (number) → false', () => expect(isValidDate(Date.now())).toBe(false));
+});
+
+describe('isValidDate — narrowing in if/else', () => {
+  it('narrows the value to Date in the then-branch', () => {
+    const v: unknown = new Date('2024-01-01');
+    if (isValidDate(v)) {
+      expectTypeOf(v).toEqualTypeOf<Date>();
+      expect(Number.isFinite(v.getTime())).toBe(true);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isValidDate(new Date('not-a-date'))).toBe(false);
+  });
 });

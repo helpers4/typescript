@@ -5,8 +5,8 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
-import { isFalsy } from './isFalsy';
+import { describe, expect, expectTypeOf, it } from 'vitest';
+import { type Falsy, isFalsy } from './isFalsy';
 import { isTruthy } from './isTruthy';
 
 describe('isFalsy — property-based', () => {
@@ -31,4 +31,17 @@ describe('isFalsy — contract', () => {
   it("'x' → false", () => expect(isFalsy('x')).toBe(false));
   it('[] → false (empty array is truthy)', () => expect(isFalsy([])).toBe(false));
   it('{} → false', () => expect(isFalsy({})).toBe(false));
+});
+
+describe('isFalsy — narrowing in if/else', () => {
+  it('narrows the value to Falsy in the then-branch', () => {
+    const v: unknown = 0;
+    if (isFalsy(v)) {
+      expectTypeOf(v).toEqualTypeOf<Falsy>();
+      expect(isFalsy(v)).toBe(true);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isFalsy('x')).toBe(false);
+  });
 });

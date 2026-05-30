@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isRegExp } from './isRegExp';
 
 describe('isRegExp — property-based', () => {
@@ -43,4 +43,17 @@ describe('isRegExp — contract', () => {
   it('{} → false', () => expect(isRegExp({})).toBe(false));
   it('null → false', () => expect(isRegExp(null)).toBe(false));
   it('undefined → false', () => expect(isRegExp(undefined)).toBe(false));
+});
+
+describe('isRegExp — narrowing in if/else', () => {
+  it('narrows the value to RegExp in the then-branch', () => {
+    const v: unknown = /x/;
+    if (isRegExp(v)) {
+      expectTypeOf(v).toEqualTypeOf<RegExp>();
+      expect(v.test('x')).toBe(true);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isRegExp('x')).toBe(false);
+  });
 });

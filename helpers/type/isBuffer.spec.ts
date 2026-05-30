@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isBuffer } from './isBuffer';
 
 describe('isBuffer — property-based', () => {
@@ -35,4 +35,17 @@ describe('isBuffer — contract', () => {
   it('undefined → false', () => expect(isBuffer(undefined)).toBe(false));
   it('{} → false', () => expect(isBuffer({})).toBe(false));
   it('"hello" → false', () => expect(isBuffer('hello')).toBe(false));
+});
+
+describe('isBuffer — narrowing in if/else', () => {
+  it('narrows the value to Buffer in the then-branch', () => {
+    const v: unknown = Buffer.from('x');
+    if (isBuffer(v)) {
+      expectTypeOf(v).toEqualTypeOf<Buffer>();
+      expect(v.length).toBe(1);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isBuffer(new Uint8Array(1))).toBe(false);
+  });
 });

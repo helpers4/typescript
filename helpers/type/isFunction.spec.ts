@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isFunction } from './isFunction';
 import { isAsyncFunction } from './isAsyncFunction';
 
@@ -43,4 +43,18 @@ describe('isFunction — contract', () => {
   it('null → false', () => expect(isFunction(null)).toBe(false));
   it('undefined → false', () => expect(isFunction(undefined)).toBe(false));
   it('42 → false', () => expect(isFunction(42)).toBe(false));
+});
+
+describe('isFunction — narrowing in if/else', () => {
+  it('narrows the value to a callable type in the then-branch', () => {
+    const v: unknown = () => 0;
+    if (isFunction(v)) {
+      // eslint-disable-next-line @typescript-eslint/ban-types
+      expectTypeOf(v).toEqualTypeOf<Function>();
+      expect(typeof v).toBe('function');
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isFunction(0)).toBe(false);
+  });
 });
