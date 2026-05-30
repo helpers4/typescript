@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isString } from './isString';
 
 describe('isString — property-based', () => {
@@ -43,4 +43,17 @@ describe('isString — contract', () => {
   it('null → false', () => expect(isString(null)).toBe(false));
   it('undefined → false', () => expect(isString(undefined)).toBe(false));
   it('true → false', () => expect(isString(true)).toBe(false));
+});
+
+describe('isString — narrowing in if/else', () => {
+  it('narrows the value to string in the then-branch', () => {
+    const v: unknown = 'hello';
+    if (isString(v)) {
+      expectTypeOf(v).toEqualTypeOf<string>();
+      expect(v.length).toBe(5);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isString(1)).toBe(false);
+  });
 });

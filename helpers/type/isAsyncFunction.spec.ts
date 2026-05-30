@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isAsyncFunction } from './isAsyncFunction';
 import { isFunction } from './isFunction';
 
@@ -46,4 +46,17 @@ describe('isAsyncFunction — contract', () => {
   it('null → false', () => expect(isAsyncFunction(null)).toBe(false));
   it('undefined → false', () => expect(isAsyncFunction(undefined)).toBe(false));
   it('{} → false', () => expect(isAsyncFunction({})).toBe(false));
+});
+
+describe('isAsyncFunction — narrowing in if/else', () => {
+  it('narrows the value to an async function signature in the then-branch', () => {
+    const v: unknown = async () => 1;
+    if (isAsyncFunction(v)) {
+      expectTypeOf(v).toEqualTypeOf<(...args: unknown[]) => Promise<unknown>>();
+      expect(v).toBeInstanceOf(Function);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isAsyncFunction(() => 1)).toBe(false);
+  });
 });

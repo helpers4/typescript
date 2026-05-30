@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isError } from './isError';
 
 describe('isError — property-based', () => {
@@ -40,4 +40,17 @@ describe('isError — contract', () => {
   it("'error' → false", () => expect(isError('error')).toBe(false));
   it('null → false', () => expect(isError(null)).toBe(false));
   it('undefined → false', () => expect(isError(undefined)).toBe(false));
+});
+
+describe('isError — narrowing in if/else', () => {
+  it('narrows the value to Error in the then-branch', () => {
+    const v: unknown = new Error('boom');
+    if (isError(v)) {
+      expectTypeOf(v).toEqualTypeOf<Error>();
+      expect(v.message).toBe('boom');
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isError({ message: 'fake' })).toBe(false);
+  });
 });

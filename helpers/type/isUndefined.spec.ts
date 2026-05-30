@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isUndefined } from './isUndefined';
 import { isNullish } from './isNullish';
 
@@ -38,4 +38,17 @@ describe('isUndefined — contract', () => {
   it('0 → false', () => expect(isUndefined(0)).toBe(false));
   it("'' → false", () => expect(isUndefined('')).toBe(false));
   it('false → false', () => expect(isUndefined(false)).toBe(false));
+});
+
+describe('isUndefined — narrowing in if/else', () => {
+  it('narrows the value to undefined in the then-branch', () => {
+    const v: unknown = undefined;
+    if (isUndefined(v)) {
+      expectTypeOf(v).toEqualTypeOf<undefined>();
+      expect(v).toBeUndefined();
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isUndefined(null)).toBe(false);
+  });
 });

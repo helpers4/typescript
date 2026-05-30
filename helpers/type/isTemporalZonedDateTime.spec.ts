@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isTemporalZonedDateTime } from './isTemporalZonedDateTime';
 
 describe('isTemporalZonedDateTime — property-based', () => {
@@ -43,4 +43,17 @@ describe('isTemporalZonedDateTime — contract', () => {
   it('null → false', () => expect(isTemporalZonedDateTime(null)).toBe(false));
   it('undefined → false', () => expect(isTemporalZonedDateTime(undefined)).toBe(false));
   it('plain object → false', () => expect(isTemporalZonedDateTime({})).toBe(false));
+});
+
+describe('isTemporalZonedDateTime — narrowing in if/else', () => {
+  it('narrows the value to Temporal.ZonedDateTime in the then-branch', () => {
+    const v: unknown = Temporal.Now.zonedDateTimeISO('UTC');
+    if (isTemporalZonedDateTime(v)) {
+      expectTypeOf(v).toEqualTypeOf<Temporal.ZonedDateTime>();
+      expect(typeof v.epochMilliseconds).toBe('number');
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isTemporalZonedDateTime(new Date())).toBe(false);
+  });
 });

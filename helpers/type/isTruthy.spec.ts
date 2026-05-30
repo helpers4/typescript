@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isTruthy } from './isTruthy';
 import { isFalsy } from './isFalsy';
 
@@ -31,4 +31,18 @@ describe('isTruthy — contract', () => {
   it('undefined → false', () => expect(isTruthy(undefined)).toBe(false));
   it('NaN → false', () => expect(isTruthy(NaN)).toBe(false));
   it('false → false', () => expect(isTruthy(false)).toBe(false));
+});
+
+describe('isTruthy — narrowing in if/else', () => {
+  it('removes Falsy from a union in the then-branch', () => {
+    const v: string | 0 | '' | null | undefined = 'x';
+    if (isTruthy(v)) {
+      expectTypeOf(v).toEqualTypeOf<string>();
+      expect(v.length).toBe(1);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    const m: string | 0 | '' | null | undefined = '';
+    expect(isTruthy(m)).toBe(false);
+  });
 });

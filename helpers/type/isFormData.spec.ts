@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isFormData } from './isFormData';
 
 describe('isFormData — property-based', () => {
@@ -30,4 +30,17 @@ describe('isFormData — contract', () => {
   it('{} → false', () => expect(isFormData({})).toBe(false));
   it('new URLSearchParams() → false', () => expect(isFormData(new URLSearchParams())).toBe(false));
   it('new Blob() → false', () => expect(isFormData(new Blob())).toBe(false));
+});
+
+describe('isFormData — narrowing in if/else', () => {
+  it('narrows the value to FormData in the then-branch', () => {
+    const v: unknown = new FormData();
+    if (isFormData(v)) {
+      expectTypeOf(v).toEqualTypeOf<FormData>();
+      expect(v.get('x')).toBeNull();
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isFormData({})).toBe(false);
+  });
 });

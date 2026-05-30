@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isNullish } from './isNullish';
 import { isDefined } from './isDefined';
 
@@ -39,4 +39,17 @@ describe('isNullish — contract', () => {
   it('NaN → false', () => expect(isNullish(NaN)).toBe(false));
   it('{} → false', () => expect(isNullish({})).toBe(false));
   it('[] → false', () => expect(isNullish([])).toBe(false));
+});
+
+describe('isNullish — narrowing in if/else', () => {
+  it('narrows the value to null | undefined in the then-branch', () => {
+    const v: unknown = null;
+    if (isNullish(v)) {
+      expectTypeOf(v).toEqualTypeOf<null | undefined>();
+      expect(v == null).toBe(true);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isNullish(0)).toBe(false);
+  });
 });

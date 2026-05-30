@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isBigInt } from './isBigInt';
 
 describe('isBigInt — property-based', () => {
@@ -44,4 +44,17 @@ describe('isBigInt — contract', () => {
   it('null → false', () => expect(isBigInt(null)).toBe(false));
   it('undefined → false', () => expect(isBigInt(undefined)).toBe(false));
   it('true → false', () => expect(isBigInt(true)).toBe(false));
+});
+
+describe('isBigInt — narrowing in if/else', () => {
+  it('narrows the value to bigint in the then-branch', () => {
+    const v: unknown = 1n;
+    if (isBigInt(v)) {
+      expectTypeOf(v).toEqualTypeOf<bigint>();
+      expect(v + 1n).toBe(2n);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isBigInt(1)).toBe(false);
+  });
 });

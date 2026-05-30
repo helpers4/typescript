@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isTimestamp } from './isTimestamp';
 import { isNumber } from './isNumber';
 
@@ -49,5 +49,18 @@ describe('isTimestamp — contract', () => {
   it('negative timestamp treated as seconds/ms heuristic → true for reasonable negatives', () => {
     // -1 treated as seconds: abs=1 <= MAX_UNIX_SECONDS, 1000 <= MAX_TIMESTAMP_MS → true
     expect(isTimestamp(-1)).toBe(true);
+  });
+});
+
+describe('isTimestamp — narrowing in if/else', () => {
+  it('narrows the value to number in the then-branch', () => {
+    const v: unknown = Date.now();
+    if (isTimestamp(v)) {
+      expectTypeOf(v).toEqualTypeOf<number>();
+      expect(typeof v).toBe('number');
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isTimestamp('2024-01-01')).toBe(false);
   });
 });

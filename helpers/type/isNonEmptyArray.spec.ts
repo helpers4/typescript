@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isNonEmptyArray } from './isNonEmptyArray';
 import { isArray } from './isArray';
 import { isEmpty } from './isEmpty';
@@ -39,4 +39,17 @@ describe('isNonEmptyArray — contract', () => {
   it('null → false', () => expect(isNonEmptyArray(null)).toBe(false));
   it('undefined → false', () => expect(isNonEmptyArray(undefined)).toBe(false));
   it("'abc' → false", () => expect(isNonEmptyArray('abc')).toBe(false));
+});
+
+describe('isNonEmptyArray — narrowing in if/else', () => {
+  it('narrows the value to a non-empty tuple in the then-branch', () => {
+    const v: unknown = [1];
+    if (isNonEmptyArray(v)) {
+      expectTypeOf(v).toEqualTypeOf<[unknown, ...unknown[]]>();
+      expect(v[0]).toBe(1);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isNonEmptyArray([])).toBe(false);
+  });
 });

@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isArrayBuffer } from './isArrayBuffer';
 
 describe('isArrayBuffer — property-based', () => {
@@ -34,4 +34,17 @@ describe('isArrayBuffer — contract', () => {
   it('undefined → false', () => expect(isArrayBuffer(undefined)).toBe(false));
   it('{} → false', () => expect(isArrayBuffer({})).toBe(false));
   it('[] → false', () => expect(isArrayBuffer([])).toBe(false));
+});
+
+describe('isArrayBuffer — narrowing in if/else', () => {
+  it('narrows the value to ArrayBuffer in the then-branch', () => {
+    const v: unknown = new ArrayBuffer(8);
+    if (isArrayBuffer(v)) {
+      expectTypeOf(v).toEqualTypeOf<ArrayBuffer>();
+      expect(v.byteLength).toBe(8);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isArrayBuffer(new Uint8Array(8))).toBe(false);
+  });
 });

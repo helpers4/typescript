@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isTemporalPlainTime } from './isTemporalPlainTime';
 
 describe('isTemporalPlainTime — property-based', () => {
@@ -42,4 +42,17 @@ describe('isTemporalPlainTime — contract', () => {
   it('string → false', () => expect(isTemporalPlainTime('12:30')).toBe(false));
   it('null → false', () => expect(isTemporalPlainTime(null)).toBe(false));
   it('undefined → false', () => expect(isTemporalPlainTime(undefined)).toBe(false));
+});
+
+describe('isTemporalPlainTime — narrowing in if/else', () => {
+  it('narrows the value to Temporal.PlainTime in the then-branch', () => {
+    const v: unknown = Temporal.PlainTime.from('12:00');
+    if (isTemporalPlainTime(v)) {
+      expectTypeOf(v).toEqualTypeOf<Temporal.PlainTime>();
+      expect(v.hour).toBe(12);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isTemporalPlainTime(new Date())).toBe(false);
+  });
 });

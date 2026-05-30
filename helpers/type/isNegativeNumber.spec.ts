@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isNegativeNumber } from './isNegativeNumber';
 import { isNumber } from './isNumber';
 import { isPositiveNumber } from './isPositiveNumber';
@@ -39,4 +39,17 @@ describe('isNegativeNumber — contract', () => {
   it('1 → false', () => expect(isNegativeNumber(1)).toBe(false));
   it('NaN → false', () => expect(isNegativeNumber(NaN)).toBe(false));
   it('null → false', () => expect(isNegativeNumber(null)).toBe(false));
+});
+
+describe('isNegativeNumber — narrowing in if/else', () => {
+  it('narrows the value to number in the then-branch', () => {
+    const v: unknown = -1;
+    if (isNegativeNumber(v)) {
+      expectTypeOf(v).toEqualTypeOf<number>();
+      expect(v).toBeLessThan(0);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isNegativeNumber(1)).toBe(false);
+  });
 });

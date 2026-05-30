@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isIterable } from './isIterable';
 import { isArray } from './isArray';
 
@@ -40,5 +40,18 @@ describe('isIterable — contract', () => {
   it('generator result is iterable', () => {
     function* gen() { yield 1; }
     expect(isIterable(gen())).toBe(true);
+  });
+});
+
+describe('isIterable — narrowing in if/else', () => {
+  it('narrows the value to Iterable<unknown> in the then-branch', () => {
+    const v: unknown = [1, 2];
+    if (isIterable(v)) {
+      expectTypeOf(v).toEqualTypeOf<Iterable<unknown>>();
+      expect([...v]).toEqual([1, 2]);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isIterable(42)).toBe(false);
   });
 });

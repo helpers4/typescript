@@ -5,7 +5,7 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { isSymbol } from './isSymbol';
 import { isPrimitive } from './isPrimitive';
 
@@ -41,4 +41,17 @@ describe('isSymbol — contract', () => {
   it('null → false', () => expect(isSymbol(null)).toBe(false));
   it('undefined → false', () => expect(isSymbol(undefined)).toBe(false));
   it('{} → false', () => expect(isSymbol({})).toBe(false));
+});
+
+describe('isSymbol — narrowing in if/else', () => {
+  it('narrows the value to symbol in the then-branch', () => {
+    const v: unknown = Symbol('s');
+    if (isSymbol(v)) {
+      expectTypeOf(v).toEqualTypeOf<symbol>();
+      expect(typeof v).toBe('symbol');
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isSymbol('s')).toBe(false);
+  });
 });

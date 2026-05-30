@@ -5,8 +5,8 @@
  */
 
 import * as fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
-import { isPrimitive } from './isPrimitive';
+import { describe, expect, expectTypeOf, it } from 'vitest';
+import { type Primitive, isPrimitive } from './isPrimitive';
 import { isPlainObject } from './isPlainObject';
 import { isArray } from './isArray';
 import { isFunction } from './isFunction';
@@ -53,4 +53,17 @@ describe('isPrimitive — contract', () => {
   it('{} → false', () => expect(isPrimitive({})).toBe(false));
   it('[] → false', () => expect(isPrimitive([])).toBe(false));
   it('() => {} → false', () => expect(isPrimitive(() => {})).toBe(false));
+});
+
+describe('isPrimitive — narrowing in if/else', () => {
+  it('narrows the value to Primitive in the then-branch', () => {
+    const v: unknown = 1;
+    if (isPrimitive(v)) {
+      expectTypeOf(v).toEqualTypeOf<Primitive>();
+      expect(typeof v === 'object' && v !== null).toBe(false);
+    } else {
+      throw new Error('expected then-branch');
+    }
+    expect(isPrimitive({})).toBe(false);
+  });
 });
