@@ -60,11 +60,19 @@ export async function prepareCategoryPackageJson(
       return acc;
     }, {});
 
-  // Merge with peerDependencies declared explicitly in the category's config.json
+  // Merge with peerDependencies declared explicitly in the category's config.json.
+  // Version is resolved from root package.json first (keeps coherency check happy),
+  // falling back to the config.json value for deps not present in root.
   const categoryConfigPath = join(DIR.HELPERS, category, "config.json");
-  const configPeerDeps = existsSync(categoryConfigPath)
+  const rawConfigPeerDeps = existsSync(categoryConfigPath)
     ? (readFileJson<{ peerDependencies?: Record<string, string> }>(categoryConfigPath).peerDependencies ?? {})
     : {};
+  const configPeerDeps = Object.fromEntries(
+    Object.entries(rawConfigPeerDeps).map(([dep, fallbackVersion]) => [
+      dep,
+      rootDeps?.[dep] ?? rootDevDeps?.[dep] ?? fallbackVersion,
+    ])
+  );
 
   const peerDependencies = { ...detectedPeerDependencies, ...configPeerDeps };
 
