@@ -1,0 +1,8 @@
+{
+  "label": "Node",
+  "smallDescription": "Node.js-specific utilities",
+  "description": "Utilities specific to Node.js, Bun, and Deno runtimes (Buffer, streams, etc.)",
+  "peerDependencies": {
+    "@types/node": ">=22"
+  }
+}

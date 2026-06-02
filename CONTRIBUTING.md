@@ -28,7 +28,7 @@ helpers/
     config.json                # Category metadata
 ```
 
-Categories: `array`, `commit`, `date`, `function`, `id`, `number`, `object`, `observable`, `promise`, `string`, `type`, `url`, `version`.
+Categories: `array`, `commit`, `date`, `function`, `id`, `node`, `number`, `object`, `observable`, `promise`, `string`, `type`, `url`, `version`.
 
 ## Creating a new helper
 
@@ -311,7 +311,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) with a gitmo
 
 **Format:** `<type>(<scope>): <emoji> <description>`
 
-**Scopes:** `array`, `commit`, `date`, `function`, `id`, `number`, `object`, `observable`, `promise`, `string`, `type`, `url`, `version`, `CI-CD`
+**Scopes:** `array`, `commit`, `date`, `function`, `id`, `node`, `number`, `object`, `observable`, `promise`, `string`, `type`, `url`, `version`, `CI-CD`
 
 | Type | Primary | Alternatives (gitmoji.dev) | When to use |
 |------|---------|---------------------------|-------------|

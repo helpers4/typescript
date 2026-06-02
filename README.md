@@ -36,6 +36,7 @@ Install only what you need, or grab everything at once:
 | [`@helpers4/array`](https://www.npmjs.com/package/@helpers4/array) | Array operations, chunking, comparison, and manipulation | `npm i @helpers4/array` |
 | [`@helpers4/date`](https://www.npmjs.com/package/@helpers4/date) | Date utilities, comparison, and validation | `npm i @helpers4/date` |
 | [`@helpers4/function`](https://www.npmjs.com/package/@helpers4/function) | Function composition and utility wrappers | `npm i @helpers4/function` |
+| [`@helpers4/node`](https://www.npmjs.com/package/@helpers4/node) | Node.js runtime utilities (Buffer, etc.) | `npm i @helpers4/node` |
 | [`@helpers4/number`](https://www.npmjs.com/package/@helpers4/number) | Numeric operations and formatting | `npm i @helpers4/number` |
 | [`@helpers4/object`](https://www.npmjs.com/package/@helpers4/object) | Object manipulation, deep comparison, and merging | `npm i @helpers4/object` |
 | [`@helpers4/observable`](https://www.npmjs.com/package/@helpers4/observable) | RxJS Observable helpers and operators | `npm i @helpers4/observable` |
