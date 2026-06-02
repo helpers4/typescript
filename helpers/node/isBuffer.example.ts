@@ -9,7 +9,7 @@ import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
   helper: 'isBuffer',
-  category: 'type',
+  category: 'node',
   examples: [
     {
       title: 'Detect a Node.js Buffer',
