@@ -17,16 +17,23 @@ import { isSpecialObject } from './isSpecialObject';
  * - plain object → no own enumerable properties
  *
  * @param value - The value to check
- * @returns `true` if the value is considered empty, `false` otherwise
+ * @returns `true` if the value is considered empty, `false` otherwise.
+ * Acts as a type guard: the `else` branch narrows away `null`, `undefined`,
+ * empty strings and empty arrays.
  *
  * @example
  * isEmpty('') // true
  * isEmpty([]) // true
  * isEmpty({}) // true
  * isEmpty('foo') // false
+ *
+ * @example
+ * // Type narrowing in else branch
+ * declare const v: string | null | undefined;
+ * if (isEmpty(v)) { ... } else { v.toUpperCase(); } // OK — null/undefined excluded
  * @since 2.0.0
  */
-export function isEmpty(value: unknown): boolean {
+export function isEmpty(value: unknown): value is null | undefined | '' | never[] {
   if (value === null || value === undefined) {
     return true;
   }
