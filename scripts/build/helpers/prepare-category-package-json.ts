@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { DIR } from "../../constants";
 import { readFileJson, writeFile } from "../../utils";
@@ -45,7 +46,7 @@ export async function prepareCategoryPackageJson(
   const rootDeps = rootPackage.dependencies as Record<string, string> | undefined;
   const rootDevDeps = rootPackage.devDependencies as Record<string, string> | undefined;
 
-  const peerDependencies = externalDependencies
+  const detectedPeerDependencies = externalDependencies
     // Map to [dep, version] pairs
     // The version comes from root package.json
     .map(dep => [dep, rootDeps?.[dep] || rootDevDeps?.[dep]])
@@ -58,6 +59,14 @@ export async function prepareCategoryPackageJson(
       }
       return acc;
     }, {});
+
+  // Merge with peerDependencies declared explicitly in the category's config.json
+  const categoryConfigPath = join(DIR.HELPERS, category, "config.json");
+  const configPeerDeps = existsSync(categoryConfigPath)
+    ? (readFileJson<{ peerDependencies?: Record<string, string> }>(categoryConfigPath).peerDependencies ?? {})
+    : {};
+
+  const peerDependencies = { ...detectedPeerDependencies, ...configPeerDeps };
 
   // Add peerDependencies only if there are any keys
   if (Object.keys(peerDependencies).length > 0) {
