@@ -5,6 +5,7 @@
  */
 
 import { basename } from "node:path";
+import { readFile, writeFile } from "node:fs/promises";
 import { build, type InlineConfig } from 'vite';
 import { rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
@@ -71,16 +72,44 @@ async function generateBundledDeclarations(indexPath: string, outDir: string, fi
       external: EXTERNAL_DEPS,
     });
 
+    const outputPath = `${outDir}/${fileName}.d.ts`;
+
     await bundle.write({
-      file: `${outDir}/${fileName}.d.ts`,
+      file: outputPath,
       format: 'es',
     });
 
     await bundle.close();
+
+    // rollup-plugin-dts strips /// <reference lib="..."> directives.
+    // Re-inject them so consumers don't need to configure their tsconfig manually.
+    await injectLibReferences(outputPath);
   } catch (error) {
     console.warn(`⚠️ Declaration generation failed for ${indexPath}:`, error);
     // Don't throw - some files may not generate declarations cleanly
   }
 }
 
+/**
+ * Re-inject lib references that rollup-plugin-dts strips from bundled .d.ts files.
+ * Required because consumers should not need to configure their tsconfig manually
+ * for features like Temporal that live in optional ESNext lib slices.
+ */
+async function injectLibReferences(dtsPath: string): Promise<void> {
+  let content: string;
+  try {
+    content = await readFile(dtsPath, 'utf-8');
+  } catch {
+    return;
+  }
 
+  const refs: string[] = [];
+
+  if (/\bTemporal\b/.test(content)) {
+    refs.push('/// <reference lib="esnext.temporal" />');
+  }
+
+  if (refs.length > 0) {
+    await writeFile(dtsPath, `${refs.join('\n')}\n\n${content}`);
+  }
+}
