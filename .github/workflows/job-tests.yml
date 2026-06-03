@@ -11,6 +11,13 @@ on:
         required: false
         type: boolean
         default: false
+      upload-codecov:
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      codecov-token:
+        required: false
     outputs:
       status:
         description: "Test execution status"
@@ -96,3 +103,9 @@ jobs:
           echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
           echo "functions=$FUNCTIONS" >> $GITHUB_OUTPUT
           echo "statements=$STATEMENTS" >> $GITHUB_OUTPUT
+
+      - name: Upload coverage to Codecov
+        if: inputs.coverage == true && inputs.upload-codecov == true
+        uses: codecov/codecov-action@75cd11691c0faa626561e295848008c8a7dddffe # v5.5.4
+        with:
+          token: ${{ secrets.codecov-token }}

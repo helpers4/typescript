@@ -24,7 +24,7 @@ export default defineConfig({
       exclude: ['helpers/**/*.{test,spec,bench,example,model}.ts', 'helpers/**/index.ts'],
       include: ['helpers/**/*.ts'],
       provider: 'v8',
-      reporter: ['text', 'json', 'json-summary', 'html'],
+      reporter: ['text', 'json', 'json-summary', 'html', 'lcov'],
       thresholds: {
         branches: 100,
         functions: 100,

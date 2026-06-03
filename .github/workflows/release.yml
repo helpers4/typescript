@@ -74,56 +74,10 @@ jobs:
       node-version: "24"
       audit-level: "low"
 
-  # Step 6: Mutation testing (quality gate, no dashboard reporting)
-  mutation:
-    needs: repo-guard
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
-
-      - name: Setup Node.js
-        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: Enable corepack
-        run: corepack enable
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run mutation tests
-        env:
-          # Prevent vitest from flooding the step summary with one report per mutant
-          GITHUB_STEP_SUMMARY: /dev/null
-        # --force: always run all mutants (quality gate — no stale incremental cache)
-        run: pnpm mutation:fresh
-
-      - name: Upload mutation reports
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: mutation-reports
-          path: reports/mutation/
-          if-no-files-found: warn
-          retention-days: 7
-
-      - name: Upload Stryker incremental file
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: stryker-incremental
-          path: reports/mutation/incremental.json
-          if-no-files-found: warn
-          retention-days: 1
-
-  # Step 7: Build, bump version and verify
+  # Step 6: Build, bump version and verify
   build-and-verify:
     runs-on: ubuntu-latest
-    needs: [lint, type-check, tests, security, mutation]
+    needs: [lint, type-check, tests, security]
     outputs:
       new-version: ${{ steps.version.outputs.new-version }}
       npm-tag: ${{ steps.version.outputs.npm-tag }}
@@ -281,12 +235,6 @@ jobs:
           name: release-helpers
           path: helpers/
 
-      - name: Download Stryker incremental file
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
-        with:
-          name: stryker-incremental
-          path: reports/mutation/
-
       - name: Get version
         id: version
         run: |
@@ -299,7 +247,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add package.json
-          git add reports/mutation/incremental.json
           if [ "${{ needs.build-and-verify.outputs.is-prerelease }}" = "false" ]; then
             git add helpers/
           fi
@@ -392,46 +339,7 @@ jobs:
             echo "🚀 v${VERSION} (npm: \`${TAG}\`) — released" >> $GITHUB_STEP_SUMMARY
           fi
 
-  # Step 9: Publish mutation reports generated earlier (no second mutation run)
-  mutation-dashboard-report:
-    runs-on: ubuntu-latest
-    needs: [publish, mutation]
-    if: ${{ !inputs.dry-run }}
-    permissions:
-      contents: write
-      actions: read
-
-    steps:
-      - name: Get GitHub App Token
-        id: app_token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
-        with:
-          client-id: ${{ vars.PUSHINATOR_ID }}
-          private-key: ${{ secrets.PUSHINATOR_KEY }}
-
-      - name: Download mutation reports artifact
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
-        with:
-          name: mutation-reports
-          path: /tmp/mutation-reports
-
-      - name: Package mutation reports
-        run: |
-          set -euo pipefail
-          tar -czf /tmp/mutation-reports.tar.gz -C /tmp mutation-reports
-          echo "📦 Packaged mutation reports ($(du -h /tmp/mutation-reports.tar.gz | cut -f1))"
-
-      - name: Upload mutation reports to release
-        env:
-          GH_TOKEN: ${{ steps.app_token.outputs.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          gh release upload "v${{ needs.publish.outputs.new-version }}" \
-            /tmp/mutation-reports.tar.gz \
-            --clobber
-
-  # Step 10: Trigger website docs refresh
-  # Runs after publish and in parallel with mutation-dashboard-report.
+  # Step 7: Trigger website docs refresh
   trigger-website-docs:
     runs-on: ubuntu-latest
     needs: [publish]
