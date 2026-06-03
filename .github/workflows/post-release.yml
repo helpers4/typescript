@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
 
       - name: Setup Node.js
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
@@ -44,6 +44,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${{ github.ref_name }}"
+          if [ ! -d "reports/mutation" ]; then
+            echo "⚠️ No mutation reports generated — skipping upload"
+            exit 0
+          fi
           tar -czf /tmp/mutation-reports.tar.gz -C reports mutation/
           if gh release view "$TAG" &>/dev/null; then
             gh release upload "$TAG" /tmp/mutation-reports.tar.gz --clobber
