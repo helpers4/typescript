@@ -61,18 +61,13 @@ export async function prepareCategoryPackageJson(
     }, {});
 
   // Merge with peerDependencies declared explicitly in the category's config.json.
-  // Version is resolved from root package.json first (keeps coherency check happy),
-  // falling back to the config.json value for deps not present in root.
+  // These are consumer-facing semver constraints (e.g. ">=22" = oldest supported LTS)
+  // and are intentionally different from the root dev-tooling versions.
+  // They are used as-is — the coherency check skips peerDependencies for this reason.
   const categoryConfigPath = join(DIR.HELPERS, category, "config.json");
-  const rawConfigPeerDeps = existsSync(categoryConfigPath)
+  const configPeerDeps = existsSync(categoryConfigPath)
     ? (readFileJson<{ peerDependencies?: Record<string, string> }>(categoryConfigPath).peerDependencies ?? {})
     : {};
-  const configPeerDeps = Object.fromEntries(
-    Object.entries(rawConfigPeerDeps).map(([dep, fallbackVersion]) => [
-      dep,
-      rootDeps?.[dep] ?? rootDevDeps?.[dep] ?? fallbackVersion,
-    ])
-  );
 
   const peerDependencies = { ...detectedPeerDependencies, ...configPeerDeps };
 

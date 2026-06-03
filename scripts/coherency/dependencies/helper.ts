@@ -35,11 +35,12 @@ export async function testDependenciesCoherency(): Promise<void> {
 
       console.log(`  🔍 Checking dependencies for: ${packageJson.name}`);
 
-      // Check dependencies consistency
+      // Check dependencies consistency (runtime/dev deps only).
+      // peerDependencies are consumer-facing semver constraints and intentionally
+      // differ from the root dev-tooling versions — they are not checked here.
       const packageDeps = {
         ...packageJson.dependencies,
         ...packageJson.devDependencies,
-        ...packageJson.peerDependencies
       };
 
       for (const [depName, depVersion] of Object.entries(packageDeps)) {
