@@ -4,6 +4,11 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to upload reports to (e.g. v2.0.1). Leave empty to skip upload."
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -43,7 +48,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="${{ github.ref_name }}"
+          TAG="${{ inputs.tag || github.ref_name }}"
           if [ ! -d "reports/mutation" ]; then
             echo "⚠️ No mutation reports generated — skipping upload"
             exit 0
