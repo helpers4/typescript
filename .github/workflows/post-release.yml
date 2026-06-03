@@ -4,11 +4,6 @@ on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      tag:
-        description: "Release tag to upload reports to (e.g. v2.0.1). Leave empty to skip upload."
-        required: false
-        type: string
 
 permissions:
   contents: write
@@ -48,18 +43,23 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG="${{ inputs.tag || github.ref_name }}"
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAG="${{ github.ref_name }}"
+          else
+            TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+          fi
+          echo "🏷️ Target release: $TAG"
+          if [ -z "$TAG" ]; then
+            echo "⚠️ No release found — skipping upload"
+            exit 0
+          fi
           if [ ! -d "reports/mutation" ]; then
             echo "⚠️ No mutation reports generated — skipping upload"
             exit 0
           fi
           tar -czf /tmp/mutation-reports.tar.gz -C reports mutation/
-          if gh release view "$TAG" &>/dev/null; then
-            gh release upload "$TAG" /tmp/mutation-reports.tar.gz --clobber
-            echo "✅ Uploaded mutation reports to release $TAG"
-          else
-            echo "⚠️ No release found for '$TAG' — skipping upload (manual run on branch)"
-          fi
+          gh release upload "$TAG" /tmp/mutation-reports.tar.gz --clobber
+          echo "✅ Uploaded mutation reports to release $TAG"
 
   # Coverage — runs tests with coverage and uploads to Codecov
   coverage:
