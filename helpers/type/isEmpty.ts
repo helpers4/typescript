@@ -19,7 +19,9 @@ import { isSpecialObject } from './isSpecialObject';
  * @param value - The value to check
  * @returns `true` if the value is considered empty, `false` otherwise.
  * Acts as a type guard: the `else` branch narrows away `null`, `undefined`,
- * empty strings and empty arrays.
+ * empty strings, empty arrays, and empty Map/Set.
+ * Plain empty objects (`{}`) are not representable as a distinct type in
+ * TypeScript and are therefore not part of the predicate.
  *
  * @example
  * isEmpty('') // true
@@ -31,9 +33,14 @@ import { isSpecialObject } from './isSpecialObject';
  * // Type narrowing in else branch
  * declare const v: string | null | undefined;
  * if (isEmpty(v)) { ... } else { v.toUpperCase(); } // OK — null/undefined excluded
+ *
+ * @example
+ * // Map/Set narrowing in true branch
+ * declare const m: ReadonlyMap<string, number> | null;
+ * if (isEmpty(m)) { ... } // m: ReadonlyMap<never, never> | null
  * @since 2.0.0
  */
-export function isEmpty(value: unknown): value is null | undefined | '' | never[] {
+export function isEmpty(value: unknown): value is null | undefined | '' | never[] | ReadonlyMap<never, never> | ReadonlySet<never> {
   if (value === null || value === undefined) {
     return true;
   }
