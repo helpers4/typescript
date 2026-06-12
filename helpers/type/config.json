@@ -1,5 +1,5 @@
 {
   "label": "Type",
   "smallDescription": "Type checking and validation utilities",
-  "description": "Utilities for runtime type checking and validation including guards for primitives, arrays, and objects"
+  "description": "Utilities for runtime type checking (isString, isArray, isDefined, …) and compile-time TypeScript type utilities (Maybe, DeepPartial, …)"
 }
