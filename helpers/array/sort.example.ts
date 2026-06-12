@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { createSortByStringFn, sortNumberAscFn, sortStringAscFn } from './sort';
+import { sortNumberAscFn, sortStringAscFn } from './sort';
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
@@ -29,18 +29,6 @@ const examples: HelperExamples = {
       assert: () => {
         const result = ['banana', 'apple', 'cherry'].sort(sortStringAscFn);
         if (result[0] !== 'apple') throw new Error('Unexpected order');
-      },
-    },
-    {
-      title: 'Sort objects by property',
-      description: 'Use createSortByStringFn to sort objects by a specific string property.',
-      code: `const items = [{ name: 'Charlie' }, { name: 'Alice' }, { name: 'Bob' }];
-items.sort(createSortByStringFn('name'))
-// => [{ name: 'Alice' }, { name: 'Bob' }, { name: 'Charlie' }]`,
-      assert: () => {
-        const items = [{ name: 'Charlie' }, { name: 'Alice' }, { name: 'Bob' }];
-        items.sort(createSortByStringFn('name'));
-        if (items[0].name !== 'Alice') throw new Error('Unexpected order');
       },
     },
   ],
