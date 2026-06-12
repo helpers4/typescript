@@ -139,7 +139,8 @@ helpers/<category>/
 
 **TypeScript rules:**
 - `any` is **FORBIDDEN** — use `unknown` or specific types
-- JSDoc required on all exports: `@param`, `@returns`, `@example`, `@since next`
+- JSDoc required on all exports: `@param`, `@returns`, `@example`, `@since <version>`
+  - `@since` must always be the **literal string `next`** — never a real version number (e.g. `2.1.0`). The release script replaces `next` with the actual version at publish time. Example: `@since next`
 - 2-space indentation, single quotes
 - Tree-shakable exports only (no side effects)
 
