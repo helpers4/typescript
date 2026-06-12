@@ -108,6 +108,18 @@
       "example": "arr.slice(n)"
     },
     {
+      "name": "sort (basic comparator)",
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
+      "native": "(a, b) => a - b  /  a.localeCompare(b)",
+      "since": "ES1",
+      "example": "arr.sort((a, b) => a - b)\narr.sort((a, b) => a.localeCompare(b))",
+      "notes": "Inline comparators are idiomatic JS/TS; no helper needed. helpers4/array provides sortNumberAscFn / sortStringAscFn as reusable shortcuts for .sort() — they are excluded from the native-alternatives rule"
+    },
+    {
       "name": "sortBy / orderBy",
       "libraries": [
         "lodash",
@@ -117,7 +129,7 @@
       "native": "Array.prototype.toSorted(fn?)",
       "since": "ES2023",
       "example": "arr.toSorted((a, b) => a.name.localeCompare(b.name))",
-      "notes": "Immutable version of .sort(); helpers4/array provides createSortByStringFn/NumberFn/DateFn comparator factories"
+      "notes": "Immutable version of .sort(); helpers4/array provides createSortByStringFn/NumberFn/DateFn/NaturalFn comparator factories for object arrays, and sortStringNaturalAscFn for human-friendly ordering of strings with embedded numbers"
     },
     {
       "name": "union",
