@@ -18,7 +18,7 @@
  * type MutablePoint = DeepWritable<Point>;
  * // => [x: number, y: number]
  *
- * @since next
+ * @since 2.0.2
  */
 export type DeepWritable<T> =
   T extends readonly (infer U)[]

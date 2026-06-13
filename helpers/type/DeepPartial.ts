@@ -13,7 +13,7 @@
  * type PartialConfig = DeepPartial<Config>;
  * // => { server?: { host?: string; port?: number }; debug?: boolean }
  *
- * @since next
+ * @since 2.0.2
  */
 export type DeepPartial<T> =
   T extends (infer U)[]

@@ -24,7 +24,7 @@ function getStringValue<T extends Record<string, unknown>>(
  *   Defaults to trying 'value', 'label', 'title', 'description' in that order.
  * @param caseInsensitive - Whether to ignore case (default: false)
  * @returns Sort function
- * @since next
+ * @since 2.0.2
  */
 export function createSortByStringFn<T extends Record<string, unknown>>(
   property?: keyof T | readonly (keyof T)[],
@@ -63,7 +63,7 @@ export function createSortByStringFn<T extends Record<string, unknown>>(
  * Creates a sort function for objects by number property.
  * @param property - The property to sort by (defaults to 'value')
  * @returns Sort function
- * @since next
+ * @since 2.0.2
  */
 export function createSortByNumberFn<T extends Record<string, unknown>>(
   property?: keyof T,
@@ -83,7 +83,7 @@ export function createSortByNumberFn<T extends Record<string, unknown>>(
  * Creates a sort function for objects by date property.
  * @param property - The property to sort by (defaults to 'date')
  * @returns Sort function
- * @since next
+ * @since 2.0.2
  */
 export function createSortByDateFn<T extends Record<string, unknown>>(
   property?: keyof T,

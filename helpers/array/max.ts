@@ -13,7 +13,7 @@
  * @example
  * max([3, 1, 4, 1, 5, 9]) // => 9
  * max([]) // => undefined
- * @since next
+ * @since 2.0.2
  */
 export function max(array: readonly number[]): number | undefined {
   if (array.length === 0) return undefined;

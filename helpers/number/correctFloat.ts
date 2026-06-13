@@ -19,7 +19,7 @@
  * @param value - The floating-point value to correct
  * @param precision - Integer number of significant digits (default: 14)
  * @returns The corrected value
- * @since next
+ * @since 2.0.2
  */
 export function correctFloat(value: number, precision: number = 14): number {
   if (!Number.isFinite(value)) {

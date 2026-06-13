@@ -13,7 +13,7 @@
  * @example
  * min([3, 1, 4, 1, 5, 9]) // => 1
  * min([]) // => undefined
- * @since next
+ * @since 2.0.2
  */
 export function min(array: readonly number[]): number | undefined {
   if (array.length === 0) return undefined;

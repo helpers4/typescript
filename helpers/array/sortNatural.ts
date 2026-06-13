@@ -24,7 +24,7 @@ const getNaturalCollatorInsensitive = (): Intl.Collator =>
  * @param a - First string
  * @param b - Second string
  * @returns Sort order
- * @since next
+ * @since 2.0.2
  */
 export const sortStringNaturalAscFn: SortFn<string> = (a: string, b: string) =>
   getNaturalCollator().compare(a, b);
@@ -35,7 +35,7 @@ export const sortStringNaturalAscFn: SortFn<string> = (a: string, b: string) =>
  * @param a - First string
  * @param b - Second string
  * @returns Sort order
- * @since next
+ * @since 2.0.2
  */
 export const sortStringNaturalDescFn: SortFn<string> = (a: string, b: string) =>
   getNaturalCollator().compare(b, a);
@@ -45,7 +45,7 @@ export const sortStringNaturalDescFn: SortFn<string> = (a: string, b: string) =>
  * @param a - First string
  * @param b - Second string
  * @returns Sort order
- * @since next
+ * @since 2.0.2
  */
 export const sortStringNaturalAscInsensitiveFn: SortFn<string> = (a: string, b: string) =>
   getNaturalCollatorInsensitive().compare(a, b);
@@ -56,7 +56,7 @@ export const sortStringNaturalAscInsensitiveFn: SortFn<string> = (a: string, b: 
  * @param a - First string
  * @param b - Second string
  * @returns Sort order
- * @since next
+ * @since 2.0.2
  */
 export const sortStringNaturalDescInsensitiveFn: SortFn<string> = (a: string, b: string) =>
   getNaturalCollatorInsensitive().compare(b, a);
@@ -73,7 +73,7 @@ export const sortStringNaturalDescInsensitiveFn: SortFn<string> = (a: string, b:
  *   This differs from `createSortByStringFn(key, true)`, which only folds case via
  *   `toLowerCase` and still distinguishes accented characters.
  * @returns Sort function
- * @since next
+ * @since 2.0.2
  */
 function natVal<T extends Record<string, unknown>>(obj: T, key: keyof T): string {
   return String(obj[key] ?? '');
