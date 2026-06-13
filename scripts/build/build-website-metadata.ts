@@ -5,6 +5,7 @@
  */
 
 import { readdir } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ensureDir } from 'fs-extra';
 import {
@@ -237,22 +238,39 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
   const since = extractTagText(comment?.blockTags as CommentTag[] | undefined, '@since') ?? 'unknown';
   const examples = extractExamples(comment?.blockTags as CommentTag[] | undefined);
 
-  // For type aliases: build the `type Name<T> = ...` definition string
+  // For type aliases: read the definition verbatim from the source file so that
+  // complex constructs (conditional types, mapped types, etc.) render correctly.
   // For interfaces: build the `interface Name { ... }` definition string
   let typeDefinition: string | undefined;
-  if (kind === 'type' && (child as unknown as Record<string, unknown>).type) {
-    const rawType = (child as unknown as Record<string, unknown>).type;
-    const typeStr = serializeType(rawType);
-    const typeParams = child.typeParameters
-      ?.map((tp: TypeParameterReflection) => {
-        let s = tp.name;
-        if (tp.type) s += ` extends ${serializeType(tp.type)}`;
-        if (tp.default) s += ` = ${serializeType(tp.default)}`;
-        return s;
-      })
-      .join(', ');
-    const generics = typeParams ? `<${typeParams}>` : '';
-    typeDefinition = `type ${child.name}${generics} = ${typeStr}`;
+  if (kind === 'type') {
+    const srcRef = child.sources?.[0] as ({ fullFileName?: string } & object) | undefined;
+    const srcPath = srcRef?.fullFileName;
+    if (srcPath) {
+      try {
+        const src = readFileSync(srcPath, 'utf-8');
+        // Extract from `export type NAME` to end of file, strip the `export ` prefix
+        const match = src.match(/export\s+(type\s+\S[\s\S]*)$/);
+        if (match) {
+          typeDefinition = match[1].trimEnd().replace(/;$/, '');
+        }
+      } catch {
+        // fallback to serialized form
+      }
+    }
+    if (!typeDefinition && (child as unknown as Record<string, unknown>).type) {
+      const rawType = (child as unknown as Record<string, unknown>).type;
+      const typeStr = serializeType(rawType);
+      const typeParams = child.typeParameters
+        ?.map((tp: TypeParameterReflection) => {
+          let s = tp.name;
+          if (tp.type) s += ` extends ${serializeType(tp.type)}`;
+          if (tp.default) s += ` = ${serializeType(tp.default)}`;
+          return s;
+        })
+        .join(', ');
+      const generics = typeParams ? `<${typeParams}>` : '';
+      typeDefinition = `type ${child.name}${generics} = ${typeStr}`;
+    }
   } else if (kind === 'interface') {
     const members = ((child as unknown as Record<string, unknown>).children as DeclarationReflection[] | undefined) ?? [];
     const memberDefinitions = members.flatMap(m => {
