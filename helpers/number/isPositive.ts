@@ -12,13 +12,13 @@
  * @param value - The value to check
  * @returns True if value is a positive number
  * @example
- * isPositiveNumber(42)   // => true
- * isPositiveNumber(0.1)  // => true
- * isPositiveNumber(0)    // => false
- * isPositiveNumber(-1)   // => false
- * isPositiveNumber(NaN)  // => false
+ * isPositive(42)   // => true
+ * isPositive(0.1)  // => true
+ * isPositive(0)    // => false
+ * isPositive(-1)   // => false
+ * isPositive(NaN)  // => false
  * @since 2.0.0
  */
-export function isPositiveNumber(value: unknown): value is number {
+export function isPositive(value: unknown): value is number {
   return typeof value === 'number' && value > 0;
 }
