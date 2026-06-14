@@ -39,6 +39,8 @@ import { isSpecialObject } from './isSpecialObject';
  * declare const m: ReadonlyMap<string, number> | null;
  * if (isEmpty(m)) { ... } // m: ReadonlyMap<never, never> | null
  * @since 2.0.0
+ * @deprecated Use the category-specific helper instead: `array/isEmpty`, `string/isEmpty`,
+ * or `object/isEmpty`. This monolithic helper will be removed in v3.
  */
 export function isEmpty(value: unknown): value is null | undefined | '' | never[] | ReadonlyMap<never, never> | ReadonlySet<never> {
   if (value === null || value === undefined) {
