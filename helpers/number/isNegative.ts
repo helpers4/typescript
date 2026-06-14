@@ -12,13 +12,13 @@
  * @param value - The value to check
  * @returns True if value is a negative number
  * @example
- * isNegativeNumber(-1)   // => true
- * isNegativeNumber(-0.5) // => true
- * isNegativeNumber(0)    // => false
- * isNegativeNumber(1)    // => false
- * isNegativeNumber(NaN)  // => false
+ * isNegative(-1)   // => true
+ * isNegative(-0.5) // => true
+ * isNegative(0)    // => false
+ * isNegative(1)    // => false
+ * isNegative(NaN)  // => false
  * @since 2.0.0
  */
-export function isNegativeNumber(value: unknown): value is number {
+export function isNegative(value: unknown): value is number {
   return typeof value === 'number' && value < 0;
 }
