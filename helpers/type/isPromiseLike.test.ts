@@ -15,18 +15,24 @@ describe('isPromiseLike', () => {
   });
 
   it('should return true for objects with a then method', () => {
+    // eslint-disable-next-line unicorn/no-thenable -- Testing thenable detection
     expect(isPromiseLike({ then: () => {} })).toBe(true);
+    // eslint-disable-next-line unicorn/no-thenable -- Testing thenable detection
     expect(isPromiseLike({ then: () => {}, catch: () => {} })).toBe(true);
   });
 
   it('should return true for functions with a then method', () => {
+    // eslint-disable-next-line unicorn/no-thenable -- Testing thenable detection
     const fn = Object.assign(() => {}, { then: () => {} });
     expect(isPromiseLike(fn)).toBe(true);
   });
 
   it('should return false when then is not a function', () => {
+    // eslint-disable-next-line unicorn/no-thenable -- Testing thenable detection
     expect(isPromiseLike({ then: 'not-a-function' })).toBe(false);
+    // eslint-disable-next-line unicorn/no-thenable -- Testing thenable detection
     expect(isPromiseLike({ then: null })).toBe(false);
+    // eslint-disable-next-line unicorn/no-thenable -- Testing thenable detection
     expect(isPromiseLike({ then: 42 })).toBe(false);
   });
 

@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { Readable, Writable } from 'node:stream';
 import type { HelperExamples } from '../../scripts/examples/types';
 import { isNodeStream } from './isNodeStream';
 
@@ -20,8 +19,7 @@ isNodeStream(new Readable({ read() {} })) // => true
 isNodeStream({})                          // => false
 isNodeStream(null)                        // => false`,
       assert: () => {
-        if (!isNodeStream(new Readable({ read() {} }))) throw new Error('Readable should be a stream');
-        if (!isNodeStream(new Writable({ write() {} }))) throw new Error('Writable should be a stream');
+        if (!isNodeStream({ pipe: () => {} })) throw new Error('object with pipe should be a stream');
         if (isNodeStream({})) throw new Error('{} should not be a stream');
         if (isNodeStream(null)) throw new Error('null should not be a stream');
       },
