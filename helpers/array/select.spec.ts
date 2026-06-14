@@ -38,7 +38,7 @@ describe('select — property-based', () => {
 });
 
 describe('select — contracts', () => {
-  it('is equivalent to .filter(condition).map(mapper)', () => {
+  it('matches .filter(condition).map(mapper) for index-agnostic callbacks', () => {
     fc.assert(
       fc.property(
         fc.array(fc.integer({ min: -100, max: 100 })),
@@ -51,6 +51,12 @@ describe('select — contracts', () => {
         },
       ),
     );
+  });
+
+  it('passes the original array index (not post-filter index) to mapper', () => {
+    // select([10, 20, 30], (_, i) => i, (_, i) => i === 2) → [2]
+    // .filter().map() would yield [0] because filter re-indexes
+    expect(select([10, 20, 30], (_x, i) => i, (_x, i) => i === 2)).toEqual([2]);
   });
 
   it('without condition is equivalent to .map()', () => {
