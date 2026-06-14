@@ -252,11 +252,14 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
     const srcPath = srcRef?.fullFileName;
     if (srcPath) {
       try {
-        const src = readFileSync(srcPath, 'utf-8');
-        // Extract from `export type NAME` to end of file, strip the `export ` prefix
-        const match = src.match(/export\s+(type\s+\S[\s\S]*)$/);
-        if (match) {
-          typeDefinition = match[1].trimEnd().replace(/;$/, '');
+        const src = readSourceCached(srcPath);
+        // Find the specific declaration: `export type NAME` → extract from `type NAME`
+        // up to the closing `;` at brace-depth 0 (handles multi-line conditional types).
+        const exportStart = src.indexOf(`export type ${child.name}`);
+        if (exportStart !== -1) {
+          const typeStart = exportStart + 'export '.length;
+          const end = findTopLevelSemicolon(src, typeStart);
+          typeDefinition = src.slice(typeStart, end).trimEnd();
         }
       } catch {
         // fallback to serialized form
