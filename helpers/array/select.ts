@@ -7,8 +7,11 @@
 /**
  * Filters and transforms an array in a single pass.
  *
- * Equivalent to `.filter(condition).map(mapper)` but only iterates the array once,
- * making it more efficient for large arrays or expensive conditions.
+ * Similar to `.filter(condition).map(mapper)` but iterates the array only once.
+ * **Index semantics differ from `.filter().map()`:** the `index` passed to both
+ * `condition` and `mapper` is the index in the **original** array, not the
+ * post-filter position. Use index-agnostic callbacks when the two must behave
+ * identically.
  *
  * @param array - The array to process
  * @param mapper - Transforms each item that passes the condition

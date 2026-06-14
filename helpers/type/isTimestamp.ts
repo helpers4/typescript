@@ -36,7 +36,7 @@ const MAX_UNIX_SECONDS = 7258118400;
  * isTimestamp('1609459200')  // => false (not a number)
  *
  * @see {@link isDate} for checking if a value is a Date instance
- * @see {@link isValidDate} for checking if a Date instance is valid
+ * @see `date/isValid` for checking if a Date instance is valid
  * @since 2.0.0
  */
 export function isTimestamp(value: unknown): value is number {
