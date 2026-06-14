@@ -318,6 +318,16 @@
       "notes": "Prefer Number.isFinite() over global isFinite() which coerces"
     },
     {
+      "name": "isInfinite",
+      "libraries": [
+        "sindresorhus/is"
+      ],
+      "native": "value === Infinity || value === -Infinity  /  !Number.isFinite(value) && !Number.isNaN(value)",
+      "since": "ES2015",
+      "example": "value === Infinity || value === -Infinity\n// or: !Number.isFinite(value) && !Number.isNaN(value)",
+      "notes": "Number.isFinite() is the complement; compose with a NaN guard if needed. No dedicated helper warranted."
+    },
+    {
       "name": "isSet (Set data structure)",
       "libraries": [
         "lodash",
