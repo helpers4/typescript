@@ -6,31 +6,7 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 
 ---
 
-## 1. `isEmpty` — split by category
-
-**Current state:** `type/isEmpty` is a monolithic helper covering string, array, Map, Set, and plain
-objects in a single function.
-
-**Decision:** `isEmpty` checks *state*, not *type* — it does not belong in `type/`. Each category
-should own its focused predicate. See the **Helper Placement** rule in `AGENTS.md`.
-
-**Planned helpers:**
-
-- **`isEmpty`** (`array/`) — `Array.isArray(value) && value.length === 0`
-- **`isEmpty`** (`string/`) — `value === ''`
-- **`isEmpty`** (`object/`) — `isPlainObject(value) && Object.keys(value).length === 0`
-- **`isNonEmpty`** (`array/`) — inverse; complements `isNonEmptyArray` currently in `type/`
-- **`isNonEmpty`** (`object/`) — inverse
-
-**Open questions before implementation:**
-
-- [ ] Deprecate or keep `type/isEmpty`? (currently the only multi-type predicate — exception to the rule)
-- [ ] Should `isNonEmptyArray` and `isNonEmptyString` (currently in `type/`) move to `array/` and `string/`?
-- [ ] Naming: `object/isNonEmpty` vs `object/isNonEmptyObject`?
-
----
-
-## 2. OpenSSF Scorecard
+## 1. OpenSSF Scorecard
 
 > Last snapshot: **6.7**. Goal: lift the score by closing the highest-impact
 > checks first, while keeping CI behaviour stable.
@@ -89,7 +65,6 @@ After each PR, re-run Scorecard and capture the delta.
 
 ---
 
-## 3. Suggested next steps
+## 2. Suggested next steps
 
-1. **`isEmpty` split** — create `array/isEmpty`, `string/isEmpty`, `object/isEmpty`; resolve open questions (§1).
-2. **OpenSSF PRs C/D/E** — land in parallel, they don't conflict with the helper roadmap.
+1. **OpenSSF PRs C/D/E** — land in parallel with the helper roadmap.
