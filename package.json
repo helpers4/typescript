@@ -95,6 +95,10 @@
     "node": ">=24.0.0",
     "browser": "ES2022+"
   },
+  "runtimes": {
+    "node": ">=20.0.0",
+    "browser": "ES2022+"
+  },
   "pnpm": {
     "overrides": {
       "postcss": ">=8.5.10",

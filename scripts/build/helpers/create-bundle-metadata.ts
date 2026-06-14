@@ -57,14 +57,14 @@ export async function createBundleMetadata(
     return `https://dashboard.stryker-mutator.io/reports/github.com/${parsed.slug}/v${version}`;
   })();
 
-  // Runtime compatibility — read from package.json engines field.
-  // Deno and Bun are structurally compatible (ESM-only, no native addons) with no per-version constraints.
-  const engines = (rootPackage.engines as Record<string, string> | undefined) ?? {};
+  // Consumer runtime compatibility — read from package.json "runtimes" field (not "engines",
+  // which tracks the dev/build tooling requirement and may be higher than the consumer minimum).
+  const runtimesField = (rootPackage.runtimes as Record<string, string> | undefined) ?? {};
   const runtimes = {
-    node: engines.node ?? '>=24.0.0',
+    node: runtimesField.node ?? '>=20.0.0',
     deno: 'compatible',
     bun: 'compatible',
-    browser: engines.browser ?? 'ES2022+',
+    browser: runtimesField.browser ?? 'ES2022+',
   };
 
   // Create build.json with build metadata
