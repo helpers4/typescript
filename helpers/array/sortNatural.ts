@@ -61,6 +61,11 @@ export const sortStringNaturalAscInsensitiveFn: SortFn<string> = (a: string, b: 
 export const sortStringNaturalDescInsensitiveFn: SortFn<string> = (a: string, b: string) =>
   getNaturalCollatorInsensitive().compare(b, a);
 
+/** @internal */
+function natVal<T extends Record<string, unknown>>(obj: T, key: keyof T): string {
+  return String(obj[key] ?? '');
+}
+
 /**
  * Creates a sort function for objects by one or more string properties using
  * natural ordering. Numbers embedded in values are compared numerically:
@@ -75,10 +80,6 @@ export const sortStringNaturalDescInsensitiveFn: SortFn<string> = (a: string, b:
  * @returns Sort function
  * @since 2.0.2
  */
-function natVal<T extends Record<string, unknown>>(obj: T, key: keyof T): string {
-  return String(obj[key] ?? '');
-}
-
 export function createSortByNaturalFn<T extends Record<string, unknown>>(
   property?: keyof T | readonly (keyof T)[],
   caseInsensitive: boolean = false,
