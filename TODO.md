@@ -1,90 +1,32 @@
 # TODO — `helpers4/typescript`
 
-> Last refresh: 2026-05-13.
+> Last refresh: 2026-06-14.
 
 Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 
 ---
 
-## 1. `type/` — gap fill
+## 1. `isEmpty` — split by category
 
-**Source:** [radashi-org/discussions#46](https://github.com/orgs/radashi-org/discussions/46#discussioncomment-11736331)
-— comparison table of Radashi / another lib / `@sindresorhus/is` (~90 predicates).
-Radashi won't act on this. helpers4 can close the relevant gaps since the design is already
-tree-shakeable, browser-safe, and one-file-per-predicate.
+**Current state:** `type/isEmpty` is a monolithic helper covering string, array, Map, Set, and plain
+objects in a single function.
 
-> Note: `isNumber(NaN) === false` is already correct in helpers4 — not affected by Radash #405.
+**Decision:** `isEmpty` checks *state*, not *type* — it does not belong in `type/`. Each category
+should own its focused predicate. See the **Helper Placement** rule in `AGENTS.md`.
 
-### 🔴 Numeric — common, frequently needed
+**Planned helpers:**
 
-| Helper | Implementation note |
-|--------|---------------------|
-| `isInteger` | `Number.isInteger(value)` — distinct from `isNumber` |
-| `isNaN` | `Number.isNaN(value)` — safe version (not the legacy global) |
-| `isSafeInteger` | `Number.isSafeInteger(value)` |
-| `isInfinite` | `value === Infinity \|\| value === -Infinity` |
+- **`isEmpty`** (`array/`) — `Array.isArray(value) && value.length === 0`
+- **`isEmpty`** (`string/`) — `value === ''`
+- **`isEmpty`** (`object/`) — `isPlainObject(value) && Object.keys(value).length === 0`
+- **`isNonEmpty`** (`array/`) — inverse; complements `isNonEmptyArray` currently in `type/`
+- **`isNonEmpty`** (`object/`) — inverse
 
-### 🔴 Collections — used widely
+**Open questions before implementation:**
 
-| Helper | Implementation note |
-|--------|---------------------|
-| `isSet` | `value instanceof Set` |
-| `isWeakMap` | `value instanceof WeakMap` |
-| `isWeakSet` | `value instanceof WeakSet` |
-| `isWeakRef` | `value instanceof WeakRef` |
-
-### 🟡 Numeric — nice-to-have
-
-| Helper | Implementation note |
-|--------|---------------------|
-| `isEvenInteger` | `isInteger(n) && n % 2 === 0` |
-| `isOddInteger` | `isInteger(n) && n % 2 !== 0` |
-
-### 🟡 Iteration protocol
-
-| Helper | Implementation note |
-|--------|---------------------|
-| `isAsyncIterable` | `Symbol.asyncIterator in Object(value)` |
-| `isGenerator` | `Object.prototype.toString` → `[object Generator]` |
-| `isGeneratorFunction` | `Object.prototype.toString` → `[object GeneratorFunction]` |
-| `isAsyncGenerator` | `Object.prototype.toString` → `[object AsyncGenerator]` |
-| `isAsyncGeneratorFunction` | `Object.prototype.toString` → `[object AsyncGeneratorFunction]` |
-
-### 🟡 String specializations
-
-| Helper | Implementation note |
-|--------|---------------------|
-| `isEmptyString` | `value === ''` |
-| `isWhitespaceString` | `isString(value) && value.trim() === ''` |
-
-> `isNonEmptyString` already exists.
-
-### 🟡 Object / Array specializations
-
-| Helper | Implementation note |
-|--------|---------------------|
-| `isEmptyArray` | `isArray(value) && value.length === 0` |
-| `isEmptyObject` | `isPlainObject(value) && Object.keys(value).length === 0` |
-| `isNonEmptyObject` | `isPlainObject(value) && Object.keys(value).length > 0` |
-
-### 🟢 General purpose
-
-| Helper | Implementation note |
-|--------|---------------------|
-| `isPropertyKey` | `isString(v) \|\| isNumber(v) \|\| isSymbol(v)` → `value is PropertyKey` |
-| `isPromiseLike` | `value != null && typeof (value as any).then === 'function'` (thenable) |
-| `isArrayLike` | `value != null && typeof (value as any).length === 'number'` |
-| `isHtmlElement` | `typeof HTMLElement !== 'undefined' && value instanceof HTMLElement` — browser-only, document it |
-| `isUrlInstance` | `value instanceof URL` |
-
-### Explicitly out of scope
-
-- Typed arrays (`Int8Array`, `Uint8Array`, etc.) — too niche, no tree-shaking benefit
-- `isNodeStream`, `isSharedArrayBuffer` — Node.js specific
-- `isObservable` — handled by the `observable/` category
-- `isAll` / `isAny` / global `is` / `assert` — meta-predicates, different design surface
-- `isClass`, `isBoundFunction`, `isTagged`, `isDirectInstanceOf`, `isEnumCase` — reflection / meta
-- `isResult` / `isResultOk` / `isResultErr` — requires a Result type not shipped by this lib
+- [ ] Deprecate or keep `type/isEmpty`? (currently the only multi-type predicate — exception to the rule)
+- [ ] Should `isNonEmptyArray` and `isNonEmptyString` (currently in `type/`) move to `array/` and `string/`?
+- [ ] Naming: `object/isNonEmpty` vs `object/isNonEmptyObject`?
 
 ---
 
@@ -149,7 +91,5 @@ After each PR, re-run Scorecard and capture the delta.
 
 ## 3. Suggested next steps
 
-1. **`type/` gap fill** — tackle §1 numeric + collection predicates first (high value, small effort).
-   One file per predicate following the existing pattern.
+1. **`isEmpty` split** — create `array/isEmpty`, `string/isEmpty`, `object/isEmpty`; resolve open questions (§1).
 2. **OpenSSF PRs C/D/E** — land in parallel, they don't conflict with the helper roadmap.
-3. Open one issue per accepted helper in §1 with its source reference for traceability.

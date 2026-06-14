@@ -146,6 +146,25 @@ helpers/<category>/
 
 **Coverage:** 100% lines, functions, branches, statements — no exceptions.
 
+### Helper Placement
+
+**Type predicates** (`is<Type>`) → `type/` category.
+These answer "what *type* is this value?" and return a TypeScript type guard.
+Examples: `isArray`, `isString`, `isNull`, `isPromise`.
+
+**State predicates** → **their own category**, never `type/`.
+These answer "what *state* is this value in?" and are category-specific.
+Category-specific examples:
+
+- `isEmpty` for arrays → `array/isEmpty` (not `type/isEmpty`)
+- `isEmpty` for objects → `object/isEmpty`
+- `isEmpty` for strings → `string/isEmpty`
+- `isNonEmpty` for arrays → `array/isNonEmpty`
+
+The distinction: a type predicate narrows the TypeScript type (`value is T`); a state predicate
+checks a runtime condition within an already-known type context (e.g. an array that happens to be
+empty). Mixing both in `type/` blurs the category boundary and makes callers import unrelated logic.
+
 **Intentional cross-category duplicates:** `compact` and `equalsShallow` exist in both `array/` and `object/`. Do **NOT** merge or deduplicate them — each category is an independent npm package and cross-package imports break tree-shaking.
 
 ### License Header (required on all source files)
