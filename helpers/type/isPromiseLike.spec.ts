@@ -22,10 +22,13 @@ describe('isPromiseLike — contract', () => {
   it('null → false', () => expect(isPromiseLike(null)).toBe(false));
   it('undefined → false', () => expect(isPromiseLike(undefined)).toBe(false));
   it('Promise.resolve() → true', () => expect(isPromiseLike(Promise.resolve())).toBe(true));
+  // eslint-disable-next-line unicorn/no-thenable -- Testing thenable detection
   it('{ then: fn } → true', () => expect(isPromiseLike({ then: () => {} })).toBe(true));
+  // eslint-disable-next-line unicorn/no-thenable -- Testing thenable detection
   it('{ then: non-fn } → false', () => expect(isPromiseLike({ then: 42 })).toBe(false));
   it('{} → false', () => expect(isPromiseLike({})).toBe(false));
   it('function with .then → true', () => {
+    // eslint-disable-next-line unicorn/no-thenable -- Testing thenable detection
     const fn = Object.assign(() => {}, { then: () => {} });
     expect(isPromiseLike(fn)).toBe(true);
   });

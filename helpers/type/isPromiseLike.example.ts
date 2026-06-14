@@ -21,8 +21,10 @@ isPromiseLike(null)                  // => false
 isPromiseLike({ then: 'not-a-fn' }) // => false`,
       assert: () => {
         if (!isPromiseLike(Promise.resolve(1))) throw new Error('Promise should be PromiseLike');
+        // eslint-disable-next-line unicorn/no-thenable -- Testing thenable detection
         if (!isPromiseLike({ then: () => {} })) throw new Error('thenable should be PromiseLike');
         if (isPromiseLike(42)) throw new Error('number should not be PromiseLike');
+        // eslint-disable-next-line unicorn/no-thenable -- Testing thenable detection
         if (isPromiseLike({ then: 'not-a-fn' })) throw new Error('non-fn then should return false');
       },
     },
