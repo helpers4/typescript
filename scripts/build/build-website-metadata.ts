@@ -236,6 +236,11 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
 
   const description = extractText(comment?.summary as Array<{ kind: string; text: string }> | undefined);
   const since = extractTagText(comment?.blockTags as CommentTag[] | undefined, '@since') ?? 'unknown';
+
+  // Double-safety: exclude anything without an explicit @since tag.
+  // Primary guard is @internal + excludeInternal:true in TypeDoc options.
+  if (since === 'unknown') return undefined;
+
   const examples = extractExamples(comment?.blockTags as CommentTag[] | undefined);
 
   // For type aliases: read the definition verbatim from the source file so that

@@ -13,7 +13,7 @@ export type SortFn<T> = (a: T, b: T) => number;
 /**
  * Default property names checked (in order) by auto-detecting sort helpers
  * when no explicit property key is provided.
- * @since 2.0.2
+ * @internal
  */
 export const DEFAULT_SORT_STRING_PROPS = ['value', 'label', 'title', 'description'] as const;
 
