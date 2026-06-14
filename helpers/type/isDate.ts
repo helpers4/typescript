@@ -8,7 +8,7 @@
  * Checks if a value is a Date instance.
  *
  * Note: this only checks the type, not whether the Date is valid.
- * Use {@link isValidDate} to also validate that the Date is not `Invalid Date`.
+ * Use `date/isValid` to also validate that the Date is not `Invalid Date`.
  *
  * @param value - The value to check
  * @returns True if value is a Date instance
@@ -18,7 +18,7 @@
  * isDate('2023-01-01')       // => false
  * isDate(1609459200000)      // => false
  *
- * @see {@link isValidDate} for validating the Date is not Invalid Date
+ * @see `date/isValid` for validating the Date is not Invalid Date
  * @see {@link isTimestamp} for checking if a number is a valid timestamp
  * @since 2.0.0
  */
