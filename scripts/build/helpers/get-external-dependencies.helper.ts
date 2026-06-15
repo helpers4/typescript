@@ -39,15 +39,10 @@ export async function getExternalDependencies(categoryName: string): Promise<str
         continue;
       }
 
-      // Skip node built-in modules
-      const builtinModules = [
-        'path', 'fs', 'util', 'events', 'stream', 'buffer', 'crypto', 'url',
-        'querystring', 'http', 'https', 'net', 'os', 'child_process', 'cluster',
-        'dns', 'readline', 'repl', 'tls', 'dgram', 'vm', 'zlib', 'assert',
-        'constants', 'domain', 'punycode', 'string_decoder', 'tty', 'v8'
-      ];
-
-      if (builtinModules.includes(importPath)) {
+      // Skip node built-in modules (with or without the node: protocol prefix).
+      // `builtinModules` comes straight from Node's own `node:module`, so it stays
+      // current as new builtins (e.g. worker_threads, node:sqlite) are added.
+      if (importPath.startsWith('node:') || builtinModules.includes(importPath)) {
         continue;
       }
 
