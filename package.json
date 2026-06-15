@@ -73,7 +73,7 @@
     "@stryker-mutator/vitest-runner": "^9.6.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^25.9.3",
-    "@typescript/native-preview": "7.0.0-dev.20260607.1",
+    "@typescript/native-preview": "7.0.0-dev.20260615.1",
     "@vitest/coverage-v8": "^4.1.8",
     "fast-check": "^4.8.0",
     "fs-extra": "^11.3.5",
