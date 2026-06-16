@@ -5,9 +5,19 @@
  */
 
 import { readdir } from "node:fs/promises";
+import { builtinModules } from "node:module";
 import { join } from "node:path";
 import { DIR } from "../../constants";
 import { readFileText } from "../../utils";
+
+/**
+ * Strips `/* ... *\/` and `// ...` comments from source text so that import-like
+ * text inside JSDoc `@example` blocks (e.g. `* import { x } from 'pkg';`) is not
+ * mistaken for a real import statement.
+ */
+function stripComments(content: string): string {
+  return content.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+}
 
 /**
  * Analyzes the external packages used in a specific category by parsing import statements
@@ -25,7 +35,7 @@ export async function getExternalDependencies(categoryName: string): Promise<str
 
   for (const file of tsFiles) {
     const filePath = join(categoryPath, file);
-    const content = readFileText(filePath);
+    const content = stripComments(readFileText(filePath));
 
     // Extract import statements
     const importRegex = /import\s+[^;]+from\s+['"]([^'"]+)['"]/g;
