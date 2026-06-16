@@ -214,6 +214,59 @@ function processSignature(sig: SignatureReflection): WebsiteSignature {
   };
 }
 
+// Caches source file contents so a file with multiple exported type aliases
+// is only read from disk once.
+const sourceFileCache = new Map<string, string>();
+
+function readSourceCached(path: string): string {
+  let src = sourceFileCache.get(path);
+  if (src === undefined) {
+    src = readFileSync(path, 'utf-8');
+    sourceFileCache.set(path, src);
+  }
+  return src;
+}
+
+/**
+ * Finds the index of the `;` that terminates a type alias starting at `start`,
+ * skipping over brackets/semicolons that appear inside string/template literals
+ * or comments (e.g. a string-literal type like `'{' | '}' | ';'`).
+ */
+function findTopLevelSemicolon(src: string, start: number): number {
+  let depth = 0;
+  let quote: string | null = null;
+  let inLineComment = false;
+  let inBlockComment = false;
+
+  for (let i = start; i < src.length; i++) {
+    const ch = src[i];
+    const next = src[i + 1];
+
+    if (inLineComment) {
+      if (ch === '\n') inLineComment = false;
+      continue;
+    }
+    if (inBlockComment) {
+      if (ch === '*' && next === '/') { inBlockComment = false; i++; }
+      continue;
+    }
+    if (quote) {
+      if (ch === '\\') { i++; }
+      else if (ch === quote) { quote = null; }
+      continue;
+    }
+
+    if (ch === '/' && next === '/') { inLineComment = true; i++; continue; }
+    if (ch === '/' && next === '*') { inBlockComment = true; i++; continue; }
+    if (ch === "'" || ch === '"' || ch === '`') { quote = ch; continue; }
+
+    if (ch === '{' || ch === '(' || ch === '[') depth++;
+    else if (ch === '}' || ch === ')' || ch === ']') depth--;
+    else if (ch === ';' && depth === 0) return i;
+  }
+  return src.length;
+}
+
 function processMember(child: DeclarationReflection): WebsiteFunction | undefined {
   const kindMap: Record<number, WebsiteFunction['kind']> = {
     [ReflectionKind.Function]: 'function',
