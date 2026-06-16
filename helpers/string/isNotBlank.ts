@@ -20,7 +20,7 @@
  * isNotBlank('')    // => false
  * isNotBlank('   ') // => false
  * isNotBlank('\t\n') // => false
- * @since next
+ * @since 2.0.3
  */
 export function isNotBlank(value: string): boolean {
   return value.trim() !== '';

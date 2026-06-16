@@ -19,7 +19,7 @@
  * isAsyncIterable([1, 2, 3])    // => false  (Iterable, not AsyncIterable)
  * isAsyncIterable('hello')      // => false
  * isAsyncIterable(null)         // => false
- * @since next
+ * @since 2.0.3
  */
 export function isAsyncIterable(value: unknown): value is AsyncIterable<unknown> {
   if (value === null || value === undefined) return false;

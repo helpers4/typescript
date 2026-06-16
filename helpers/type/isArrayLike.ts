@@ -21,7 +21,7 @@
  * isArrayLike({ length: 1.5 }) // => false  (non-integer length)
  * isArrayLike(() => {})        // => false  (functions excluded)
  * isArrayLike(null)            // => false
- * @since next
+ * @since 2.0.3
  */
 export function isArrayLike(value: unknown): value is ArrayLike<unknown> {
   if (value == null) return false;

@@ -58,7 +58,7 @@ function isWordChar(char: string | undefined): boolean {
  * extractNumber('1e5kg')         // => 1     ('e5' glued to text → mantissa only)
  * extractNumber('no number')     // => undefined
  * extractNumber(42)              // => 42
- * @since next
+ * @since 2.0.3
  */
 export function extractNumber(value: unknown, options: ExtractNumberOptions = {}): number | undefined {
   const { sign = 'auto', exponent = 'auto' } = options;

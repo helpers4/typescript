@@ -16,7 +16,7 @@
  * isPropertyKey(null)          // => false
  * isPropertyKey({})            // => false
  * isPropertyKey(true)          // => false
- * @since next
+ * @since 2.0.3
  */
 export function isPropertyKey(value: unknown): value is PropertyKey {
   const t = typeof value;

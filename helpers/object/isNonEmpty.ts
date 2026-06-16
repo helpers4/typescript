@@ -15,7 +15,7 @@
  * @example
  * isNonEmpty({ a: 1 })    // => true
  * isNonEmpty({})          // => false
- * @since next
+ * @since 2.0.3
  */
 export function isNonEmpty(value: Record<PropertyKey, unknown>): boolean {
   return Object.keys(value).length > 0;

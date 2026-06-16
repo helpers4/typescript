@@ -18,7 +18,7 @@
  * isAsyncGeneratorFunction(gen())       // => false  (instance, not function)
  * isAsyncGeneratorFunction(async () => {}) // => false
  * @see {@link isAsyncGenerator}
- * @since next
+ * @since 2.0.3
  */
 export function isAsyncGeneratorFunction(value: unknown): value is AsyncGeneratorFunction {
   return Object.prototype.toString.call(value) === '[object AsyncGeneratorFunction]';

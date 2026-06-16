@@ -18,7 +18,7 @@
  * isEven(3)    // => false
  * isEven(1.5)  // => false  (not an integer)
  * isEven('2')  // => false
- * @since next
+ * @since 2.0.3
  */
 export function isEven(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value % 2 === 0;

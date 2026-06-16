@@ -31,7 +31,7 @@
  * // Without condition — equivalent to .map()
  * select([1, 2, 3], x => x * 10)
  * // => [10, 20, 30]
- * @since next
+ * @since 2.0.3
  */
 export function select<T, U>(
   array: readonly T[],

@@ -16,7 +16,7 @@
  * isEmpty('')    // => true
  * isEmpty('   ') // => false  (whitespace-only, not empty)
  * isEmpty('foo') // => false
- * @since next
+ * @since 2.0.3
  */
 export function isEmpty(value: string): value is '' {
   return value === '';

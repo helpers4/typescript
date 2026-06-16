@@ -26,7 +26,7 @@
  * isBlank(' ')   // => true   (non-breaking space U+00A0)
  * isBlank('foo') // => false
  * isBlank(' x ') // => false
- * @since next
+ * @since 2.0.3
  */
 export function isBlank(value: string): boolean {
   return value.trim() === '';

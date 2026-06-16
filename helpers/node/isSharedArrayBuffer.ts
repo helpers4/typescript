@@ -17,7 +17,7 @@
  * isSharedArrayBuffer(new SharedArrayBuffer(8)) // => true
  * isSharedArrayBuffer(new ArrayBuffer(8))       // => false
  * isSharedArrayBuffer(null)                     // => false
- * @since next
+ * @since 2.0.3
  */
 export function isSharedArrayBuffer(value: unknown): value is SharedArrayBuffer {
   return typeof SharedArrayBuffer !== 'undefined' && value instanceof SharedArrayBuffer;

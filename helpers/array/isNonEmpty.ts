@@ -11,7 +11,7 @@
  * @example
  * isNonEmpty([1, 2, 3]) // => true
  * isNonEmpty([])        // => false
- * @since next
+ * @since 2.0.3
  */
 export function isNonEmpty<T>(value: readonly T[]): value is readonly [T, ...T[]] {
   return value.length > 0;

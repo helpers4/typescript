@@ -20,7 +20,7 @@
  * isPromiseLike(42)                         // => false
  * isPromiseLike(null)                       // => false
  * @see {@link isPromise} for a stricter check that also requires `.catch()`
- * @since next
+ * @since 2.0.3
  */
 export function isPromiseLike(value: unknown): value is PromiseLike<unknown> {
   return (

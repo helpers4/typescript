@@ -18,7 +18,7 @@
  * isOdd(2)    // => false
  * isOdd(1.5)  // => false  (not an integer)
  * isOdd('3')  // => false
- * @since next
+ * @since 2.0.3
  */
 export function isOdd(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value % 2 !== 0;

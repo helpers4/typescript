@@ -11,7 +11,7 @@
  * @example
  * isEmpty([])        // => true
  * isEmpty([1, 2, 3]) // => false
- * @since next
+ * @since 2.0.3
  */
 export function isEmpty(value: readonly unknown[]): value is readonly never[] {
   return value.length === 0;

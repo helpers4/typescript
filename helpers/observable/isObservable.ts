@@ -21,7 +21,7 @@ import type { Observable } from 'rxjs';
  * isObservable(new Subject())     // => true
  * isObservable(Promise.resolve()) // => false
  * isObservable({})                // => false
- * @since next
+ * @since 2.0.3
  */
 export function isObservable(value: unknown): value is Observable<unknown> {
   return (

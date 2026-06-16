@@ -18,7 +18,7 @@
  * isNodeStream(new Readable()) // => true
  * isNodeStream({})             // => false
  * isNodeStream(null)           // => false
- * @since next
+ * @since 2.0.3
  */
 export function isNodeStream(value: unknown): value is { pipe: (...args: unknown[]) => unknown } {
   return (

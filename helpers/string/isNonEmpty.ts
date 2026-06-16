@@ -16,7 +16,7 @@
  * isNonEmpty('hello') // => true
  * isNonEmpty('   ')   // => true  (whitespace-only, not empty)
  * isNonEmpty('')      // => false
- * @since next
+ * @since 2.0.3
  */
 export function isNonEmpty(value: string): boolean {
   return value.length > 0;

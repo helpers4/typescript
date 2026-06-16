@@ -16,7 +16,7 @@
  * isEmpty({})          // => true
  * isEmpty({ a: 1 })    // => false
  * isEmpty({ a: undefined }) // => false  (key exists)
- * @since next
+ * @since 2.0.3
  */
 export function isEmpty(value: Record<PropertyKey, unknown>): boolean {
   return Object.keys(value).length === 0;

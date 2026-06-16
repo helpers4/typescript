@@ -18,7 +18,7 @@
  * isGenerator(gen)     // => false  (function, not instance)
  * isGenerator([1, 2])  // => false
  * @see {@link isGeneratorFunction}
- * @since next
+ * @since 2.0.3
  */
 export function isGenerator(value: unknown): value is Generator<unknown, unknown, unknown> {
   return Object.prototype.toString.call(value) === '[object Generator]';
