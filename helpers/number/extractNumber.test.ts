@@ -15,6 +15,33 @@ describe('extractNumber', () => {
     expect(extractNumber('no number here')).toBeUndefined();
   });
 
+  describe('leading-dot decimals', () => {
+    it('extracts a decimal with no leading digit', () => {
+      expect(extractNumber('.5rem')).toBe(0.5);
+      expect(extractNumber('.05em')).toBe(0.05);
+      expect(extractNumber('opacity: .75')).toBe(0.75);
+    });
+
+    it('extracts a negative leading-dot decimal', () => {
+      expect(extractNumber('-.5')).toBe(-0.5);
+      expect(extractNumber('-.05')).toBe(-0.05);
+    });
+
+    it('treats a glued "-" before a leading-dot decimal as a separator (auto mode)', () => {
+      expect(extractNumber('x-.5')).toBe(0.5);
+    });
+
+    it('treats a space-separated "-" before a leading-dot decimal as a sign (auto mode)', () => {
+      expect(extractNumber('x -.5')).toBe(-0.5);
+    });
+
+    it('ignores a dot immediately after a word character (property separator, not decimal point)', () => {
+      expect(extractNumber('text.5')).toBe(5);
+      expect(extractNumber('obj.123')).toBe(123);
+      expect(extractNumber('timeout.5s')).toBe(5);
+    });
+  });
+
   it('should pass through numbers, and reject NaN', () => {
     expect(extractNumber(42)).toBe(42);
     expect(extractNumber(-3.14)).toBe(-3.14);
