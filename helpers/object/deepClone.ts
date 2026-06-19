@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+import { UNSAFE_KEYS } from './_unsafeKeys.js';
 
 /**
  * Creates a deep copy of an object or array

@@ -182,3 +182,38 @@ describe("deepMerge", () => {
     expect(target['inherited']).toBeUndefined();
   });
 });
+
+describe("deepMerge — symbol keys", () => {
+  it('should merge symbol keys from source', () => {
+    const sym = Symbol('x');
+    const target: Record<PropertyKey, unknown> = { a: 1 };
+    const source: Record<PropertyKey, unknown> = { [sym]: 'value' };
+    const result = deepMerge(target, source);
+    expect(result[sym]).toBe('value');
+  });
+
+  it('should not overwrite symbol key when source value is undefined', () => {
+    const sym = Symbol('x');
+    const target: Record<PropertyKey, unknown> = { [sym]: 'original' };
+    const source: Record<PropertyKey, unknown> = { [sym]: undefined };
+    const result = deepMerge(target, source);
+    expect(result[sym]).toBe('original');
+  });
+
+  it('should deeply merge symbol keys whose values are plain objects', () => {
+    const sym = Symbol('nested');
+    const target: Record<PropertyKey, unknown> = { [sym]: { a: 1 } };
+    const source: Record<PropertyKey, unknown> = { [sym]: { b: 2 } };
+    const result = deepMerge(target, source);
+    expect(result[sym]).toEqual({ a: 1, b: 2 });
+  });
+
+  it('should not merge non-enumerable symbol keys', () => {
+    const sym = Symbol('hidden');
+    const target: Record<PropertyKey, unknown> = {};
+    const source = {};
+    Object.defineProperty(source, sym, { value: 'hidden', enumerable: false });
+    deepMerge(target, source as Record<PropertyKey, unknown>);
+    expect(target[sym]).toBeUndefined();
+  });
+});
