@@ -31,6 +31,18 @@ const examples: HelperExamples = {
         if (result !== 'default') throw new Error(`Expected 'default', got ${result}`);
       },
     },
+    {
+      title: 'Get via key array (supports symbols)',
+      description: 'Pass an explicit PropertyKey[] to bypass parsing. Supports string, number, and symbol keys.',
+      code: `const id = Symbol('id')
+get({ [id]: 'alice' }, [id])
+// => 'alice'`,
+      assert: () => {
+        const id = Symbol('id');
+        const result = get({ [id]: 'alice' } as Record<symbol, string>, [id]);
+        if (result !== 'alice') throw new Error(`Expected 'alice', got ${String(result)}`);
+      },
+    },
   ],
 };
 
