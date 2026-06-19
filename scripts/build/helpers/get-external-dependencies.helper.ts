@@ -11,12 +11,16 @@ import { DIR } from "../../constants";
 import { readFileText } from "../../utils";
 
 /**
- * Strips `/* ... *\/` and `// ...` comments from source text so that import-like
- * text inside JSDoc `@example` blocks (e.g. `* import { x } from 'pkg';`) is not
- * mistaken for a real import statement.
+ * Strips comments from source text so that import-like text inside JSDoc
+ * `@example` blocks is not mistaken for a real import statement.
+ *
+ * All `//` comments are removed (not just standalone lines): import statements
+ * never contain regex literals, so stripping inline `//` is safe here.
  */
 function stripComments(content: string): string {
-  return content.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+  return content
+    .replace(/\/\*[\s\S]*?\*\//g, '\n')
+    .replace(/\/\/.*$/gm, '');
 }
 
 /**
@@ -37,8 +41,7 @@ export async function getExternalDependencies(categoryName: string): Promise<str
     const filePath = join(categoryPath, file);
     const content = stripComments(readFileText(filePath));
 
-    // Extract import statements
-    const importRegex = /import\s+[^;]+from\s+['"]([^'"]+)['"]/g;
+    const importRegex = /^import\s+[^;]+from\s+['"]([^'"]+)['"]/gm;
     let match;
 
     while ((match = importRegex.exec(content)) !== null) {

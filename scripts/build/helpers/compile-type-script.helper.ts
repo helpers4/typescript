@@ -105,8 +105,12 @@ async function injectLibReferences(dtsPath: string): Promise<void> {
 
   const refs: string[] = [];
 
-  if (/\bTemporal\b/.test(content)) {
-    refs.push('/// <reference lib="esnext.temporal" />');
+  const TEMPORAL_REF = '/// <reference lib="esnext.temporal" />';
+  // \bTemporal\. (with dot) is intentional: Temporal is a namespace, all its types are accessed
+  // as Temporal.Duration, Temporal.Instant, etc. A bare \bTemporal\b would also match JSDoc
+  // prose ("the Temporal API") and inject the directive for files that don't actually use the types.
+  if (/\bTemporal\./.test(content) && !content.includes(TEMPORAL_REF)) {
+    refs.push(TEMPORAL_REF);
   }
 
   if (refs.length > 0) {

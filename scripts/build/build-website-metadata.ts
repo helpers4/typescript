@@ -100,11 +100,20 @@ interface WebsiteLicensesJson {
   readonly dependencies: readonly WebsiteDependency[];
 }
 
+// TypeDoc content parts — each text segment carries a `kind` discriminant and the raw `text`.
+type ContentPart = { kind: string; text: string };
+
+// Shared scanner context types used by buildCommentRanges and findTopLevelSemicolon.
+type ScanCodeCtx = { kind: 'code'; depth: number };
+type ScanStrCtx  = { kind: 'str';  ch: string };
+type ScanTmplCtx = { kind: 'tmpl' };
+type ScanCtx = ScanCodeCtx | ScanStrCtx | ScanTmplCtx;
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-function extractText(summary: Array<{ kind: string; text: string }> | undefined): string {
+function extractText(summary: ContentPart[] | undefined): string {
   if (!summary) return '';
   return summary.map(s => s.text).join('').trim();
 }
@@ -113,14 +122,14 @@ function extractTagText(tags: CommentTag[] | undefined, tagName: string): string
   if (!tags) return undefined;
   const tag = tags.find(t => t.tag === tagName);
   if (!tag) return undefined;
-  return extractText(tag.content as Array<{ kind: string; text: string }>);
+  return extractText(tag.content as ContentPart[]);
 }
 
 function extractExamples(tags: CommentTag[] | undefined): string[] {
   if (!tags) return [];
   return tags
     .filter(t => t.tag === '@example')
-    .map(t => extractText(t.content as Array<{ kind: string; text: string }>))
+    .map(t => extractText(t.content as ContentPart[]))
     .filter(Boolean);
 }
 
@@ -187,7 +196,7 @@ function buildSignatureString(sig: SignatureReflection): string {
 
 function processSignature(sig: SignatureReflection): WebsiteSignature {
   const comment = sig.comment;
-  const description = extractText(comment?.summary as Array<{ kind: string; text: string }> | undefined);
+  const description = extractText(comment?.summary as ContentPart[] | undefined);
   const returnsDesc = extractTagText(comment?.blockTags as CommentTag[] | undefined, '@returns') ?? '';
 
   return {
@@ -196,7 +205,7 @@ function processSignature(sig: SignatureReflection): WebsiteSignature {
     params: (sig.parameters ?? []).map((p: ParameterReflection) => ({
       name: p.name,
       type: serializeType(p.type),
-      description: extractText(p.comment?.summary as Array<{ kind: string; text: string }> | undefined),
+      description: extractText(p.comment?.summary as ContentPart[] | undefined),
       ...(p.flags?.isOptional ? { optional: true } : {}),
       ...(p.defaultValue ? { defaultValue: p.defaultValue } : {}),
     })),
@@ -228,20 +237,129 @@ function readSourceCached(path: string): string {
 }
 
 /**
+ * Pre-scans `src` once and returns a sorted array of `[start, end]` character
+ * ranges covering every line comment (`//`) and block comment (`/* … *​/`).
+ *
+ * Uses a context stack (shared `ScanCtx` types) so that comment-like sequences
+ * inside string or template literals are correctly ignored. Template interpolations
+ * (`${…}`) are tracked with brace-depth counting so that a `}` only exits the
+ * interpolation's code context when it matches the opening `{`, not an inner brace.
+ *
+ * Call once per source file; reuse the result with `isInCommentRange` (O(log n)).
+ */
+function buildCommentRanges(src: string): [number, number][] {
+  const ranges: [number, number][] = [];
+  const stack: ScanCtx[] = [{ kind: 'code', depth: 0 }];
+  let i = 0;
+  while (i < src.length) {
+    const c = src[i];
+    const ctx = stack[stack.length - 1];
+
+    if (ctx.kind === 'str') {
+      if (c === '\\') { i += 2; continue; }
+      if (c === ctx.ch) stack.pop();
+      i++;
+      continue;
+    }
+
+    if (ctx.kind === 'tmpl') {
+      if (c === '\\') { i += 2; continue; }
+      if (c === '$' && src[i + 1] === '{') { stack.push({ kind: 'code', depth: 0 }); i += 2; continue; }
+      if (c === '`') stack.pop();
+      i++;
+      continue;
+    }
+
+    // Code context: top-level or inside a ${…} interpolation.
+    if (c === '\\') { i += 2; continue; } // skip escaped char (e.g. '\/*' inside a regex literal)
+    if (c === '/' && src[i + 1] === '/') {
+      const start = i;
+      while (i < src.length && src[i] !== '\n') i++;
+      ranges.push([start, i - 1]);
+      continue;
+    }
+    if (c === '/' && src[i + 1] === '*') {
+      const start = i;
+      i += 2;
+      while (i < src.length && !(src[i] === '*' && src[i + 1] === '/')) i++;
+      ranges.push([start, i + 1]);
+      i += 2;
+      continue;
+    }
+    if (c === '"' || c === "'") { stack.push({ kind: 'str', ch: c }); i++; continue; }
+    if (c === '`')               { stack.push({ kind: 'tmpl' });       i++; continue; }
+    if (c === '{') {
+      ctx.depth++;
+    } else if (c === '}') {
+      if (ctx.depth === 0 && stack.length > 1) stack.pop(); // close ${…}, resume template body
+      else if (ctx.depth > 0) ctx.depth--;
+    }
+    i++;
+  }
+  return ranges;
+}
+
+// Caches comment ranges per source file so each file is scanned only once
+// across all processMember calls for the same build category.
+const commentRangesCache = new Map<string, [number, number][]>();
+
+function getCommentRanges(srcPath: string): [number, number][] {
+  let ranges = commentRangesCache.get(srcPath);
+  if (!ranges) {
+    ranges = buildCommentRanges(readSourceCached(srcPath));
+    commentRangesCache.set(srcPath, ranges);
+  }
+  return ranges;
+}
+
+/** O(log n) binary search: is `pos` inside any pre-computed comment span? */
+function isInCommentRange(ranges: [number, number][], pos: number): boolean {
+  let lo = 0, hi = ranges.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >>> 1;
+    const [start, end] = ranges[mid];
+    if (pos < start) hi = mid - 1;
+    else if (pos > end) lo = mid + 1;
+    else return true;
+  }
+  return false;
+}
+
+/**
  * Finds the index of the `;` that terminates a type alias starting at `start`,
  * skipping over brackets/semicolons that appear inside string/template literals
  * or comments (e.g. a string-literal type like `'{' | '}' | ';'`).
+ *
+ * Uses a context stack to correctly handle nested template literals such as
+ * `\`${\`inner\`}\`` — a flat quote variable would exit the outer template
+ * prematurely when it saw the inner closing backtick.
  */
 function findTopLevelSemicolon(src: string, start: number): number {
-  let depth = 0;
-  let quote: string | null = null;
+  const stack: ScanCtx[] = [{ kind: 'code', depth: 0 }];
   let inLineComment = false;
   let inBlockComment = false;
 
   for (let i = start; i < src.length; i++) {
     const ch = src[i];
     const next = src[i + 1];
+    const ctx = stack[stack.length - 1];
 
+    // Inside a plain string literal — skip until the closing quote.
+    if (ctx.kind === 'str') {
+      if (ch === '\\') { i++; }
+      else if (ch === ctx.ch) { stack.pop(); }
+      continue;
+    }
+
+    // Inside a template literal body — watch for escape, ${ and closing `.
+    if (ctx.kind === 'tmpl') {
+      if (ch === '\\') { i++; }
+      else if (ch === '$' && next === '{') { stack.push({kind: 'code', depth: 0}); i++; }
+      else if (ch === '`') { stack.pop(); }
+      continue;
+    }
+
+    // Code context: top-level or inside a ${...} expression.
     if (inLineComment) {
       if (ch === '\n') inLineComment = false;
       continue;
@@ -250,19 +368,23 @@ function findTopLevelSemicolon(src: string, start: number): number {
       if (ch === '*' && next === '/') { inBlockComment = false; i++; }
       continue;
     }
-    if (quote) {
-      if (ch === '\\') { i++; }
-      else if (ch === quote) { quote = null; }
-      continue;
-    }
 
     if (ch === '/' && next === '/') { inLineComment = true; i++; continue; }
     if (ch === '/' && next === '*') { inBlockComment = true; i++; continue; }
-    if (ch === "'" || ch === '"' || ch === '`') { quote = ch; continue; }
+    if (ch === "'" || ch === '"')   { stack.push({kind: 'str', ch}); continue; }
+    if (ch === '`')                  { stack.push({kind: 'tmpl'}); continue; }
 
-    if (ch === '{' || ch === '(' || ch === '[') depth++;
-    else if (ch === '}' || ch === ')' || ch === ']') depth--;
-    else if (ch === ';' && depth === 0) return i;
+    if (ch === '{' || ch === '(' || ch === '[') {
+      ctx.depth++;
+    } else if (ch === '}' || ch === ')' || ch === ']') {
+      if (ch === '}' && ctx.depth === 0 && stack.length > 1) {
+        stack.pop(); // close the ${...} expression, resume template body
+      } else if (ctx.depth > 0) {
+        ctx.depth--;
+      }
+    } else if (ch === ';' && ctx.depth === 0 && stack.length === 1) {
+      return i;
+    }
   }
   return src.length;
 }
@@ -287,7 +409,7 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
   const primarySig = child.signatures?.[0] as SignatureReflection | undefined;
   const comment = primarySig?.comment ?? child.comment;
 
-  const description = extractText(comment?.summary as Array<{ kind: string; text: string }> | undefined);
+  const description = extractText(comment?.summary as ContentPart[] | undefined);
   const since = extractTagText(comment?.blockTags as CommentTag[] | undefined, '@since') ?? 'unknown';
 
   // Double-safety: exclude anything without an explicit @since tag.
@@ -308,7 +430,27 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
         const src = readSourceCached(srcPath);
         // Find the specific declaration: `export type NAME` → extract from `type NAME`
         // up to the closing `;` at brace-depth 0 (handles multi-line conditional types).
-        const exportStart = src.indexOf(`export type ${child.name}`);
+        // Word-boundary check: skip `export type FooBar` when looking for `Foo`.
+        // Comment check: skip occurrences that fall inside `//` or `/* */` comments.
+        //
+        // Comment ranges are pre-computed once per file (O(n)) and reused across all
+        // processMember calls for the same source file via getCommentRanges/commentRangesCache.
+        // Each individual candidate check is then O(log k) binary search instead of O(n).
+        const searchStr = `export type ${child.name}`;
+        const commentRanges = getCommentRanges(srcPath);
+        let exportStart = -1;
+        let searchFrom = 0;
+        while (true) {
+          const candidate = src.indexOf(searchStr, searchFrom);
+          if (candidate === -1) break;
+          const charAfter = src[candidate + searchStr.length];
+          const wordBoundaryOk = charAfter === undefined || /[\s<=;(]/.test(charAfter);
+          if (wordBoundaryOk && !isInCommentRange(commentRanges, candidate)) {
+            exportStart = candidate;
+            break;
+          }
+          searchFrom = candidate + 1;
+        }
         if (exportStart !== -1) {
           const typeStart = exportStart + 'export '.length;
           const end = findTopLevelSemicolon(src, typeStart);
@@ -447,6 +589,10 @@ async function loadExampleFiles(
  * @param validCategories - Categories that were successfully built
  */
 export async function buildWebsiteMetadata(validCategories: string[]): Promise<void> {
+  // Clear per-invocation caches so repeated calls (e.g. watch mode) don't serve stale data.
+  sourceFileCache.clear();
+  commentRangesCache.clear();
+
   const rootPkg = readFileJson<Record<string, unknown>>(join(DIR.ROOT, 'package.json'));
   const version = rootPkg.version as string;
 
@@ -533,8 +679,23 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
     };
 
     /** Word-boundary match for a type identifier inside a signature blob. */
-    const referencesType = (haystack: string, typeName: string): boolean =>
-      new RegExp(`\\b${typeName.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}\\b`).test(haystack);
+    // '\\$&' in a JS replacement string → one literal backslash before the matched char.
+    const typeRefCache = new Map<string, RegExp>();
+    const referencesType = (haystack: string, typeName: string): boolean => {
+      let re = typeRefCache.get(typeName);
+      if (!re) {
+        re = new RegExp(`\\b${typeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
+        typeRefCache.set(typeName, re);
+      }
+      return re.test(haystack);
+    };
+
+    // Precompute text blobs once per function — avoids M×N redundant joins in the orphan loop.
+    const functionTextCache = new Map<WebsiteFunction, string>(
+      functions
+        .filter(fn => fn.kind === 'function')
+        .map(fn => [fn, collectFunctionText(fn)]),
+    );
 
     for (const fn of functions) {
       if (fn.kind !== 'type' && fn.kind !== 'interface') continue;
@@ -563,7 +724,7 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
       // 1:0 (orphan) — type lives alone in its file (typically *.model.ts).
       // Attach it to every function in the category that references it in a signature.
       const consumers = functions.filter(
-        other => other.kind === 'function' && referencesType(collectFunctionText(other), fn.name),
+        other => other.kind === 'function' && referencesType(functionTextCache.get(other) ?? '', fn.name),
       );
       if (consumers.length > 0) {
         companionTypeNames.add(fn.name);
