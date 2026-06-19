@@ -11,8 +11,9 @@ import { get } from './get';
 
 describe('set — property-based', () => {
   it('get(set(obj, path, value), path) === value for single-level paths', () => {
+    // Exclude '.' and bracket chars — they create multi-level paths, tested separately
     const safeKey = fc.string({ minLength: 1, maxLength: 10 }).filter(
-      (s) => !s.includes('.') && s !== '__proto__' && s !== 'constructor' && s !== 'prototype'
+      (s) => !s.includes('.') && !s.includes('[') && !s.includes(']') && s !== '__proto__' && s !== 'constructor' && s !== 'prototype'
     );
     fc.assert(
       fc.property(
@@ -28,8 +29,9 @@ describe('set — property-based', () => {
   });
 
   it('set mutates and returns the same object reference', () => {
+    // Exclude '.' and bracket chars — they create multi-level paths, tested separately
     const safeKey = fc.string({ minLength: 1, maxLength: 10 }).filter(
-      (s) => !s.includes('.') && s !== '__proto__' && s !== 'constructor' && s !== 'prototype'
+      (s) => !s.includes('.') && !s.includes('[') && !s.includes(']') && s !== '__proto__' && s !== 'constructor' && s !== 'prototype'
     );
     fc.assert(
       fc.property(

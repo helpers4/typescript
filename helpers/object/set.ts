@@ -4,31 +4,75 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+import { parsePath } from './_parsePath.js';
+import type { DeepGet, DeepSet } from './_types.js';
+import { UNSAFE_KEYS } from './_unsafeKeys.js';
 
 /**
- * Sets a value in an object using a dot-notated path
- * @param obj - The object to set value in
- * @param path - The dot-notated path (e.g., 'a.b.c')
- * @param value - The value to set
- * @returns The modified object
+ * Sets a value in an object at the given path, creating intermediate objects as needed.
+ *
+ * **Three path forms are supported:**
+ *
+ * 1. **Dot notation** (`string`) — segments split on `.` are kept as-is string keys.
+ *    `"layers.1.name"` → keys `["layers", "1", "name"]` (all strings, including `"1"`).
+ *
+ * 2. **Bracket notation** (`string`) — `[n]` segments are parsed as numeric keys.
+ *    `"layers[1].name"` → keys `["layers", 1, "name"]` (index `1` becomes a number).
+ *    Dot and bracket can be mixed freely: `"a[0].b[2].c"`.
+ *
+ * 3. **Key array** (`PropertyKey[]`) — explicit array of `string | number | symbol` keys,
+ *    no parsing performed. Enables full key-type control, including symbols:
+ *    `["layers", 1, Symbol('id')]`.
+ *
+ * Intermediate nodes that are absent, `null`, or not an object are replaced with `{}`.
+ * Any path containing a string segment equal to `__proto__`, `constructor`, or `prototype`
+ * is rejected and the original object is returned unchanged (prototype-pollution guard).
+ *
+ * @param obj - The object to mutate
+ * @param path - Dot/bracket-notation string or explicit `PropertyKey[]`
+ * @param value - Value to assign at the path
+ * @returns The mutated object (same reference)
+ * @example
+ * // 1. Dot notation — "1" stays a string key
+ * set({}, 'a.b.c', 42)
+ * // => { a: { b: { c: 42 } } }
+ *
+ * set({}, 'layers.1.name', 'bg')
+ * // => { layers: { '1': { name: 'bg' } } }
+ *
+ * // 2. Bracket notation — [1] becomes a number key
+ * set({ layers: [{}, { name: 'old' }] }, 'layers[1].name', 'bg')
+ * // => { layers: [{}, { name: 'bg' }] }
+ *
+ * // 3. Key array — supports symbols
+ * const id = Symbol('id')
+ * set({}, ['user', id], 'alice')
+ * // => { user: { [id]: 'alice' } }
  * @since 1.9.0
  */
-export function set(obj: Record<string, unknown>, path: string, value: unknown): Record<string, unknown> {
-  const keys = path.split('.');
 
-  if (keys.some((k) => UNSAFE_KEYS.has(k))) return obj;
+export function set(obj: Record<string, unknown>, path: string, value: unknown): Record<string, unknown>;
+export function set<T extends object, const Path extends readonly PropertyKey[], V extends DeepGet<T, Path>>(obj: T, path: Path, value: V): DeepSet<T, Path, V>;
+export function set(obj: object, path: string | PropertyKey[], value: unknown): object {
+  const keys: readonly PropertyKey[] = typeof path === 'string' ? parsePath(path) : path;
 
-  let current: Record<string, unknown> = obj;
+  if (keys.length === 0) return obj;
+  if (keys.some((k) => typeof k === 'string' && UNSAFE_KEYS.has(k))) return obj;
+
+  let current = obj as Record<PropertyKey, unknown>;
 
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
 
-    if (!(key in current) || typeof current[key] !== 'object' || current[key] === null) {
+    // Object.hasOwn (not `key in current`) is intentional: `in` checks the prototype chain,
+    // which would silently traverse into — and potentially mutate — an inherited object.
+    // Using hasOwn ensures we only follow own properties; inherited intermediate nodes are
+    // shadowed with a fresh own `{}` instead of being followed into the prototype.
+    if (!Object.hasOwn(current, key) || typeof current[key] !== 'object' || current[key] === null) {
       current[key] = {};
     }
 
-    current = current[key] as Record<string, unknown>;
+    current = current[key] as Record<PropertyKey, unknown>;
   }
 
   current[keys[keys.length - 1]] = value;

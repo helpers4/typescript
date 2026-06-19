@@ -120,4 +120,100 @@ describe("set", () => {
     set(obj, 'a.__proto__.x', 1);
     expect(obj['a']).toBeUndefined();
   });
+
+  it('should shadow a prototype-inherited intermediate node instead of traversing into it', () => {
+    // Object.hasOwn (not `in`) is intentional: traversing into an inherited node would
+    // mutate the prototype, affecting all objects that share it.
+    const proto = { middleware: { timeout: 5000 } };
+    const obj = Object.create(proto) as Record<string, unknown>;
+    set(obj, 'middleware.host', 'localhost');
+    // Own 'middleware' is created on obj, shadowing proto.middleware.
+    expect(Object.hasOwn(obj, 'middleware')).toBe(true);
+    expect((obj['middleware'] as Record<string, unknown>)['host']).toBe('localhost');
+    // The prototype node is left untouched.
+    expect(proto.middleware.timeout).toBe(5000);
+    expect((proto.middleware as Record<string, unknown>)['host']).toBeUndefined();
+  });
+});
+
+describe("set — bracket notation", () => {
+  it('should parse [n] as a number key', () => {
+    const obj: Record<PropertyKey, unknown> = {};
+    set(obj, 'a[0]', 'val');
+    expect((obj['a'] as Record<number, unknown>)[0]).toBe('val');
+  });
+
+  it('should handle mixed dot and bracket notation', () => {
+    const obj: Record<PropertyKey, unknown> = {};
+    set(obj, 'layers[1].name', 'bg');
+    expect(((obj['layers'] as Record<number, unknown>)[1] as Record<string, unknown>)['name']).toBe('bg');
+  });
+
+  it('dot notation keeps "1" as string key, bracket [1] gives number key', () => {
+    const obj1: Record<string, unknown> = {};
+    const obj2: Record<PropertyKey, unknown> = {};
+    set(obj1, 'a.1.b', 'dot');
+    set(obj2, 'a[1].b', 'bracket');
+    expect(((obj1['a'] as Record<string, unknown>)['1'] as Record<string, unknown>)['b']).toBe('dot');
+    expect(((obj2['a'] as Record<number, unknown>)[1] as Record<string, unknown>)['b']).toBe('bracket');
+  });
+
+  it('should work on existing array elements', () => {
+    const obj = { layers: [{}, { name: 'old' }] };
+    set(obj, 'layers[1].name', 'new');
+    expect(obj.layers[1].name).toBe('new');
+  });
+
+  it('should handle multiple bracket indices', () => {
+    const obj: Record<PropertyKey, unknown> = {};
+    set(obj, 'a[0][1]', 'deep');
+    expect(((obj['a'] as Record<number, unknown>)[0] as Record<number, unknown>)[1]).toBe('deep');
+  });
+});
+
+describe("set — PropertyKey[] path", () => {
+  it('should accept an array of string keys', () => {
+    const obj: Record<string, unknown> = {};
+    set(obj, ['a', 'b', 'c'], 42);
+    expect(((obj['a'] as Record<string, unknown>)['b'] as Record<string, unknown>)['c']).toBe(42);
+  });
+
+  it('should accept number keys', () => {
+    const obj: Record<PropertyKey, unknown> = {};
+    set(obj, ['items', 0, 'name'], 'first');
+    expect(((obj['items'] as Record<number, unknown>)[0] as Record<string, unknown>)['name']).toBe('first');
+  });
+
+  it('should accept symbol keys', () => {
+    const sym = Symbol('id');
+    const obj: Record<PropertyKey, unknown> = {};
+    set(obj, ['user', sym], 'alice');
+    expect((obj['user'] as Record<symbol, unknown>)[sym]).toBe('alice');
+  });
+
+  it('should return same object reference', () => {
+    const obj: Record<PropertyKey, unknown> = {};
+    const result = set(obj, ['a'], 1);
+    expect(result).toBe(obj);
+  });
+
+  it('should reject paths with unsafe string keys', () => {
+    const obj = { a: 1 };
+    const result = set(obj, ['__proto__', 'polluted'] as PropertyKey[], 'yes');
+    expect(result).toBe(obj);
+    expect(({} as Record<string, unknown>)['polluted']).toBeUndefined();
+  });
+
+  it('should return obj unchanged for empty key array', () => {
+    const obj = { a: 1 };
+    const result = set(obj, [] as PropertyKey[], 'value');
+    expect(result).toBe(obj);
+    expect(result).toEqual({ a: 1 });
+  });
+
+  it('should create intermediate objects as needed', () => {
+    const obj: Record<PropertyKey, unknown> = {};
+    set(obj, ['x', 'y', 'z'], true);
+    expect(((obj['x'] as Record<string, unknown>)['y'] as Record<string, unknown>)['z']).toBe(true);
+  });
 });

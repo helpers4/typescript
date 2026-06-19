@@ -25,8 +25,17 @@ describe("get", () => {
     expect(get(obj, 'a.b.d', 'default')).toBe('default');
   });
 
-  it("should work with array indices", () => {
+  it("should work with array indices via dot notation", () => {
     expect(get(obj, 'x.2.y')).toBe('array-value');
+  });
+
+  it("should work with bracket notation for array indices", () => {
+    expect(get(obj, 'x[2].y')).toBe('array-value');
+  });
+
+  it("should work with mixed dot and bracket notation", () => {
+    const nested = { a: [{ b: [{ c: 'deep' }] }] };
+    expect(get(nested, 'a[0].b[0].c')).toBe('deep');
   });
 
   it("should return undefined for non-existent path without default", () => {
@@ -55,5 +64,44 @@ describe("get", () => {
   it("should return default when path traverses through string", () => {
     const obj = { a: 'hello' };
     expect(get(obj, 'a.b', 'fallback')).toBe('fallback');
+  });
+
+  // --- PropertyKey[] path ---
+
+  it("should accept an array of string keys", () => {
+    expect(get(obj, ['a', 'b', 'c'])).toBe('value');
+  });
+
+  it("should accept number keys", () => {
+    expect(get(obj, ['x', 2, 'y'])).toBe('array-value');
+  });
+
+  it("should accept symbol keys", () => {
+    const sym = Symbol('id');
+    const o = { [sym]: 'secret' };
+    expect(get(o, [sym])).toBe('secret');
+  });
+
+  it("should return default for missing array path", () => {
+    expect(get(obj, ['a', 'z'], 'fallback')).toBe('fallback');
+  });
+
+  it("should return obj itself for empty key array", () => {
+    expect(get(obj, [])).toBe(obj);
+  });
+
+  // --- parsePath edge-case regressions ---
+
+  it('should traverse the empty-string key for a bare dot path "."', () => {
+    // '.' is treated as a leading dot (stripped) leaving '' → [''] — one empty-string key.
+    // Regression: parsePath('.') previously returned [], causing a silent no-op.
+    const o: Record<string, unknown> = { '': 'empty-key-value' };
+    expect(get(o, '.')).toBe('empty-key-value');
+  });
+
+  it('should traverse empty middle segment for consecutive dots "a..b"', () => {
+    // 'a..b' → ['a', '', 'b'] — the empty segment addresses obj.a[''].b.
+    const o = { a: { '': { b: 'found' } } };
+    expect(get(o, 'a..b')).toBe('found');
   });
 });

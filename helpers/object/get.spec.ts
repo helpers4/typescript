@@ -22,9 +22,10 @@ describe('get — property-based', () => {
   });
 
   it('returns value when path exists', () => {
+    // Exclude '.', '[', ']' — dot and bracket notation create multi-level paths
     const safeKey = fc
       .string({ minLength: 1, maxLength: 10 })
-      .filter((s) => !s.includes('.') && s !== '__proto__' && s !== 'constructor' && s !== 'prototype');
+      .filter((s) => !s.includes('.') && !s.includes('[') && !s.includes(']') && s !== '__proto__' && s !== 'constructor' && s !== 'prototype');
     fc.assert(
       fc.property(safeKey, fc.integer(), (key, value) => {
         const obj = Object.create(null) as Record<string, unknown>;
