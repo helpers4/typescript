@@ -29,10 +29,14 @@ export interface ExtractNumberOptions {
   exponent?: 'auto' | 'strict' | 'ignore';
 }
 
-const NUMBER_TOKEN = /(-)?(\d+(?:\.\d+)?)([eE][+-]?\d+)?/g;
+// (?<![\p{L}\p{N}_]) prevents matching a leading-dot decimal immediately after a word
+// character (e.g. the '.5' in 'text.5' is a property separator, not a decimal point).
+// No `g` flag — cloned per call via `new RegExp(…, 'gu')` so each invocation has its own lastIndex.
+const NUMBER_TOKEN = /(-)?(\d+(?:\.\d+)?|(?<![\p{L}\p{N}_])\.\d+)([eE][+-]?\d+)?/u;
+const WORD_CHAR = /[\p{L}\p{N}_]/u;
 
 function isWordChar(char: string | undefined): boolean {
-  return char !== undefined && /[\p{L}\p{N}_]/u.test(char);
+  return char !== undefined && WORD_CHAR.test(char);
 }
 
 /**
@@ -50,15 +54,18 @@ function isWordChar(char: string | undefined): boolean {
  * @returns The extracted number, or `undefined` if none was found
  * @example
  * extractNumber('16.5px')        // => 16.5
+ * extractNumber('.5rem')         // => 0.5   (leading-dot decimal)
+ * extractNumber('-.5')           // => -0.5  (leading-dot with sign)
  * extractNumber('Wafer 10')      // => 10
  * extractNumber('xxx-111')       // => 111   ('-' glued to text → separator)
  * extractNumber('xxx -111')      // => -111  ('-' preceded by a space → sign)
+ * extractNumber('x-.5')          // => 0.5   ('-' glued to 'x' → separator; leading-dot decimal follows)
  * extractNumber('-111')          // => -111  ('-' at the start of the string → sign)
  * extractNumber('1e5 mol')       // => 100000
  * extractNumber('1e5kg')         // => 1     ('e5' glued to text → mantissa only)
  * extractNumber('no number')     // => undefined
  * extractNumber(42)              // => 42
- * @since 2.0.3
+ * @since next
  */
 export function extractNumber(value: unknown, options: ExtractNumberOptions = {}): number | undefined {
   const { sign = 'auto', exponent = 'auto' } = options;
@@ -71,10 +78,10 @@ export function extractNumber(value: unknown, options: ExtractNumberOptions = {}
     return undefined;
   }
 
-  NUMBER_TOKEN.lastIndex = 0;
+  const re = new RegExp(NUMBER_TOKEN.source, 'gu');
   let match: RegExpExecArray | null;
 
-  while ((match = NUMBER_TOKEN.exec(value)) !== null) {
+  while ((match = re.exec(value)) !== null) {
     const [full, signChar, mantissa, exponentPart] = match;
     const start = match.index;
 
@@ -84,7 +91,7 @@ export function extractNumber(value: unknown, options: ExtractNumberOptions = {}
 
       if (!keepSign) {
         // Re-scan from right after the '-' so the digits are matched as a fresh, unsigned number.
-        NUMBER_TOKEN.lastIndex = start + 1;
+        re.lastIndex = start + 1;
         continue;
       }
     }
