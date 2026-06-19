@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { sum } from './sum.js';
+
 /**
  * Calculates the arithmetic mean (average) of an array of numbers.
  * Returns `NaN` for an empty array.
@@ -20,5 +22,5 @@
  */
 export function mean(array: readonly number[]): number {
   if (array.length === 0) return NaN;
-  return array.reduce((acc, n) => acc + n, 0) / array.length;
+  return sum(array) / array.length;
 }

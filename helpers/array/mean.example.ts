@@ -9,7 +9,7 @@ import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
   helper: 'mean',
-  category: 'number',
+  category: 'array',
   examples: [
     {
       title: 'Average a list of numbers',

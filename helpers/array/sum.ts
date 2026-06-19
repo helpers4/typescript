@@ -7,7 +7,7 @@
 /**
  * Calculates the sum of an array of numbers.
  * @param array - The array of numbers to sum
- * @returns The sum of all values
+ * @returns The sum of all values, or `0` for an empty array
  * @example
  * sum([1, 2, 3, 4])
  * // => 10
