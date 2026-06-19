@@ -9,7 +9,7 @@ import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
   helper: 'sum',
-  category: 'number',
+  category: 'array',
   examples: [
     {
       title: 'Sum numbers',
