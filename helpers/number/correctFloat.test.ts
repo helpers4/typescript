@@ -44,6 +44,12 @@ describe('correctFloat', () => {
     expect(correctFloat(1_000_000)).toBe(1_000_000);
   });
 
+  it('silently truncates decimal digits for |value| >= 1e13 at default precision', () => {
+    // 1e13 consumes all 14 significant digits with its integer part;
+    // the fractional .1 is rounded away — documented, intentional behavior.
+    expect(correctFloat(1e13 + 0.1)).toBe(1e13);
+  });
+
   it('throws RangeError for NaN value', () => {
     expect(() => correctFloat(NaN)).toThrow(RangeError);
     expect(() => correctFloat(NaN)).toThrow('finite number');
