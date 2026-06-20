@@ -18,7 +18,7 @@ describe('correctFloat', () => {
     correctFloat(1.23456789, 4);
   });
   bench('large float', () => {
-    correctFloat(123456789.987654321);
+    correctFloat(123456789.9876543);
   });
   bench('negative zero', () => {
     correctFloat(-0);

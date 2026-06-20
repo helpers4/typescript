@@ -62,12 +62,15 @@ describe('sortBy — property-based', () => {
 
   it('createSortByDateFn: result is non-decreasing for valid Date objects', () => {
     fc.assert(
-      fc.property(fc.array(fc.record({ date: fc.date() }), { minLength: 2 }), (arr) => {
-        const sorted = [...arr].sort(createSortByDateFn());
-        for (let i = 1; i < sorted.length; i++) {
-          expect(sorted[i]!.date.getTime()).toBeGreaterThanOrEqual(sorted[i - 1]!.date.getTime());
-        }
-      }),
+      fc.property(
+        fc.array(fc.record({ date: fc.date() }).filter(r => !isNaN(r.date.getTime())), { minLength: 2 }),
+        (arr) => {
+          const sorted = [...arr].sort(createSortByDateFn());
+          for (let i = 1; i < sorted.length; i++) {
+            expect(sorted[i]!.date.getTime()).toBeGreaterThanOrEqual(sorted[i - 1]!.date.getTime());
+          }
+        },
+      ),
     );
   });
 });
