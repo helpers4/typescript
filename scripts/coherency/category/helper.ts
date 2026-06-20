@@ -166,6 +166,7 @@ export async function testSourceStructure(): Promise<void> {
       .map(e => e.name)
       .filter(name => {
         if (name === 'index.ts') return false;
+        if (name.startsWith('_')) return false;
         return !SUFFIXES.some(suffix => name.endsWith(suffix));
       });
 
