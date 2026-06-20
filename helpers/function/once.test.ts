@@ -64,6 +64,24 @@ describe('once', () => {
     expect(count).toBe(1);
   });
 
+  it('re-throws if the first call throws, and retries on the next call', () => {
+    let calls = 0;
+    const wrapped = once(() => {
+      calls++;
+      if (calls === 1) throw new Error('boom');
+      return 'ok';
+    });
+
+    expect(() => wrapped()).toThrow('boom');
+    expect(calls).toBe(1);
+    // called must still be false — the throw did not lock the cache
+    expect(wrapped()).toBe('ok');
+    expect(calls).toBe(2);
+    // now locked
+    expect(wrapped()).toBe('ok');
+    expect(calls).toBe(2);
+  });
+
   describe('reset()', () => {
     it('allows the function to be called again after reset', () => {
       let count = 0;
