@@ -18,6 +18,10 @@
  * type MutablePoint = DeepWritable<Point>;
  * // => [x: number, y: number]
  *
+ * Note: `Date`, `Map`, `Set`, `Promise`, and `RegExp` are treated as opaque and passed
+ * through unchanged. In particular, `DeepWritable<Map<K, V>>` does **not** strip `readonly`
+ * from the value type `V` — use a manual mapped type if you need that.
+ *
  * @since 2.0.2
  */
 export type DeepWritable<T> =
