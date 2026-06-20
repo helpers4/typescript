@@ -140,7 +140,9 @@ helpers/<category>/
 **TypeScript rules:**
 - `any` is **FORBIDDEN** — use `unknown` or specific types
 - JSDoc required on all exports: `@param`, `@returns`, `@example`, `@since <version>`
-  - `@since` must always be the **literal string `next`** — never a real version number (e.g. `2.1.0`). The release script replaces `next` with the actual version at publish time. Example: `@since next`
+  - For **new exports** (not yet released): use the literal token `@since next`. The release script replaces it with the actual version at publish time.
+  - For **existing exports** that already have `@since x.x.x`: **NEVER change it** — the version records when the API was first published and must stay accurate.
+  - Rule of thumb: if a `@since` tag already has a real version number, leave it exactly as-is.
 - 2-space indentation, single quotes
 - Tree-shakable exports only (no side effects)
 
@@ -151,6 +153,12 @@ helpers/<category>/
 **Type predicates** (`is<Type>`) → `type/` category.
 These answer "what *type* is this value?" and return a TypeScript type guard.
 Examples: `isArray`, `isString`, `isNull`, `isPromise`.
+
+**Exception — `node/` category:** Node.js-specific type predicates (`isBuffer`, `isNodeStream`,
+`isSharedArrayBuffer`) live in `node/` rather than `type/` because they depend on Node.js
+globals that are unavailable in browser environments, making them incompatible with the
+browser-safe `type/` category. New Node.js-specific `is*` predicates should follow the same
+pattern and belong in `node/`.
 
 **State predicates** → **their own category**, never `type/`.
 These answer "what *state* is this value in?" and are category-specific.
