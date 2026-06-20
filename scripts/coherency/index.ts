@@ -6,25 +6,51 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-// Simple index that runs all coherency tests by calling their individual scripts
-import { execSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 
 const tests = ['bundle', 'version', 'category', 'dependencies', 'sizes', 'jsdoc-since'];
+
+function runScript(name: string, script: string): Promise<{ name: string; ok: boolean }> {
+  return new Promise(resolve => {
+    const child = spawn('pnpm', ['exec', 'tsx', script], {
+      cwd: process.cwd(),
+      stdio: 'pipe',
+      shell: false,
+    });
+    const chunks: Buffer[] = [];
+    child.stdout?.on('data', (d: Buffer) => chunks.push(d));
+    child.stderr?.on('data', (d: Buffer) => chunks.push(d));
+    child.on('close', code => {
+      const out = Buffer.concat(chunks).toString().trim();
+      if (out) process.stdout.write(`[${name}]\n${out}\n`);
+      resolve({ name, ok: code === 0 });
+    });
+    child.on('error', (err: Error) => {
+      process.stderr.write(`[${name}] spawn error: ${err.message}\n`);
+      resolve({ name, ok: false });
+    });
+  });
+}
 
 async function runAllTests() {
   console.log("🔍 Running coherency tests in parallel...\n");
 
-  const commands = tests.map(test => `pnpm exec tsx scripts/coherency/${test}/index.ts`);
-  const parallelCommand = commands.join(' & ') + '; wait';
+  const results = await Promise.all(
+    tests.map(test => runScript(test, `scripts/coherency/${test}/index.ts`))
+  );
 
-  try {
-    execSync(parallelCommand, { cwd: process.cwd(), stdio: 'inherit' });
+  const failed = results.filter(r => !r.ok);
+
+  if (failed.length === 0) {
     console.log("\n🎉 All coherency tests completed!");
-  } catch {
-    console.error("\n💥 Some coherency tests failed!");
+  } else {
+    console.error(`\n💥 ${failed.length} coherency test(s) failed:`);
+    for (const f of failed) console.error(`   ✗ ${f.name}`);
     process.exit(1);
   }
 }
 
-// Run all tests
-runAllTests().catch(console.error);
+runAllTests().catch(err => {
+  console.error(err);
+  process.exit(1);
+});
