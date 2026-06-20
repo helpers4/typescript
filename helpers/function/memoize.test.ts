@@ -61,6 +61,17 @@ describe("memoize", () => {
       expect(callCount).toBe(4);
     });
 
+    it("with maxSize: 0, nothing is ever cached (every call computes)", () => {
+      let callCount = 0;
+      const fn = memoize((x: number) => { callCount++; return x; }, { maxSize: 0 });
+
+      expect(fn(1)).toBe(1);
+      expect(fn(1)).toBe(1); // no cache — computes again
+      expect(callCount).toBe(2);
+      expect(fn(2)).toBe(2);
+      expect(callCount).toBe(3);
+    });
+
     it("with maxSize: 1 always returns the latest result cached", () => {
       let callCount = 0;
       const fn = memoize((x: number) => { callCount++; return x; }, { maxSize: 1 });
