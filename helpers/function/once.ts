@@ -38,8 +38,8 @@ export function once<A extends unknown[], R>(fn: (...args: A) => R): OnceFn<A, R
 
   const wrapped = (...args: A): R => {
     if (!called) {
-      called = true;
       result = fn(...args);
+      called = true;
     }
     return result;
   };
