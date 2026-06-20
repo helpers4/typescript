@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { DEFAULT_SORT_STRING_PROPS } from './sort';
+import { buildCollatorCompareFn, normalizePropertyToKeys } from './_sortHelpers';
 import type { SortFn } from './sort';
 
-// Shared Intl.Collator instances — lazy-init so the module is safe to import
-// in environments that may not have Intl available at module evaluation time.
+// Natural-sort collators use { numeric: true } — different options from the
+// string-sort singletons in _sortHelpers.ts, so these cannot be shared.
 let naturalCollatorCache: Intl.Collator | undefined;
 let naturalCollatorInsensitiveCache: Intl.Collator | undefined;
 
@@ -24,6 +24,8 @@ const getNaturalCollatorInsensitive = (): Intl.Collator =>
  * @param a - First string
  * @param b - Second string
  * @returns Sort order
+ * @example
+ * ['W11', 'W2', 'W20'].sort(sortStringNaturalAscFn) // => ['W2', 'W11', 'W20']
  * @since 2.0.2
  */
 export const sortStringNaturalAscFn: SortFn<string> = (a: string, b: string) =>
@@ -35,36 +37,40 @@ export const sortStringNaturalAscFn: SortFn<string> = (a: string, b: string) =>
  * @param a - First string
  * @param b - Second string
  * @returns Sort order
+ * @example
+ * ['W11', 'W2', 'W20'].sort(sortStringNaturalDescFn) // => ['W20', 'W11', 'W2']
  * @since 2.0.2
  */
 export const sortStringNaturalDescFn: SortFn<string> = (a: string, b: string) =>
   getNaturalCollator().compare(b, a);
 
 /**
- * Sort strings in ascending natural order (case insensitive).
+ * Sort strings in ascending natural order, ignoring case **and diacritics**
+ * (`Intl.Collator { sensitivity: 'base' }` — treats é, E, and e as equal).
+ * Numbers embedded in strings are compared numerically: "W2" < "W11" < "W20".
  * @param a - First string
  * @param b - Second string
  * @returns Sort order
+ * @example
+ * ['W11', 'W2', 'W20'].sort(sortStringNaturalAscInsensitiveFn) // => ['W2', 'W11', 'W20']
  * @since 2.0.2
  */
 export const sortStringNaturalAscInsensitiveFn: SortFn<string> = (a: string, b: string) =>
   getNaturalCollatorInsensitive().compare(a, b);
 
 /**
- * Sort strings in descending natural order (case insensitive).
+ * Sort strings in descending natural order, ignoring case **and diacritics**
+ * (`Intl.Collator { sensitivity: 'base' }` — treats é, E, and e as equal).
  * Numbers embedded in strings are compared numerically: "W20" > "W11" > "W2".
  * @param a - First string
  * @param b - Second string
  * @returns Sort order
+ * @example
+ * ['W11', 'W2', 'W20'].sort(sortStringNaturalDescInsensitiveFn) // => ['W20', 'W11', 'W2']
  * @since 2.0.2
  */
 export const sortStringNaturalDescInsensitiveFn: SortFn<string> = (a: string, b: string) =>
   getNaturalCollatorInsensitive().compare(b, a);
-
-/** @internal */
-function natVal<T extends Record<string, unknown>>(obj: T, key: keyof T): string {
-  return String(obj[key] ?? '');
-}
 
 /**
  * Creates a sort function for objects by one or more string properties using
@@ -75,9 +81,13 @@ function natVal<T extends Record<string, unknown>>(obj: T, key: keyof T): string
  *   Defaults to trying 'value', 'label', 'title', 'description' in that order.
  * @param caseInsensitive - Whether to ignore case **and diacritics** (default: false).
  *   Uses `Intl.Collator { sensitivity: 'base' }`, which treats é, E, and e as equal.
- *   This differs from `createSortByStringFn(key, true)`, which only folds case via
- *   `toLowerCase` and still distinguishes accented characters.
+ *   This differs from `createSortByStringFn(key, true)`, which only folds case and
+ *   still distinguishes accented characters (é ≠ e).
  * @returns Sort function
+ * @example
+ * const items = [{ label: 'W11' }, { label: 'W2' }, { label: 'W20' }];
+ * items.sort(createSortByNaturalFn('label'))
+ * // => [{ label: 'W2' }, { label: 'W11' }, { label: 'W20' }]
  * @since 2.0.2
  */
 export function createSortByNaturalFn<T extends Record<string, unknown>>(
@@ -85,30 +95,5 @@ export function createSortByNaturalFn<T extends Record<string, unknown>>(
   caseInsensitive: boolean = false,
 ): SortFn<T> {
   const collator = caseInsensitive ? getNaturalCollatorInsensitive() : getNaturalCollator();
-  const keys: readonly (keyof T)[] | undefined = property === undefined
-    ? undefined
-    : Array.isArray(property)
-      ? (property as readonly (keyof T)[])
-      : [property as keyof T];
-
-  return (a: T, b: T) => {
-    if (keys !== undefined) {
-      for (const key of keys) {
-        const cmp = collator.compare(natVal(a, key), natVal(b, key));
-        if (cmp !== 0) return cmp;
-      }
-      return 0;
-    }
-
-    // Auto-detect: find the first property shared by both objects.
-    for (const prop of DEFAULT_SORT_STRING_PROPS) {
-      if (prop in a && prop in b) {
-        return collator.compare(
-          natVal(a, prop as keyof T),
-          natVal(b, prop as keyof T),
-        );
-      }
-    }
-    return 0;
-  };
+  return buildCollatorCompareFn<T>(collator, normalizePropertyToKeys<T>(property));
 }

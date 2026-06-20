@@ -55,8 +55,8 @@ describe('createSortByStringFn', () => {
   it('should handle null/undefined property values', () => {
     const items = [
       { name: 'John' },
-      { name: null as any },
-      { name: undefined as any },
+      { name: null as unknown as string },
+      { name: undefined as unknown as string },
       { name: 'Alice' },
     ];
     const sorted = [...items].sort(createSortByStringFn('name'));
@@ -120,9 +120,9 @@ describe('createSortByStringFn', () => {
 
   it('auto-detect path: null/undefined prop value falls back to empty string', () => {
     const items = [
-      { value: null as any },
+      { value: null as unknown as string },
       { value: 'hello' },
-      { value: undefined as any },
+      { value: undefined as unknown as string },
     ];
     const sorted = [...items].sort(createSortByStringFn());
     // null/undefined → '', which sorts before 'hello'
@@ -143,9 +143,9 @@ describe('createSortByNumberFn', () => {
     expect(sorted.map(i => i.value)).toEqual([10, 20, 30]);
   });
 
-  it('missing property defaults to 0', () => {
+  it('missing property sorts last (treated as Infinity)', () => {
     const items = [{ score: 5 }, {}] as { score?: number }[];
-    expect(items.sort(createSortByNumberFn('score'))).toEqual([{}, { score: 5 }]);
+    expect(items.sort(createSortByNumberFn('score'))).toEqual([{ score: 5 }, {}]);
   });
 
   it('handles numeric comparison (not lexical)', () => {
@@ -156,29 +156,30 @@ describe('createSortByNumberFn', () => {
     expect(sorted[2].value).toBe(200);
   });
 
-  it('null/undefined value falls back to 0 for both a and b', () => {
+  it('null/undefined value sorts last (treated as Infinity)', () => {
     const items = [
-      { score: null as any },
+      { score: null as unknown as number },
       { score: 5 },
-      { score: undefined as any },
+      { score: undefined as unknown as number },
     ];
     const sorted = [...items].sort(createSortByNumberFn('score'));
-    expect(sorted[0].score ?? 0).toBe(0);
-    expect(sorted[1].score ?? 0).toBe(0);
-    expect(sorted[2].score).toBe(5);
+    expect(sorted[0].score).toBe(5);
+    expect(sorted[1].score).toBeNull();
+    expect(sorted[2].score).toBeUndefined();
   });
 
-  it('NaN value is treated as 0 — comparator never returns NaN', () => {
+  it('NaN value sorts last — comparator never returns NaN', () => {
     const items = [{ value: NaN }, { value: 5 }, { value: 1 }];
     const sorted = [...items].sort(createSortByNumberFn('value'));
     expect(sorted.map(i => i.value)).toHaveLength(3);
-    expect(isNaN(sorted[0].value) || sorted[0].value === 0).toBe(true);
-    expect(sorted[sorted.length - 1].value).toBe(5);
+    expect(sorted[0].value).toBe(1);
+    expect(sorted[1].value).toBe(5);
+    expect(isNaN(sorted[sorted.length - 1].value)).toBe(true);
   });
 
-  it('NaN as first argument (a) is normalized to 0', () => {
+  it('NaN as first argument (a) sorts after finite values', () => {
     const cmp = createSortByNumberFn('value');
-    expect(cmp({ value: NaN }, { value: 5 })).toBe(-1);
+    expect(cmp({ value: NaN }, { value: 5 })).toBe(1);
     expect(cmp({ value: NaN }, { value: -3 })).toBe(1);
     expect(cmp({ value: NaN }, { value: NaN })).toBe(0);
   });
@@ -230,7 +231,7 @@ describe('createSortByDateFn', () => {
     expect([].sort(createSortByDateFn())).toEqual([]);
   });
 
-  it('invalid date string is treated as epoch — comparator never returns NaN', () => {
+  it('invalid date string sorts last — comparator never returns NaN', () => {
     const items = [
       { date: 'not-a-date' },
       { date: '2024-01-01' },
@@ -238,18 +239,20 @@ describe('createSortByDateFn', () => {
     ];
     const sorted = [...items].sort(createSortByDateFn());
     expect(sorted).toHaveLength(3);
-    expect(sorted[sorted.length - 1].date).toBe('2024-01-01');
+    expect(sorted[0].date).toBe('2020-06-15');
+    expect(sorted[1].date).toBe('2024-01-01');
+    expect(sorted[sorted.length - 1].date).toBe('not-a-date');
   });
 
-  it('invalid date in both positions — directly invoke comparator to cover all NaN branches', () => {
+  it('invalid/missing date sorts last — directly invoke comparator to cover all NaN branches', () => {
     const cmp = createSortByDateFn();
-    // b is invalid (bRaw = NaN → 0): valid date vs invalid
-    expect(cmp({ date: '2024-01-01' }, { date: 'bad' })).toBeGreaterThan(0);
-    // a is invalid (aRaw = NaN → 0): invalid date vs valid
-    expect(cmp({ date: 'bad' }, { date: '2024-01-01' })).toBeLessThan(0);
-    // missing property (??0 branch): epoch (0) vs valid date
-    expect(cmp({}, { date: '2024-01-01' })).toBeLessThan(0);
-    expect(cmp({ date: '2024-01-01' }, {})).toBeGreaterThan(0);
+    // b is invalid (bRaw = NaN → Infinity): valid date sorts before invalid
+    expect(cmp({ date: '2024-01-01' }, { date: 'bad' })).toBeLessThan(0);
+    // a is invalid (aRaw = NaN → Infinity): invalid sorts after valid
+    expect(cmp({ date: 'bad' }, { date: '2024-01-01' })).toBeGreaterThan(0);
+    // missing property: undefined → NaN → Infinity, so missing sorts after valid date
+    expect(cmp({}, { date: '2024-01-01' })).toBeGreaterThan(0);
+    expect(cmp({ date: '2024-01-01' }, {})).toBeLessThan(0);
   });
 
   it('sort descending via reversed comparator', () => {
