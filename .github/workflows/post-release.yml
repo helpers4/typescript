@@ -46,7 +46,7 @@ jobs:
           if [ "${{ github.event_name }}" = "release" ]; then
             TAG="${{ github.ref_name }}"
           else
-            TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+            TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName // empty')
           fi
           echo "🏷️ Target release: $TAG"
           if [ -z "$TAG" ]; then
