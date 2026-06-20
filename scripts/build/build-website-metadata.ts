@@ -609,6 +609,7 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
     const files = await readdir(categoryPath);
     const sourceFiles = files
       .filter(f => f.endsWith('.ts'))
+      .filter(f => !f.startsWith('_'))
       .filter(f => !f.match(/\.\w+\.ts$/))
       .filter(f => f !== 'index.ts');
 

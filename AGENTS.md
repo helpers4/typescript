@@ -127,15 +127,23 @@ pnpm release:validate
 ### Code Conventions
 
 **File structure per category:**
-```
+
+```text
 helpers/<category>/
 ├── functionName.ts            # One function per file
 ├── functionName.test.ts       # Colocated unit tests (100% coverage required)
 ├── functionName.spec.ts       # Property-based + contract tests (fast-check)
 ├── functionName.bench.ts      # Optional benchmark
-├── index.ts                   # Re-exports all helpers
+├── _internalHelper.ts         # Internal shared helpers (underscore prefix)
+├── _internalHelper.test.ts    # Tests for internal helpers (still required)
+├── index.ts                   # Re-exports all helpers (auto-generated at build time)
 └── config.json                # Category metadata
 ```
+
+**Underscore-prefixed files (`_*.ts`)** are internal helpers shared within the category.
+They are **not included** in the auto-generated `index.ts` barrel, not published as public API,
+and not scanned by the `@since` coherency check. Use `@ignore` (not `@since`) in their JSDoc.
+Tests are still required at 100% coverage.
 
 **TypeScript rules:**
 - `any` is **FORBIDDEN** — use `unknown` or specific types

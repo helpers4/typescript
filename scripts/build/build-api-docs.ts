@@ -123,9 +123,10 @@ export async function buildApiDocs(validCategories: string[]): Promise<void> {
     const categoryPath = join(DIR.HELPERS, category);
     const files = await readdir(categoryPath);
 
-    // Only consider actual helper source files (not tests, examples, benchmarks, index)
+    // Only consider actual helper source files (not tests, examples, benchmarks, index, or _internal helpers)
     const sourceFiles = files
       .filter(f => f.endsWith('.ts'))
+      .filter(f => !f.startsWith('_'))
       .filter(f => !f.match(/\.\w+\.ts$/))
       .filter(f => f !== 'index.ts');
 

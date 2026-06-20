@@ -14,6 +14,7 @@ export const SKIP_SUFFIXES = ['.test.ts', '.spec.ts', '.bench.ts', '.example.ts'
 export const SKIP_FILENAMES = new Set(['index.ts']);
 
 export function isHelperSourceFile(filename: string): boolean {
+  if (filename.startsWith('_')) return false;
   if (SKIP_FILENAMES.has(filename)) return false;
   for (const suffix of SKIP_SUFFIXES) {
     if (filename.endsWith(suffix)) return false;
