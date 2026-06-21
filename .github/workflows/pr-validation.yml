@@ -14,7 +14,7 @@ env:
   # Reusable workflow calls (uses:) must use literal values in with: inputs.
   NODE_OLDEST_LTS: "20"
   NODE_LATEST_LTS: "24"
-  DENO_LATEST: "2.x"
+  DENO_LATEST: "2.8.3"
   BUN_LATEST: "latest"
 
   WORKFLOW_ID: ${{ github.run_id }}
@@ -230,6 +230,7 @@ jobs:
     uses: ./.github/workflows/job-bench.yml
     with:
       node-version: "24"
+      base-ref: ${{ github.base_ref }}
 
   # PR comment with results
   pr-comment:
