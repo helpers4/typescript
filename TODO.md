@@ -68,3 +68,51 @@ After each PR, re-run Scorecard and capture the delta.
 ## 2. Suggested next steps
 
 1. **OpenSSF PRs C/D/E** — land in parallel with the helper roadmap.
+
+---
+
+## 3. v3 roadmap
+
+> Last refresh: 2026-06-21.
+> Scope: **breaking changes only** — non-breaking improvements land in 2.x.
+
+### 3.1 Suppression des dépréciés 🔴
+
+Toutes ces fonctions sont déjà marquées `@deprecated "…will be removed in v3"` — les supprimer simplement.
+
+| Symbole | Fichier | Déprécié depuis | Remplaçant |
+| --- | --- | --- | --- |
+| `isEmpty` | `type/isEmpty.ts` | 2.0.0 | `array/isEmpty`, `string/isEmpty`, `object/isEmpty` |
+| `safeDate` | `date/safeDate.ts` | 1.9.0 | `ensureDate` |
+| `dateToISOString` | `date/safeDate.ts` | 1.9.0 | `toISO8601` (date/format.ts) |
+| `daysDifference` | `date/difference.ts` | 2.0.0 | `difference` |
+
+- [ ] Supprimer les 4 symboles + leurs fichiers/exports barrel
+- [ ] Supprimer les tests associés (ou les migrer vers le remplaçant)
+- [ ] Vérifier qu'aucun helper interne ne les appelle encore
+
+### 3.2 DEFAULT_SORT_STRING_PROPS 🟡
+
+Décision à prendre : rester interne (état actuel depuis PR #95) ou promouvoir en API publique documentée dans v3.
+
+- [ ] Confirmer le choix : interne définitif → rien à faire ; public → ajouter JSDoc complet sur `sort.ts` et `@since 3.0.0`
+
+### 3.3 Promise helpers — nettoyage des signatures 🟡
+
+`truthyPromiseOrThrow`, `falsyPromiseOrThrow`, `meaningPromiseOrThrow` ont tous des `as T` non-soundés et plusieurs `eslint-disable`. Le problème de fond : `T` n'est pas contraint et le cast est invisible à l'appelant.
+
+- [ ] Revoir si `T` doit être contraint (`T extends object`, etc.) ou si le `as T` est remplaçable par une surcharge typée
+- [ ] Supprimer les `eslint-disable` si le type devient sound, sinon ajouter un commentaire justificatif
+
+### 3.4 isNonEmpty — cohérence des type guards 🟢
+
+`array/isNonEmpty` retourne un type guard `[T, ...T[]]`. Les versions `string/isNonEmpty` et `object/isNonEmpty` n'ont pas de type guard.
+
+- [ ] Décider si l'on ajoute `value is NonEmptyString` / `value is NonEmptyObject<T>` dans les versions string/object, ou si l'asymétrie est intentionnelle (documenter alors le choix)
+
+### 3.5 DateLike / Temporal 🟢
+
+`date/types.ts:30` a un TODO existant : quand Temporal atteint Stage 4, substituer `EpochMilliseconds` par `Temporal.Instant | Temporal.ZonedDateTime`.
+
+- [ ] Surveiller l'avancement TC39 — actuellement Stage 3
+- [ ] Quand disponible sans flag dans Node LTS + tous les evergreen browsers : remplacer le duck-type par les types Temporal concrets et supprimer l'interface `EpochMilliseconds`
