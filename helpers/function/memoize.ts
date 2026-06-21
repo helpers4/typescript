@@ -6,7 +6,7 @@
 
 /**
  * Options for {@link memoize}.
- * @since next
+ * @since 2.0.4
  */
 export interface MemoizeOptions {
   /**
