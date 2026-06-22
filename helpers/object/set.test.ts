@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 import { set } from "./set";
 
 describe("set", () => {
@@ -215,5 +215,44 @@ describe("set — PropertyKey[] path", () => {
     const obj: Record<PropertyKey, unknown> = {};
     set(obj, ['x', 'y', 'z'], true);
     expect(((obj['x'] as Record<string, unknown>)['y'] as Record<string, unknown>)['z']).toBe(true);
+  });
+});
+
+describe('set — type inference', () => {
+  it('dot path: return type reflects updated field', () => {
+    const obj = { a: { b: 1 } };
+    const result = set(obj, 'a.b', 42);
+    expectTypeOf(result).toEqualTypeOf<{ a: { b: number } }>();
+  });
+
+  it('bracket path: return type reflects updated array element field', () => {
+    const obj = { layers: [{ name: 'old' }] };
+    const result = set(obj, 'layers[0].name', 'new');
+    expectTypeOf(result).toEqualTypeOf<{ layers: { name: string }[] }>();
+  });
+
+  it('PropertyKey[] path: return type reflects updated field', () => {
+    const obj = { a: { b: true } };
+    const result = set(obj, ['a', 'b'] as const, false);
+    expectTypeOf(result).toEqualTypeOf<{ a: { b: boolean } }>();
+  });
+
+  it('symbol key via PropertyKey[] path infers type', () => {
+    const sym = Symbol('id');
+    const obj = { [sym]: 'alice' };
+    const result = set(obj, [sym] as const, 'bob');
+    expectTypeOf(result).toEqualTypeOf<{ [sym]: string }>();
+  });
+
+  it('wrong value type is rejected at compile time', () => {
+    const obj = { a: { b: 1 } };
+    // @ts-expect-error string is not assignable to number
+    set(obj, 'a.b', 'wrong');
+  });
+
+  it('wrong value type is rejected for PropertyKey[] path', () => {
+    const obj = { a: { b: 1 } };
+    // @ts-expect-error string is not assignable to number
+    set(obj, ['a', 'b'] as const, 'wrong');
   });
 });

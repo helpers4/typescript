@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vitest";
 import { get } from "./get";
 
 describe("get", () => {
@@ -45,6 +45,13 @@ describe("get", () => {
   it("should handle null/undefined objects", () => {
     expect(get(null, 'a.b', 'default')).toBe('default');
     expect(get(undefined, 'a.b', 'default')).toBe('default');
+    expect(get(null, 'a.b')).toBeUndefined();
+  });
+
+  it("should return defaultValue for null obj with empty key array", () => {
+    expect(get(null, [], 'fallback')).toBe('fallback');
+    expect(get(undefined, [], 'fallback')).toBe('fallback');
+    expect(get(null, [])).toBeUndefined();
   });
 
   // --- Mutation-killing tests ---
@@ -103,5 +110,64 @@ describe("get", () => {
     // 'a..b' → ['a', '', 'b'] — the empty segment addresses obj.a[''].b.
     const o = { a: { '': { b: 'found' } } };
     expect(get(o, 'a..b')).toBe('found');
+  });
+});
+
+describe('get — type inference', () => {
+  const obj = {
+    a: { b: { c: 42 } },
+    name: 'hello',
+    layers: [{ title: 'bg' }, { title: 'fg' }],
+    counts: [1, 2, 3],
+  };
+
+  it('dot path infers leaf type', () => {
+    expectTypeOf(get(obj, 'a.b.c')).toEqualTypeOf<number | undefined>();
+  });
+
+  it('dot path infers intermediate object type', () => {
+    expectTypeOf(get(obj, 'a.b')).toEqualTypeOf<{ c: number } | undefined>();
+  });
+
+  it('string field inferred', () => {
+    expectTypeOf(get(obj, 'name')).toEqualTypeOf<string | undefined>();
+  });
+
+  it('bracket notation infers array element type', () => {
+    expectTypeOf(get(obj, 'layers[0]')).toEqualTypeOf<{ title: string } | undefined>();
+  });
+
+  it('mixed dot/bracket infers nested field inside array element', () => {
+    expectTypeOf(get(obj, 'layers[0].title')).toEqualTypeOf<string | undefined>();
+  });
+
+  it('numeric array via bracket infers number', () => {
+    expectTypeOf(get(obj, 'counts[1]')).toEqualTypeOf<number | undefined>();
+  });
+
+  it('missing key returns unknown', () => {
+    expectTypeOf(get(obj, 'a.x')).toEqualTypeOf<unknown>();
+  });
+
+  it('PropertyKey[] path infers type', () => {
+    expectTypeOf(get(obj, ['a', 'b', 'c'] as const)).toEqualTypeOf<number | undefined>();
+  });
+
+  it('symbol key via PropertyKey[] path infers type', () => {
+    const sym = Symbol('id');
+    const o = { [sym]: 42 };
+    expectTypeOf(get(o, [sym] as const)).toEqualTypeOf<number | undefined>();
+  });
+
+  it('dynamic string path returns unknown', () => {
+    const path = 'a.b.c' as string;
+    expectTypeOf(get(obj, path)).toEqualTypeOf<unknown>();
+  });
+
+  it('defaultValue type matches inferred path type', () => {
+    // defaultValue must be compatible with the resolved path type
+    get(obj, 'a.b.c', 0);         // number default ✓
+    // @ts-expect-error string is not assignable to number
+    get(obj, 'a.b.c', 'wrong');
   });
 });
