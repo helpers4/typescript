@@ -6,6 +6,11 @@
 
 /**
  * Keys that must never be set on a plain object (prototype-pollution guard).
- * @internal
+ * @ignore
  */
-export const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+const UNSAFE_KEY_LIST = ['__proto__', 'constructor', 'prototype'] as const;
+
+/** @ignore */
+export type UnsafeKey = (typeof UNSAFE_KEY_LIST)[number];
+
+export const UNSAFE_KEYS = new Set<string>(UNSAFE_KEY_LIST);
