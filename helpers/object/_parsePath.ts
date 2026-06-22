@@ -16,7 +16,7 @@
  * - Non-bracket text trailing a `]` within the same dot-segment throws a RangeError;
  *   use a dot separator instead (`'a[0].b'` not `'a[0]b'`).
  *
- * @internal
+ * @ignore
  * @example
  * parsePath('a.b.c')       // => ['a', 'b', 'c']        (all strings)
  * parsePath('layers.1.x')  // => ['layers', '1', 'x']   (all strings)
