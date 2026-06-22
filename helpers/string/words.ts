@@ -6,6 +6,7 @@
 
 /**
  * Splits a string into an array of words.
+ * `null` and `undefined` return `[]`.
  *
  * Handles camelCase, PascalCase, SCREAMING_SNAKE_CASE, kebab-case,
  * snake_case, and regular whitespace-separated text. Numbers are
@@ -21,9 +22,11 @@
  * words('kebab-case');         // ['kebab', 'case']
  * words('SCREAMING_SNAKE');    // ['SCREAMING', 'SNAKE']
  * words('foo123bar');          // ['foo', '123', 'bar']
+ * words(null);                 // []
  * @since 2.0.0
  */
-export function words(str: string): string[] {
+export function words(str: string | null | undefined): string[] {
+  if (str == null) return [];
   return (
     str
       // Insert boundary before uppercase following lowercase or digit: camelCase → camel Case

@@ -59,4 +59,12 @@ describe('words', () => {
   it('handles mixed case patterns', () => {
     expect(words('getHTTPSResponse')).toEqual(['get', 'HTTPS', 'Response']);
   });
+
+  it('returns [] for null', () => {
+    expect(words(null)).toEqual([]);
+  });
+
+  it('returns [] for undefined', () => {
+    expect(words(undefined)).toEqual([]);
+  });
 });

@@ -6,6 +6,7 @@
 
 /**
  * Checks if a string is blank — empty or contains only whitespace characters.
+ * `null` and `undefined` are considered blank and return `true`.
  *
  * Uses `String.prototype.trim()` internally, which covers all ECMAScript
  * whitespace: standard ASCII whitespace (`\t`, `\n`, `\r`, `\f`, `\v`),
@@ -18,16 +19,18 @@
  * `isBlank(value.replace(/[​-‍⁠]/g, ''))`
  *
  * @param value - The string to check
- * @returns `true` if the string is empty or contains only whitespace
+ * @returns `true` if the string is empty, contains only whitespace, or is `null`/`undefined`
  * @example
- * isBlank('')    // => true
- * isBlank('   ') // => true
- * isBlank('\t\n') // => true
- * isBlank(' ')   // => true   (non-breaking space U+00A0)
- * isBlank('foo') // => false
- * isBlank(' x ') // => false
+ * isBlank('')        // => true
+ * isBlank('   ')     // => true
+ * isBlank('\t\n')    // => true
+ * isBlank(' ')       // => true   (non-breaking space U+00A0)
+ * isBlank(null)      // => true
+ * isBlank(undefined) // => true
+ * isBlank('foo')     // => false
+ * isBlank(' x ')     // => false
  * @since 2.0.3
  */
-export function isBlank(value: string): boolean {
-  return value.trim() === '';
+export function isBlank(value: string | null | undefined): boolean {
+  return value == null || value.trim() === '';
 }

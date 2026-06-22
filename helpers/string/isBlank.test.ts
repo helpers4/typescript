@@ -46,4 +46,12 @@ describe('isBlank', () => {
     expect(isBlank('‍')).toBe(false); // zero-width joiner
     expect(isBlank('⁠')).toBe(false); // word joiner
   });
+
+  it('should return true for null', () => {
+    expect(isBlank(null)).toBe(true);
+  });
+
+  it('should return true for undefined', () => {
+    expect(isBlank(undefined)).toBe(true);
+  });
 });
