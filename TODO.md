@@ -86,8 +86,8 @@ All these symbols are already marked `@deprecated "…will be removed in v3"` �
 | `safeDate` | `date/safeDate.ts` | 1.9.0 | `ensureDate` |
 | `dateToISOString` | `date/safeDate.ts` | 1.9.0 | `toISO8601` (date/format.ts) |
 | `daysDifference` | `date/difference.ts` | 2.0.0 | `difference` |
-| `deepClone` | `object/deepClone.ts` | next | `cloneDeep` |
-| `deepMerge` | `object/deepMerge.ts` | next | `mergeDeep` |
+| `deepClone` | `object/cloneDeep.ts` (re-export at bottom) | next | `cloneDeep` |
+| `deepMerge` | `object/mergeDeep.ts` (re-export at bottom) | next | `mergeDeep` |
 
 - [ ] Delete all 6 symbols + their files/barrel exports
 - [ ] Delete or migrate associated tests to the replacement
@@ -112,7 +112,27 @@ Décision à prendre : rester interne (état actuel depuis PR #95) ou promouvoir
 
 - [ ] Décider si l'on ajoute `value is NonEmptyString` / `value is NonEmptyObject<T>` dans les versions string/object, ou si l'asymétrie est intentionnelle (documenter alors le choix)
 
-### 3.5 DateLike / Temporal 🟢
+### 3.5 Category renames 🟡
+
+Two category names need to change for clarity:
+
+| Current | New | Reason |
+| --- | --- | --- |
+| `helpers/type/` | `helpers/guard/` | Content is runtime type guards (`isString`, `isNull`, …) — "guard" is the canonical TypeScript term |
+| _(freed name)_ | `helpers/type/` | New category for compile-time-only utility types (`DeepPartial`, `Brand`, `Prettify`, …) — singular, consistent with all other categories |
+
+- [ ] Rename `helpers/type/` → `helpers/guard/` (update barrel, all internal imports, docs)
+- [ ] Create `helpers/type/` for pure TypeScript utility types; migrate `DeepPartial`, `DeepWritable`, `Maybe` from the old `helpers/type/` and expose previously-internal types (`UnionToIntersection`, `DeepGet`, `DeepSet`, `ParsePath`, …) as public API
+- [ ] Update all consumer imports and documentation
+
+### 3.6 `_unsafeKeys` — fichier partagé entre catégories 🟢
+
+`helpers/array/_unsafeKeys.ts` et `helpers/object/_unsafeKeys.ts` sont identiques (même `Set` de clés protégées). Ils sont dupliqués délibérément pour éviter les dépendances croisées entre catégories, mais une modification dans l'un n'est pas propagée à l'autre.
+
+- [ ] Trouver une solution d'infrastructure pour partager ce type de fichier entre catégories sans créer de couplage entre `array/` et `object/` (e.g. dossier `helpers/_shared/`, workspace interne, ou génération de code)
+- [ ] Lors de l'implémentation, vérifier que tous les consommateurs existants (`countBy`, `groupBy`, `invert`, `map`, `cloneDeep`, `mergeDeep`, `set`) importent depuis la source unique
+
+### 3.7 DateLike / Temporal 🟢
 
 `date/types.ts:30` a un TODO existant : quand Temporal atteint Stage 4, substituer `EpochMilliseconds` par `Temporal.Instant | Temporal.ZonedDateTime`.
 
