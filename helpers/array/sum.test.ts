@@ -35,4 +35,12 @@ describe('sum', () => {
   it('should handle large arrays', () => {
     expect(sum([100, 200, 300, 400, 500])).toBe(1500);
   });
+
+  it('should return 0 for null', () => {
+    expect(sum(null)).toBe(0);
+  });
+
+  it('should return 0 for undefined', () => {
+    expect(sum(undefined)).toBe(0);
+  });
 });

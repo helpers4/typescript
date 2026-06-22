@@ -54,4 +54,12 @@ describe('without', () => {
   it('preserves order of remaining elements', () => {
     expect(without([5, 1, 3, 2, 4], 3)).toEqual([5, 1, 2, 4]);
   });
+
+  it('returns [] for null', () => {
+    expect(without(null, 1, 2)).toEqual([]);
+  });
+
+  it('returns [] for undefined', () => {
+    expect(without(undefined, 1, 2)).toEqual([]);
+  });
 });

@@ -51,4 +51,17 @@ describe('countBy', () => {
     const result = countBy([10, 20, 10, 30, 20, 10], (n) => n);
     expect(result).toEqual({ 10: 3, 20: 2, 30: 1 });
   });
+
+  it('returns {} for null', () => {
+    expect(countBy(null, (x: number) => x)).toEqual({});
+  });
+
+  it('returns {} for undefined', () => {
+    expect(countBy(undefined, (x: number) => x)).toEqual({});
+  });
+
+  it('skips items whose key is a dangerous property name', () => {
+    expect(countBy([1, 2, 3], () => '__proto__')).toEqual({});
+    expect(countBy([1, 2, 3], () => 'constructor')).toEqual({});
+  });
 });

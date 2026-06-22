@@ -6,13 +6,16 @@
 
 /**
  * Checks if an array is non-empty (has at least one element).
+ * `null` and `undefined` are treated as empty arrays and return `false`.
  * @param value - The array to check
- * @returns `true` if the array has at least one element
+ * @returns `true` if the array has at least one element; `false` for empty, `null`, or `undefined`
  * @example
  * isNonEmpty([1, 2, 3]) // => true
  * isNonEmpty([])        // => false
+ * isNonEmpty(null)      // => false
+ * isNonEmpty(undefined) // => false
  * @since 2.0.3
  */
-export function isNonEmpty<T>(value: readonly T[]): value is readonly [T, ...T[]] {
-  return value.length > 0;
+export function isNonEmpty<T>(value: readonly T[] | null | undefined): value is readonly [T, ...T[]] {
+  return value != null && value.length > 0;
 }

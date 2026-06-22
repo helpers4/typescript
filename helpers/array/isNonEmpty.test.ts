@@ -40,4 +40,20 @@ describe('isNonEmpty', () => {
       expect(first).toBe(1);
     }
   });
+
+  it('should return false for null', () => {
+    expect(isNonEmpty(null)).toBe(false);
+  });
+
+  it('should return false for undefined', () => {
+    expect(isNonEmpty(undefined)).toBe(false);
+  });
+
+  it('should narrow null/undefined away in true branch', () => {
+    const arr: number[] | null = [1];
+    if (isNonEmpty(arr)) {
+      const first: number = arr[0];
+      expect(first).toBe(1);
+    }
+  });
 });

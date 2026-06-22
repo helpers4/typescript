@@ -51,4 +51,14 @@ describe("chunk", () => {
       expect(chunk([1, 2, 3], Infinity)).toEqual([[1, 2, 3]]);
     });
   });
+
+  describe('null/undefined', () => {
+    it('should return [] for null', () => {
+      expect(chunk(null, 2)).toEqual([]);
+    });
+
+    it('should return [] for undefined', () => {
+      expect(chunk(undefined, 2)).toEqual([]);
+    });
+  });
 });

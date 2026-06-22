@@ -17,11 +17,11 @@
  * // => [[1, 2, 3], ['a', 'b', 'c']]
  * @since 2.0.0
  */
-export function unzip<A, B>(pairs: readonly [A, B][]): [A[], B[]];
-export function unzip<A, B, C>(pairs: readonly [A, B, C][]): [A[], B[], C[]];
-export function unzip<A, B, C, D>(pairs: readonly [A, B, C, D][]): [A[], B[], C[], D[]];
-export function unzip(pairs: readonly unknown[][]): unknown[][] {
-  if (pairs.length === 0) return [];
+export function unzip<A, B>(pairs: readonly [A, B][] | null | undefined): [A[], B[]];
+export function unzip<A, B, C>(pairs: readonly [A, B, C][] | null | undefined): [A[], B[], C[]];
+export function unzip<A, B, C, D>(pairs: readonly [A, B, C, D][] | null | undefined): [A[], B[], C[], D[]];
+export function unzip(pairs: readonly unknown[][] | null | undefined): unknown[][] {
+  if (pairs == null || pairs.length === 0) return [];
   const width = pairs[0].length;
   const result = Array.from({ length: width }, (): unknown[] => []);
   for (const tuple of pairs) {

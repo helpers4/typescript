@@ -37,4 +37,12 @@ describe('unzip', () => {
     const [nums, strs] = unzip(original);
     expect(zip(nums, strs)).toEqual(original);
   });
+
+  it('returns [] for null', () => {
+    expect(unzip(null)).toEqual([]);
+  });
+
+  it('returns [] for undefined', () => {
+    expect(unzip(undefined)).toEqual([]);
+  });
 });

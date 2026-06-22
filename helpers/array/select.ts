@@ -34,11 +34,12 @@
  * @since 2.0.3
  */
 export function select<T, U>(
-  array: readonly T[],
+  array: readonly T[] | null | undefined,
   mapper: (item: T, index: number) => U,
   condition: (item: T, index: number) => boolean = () => true,
 ): U[] {
   const result: U[] = [];
+  if (array == null) return result;
   for (let i = 0; i < array.length; i++) {
     if (condition(array[i], i)) {
       result.push(mapper(array[i], i));

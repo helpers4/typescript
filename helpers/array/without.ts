@@ -10,6 +10,7 @@
  * Unlike `difference`, which operates on two arrays as set operands, `without`
  * uses a variadic API suited for removing known sentinel values inline.
  * Uses `SameValueZero` equality (same as `Array.prototype.includes`).
+ * `null` and `undefined` are treated as empty arrays and return `[]`.
  *
  * @param array - The source array.
  * @param values - One or more values to exclude from the result.
@@ -18,9 +19,11 @@
  * without([1, 2, 3, 2, 4], 2);       // [1, 3, 4]
  * without([1, 2, 3, 2, 4], 2, 3);    // [1, 4]
  * without(['a', 'b', 'c'], 'b');      // ['a', 'c']
+ * without(null, 1);                   // []
  * @since 2.0.0
  */
-export function without<T>(array: readonly T[], ...values: T[]): T[] {
+export function without<T>(array: readonly T[] | null | undefined, ...values: T[]): T[] {
+  if (array == null) return [];
   const excluded = new Set(values);
   return array.filter((item) => !excluded.has(item));
 }

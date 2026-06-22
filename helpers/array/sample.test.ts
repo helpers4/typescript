@@ -138,4 +138,22 @@ describe('sample', () => {
       }
     });
   });
+
+  describe('null/undefined', () => {
+    it('returns undefined for null (no count)', () => {
+      expect(sample(null)).toBeUndefined();
+    });
+
+    it('returns undefined for undefined (no count)', () => {
+      expect(sample(undefined)).toBeUndefined();
+    });
+
+    it('returns [] for null (with count)', () => {
+      expect(sample(null, 3)).toEqual([]);
+    });
+
+    it('returns [] for undefined (with count)', () => {
+      expect(sample(undefined, 3)).toEqual([]);
+    });
+  });
 });

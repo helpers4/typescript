@@ -5,13 +5,16 @@
  */
 
 /**
- * Returns the difference between two arrays (items in first array but not in second)
+ * Returns the difference between two arrays (items in first array but not in second).
+ * `null` and `undefined` are treated as empty arrays:
+ * `difference(null, b)` → `[]`; `difference(a, null)` → copy of `a`.
  * @param array1 - First array
  * @param array2 - Second array
  * @returns Array with items from first array not present in second array
  * @since 1.9.0
  */
-export function difference<T>(array1: readonly T[], array2: readonly T[]): T[] {
-  const set2 = new Set(array2);
+export function difference<T>(array1: readonly T[] | null | undefined, array2: readonly T[] | null | undefined): T[] {
+  if (array1 == null) return [];
+  const set2 = new Set(array2 ?? []);
   return array1.filter(item => !set2.has(item));
 }

@@ -92,4 +92,12 @@ describe('shuffle', () => {
     const result = shuffle(original);
     expect(result.sort()).toEqual([1, 1, 2, 2, 3]);
   });
+
+  it('should return [] for null', () => {
+    expect(shuffle(null)).toEqual([]);
+  });
+
+  it('should return [] for undefined', () => {
+    expect(shuffle(undefined)).toEqual([]);
+  });
 });

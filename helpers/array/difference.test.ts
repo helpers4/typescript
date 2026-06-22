@@ -28,4 +28,16 @@ describe("difference", () => {
     expect(difference([], [1, 2])).toEqual([]);
     expect(difference([1, 2], [])).toEqual([1, 2]);
   });
+
+  it("returns [] when first arg is null", () => {
+    expect(difference(null, [1, 2])).toEqual([]);
+  });
+
+  it("returns copy of first array when second arg is null", () => {
+    expect(difference([1, 2, 3], null)).toEqual([1, 2, 3]);
+  });
+
+  it("returns [] when both args are null", () => {
+    expect(difference(null, null)).toEqual([]);
+  });
 });
