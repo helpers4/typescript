@@ -52,4 +52,17 @@ describe('groupBy', () => {
       b: ['banana', 'blueberry'],
     });
   });
+
+  it('returns {} for null', () => {
+    expect(groupBy(null, (x: number) => x)).toEqual({});
+  });
+
+  it('returns {} for undefined', () => {
+    expect(groupBy(undefined, (x: number) => x)).toEqual({});
+  });
+
+  it('skips items whose key is a dangerous property name', () => {
+    expect(groupBy([1, 2, 3], () => '__proto__')).toEqual({});
+    expect(groupBy([1, 2, 3], () => 'constructor')).toEqual({});
+  });
 });

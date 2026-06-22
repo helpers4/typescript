@@ -35,4 +35,25 @@ describe('invert', () => {
     obj['own'] = 'value';
     expect(invert(obj)).toEqual({ value: 'own' });
   });
+
+  it('returns {} for null', () => {
+    expect(invert(null)).toEqual({});
+  });
+
+  it('returns {} for undefined', () => {
+    expect(invert(undefined)).toEqual({});
+  });
+
+  it('skips entries whose value is a dangerous key (__proto__)', () => {
+    expect(invert({ a: '__proto__', b: 'safe' })).toEqual({ safe: 'b' });
+  });
+
+  it('skips entries whose value is a dangerous key (constructor)', () => {
+    expect(invert({ a: 'constructor', b: 'safe' })).toEqual({ safe: 'b' });
+  });
+
+  it('skips entries whose source key is a dangerous key (via JSON.parse)', () => {
+    const obj = JSON.parse('{"__proto__": "value", "safe": "ok"}') as Record<string, string>;
+    expect(invert(obj)).toEqual({ ok: 'safe' });
+  });
 });

@@ -34,4 +34,12 @@ describe('isEmpty', () => {
     obj['key'] = 'value';
     expect(isEmpty(obj)).toBe(false);
   });
+
+  it('should return true for null', () => {
+    expect(isEmpty(null)).toBe(true);
+  });
+
+  it('should return true for undefined', () => {
+    expect(isEmpty(undefined)).toBe(true);
+  });
 });

@@ -30,4 +30,12 @@ describe('isNonEmpty', () => {
     obj['key'] = 'value';
     expect(isNonEmpty(obj)).toBe(true);
   });
+
+  it('should return false for null', () => {
+    expect(isNonEmpty(null)).toBe(false);
+  });
+
+  it('should return false for undefined', () => {
+    expect(isNonEmpty(undefined)).toBe(false);
+  });
 });
