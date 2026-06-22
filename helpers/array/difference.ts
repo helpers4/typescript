@@ -11,7 +11,7 @@
  * @returns Array with items from first array not present in second array
  * @since 1.9.0
  */
-export function difference<T>(array1: T[], array2: T[]): T[] {
+export function difference<T>(array1: readonly T[], array2: readonly T[]): T[] {
   const set2 = new Set(array2);
   return array1.filter(item => !set2.has(item));
 }
