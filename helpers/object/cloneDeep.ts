@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { cloneDeep } from './cloneDeep.js';
+import { UNSAFE_KEYS } from './_unsafeKeys.js';
 
 /**
  * Creates a deep copy of an object or array.
@@ -30,6 +30,42 @@ import { cloneDeep } from './cloneDeep.js';
  * cloneDeep(42)   // => 42
  * cloneDeep(null) // => null
  * @since 1.9.0
+ */
+export function cloneDeep<T>(obj: T): T {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (obj instanceof Date) {
+    return new Date(obj.getTime()) as T;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(item => cloneDeep(item)) as T;
+  }
+
+  const cloned = {} as T;
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key) && !UNSAFE_KEYS.has(key)) {
+      cloned[key] = cloneDeep(obj[key]);
+    }
+  }
+
+  return cloned;
+}
+
+/**
  * @deprecated Use {@link cloneDeep} instead. Will be removed in v3.
+ * @since 1.9.0
+ * @example
+ * deepClone({ a: { b: [1, 2] } })
+ * // => { a: { b: [1, 2] } }  — fully independent copy
+ *
+ * deepClone(new Date('2024-01-01'))
+ * // => Date with the same timestamp
+ *
+ * // Primitives pass through unchanged
+ * deepClone(42)   // => 42
+ * deepClone(null) // => null
  */
 export { cloneDeep as deepClone };

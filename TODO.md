@@ -76,20 +76,22 @@ After each PR, re-run Scorecard and capture the delta.
 > Last refresh: 2026-06-21.
 > Scope: **breaking changes only** — non-breaking improvements land in 2.x.
 
-### 3.1 Suppression des dépréciés 🔴
+### 3.1 Remove deprecated symbols 🔴
 
-Toutes ces fonctions sont déjà marquées `@deprecated "…will be removed in v3"` — les supprimer simplement.
+All these symbols are already marked `@deprecated "…will be removed in v3"` — remove them.
 
-| Symbole | Fichier | Déprécié depuis | Remplaçant |
+| Symbol | File | Deprecated since | Replacement |
 | --- | --- | --- | --- |
 | `isEmpty` | `type/isEmpty.ts` | 2.0.0 | `array/isEmpty`, `string/isEmpty`, `object/isEmpty` |
 | `safeDate` | `date/safeDate.ts` | 1.9.0 | `ensureDate` |
 | `dateToISOString` | `date/safeDate.ts` | 1.9.0 | `toISO8601` (date/format.ts) |
 | `daysDifference` | `date/difference.ts` | 2.0.0 | `difference` |
+| `deepClone` | `object/deepClone.ts` | next | `cloneDeep` |
+| `deepMerge` | `object/deepMerge.ts` | next | `mergeDeep` |
 
-- [ ] Supprimer les 4 symboles + leurs fichiers/exports barrel
-- [ ] Supprimer les tests associés (ou les migrer vers le remplaçant)
-- [ ] Vérifier qu'aucun helper interne ne les appelle encore
+- [ ] Delete all 6 symbols + their files/barrel exports
+- [ ] Delete or migrate associated tests to the replacement
+- [ ] Verify no internal helper still calls them
 
 ### 3.2 DEFAULT_SORT_STRING_PROPS 🟡
 
