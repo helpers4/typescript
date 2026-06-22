@@ -54,4 +54,17 @@ describe('map', () => {
   it('works with numeric values', () => {
     expect(map({ count: 5, limit: 10 }, v => String(v))).toEqual({ count: '5', limit: '10' });
   });
+
+  it('returns {} for null', () => {
+    expect(map(null)).toEqual({});
+  });
+
+  it('returns {} for undefined', () => {
+    expect(map(undefined)).toEqual({});
+  });
+
+  it('skips entries whose mapped key is a dangerous property name', () => {
+    expect(map({ a: 1, b: 2 }, undefined, () => '__proto__')).toEqual({});
+    expect(map({ a: 1 }, undefined, () => 'constructor')).toEqual({});
+  });
 });
