@@ -47,4 +47,12 @@ describe('leadingSentence', () => {
   it('returns empty string for empty input', () => {
     expect(leadingSentence('')).toBe('');
   });
+
+  it('returns null for null', () => {
+    expect(leadingSentence(null)).toBeNull();
+  });
+
+  it('returns undefined for undefined', () => {
+    expect(leadingSentence(undefined)).toBeUndefined();
+  });
 });

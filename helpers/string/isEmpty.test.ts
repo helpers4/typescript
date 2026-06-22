@@ -31,4 +31,20 @@ describe('isEmpty', () => {
       expect(_).toBe('');
     }
   });
+
+  it('should return true for null', () => {
+    expect(isEmpty(null)).toBe(true);
+  });
+
+  it('should return true for undefined', () => {
+    expect(isEmpty(undefined)).toBe(true);
+  });
+
+  it('should narrow null/undefined away in false branch', () => {
+    const s: string | null | undefined = 'hello';
+    if (!isEmpty(s)) {
+      const _: string = s;
+      expect(_.length).toBeGreaterThan(0);
+    }
+  });
 });

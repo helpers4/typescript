@@ -22,4 +22,12 @@ describe('isNonEmpty', () => {
   it('should return false for an empty string', () => {
     expect(isNonEmpty('')).toBe(false);
   });
+
+  it('should return false for null', () => {
+    expect(isNonEmpty(null)).toBe(false);
+  });
+
+  it('should return false for undefined', () => {
+    expect(isNonEmpty(undefined)).toBe(false);
+  });
 });

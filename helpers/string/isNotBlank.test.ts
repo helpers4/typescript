@@ -32,9 +32,17 @@ describe('isNotBlank', () => {
   });
 
   it('should return false for Unicode whitespace-only strings', () => {
-    expect(isNotBlank(' ')).toBe(false); // non-breaking space
-    expect(isNotBlank(' ')).toBe(false); // em space
+    expect(isNotBlank(' ')).toBe(false); // non-breaking space
+    expect(isNotBlank(' ')).toBe(false); // em space
     expect(isNotBlank('　')).toBe(false); // ideographic space
     expect(isNotBlank('﻿')).toBe(false); // BOM
+  });
+
+  it('should return false for null', () => {
+    expect(isNotBlank(null)).toBe(false);
+  });
+
+  it('should return false for undefined', () => {
+    expect(isNotBlank(undefined)).toBe(false);
   });
 });
