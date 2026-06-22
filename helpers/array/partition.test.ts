@@ -55,4 +55,12 @@ describe('partition', () => {
     ]);
     expect(inactive).toEqual([{ name: 'Bob', active: false }]);
   });
+
+  it('returns [[], []] for null', () => {
+    expect(partition(null, () => true)).toEqual([[], []]);
+  });
+
+  it('returns [[], []] for undefined', () => {
+    expect(partition(undefined, () => true)).toEqual([[], []]);
+  });
 });

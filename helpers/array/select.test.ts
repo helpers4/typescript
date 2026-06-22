@@ -49,4 +49,12 @@ describe('select', () => {
     const arr: readonly number[] = [1, 2, 3, 4];
     expect(select(arr, x => x * 2, x => x > 2)).toEqual([6, 8]);
   });
+
+  it('returns [] for null', () => {
+    expect(select(null, x => x)).toEqual([]);
+  });
+
+  it('returns [] for undefined', () => {
+    expect(select(undefined, x => x)).toEqual([]);
+  });
 });

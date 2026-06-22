@@ -53,4 +53,12 @@ describe('max', () => {
     expect(max([1, NaN, 3])).toBeNaN();
     expect(max([1, 3, NaN])).toBeNaN();
   });
+
+  it('returns undefined for null', () => {
+    expect(max(null)).toBeUndefined();
+  });
+
+  it('returns undefined for undefined', () => {
+    expect(max(undefined)).toBeUndefined();
+  });
 });

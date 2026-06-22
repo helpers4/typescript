@@ -33,11 +33,24 @@ describe('isEmpty', () => {
     expect(isEmpty(arr)).toBe(true);
   });
 
-  it('should narrow type to never[] in true branch', () => {
+  it('should return true for an empty array regardless of declared type', () => {
     const arr: string[] = [];
+    expect(isEmpty(arr)).toBe(true);
+  });
+
+  it('should narrow type to readonly never[] | null | undefined in true branch', () => {
+    const arr: string[] | null = null;
     if (isEmpty(arr)) {
-      const _: readonly never[] = arr;
-      expect(_).toEqual([]);
+      const _: readonly never[] | null | undefined = arr;
+      expect(_).toBeNull();
     }
+  });
+
+  it('should return true for null', () => {
+    expect(isEmpty(null)).toBe(true);
+  });
+
+  it('should return true for undefined', () => {
+    expect(isEmpty(undefined)).toBe(true);
   });
 });

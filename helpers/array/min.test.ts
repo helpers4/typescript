@@ -53,4 +53,12 @@ describe('min', () => {
     expect(min([1, NaN, 3])).toBeNaN();
     expect(min([1, 3, NaN])).toBeNaN();
   });
+
+  it('returns undefined for null', () => {
+    expect(min(null)).toBeUndefined();
+  });
+
+  it('returns undefined for undefined', () => {
+    expect(min(undefined)).toBeUndefined();
+  });
 });

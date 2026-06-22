@@ -36,4 +36,12 @@ describe('compact', () => {
   it('should keep -1 and other truthy numbers', () => {
     expect(compact([0, -1, 1, NaN, 2])).toEqual([-1, 1, 2]);
   });
+
+  it('should return [] for null', () => {
+    expect(compact(null)).toEqual([]);
+  });
+
+  it('should return [] for undefined', () => {
+    expect(compact(undefined)).toEqual([]);
+  });
 });

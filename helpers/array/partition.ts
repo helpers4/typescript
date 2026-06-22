@@ -8,20 +8,24 @@
  * Splits an array into two groups based on a predicate function.
  * The first group contains elements for which the predicate returns true,
  * the second group contains the rest.
+ * `null` and `undefined` are treated as empty arrays and return `[[], []]`.
  * @param array - The array to partition
  * @param predicate - Function that returns true for elements in the first group
  * @returns A tuple of two arrays: [matching, non-matching]
  * @example
  * partition([1, 2, 3, 4, 5], n => n % 2 === 0)
  * // => [[2, 4], [1, 3, 5]]
+ * partition(null, n => n % 2 === 0)
+ * // => [[], []]
  * @since 2.0.0
  */
 export function partition<T>(
-  array: readonly T[],
+  array: readonly T[] | null | undefined,
   predicate: (item: T, index: number) => boolean,
 ): [T[], T[]] {
   const pass: T[] = [];
   const fail: T[] = [];
+  if (array == null) return [pass, fail];
   for (let i = 0; i < array.length; i++) {
     if (predicate(array[i], i)) {
       pass.push(array[i]);

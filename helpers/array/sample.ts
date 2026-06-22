@@ -21,10 +21,10 @@ import { shuffle } from './shuffle';
  * // => [2, 5, 1] (3 random elements)
  * @since 2.0.0
  */
-export function sample<T>(array: readonly T[]): T | undefined;
-export function sample<T>(array: readonly T[], count: number): T[];
-export function sample<T>(array: readonly T[], count?: number): T | undefined | T[] {
-  if (array.length === 0) {
+export function sample<T>(array: readonly T[] | null | undefined): T | undefined;
+export function sample<T>(array: readonly T[] | null | undefined, count: number): T[];
+export function sample<T>(array: readonly T[] | null | undefined, count?: number): T | undefined | T[] {
+  if (array == null || array.length === 0) {
     return count === undefined ? undefined : [];
   }
 

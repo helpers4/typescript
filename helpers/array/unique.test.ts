@@ -45,4 +45,14 @@ describe("unique", () => {
       expect(unique([0, -0, 0])).toEqual([0]);
     });
   });
+
+  describe('null/undefined', () => {
+    it('should return [] for null', () => {
+      expect(unique(null)).toEqual([]);
+    });
+
+    it('should return [] for undefined', () => {
+      expect(unique(undefined)).toEqual([]);
+    });
+  });
 });

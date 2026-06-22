@@ -8,15 +8,17 @@
  * Returns the minimum value in an array using a loop instead of spread,
  * avoiding the call stack overflow that occurs with `Math.min(...array)`
  * for very large arrays (> ~65 000 elements).
+ * `null` and `undefined` are treated as empty arrays and return `undefined`.
  * @param array - Array of numbers
- * @returns Minimum value, `undefined` for empty arrays, or `NaN` if any element is `NaN`
+ * @returns Minimum value, `undefined` for empty arrays, `null`, `undefined`, or `NaN` if any element is `NaN`
  * @example
  * min([3, 1, 4, 1, 5, 9]) // => 1
- * min([]) // => undefined
+ * min([])                  // => undefined
+ * min(null)                // => undefined
  * @since 2.0.2
  */
-export function min(array: readonly number[]): number | undefined {
-  if (array.length === 0) return undefined;
+export function min(array: readonly number[] | null | undefined): number | undefined {
+  if (array == null || array.length === 0) return undefined;
   let result = Infinity;
   for (const val of array) {
     if (Number.isNaN(val)) return NaN;

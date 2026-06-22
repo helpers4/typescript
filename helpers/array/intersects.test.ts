@@ -19,4 +19,16 @@ describe('intersects', () => {
     it('should return false if one of the arrays is empty', () => {
         expect(intersects([1, 2, 3], [])).toBe(false);
     });
+
+    it('returns false when first arg is null', () => {
+        expect(intersects(null, [1, 2, 3])).toBe(false);
+    });
+
+    it('returns false when second arg is null', () => {
+        expect(intersects([1, 2, 3], null)).toBe(false);
+    });
+
+    it('returns false when both args are null', () => {
+        expect(intersects(null, null)).toBe(false);
+    });
 });
