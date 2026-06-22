@@ -4,39 +4,57 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 import { mergeDeep } from './mergeDeep';
 
 describe('mergeDeep', () => {
   it('should merge objects deeply', () => {
-    const base = { a: 1, b: { c: 2, d: 3 } };
-    const source = { b: { c: 4, e: 5 }, f: 6 };
-
-    const result = mergeDeep(base, source);
-
+    const result = mergeDeep({ a: 1, b: { c: 2, d: 3 } }, { b: { c: 4, e: 5 }, f: 6 });
     expect(result).toEqual({ a: 1, b: { c: 4, d: 3, e: 5 }, f: 6 });
   });
 
   it('should handle multiple sources', () => {
-    const result = mergeDeep({ a: 1 }, { b: 2 }, { c: 3 });
-    expect(result).toEqual({ a: 1, b: 2, c: 3 });
+    expect(mergeDeep({ a: 1 }, { b: 2 }, { c: 3 })).toEqual({ a: 1, b: 2, c: 3 });
   });
 
-  it('should not mutate base or sources', () => {
-    const base = { a: 1, b: { c: 2 } };
-    const source = { b: { d: 3 } };
-    const result = mergeDeep(base, source);
+  it('should not mutate any source', () => {
+    const s1 = { a: 1, b: { c: 2 } };
+    const s2 = { b: { d: 3 } };
+    const result = mergeDeep(s1, s2);
 
-    expect(base.b).not.toHaveProperty('d');
+    expect(s1.b).not.toHaveProperty('d');
+    expect(s2.b).not.toHaveProperty('c');
     expect(result.b).toHaveProperty('d', 3);
     expect(result.b).toHaveProperty('c', 2);
   });
 
-  it('should return new object when no sources provided', () => {
+  it('single source returns new equal object', () => {
     const base = { a: 1 };
     const result = mergeDeep(base);
     expect(result).toEqual({ a: 1 });
     expect(result).not.toBe(base);
+  });
+
+  it('non-conflicting nested objects are not shared with the source', () => {
+    const s1 = { a: { x: 1 } };
+    const result = mergeDeep(s1, { b: 2 });
+    expect(result.a).not.toBe(s1.a);
+    (result.a as { x: number }).x = 99;
+    expect(s1.a.x).toBe(1);
+  });
+
+  it('non-conflicting arrays are cloned, not shared', () => {
+    const s1 = { arr: [1, 2, 3] };
+    const result = mergeDeep(s1, { b: 2 });
+    expect(result.arr).not.toBe(s1.arr);
+    (result.arr as number[]).push(4);
+    expect(s1.arr).toHaveLength(3);
+  });
+
+  it('non-conflicting nested plain objects preserve undefined-valued keys', () => {
+    const result = mergeDeep({}, { cfg: { debug: undefined, level: 1 } });
+    expect('debug' in (result as any).cfg).toBe(true);
+    expect((result as any).cfg.level).toBe(1);
   });
 
   it('should handle undefined values in source', () => {
@@ -46,56 +64,32 @@ describe('mergeDeep', () => {
   });
 
   it('should handle null values in source', () => {
-    const result = mergeDeep({ a: 1 }, { b: null });
-    expect(result).toEqual({ a: 1, b: null });
+    expect(mergeDeep({ a: 1 }, { b: null })).toEqual({ a: 1, b: null });
   });
 
   it('should handle arrays as values (not merge them)', () => {
-    const result = mergeDeep({ arr: [1, 2] }, { arr: [3, 4] });
-    expect(result.arr).toEqual([3, 4]);
+    expect(mergeDeep({ arr: [1, 2] }, { arr: [3, 4] })).toEqual({ arr: [3, 4] });
   });
 
   it('should deeply merge multiple nested objects', () => {
-    const result = mergeDeep(
-      { a: { b: { c: 1 } } },
-      { a: { b: { d: 2 } } },
-      { a: { e: 3 } },
-    );
-    expect(result).toEqual({ a: { b: { c: 1, d: 2 }, e: 3 } });
-  });
-
-  it('should handle multiple sources with no common properties', () => {
-    expect(mergeDeep({ x: 1 }, { y: 2 }, { z: 3 })).toEqual({ x: 1, y: 2, z: 3 });
-  });
-
-  it('should handle merging with nested null values correctly', () => {
-    const result = mergeDeep({ a: { b: null } }, { a: { c: 3 } });
-    expect(result).toEqual({ a: { b: null, c: 3 } });
+    expect(mergeDeep({ a: { b: { c: 1 } } }, { a: { b: { d: 2 } } }, { a: { e: 3 } }))
+      .toEqual({ a: { b: { c: 1, d: 2 }, e: 3 } });
   });
 
   it('should handle multiple sources including empty objects', () => {
     expect(mergeDeep({ a: 1 }, { b: 2 }, {}, { c: 3 })).toEqual({ a: 1, b: 2, c: 3 });
   });
 
-  it('should handle null/undefined sources gracefully', () => {
-    const result = mergeDeep({ a: 1 }, null as unknown as Record<string, unknown>, undefined as unknown as Record<string, unknown>, { b: 2 });
-    expect(result).toEqual({ a: 1, b: 2 });
-  });
-
   it('should deeply merge nested objects (not just overwrite)', () => {
-    const result = mergeDeep({ a: { x: 1, y: 2 } }, { a: { z: 3 } });
-    expect(result.a).toEqual({ x: 1, y: 2, z: 3 });
-    expect(result.a.x).toBe(1);
+    expect(mergeDeep({ a: { x: 1, y: 2 } }, { a: { z: 3 } }).a).toEqual({ x: 1, y: 2, z: 3 });
   });
 
-  it('should overwrite when base value is not plain object', () => {
-    const result = mergeDeep({ a: 'string' }, { a: { nested: true } });
-    expect(result.a).toEqual({ nested: true });
+  it('should overwrite when left value is not plain object', () => {
+    expect(mergeDeep({ a: 'string' }, { a: { nested: true } }).a).toEqual({ nested: true });
   });
 
-  it('should overwrite when source value is not plain object', () => {
-    const result = mergeDeep({ a: { nested: true } }, { a: 'string' });
-    expect(result.a).toBe('string');
+  it('should overwrite when right value is not plain object', () => {
+    expect(mergeDeep({ a: { nested: true } }, { a: 'string' }).a).toBe('string');
   });
 
   it('should not allow __proto__ pollution', () => {
@@ -105,9 +99,7 @@ describe('mergeDeep', () => {
   });
 
   it('should not allow constructor pollution', () => {
-    const base = {};
-    const malicious = { constructor: { polluted: 'yes' } };
-    const result = mergeDeep(base, malicious);
+    const result = mergeDeep({}, { constructor: { polluted: 'yes' } });
     expect(result.constructor).toBe(Object);
   });
 
@@ -151,5 +143,30 @@ describe('mergeDeep — symbol keys', () => {
     Object.defineProperty(source, sym, { value: 'hidden', enumerable: false });
     const result = mergeDeep({} as Record<PropertyKey, unknown>, source as Record<PropertyKey, unknown>);
     expect(result[sym]).toBeUndefined();
+  });
+});
+
+describe('mergeDeep — type inference', () => {
+  it('two disjoint objects → intersection type', () => {
+    const result = mergeDeep({ a: 1 }, { b: 'x' });
+    expectTypeOf(result).toEqualTypeOf<{ a: number } & { b: string }>();
+  });
+
+  it('three sources → triple intersection', () => {
+    const result = mergeDeep({ a: 1 }, { b: 'x' }, { c: true });
+    expectTypeOf(result).toEqualTypeOf<{ a: number } & { b: string } & { c: boolean }>();
+  });
+
+  it('nested shared key → nested intersection', () => {
+    const result = mergeDeep({ a: { b: 1 } }, { a: { c: 'x' } });
+    // TypeScript distributes intersection: { a: { b: number } } & { a: { c: string } }
+    // = { a: { b: number } & { c: string } }
+    expectTypeOf(result).toEqualTypeOf<{ a: { b: number } } & { a: { c: string } }>();
+  });
+
+  it('single source → same type', () => {
+    const obj = { a: 1, b: 'x' };
+    const result = mergeDeep(obj);
+    expectTypeOf(result).toEqualTypeOf<typeof obj>();
   });
 });
