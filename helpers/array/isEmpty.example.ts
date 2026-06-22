@@ -24,20 +24,23 @@ isEmpty([null])    // => false  (null is still an element)`,
       },
     },
     {
-      title: 'Branch on empty array with type narrowing',
-      description: 'In the true branch, the type narrows to never[], ensuring no element access.',
-      code: `function first<T>(arr: T[]): T | undefined {
+      title: 'Guard before accessing first element',
+      description: 'Use isEmpty as an early-return guard for arrays, null, and undefined; the false branch is safely non-empty.',
+      code: `function first<T>(arr: T[] | null | undefined): T | undefined {
   if (isEmpty(arr)) return undefined;
-  return arr[0]; // TypeScript knows arr is non-empty here
+  return arr[0];
 }
-first([])      // => undefined
-first([1, 2])  // => 1`,
+first([])        // => undefined
+first(null)      // => undefined
+first([1, 2])    // => 1`,
       assert: () => {
-        function first<T>(arr: T[]): T | undefined {
+        function first<T>(arr: T[] | null | undefined): T | undefined {
           if (isEmpty(arr)) return undefined;
           return arr[0];
         }
-        if (first([]) !== undefined) throw new Error('Expected undefined');
+        if (first([]) !== undefined) throw new Error('Expected undefined for []');
+        if (first(null) !== undefined) throw new Error('Expected undefined for null');
+        if (first(undefined) !== undefined) throw new Error('Expected undefined for undefined');
         if (first([1, 2]) !== 1) throw new Error('Expected 1');
       },
     },
