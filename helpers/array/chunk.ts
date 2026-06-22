@@ -11,7 +11,7 @@
  * @returns Array of chunks
  * @since 1.9.0
  */
-export function chunk<T>(array: T[], size: number): T[][] {
+export function chunk<T>(array: readonly T[], size: number): T[][] {
   if (size <= 0) return [];
   const result: T[][] = [];
   for (let i = 0; i < array.length; i += size) {

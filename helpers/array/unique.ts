@@ -10,6 +10,6 @@
  * @returns New array with unique values only
  * @since 1.9.0
  */
-export function unique<T>(array: T[]): T[] {
+export function unique<T>(array: readonly T[]): T[] {
   return Array.from(new Set(array));
 }
