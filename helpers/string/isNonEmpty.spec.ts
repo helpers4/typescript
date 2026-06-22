@@ -30,4 +30,11 @@ describe('isNonEmpty — contracts', () => {
       }),
     );
   });
+
+  it('narrows string | null | undefined to string in the truthy branch', () => {
+    const value: string | null | undefined = 'hello';
+    if (isNonEmpty(value)) {
+      expect(value.toLowerCase()).toBe('hello');
+    }
+  });
 });

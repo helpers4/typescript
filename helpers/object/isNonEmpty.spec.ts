@@ -33,4 +33,11 @@ describe('isNonEmpty — contracts', () => {
       }),
     );
   });
+
+  it('narrows Record | null | undefined to Record in the truthy branch', () => {
+    const value: Record<PropertyKey, unknown> | null | undefined = { key: 1 };
+    if (isNonEmpty(value)) {
+      expect(Object.keys(value).length).toBeGreaterThan(0);
+    }
+  });
 });
