@@ -108,16 +108,16 @@
       "example": "arr.slice(n)"
     },
     {
-      "name": "sort (basic comparator)",
+      "name": "sort (immutable)",
       "libraries": [
         "lodash",
         "radashi",
         "ramda"
       ],
-      "native": "(a, b) => a - b  /  a.localeCompare(b)",
-      "since": "ES1",
-      "example": "arr.sort((a, b) => a - b)\narr.sort((a, b) => a.localeCompare(b))",
-      "notes": "Inline comparators are idiomatic JS/TS; no helper needed. helpers4/array provides sortNumberAscFn / sortStringAscFn as reusable shortcuts for .sort() — they are excluded from the native-alternatives rule"
+      "native": "Array.prototype.toSorted(compareFn?)",
+      "since": "ES2023",
+      "example": "arr.toSorted((a, b) => a - b)\narr.toSorted((a, b) => a.localeCompare(b))",
+      "notes": "Non-mutating; prefer over [...arr].sort(). .sort() mutates in place. helpers4/array provides sortNumberAscFn / sortStringAscFn as reusable comparator shortcuts — they are excluded from the native-alternatives rule"
     },
     {
       "name": "sortBy / orderBy",
@@ -231,7 +231,7 @@
       "native": "{ ...a, ...b } or Object.assign({}, a, b)",
       "since": "ES2015",
       "example": "const merged = { ...defaults, ...options }",
-      "notes": "For deep merge, use deepMerge from helpers4"
+      "notes": "For deep merge, use mergeDeep from helpers4"
     }
   ],
   "string": [
