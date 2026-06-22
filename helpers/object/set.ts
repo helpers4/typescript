@@ -5,54 +5,58 @@
  */
 
 import { parsePath } from './_parsePath.js';
-import type { DeepGet, DeepSet } from './_types.js';
+import type { ContainsUnsafeStringKey, DeepGet, DeepSet, ParsePath } from './_types.js';
 import { UNSAFE_KEYS } from './_unsafeKeys.js';
 
 /**
  * Sets a value in an object at the given path, creating intermediate objects as needed.
  *
- * **Three path forms are supported:**
+ * **Two path forms are supported:**
  *
- * 1. **Dot notation** (`string`) — segments split on `.` are kept as-is string keys.
- *    `"layers.1.name"` → keys `["layers", "1", "name"]` (all strings, including `"1"`).
+ * 1. **String path** — dot notation and bracket notation, mixed freely.
+ *    - Dot segments are always string keys: `'layers.1.name'` → keys `['layers', '1', 'name']`.
+ *    - Bracket segments are always number keys: `'layers[1].name'` → keys `['layers', 1, 'name']`.
+ *    - String literal paths give **full compile-time type inference** on the return type.
+ *    - Dynamic (non-literal) strings return `T` (same object type).
  *
- * 2. **Bracket notation** (`string`) — `[n]` segments are parsed as numeric keys.
- *    `"layers[1].name"` → keys `["layers", 1, "name"]` (index `1` becomes a number).
- *    Dot and bracket can be mixed freely: `"a[0].b[2].c"`.
+ * 2. **Key array** (`PropertyKey[]`) — explicit array of `string | number | symbol` keys,
+ *    no parsing performed. Enables symbol-keyed access and precise return-type inference.
  *
- * 3. **Key array** (`PropertyKey[]`) — explicit array of `string | number | symbol` keys,
- *    no parsing performed. Enables full key-type control, including symbols:
- *    `["layers", 1, Symbol('id')]`.
+ * Both forms support **all objects** (plain objects, arrays, class instances).
+ * Symbol keys are only reachable via the key-array form.
  *
  * Intermediate nodes that are absent, `null`, or not an object are replaced with `{}`.
  * Any path containing a string segment equal to `__proto__`, `constructor`, or `prototype`
  * is rejected and the original object is returned unchanged (prototype-pollution guard).
  *
  * @param obj - The object to mutate
- * @param path - Dot/bracket-notation string or explicit `PropertyKey[]`
+ * @param path - Dot/bracket-notation string literal or explicit `PropertyKey[]`
  * @param value - Value to assign at the path
- * @returns The mutated object (same reference)
+ * @returns The mutated object (same reference, narrowed type)
  * @example
- * // 1. Dot notation — "1" stays a string key
+ * // Dot notation — "1" stays a string key
  * set({}, 'a.b.c', 42)
  * // => { a: { b: { c: 42 } } }
  *
- * set({}, 'layers.1.name', 'bg')
- * // => { layers: { '1': { name: 'bg' } } }
- *
- * // 2. Bracket notation — [1] becomes a number key
+ * // Bracket notation — [1] becomes a number key
  * set({ layers: [{}, { name: 'old' }] }, 'layers[1].name', 'bg')
  * // => { layers: [{}, { name: 'bg' }] }
  *
- * // 3. Key array — supports symbols
+ * // Key array — supports symbols
  * const id = Symbol('id')
  * set({}, ['user', id], 'alice')
  * // => { user: { [id]: 'alice' } }
  * @since 1.9.0
  */
-
-export function set(obj: Record<string, unknown>, path: string, value: unknown): Record<string, unknown>;
-export function set<T extends object, const Path extends readonly PropertyKey[], V extends DeepGet<T, Path>>(obj: T, path: Path, value: V): DeepSet<T, Path, V>;
+export function set<
+  T extends object,
+  const P extends string | readonly PropertyKey[],
+  V extends DeepGet<T, ParsePath<P>>,
+>(
+  obj: T,
+  path: P,
+  value: V,
+): string extends P ? T : readonly PropertyKey[] extends P ? T : ContainsUnsafeStringKey<ParsePath<P>> extends true ? T : DeepSet<T, ParsePath<P>, V>;
 export function set(obj: object, path: string | PropertyKey[], value: unknown): object {
   const keys: readonly PropertyKey[] = typeof path === 'string' ? parsePath(path) : path;
 
