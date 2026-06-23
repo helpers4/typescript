@@ -82,17 +82,3 @@ export function difference(dateA: DateLike, dateB: DateLike, options: DateDiffer
 
   return absolute ? Math.abs(result) : result;
 }
-
-/**
- * Gets the difference in days between two dates.
- *
- * @param date1 - First date
- * @param date2 - Second date
- * @returns Number of days difference (rounded)
- * @deprecated Use {@link difference} instead. `daysDifference` will be removed in v3.
- * @since 2.0.0
- */
-export function daysDifference(date1: Date, date2: Date): number {
-  const oneDay = 24 * 60 * 60 * 1000;
-  return Math.round(Math.abs((date1.getTime() - date2.getTime()) / oneDay));
-}

@@ -5,51 +5,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { daysDifference, difference } from './difference';
-
-describe('daysDifference', () => {
-  it('should return 0 for same date', () => {
-    const date = new Date('2023-01-01T12:30:45.123Z');
-    expect(daysDifference(date, date)).toBe(0);
-  });
-
-  it('should return 1 for consecutive days', () => {
-    const date1 = new Date('2023-01-01T12:30:45.123Z');
-    const date2 = new Date('2023-01-02T12:30:45.123Z');
-    expect(daysDifference(date1, date2)).toBe(1);
-    expect(daysDifference(date2, date1)).toBe(1);
-  });
-
-  it('should return correct difference for multiple days', () => {
-    const date1 = new Date('2023-01-01T12:30:45.123Z');
-    const date2 = new Date('2023-01-08T12:30:45.123Z');
-    expect(daysDifference(date1, date2)).toBe(7);
-  });
-
-  it('should handle dates across months', () => {
-    expect(daysDifference(new Date('2023-01-31T12:30:45.123Z'), new Date('2023-02-01T12:30:45.123Z'))).toBe(1);
-  });
-
-  it('should handle dates across years', () => {
-    expect(daysDifference(new Date('2023-12-31T12:30:45.123Z'), new Date('2024-01-01T12:30:45.123Z'))).toBe(1);
-  });
-
-  it('should handle leap years correctly', () => {
-    expect(daysDifference(new Date('2024-02-28T12:00:00.000Z'), new Date('2024-03-01T12:00:00.000Z'))).toBe(2);
-  });
-
-  it('should ignore time differences within same day', () => {
-    expect(daysDifference(new Date('2023-01-01T12:00:00.000Z'), new Date('2023-01-01T15:00:00.000Z'))).toBe(0);
-  });
-
-  it('should handle large date differences', () => {
-    expect(daysDifference(new Date('2020-01-01T12:00:00.000Z'), new Date('2023-01-01T12:00:00.000Z'))).toBe(1096);
-  });
-
-  it('should round to nearest day for partial day differences', () => {
-    expect(daysDifference(new Date('2023-01-01T12:00:00.000Z'), new Date('2023-01-02T11:59:59.999Z'))).toBe(1);
-  });
-});
+import { difference } from './difference';
 
 describe('difference', () => {
   describe('days (default)', () => {
