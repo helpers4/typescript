@@ -53,19 +53,3 @@ export function cloneDeep<T>(obj: T): T {
 
   return cloned;
 }
-
-/**
- * @deprecated Use {@link cloneDeep} instead. Will be removed in v3.
- * @since 1.9.0
- * @example
- * deepClone({ a: { b: [1, 2] } })
- * // => { a: { b: [1, 2] } }  — fully independent copy
- *
- * deepClone(new Date('2024-01-01'))
- * // => Date with the same timestamp
- *
- * // Primitives pass through unchanged
- * deepClone(42)   // => 42
- * deepClone(null) // => null
- */
-export { cloneDeep as deepClone };
