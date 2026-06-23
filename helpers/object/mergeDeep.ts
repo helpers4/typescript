@@ -106,32 +106,3 @@ export function mergeDeep(...sources: object[]): object {
   }
   return result;
 }
-
-/**
- * @deprecated Use {@link mergeDeep} instead. Will be removed in v3.
- * @since 1.9.0
- * @example
- * deepMerge({ a: 1, b: { c: 2 } }, { b: { d: 3 }, e: 4 })
- * // => { a: 1, b: { c: 2, d: 3 }, e: 4 }
- *
- * // Later source wins for non-object values
- * deepMerge({ a: 1, arr: [1, 2] }, { a: 2, arr: [3] })
- * // => { a: 2, arr: [3] }
- *
- * // undefined never overwrites
- * deepMerge({ a: 1 }, { a: undefined })
- * // => { a: 1 }
- *
- * // Three sources, left to right
- * deepMerge({ x: 1 }, { y: 2 }, { x: 99, z: 3 })
- * // => { x: 99, y: 2, z: 3 }
- *
- * **Breaking change (v2.x):** this function previously mutated the first argument
- * in-place. It now delegates to `mergeDeep`, which returns a **new object**.
- * Read the return value — do not rely on the first argument being updated.
- *
- * The former `deepMerge(null, …)` / `deepMerge(undefined, …)` overloads that
- * returned `null` / `undefined` are also gone; `mergeDeep` always returns a
- * plain object.
- */
-export { mergeDeep as deepMerge };
