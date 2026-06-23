@@ -6,7 +6,7 @@
 
 import { parsePath } from './_parsePath.js';
 import type { ContainsUnsafeStringKey, DeepGet, DeepSet, ParsePath } from './_types.js';
-import { UNSAFE_KEYS } from './_unsafeKeys.js';
+import { UNSAFE_KEYS } from '../_shared/_unsafeKeys.js';
 
 /**
  * Sets a value in an object at the given path, creating intermediate objects as needed.

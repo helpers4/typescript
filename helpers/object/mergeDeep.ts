@@ -5,9 +5,9 @@
  */
 
 import { cloneDeep } from './cloneDeep.js';
-import { isPlainObject } from '../type/isPlainObject';
+import { isPlainObject } from '../guard/isPlainObject';
 import type { MergeResult } from './_types.js';
-import { UNSAFE_KEYS } from './_unsafeKeys.js';
+import { UNSAFE_KEYS } from '../_shared/_unsafeKeys.js';
 
 function applyKey(
   result: Record<PropertyKey, unknown>,

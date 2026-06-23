@@ -89,9 +89,9 @@ All these symbols are already marked `@deprecated "…will be removed in v3"` �
 | `deepClone` | `object/cloneDeep.ts` (re-export at bottom) | next | `cloneDeep` |
 | `deepMerge` | `object/mergeDeep.ts` (re-export at bottom) | next | `mergeDeep` |
 
-- [ ] Delete all 6 symbols + their files/barrel exports
-- [ ] Delete or migrate associated tests to the replacement
-- [ ] Verify no internal helper still calls them
+- [x] Delete all 6 symbols + their files/barrel exports
+- [x] Delete or migrate associated tests to the replacement
+- [x] Verify no internal helper still calls them
 
 ### 3.2 DEFAULT_SORT_STRING_PROPS 🟡
 
@@ -129,8 +129,9 @@ Two category names need to change for clarity:
 
 `helpers/array/_unsafeKeys.ts` et `helpers/object/_unsafeKeys.ts` sont identiques (même `Set` de clés protégées). Ils sont dupliqués délibérément pour éviter les dépendances croisées entre catégories, mais une modification dans l'un n'est pas propagée à l'autre.
 
-- [ ] Trouver une solution d'infrastructure pour partager ce type de fichier entre catégories sans créer de couplage entre `array/` et `object/` (e.g. dossier `helpers/_shared/`, workspace interne, ou génération de code)
-- [ ] Lors de l'implémentation, vérifier que tous les consommateurs existants (`countBy`, `groupBy`, `invert`, `map`, `cloneDeep`, `mergeDeep`, `set`) importent depuis la source unique
+- [x] Trouver une solution d'infrastructure pour partager ce type de fichier entre catégories sans créer de couplage entre `array/` et `object/` (e.g. dossier `helpers/_shared/`, workspace interne, ou génération de code)
+  - Choix retenu : `helpers/_shared/_unsafeKeys.ts` — fichier source unique, importé en `'../_shared/_unsafeKeys.js'` depuis les catégories consommatrices ; inliné dans chaque bundle à la compilation, donc pas de dépendance runtime inter-packages. Le build script skippe les dossiers préfixés `_`.
+- [x] Lors de l'implémentation, vérifier que tous les consommateurs existants (`countBy`, `groupBy`, `invert`, `map`, `cloneDeep`, `mergeDeep`, `set`) importent depuis la source unique
 
 ### 3.7 DateLike / Temporal 🟢
 
