@@ -122,8 +122,10 @@ Two category names need to change for clarity:
 | _(freed name)_ | `helpers/type/` | New category for compile-time-only utility types (`DeepPartial`, `Brand`, `Prettify`, …) — singular, consistent with all other categories |
 
 - [x] Rename `helpers/type/` → `helpers/guard/` (update barrel, all internal imports, docs)
-- [ ] Create `helpers/type/` for pure TypeScript utility types; migrate `DeepPartial`, `DeepWritable`, `Maybe` from the old `helpers/type/` and expose previously-internal types (`UnionToIntersection`, `DeepGet`, `DeepSet`, `ParsePath`, …) as public API
-- [ ] Update all consumer imports and documentation
+- [x] Create `helpers/type/` for pure TypeScript utility types; migrate `DeepPartial`, `DeepWritable`, `Maybe` from the old `helpers/type/` and expose previously-internal types (`UnionToIntersection`, `DeepGet`, `DeepSet`, `ParsePath`, …) as public API
+  - Promoted: `UnionToIntersection`, `DeepGet`, `DeepSet` — standalone implementations (no cross-category runtime dep). `ParsePath` kept internal to `object/` (too path-specific).
+  - New types added: `Brand`, `Prettify`, `Nullable`, `Nullish`, `ValueOf`, `KeysOfType`, `PickByValue`, `OmitByValue`, `RequiredKeys`, `OptionalKeys`
+- [x] Update all consumer imports and documentation
 
 ### 3.6 `_unsafeKeys` — fichier partagé entre catégories 🟢
 
