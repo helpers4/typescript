@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { isNullish } from '../type/isNullish';
+import { isNullish } from '../guard/isNullish';
 
 /**
  * Return a value or throw an error if null or undefined.

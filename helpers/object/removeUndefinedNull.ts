@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { isNullish } from '../type/isNullish';
+import { isNullish } from '../guard/isNullish';
 
 /**
  * Remove null and undefined values from an object.

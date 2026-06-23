@@ -121,7 +121,7 @@ Two category names need to change for clarity:
 | `helpers/type/` | `helpers/guard/` | Content is runtime type guards (`isString`, `isNull`, …) — "guard" is the canonical TypeScript term |
 | _(freed name)_ | `helpers/type/` | New category for compile-time-only utility types (`DeepPartial`, `Brand`, `Prettify`, …) — singular, consistent with all other categories |
 
-- [ ] Rename `helpers/type/` → `helpers/guard/` (update barrel, all internal imports, docs)
+- [x] Rename `helpers/type/` → `helpers/guard/` (update barrel, all internal imports, docs)
 - [ ] Create `helpers/type/` for pure TypeScript utility types; migrate `DeepPartial`, `DeepWritable`, `Maybe` from the old `helpers/type/` and expose previously-internal types (`UnionToIntersection`, `DeepGet`, `DeepSet`, `ParsePath`, …) as public API
 - [ ] Update all consumer imports and documentation
 

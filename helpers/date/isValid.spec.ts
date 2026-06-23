@@ -6,7 +6,7 @@
 
 import * as fc from 'fast-check';
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import { isDate } from '../type/isDate';
+import { isDate } from '../guard/isDate';
 import { isValid } from './isValid';
 
 describe('isValid — property-based', () => {

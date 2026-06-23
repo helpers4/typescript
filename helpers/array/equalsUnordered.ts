@@ -5,8 +5,8 @@
  */
 
 import { equalsShallow } from '../object/equalsShallow';
-import { isArray } from '../type/isArray';
-import { isPlainObject } from '../type/isPlainObject';
+import { isArray } from '../guard/isArray';
+import { isPlainObject } from '../guard/isPlainObject';
 
 /**
  * Order-independent (set-style) array equality.

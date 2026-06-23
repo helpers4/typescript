@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { isPlainObject } from '../type/isPlainObject';
+import { isPlainObject } from '../guard/isPlainObject';
 
 /**
  * Recursive structural array equality.
