@@ -6,7 +6,7 @@
 
 import * as fc from 'fast-check';
 import { describe, expect, expectTypeOf, it } from 'vitest';
-import { isNumber } from '../type/isNumber';
+import { isNumber } from '../guard/isNumber';
 import { isNegative } from './isNegative';
 import { isPositive } from './isPositive';
 

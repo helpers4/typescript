@@ -1,5 +1,5 @@
 {
   "label": "Type",
-  "smallDescription": "Type checking and validation utilities",
-  "description": "Utilities for runtime type checking (isString, isArray, isDefined, …) and compile-time TypeScript type utilities (Maybe, DeepPartial, …)"
+  "smallDescription": "Compile-time TypeScript utility types",
+  "description": "Pure compile-time TypeScript utility types: `DeepPartial`, `DeepWritable`, `Maybe`, `Brand`, `Prettify`, `Nullable`, `ValueOf`, and structural helpers (`DeepGet`, `DeepSet`, `UnionToIntersection`, …). No runtime footprint — import with `import type`."
 }

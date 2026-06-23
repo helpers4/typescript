@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { type Falsy, isFalsy } from '../type/isFalsy';
+import { type Falsy, isFalsy } from '../guard/isFalsy';
 
 /**
  * Removes all falsy values (`false`, `null`, `undefined`, `0`, `""`, `NaN`) from an array.

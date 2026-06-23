@@ -1,0 +1,5 @@
+{
+  "label": "Guard",
+  "smallDescription": "Runtime type guard utilities",
+  "description": "Runtime type guards (`isString`, `isArray`, `isDefined`, `isNull`, …) — narrowing functions that return boolean predicates usable in TypeScript type-safe branches."
+}

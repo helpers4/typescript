@@ -16,7 +16,7 @@ import {
   combineLatest as combineLatestOperator,
   of,
 } from "rxjs";
-import { isDefined } from '../type/isDefined';
+import { isDefined } from '../guard/isDefined';
 
 // combineLatest([a, b, c])
 export function combineLatest<A extends readonly unknown[]>(

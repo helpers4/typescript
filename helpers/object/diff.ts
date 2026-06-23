@@ -6,7 +6,7 @@
 
 import { equalsDeep as arrayDeepEquals } from '../array/equalsDeep';
 import { compare as compareDate } from '../date/compare';
-import { isSpecialObject } from '../type/isSpecialObject';
+import { isSpecialObject } from '../guard/isSpecialObject';
 
 /**
  * Per-key diff result. Each entry tells what differs between the two
