@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { UNSAFE_KEYS } from './_unsafeKeys.js';
-import type { UnsafeKey } from './_unsafeKeys.js';
+import { UNSAFE_KEYS } from '../_shared/_unsafeKeys.js';
+import type { UnsafeKey } from '../_shared/_unsafeKeys.js';
 
 /**
  * Groups the elements of an array by the key returned by `keyFn` and returns a

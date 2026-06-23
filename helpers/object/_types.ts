@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import type { UnsafeKey } from './_unsafeKeys.js';
+import type { UnsafeKey } from '../_shared/_unsafeKeys.js';
 
 /**
  * Parses a `[n]` bracket index: numeric index strings become `number`, anything else stays `string`.

@@ -22,12 +22,13 @@ import {
  * @returns Array of valid categories that were built
  */
 export async function buildCategories(): Promise<string[]> {
-  // Read categories in the /helpers directory
-  const categories = (await readdir(DIR.HELPERS)).sort();
+  // Read categories in the /helpers directory, excluding internal shared dirs (e.g. _shared/).
+  const categories = (await readdir(DIR.HELPERS)).sort().filter(c => !c.startsWith('_'));
   const validCategories: string[] = [];
 
   // Build individual categories
   for (const category of categories) {
+
     const categoryPath = join(DIR.HELPERS, category);
     const files = await readdir(categoryPath);
 

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { UNSAFE_KEYS } from './_unsafeKeys.js';
+import { UNSAFE_KEYS } from '../_shared/_unsafeKeys.js';
 
 /**
  * Transforms the values and/or keys of a plain object in a single pass.
