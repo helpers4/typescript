@@ -12,34 +12,21 @@
  * @since 1.0.0
  */
 export function meaningPromiseOrThrow<T>(
-    error: string
+  error: string
 ): (data: T) => T | never {
-    return (data: unknown) => {
-        if (
-            data === undefined ||
-            data === null ||
-            data === '' ||
-            isEmptyObject(data) ||
-            // eslint-disable-next-line functional/prefer-readonly-type, @typescript-eslint/no-explicit-any
-            isEmptyArray(data as any[])
-        ) {
-            // eslint-disable-next-line functional/no-throw-statement
-            throw new Error(error);
-        } else {
-            return data as T;
-        }
-    };
+  return (data: T) => {
+    if (isMeaningless(data)) {
+      throw new Error(error); // eslint-disable-line functional/no-throw-statement
+    }
+    return data;
+  };
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-function isEmptyObject(obj: object): boolean {
-    return (
-        Object.keys(obj).length === 0 &&
-        Object.getPrototypeOf(obj) === Object.prototype
-    );
-}
-
-// eslint-disable-next-line functional/prefer-readonly-type, @typescript-eslint/no-explicit-any
-function isEmptyArray(arr: any[]): boolean {
-    return arr.constructor === Array && arr.length === 0;
+function isMeaningless(value: unknown): boolean {
+  if (value === undefined || value === null || value === '') return true;
+  if (Array.isArray(value)) return value.length === 0;
+  if (typeof value === 'object') {
+    return Object.keys(value).length === 0 && Object.getPrototypeOf(value) === Object.prototype;
+  }
+  return false;
 }

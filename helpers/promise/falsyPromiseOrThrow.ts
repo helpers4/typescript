@@ -11,12 +11,10 @@
  * @since 1.0.0
  */
 export function falsyPromiseOrThrow<T>(error: string): (data: T) => T | never {
-    return (data: unknown) => {
-        if (data) {
-            // eslint-disable-next-line functional/no-throw-statement
-            throw new Error(error);
-        } else {
-            return data as T;
-        }
-    };
+  return (data: T) => {
+    if (data) {
+      throw new Error(error); // eslint-disable-line functional/no-throw-statement
+    }
+    return data;
+  };
 }

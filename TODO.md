@@ -103,8 +103,10 @@ Décision à prendre : rester interne (état actuel depuis PR #95) ou promouvoir
 
 `truthyPromiseOrThrow`, `falsyPromiseOrThrow`, `meaningPromiseOrThrow` ont tous des `as T` non-soundés et plusieurs `eslint-disable`. Le problème de fond : `T` n'est pas contraint et le cast est invisible à l'appelant.
 
-- [ ] Revoir si `T` doit être contraint (`T extends object`, etc.) ou si le `as T` est remplaçable par une surcharge typée
-- [ ] Supprimer les `eslint-disable` si le type devient sound, sinon ajouter un commentaire justificatif
+- [x] Revoir si `T` doit être contraint (`T extends object`, etc.) ou si le `as T` est remplaçable par une surcharge typée
+  - Fix retenu : `data: unknown` → `data: T` dans le corps du retour ; le cast `as T` disparaît car le type est déjà connu. `meaningPromiseOrThrow` extrait `isMeaningless(value: unknown): boolean` pour éviter tous les casts restants.
+- [x] Supprimer les `eslint-disable` si le type devient sound, sinon ajouter un commentaire justificatif
+  - Seul `functional/no-throw-statement` subsiste (règle de style, non liée aux types).
 
 ### 3.4 isNonEmpty — cohérence des type guards 🟢
 
