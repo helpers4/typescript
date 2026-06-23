@@ -11,12 +11,10 @@
  * @since 1.0.0
  */
 export function truthyPromiseOrThrow<T>(error: string): (data: T) => T | never {
-    return (data: unknown) => {
-        if (data) {
-            return data as T;
-        } else {
-            // eslint-disable-next-line functional/no-throw-statement
-            throw new Error(error);
-        }
-    };
+  return (data: T) => {
+    if (data) {
+      return data;
+    }
+    throw new Error(error); // eslint-disable-line functional/no-throw-statement
+  };
 }
