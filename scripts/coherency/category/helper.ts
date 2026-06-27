@@ -107,6 +107,8 @@ export async function testCategoryConfigs(): Promise<void> {
   const categories = await fs.readdir(helpersDir);
 
   for (const category of categories) {
+    if (category.startsWith('_')) continue;
+
     const categoryPath = path.join(helpersDir, category);
     const stat = await fs.stat(categoryPath);
     if (!stat.isDirectory()) continue;
@@ -146,6 +148,8 @@ export async function testSourceStructure(): Promise<void> {
   const SUFFIXES = ['.test.ts', '.spec.ts', '.bench.ts', '.example.ts'];
 
   for (const category of categories) {
+    if (category.startsWith('_')) continue;
+
     const categoryPath = path.join(helpersDir, category);
     const stat = await fs.stat(categoryPath);
     if (!stat.isDirectory()) continue;
