@@ -47,10 +47,10 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 
 ### Priority 5 — `Branch-Protection`
 
-- [ ] Add `SCORECARD_TOKEN` (fine-grained PAT, `Administration: Read-only`,
-  `Metadata: Read-only` implicit, optional `Webhooks: Read-only`).
-- [ ] Wire it into the Scorecard action workflow.
-- [ ] Confirm `Branch-Protection` is scored (no `?` / token error).
+- [ ] Add `SCORECARD_TOKEN` secret to the repo (fine-grained PAT, `Administration: Read-only`,
+  `Metadata: Read-only` implicit) — manual step in GitHub Settings → Secrets → Actions.
+- [x] Wire it into the Scorecard action workflow (`repo_token: ${{ secrets.SCORECARD_TOKEN }}`).
+- [ ] Confirm `Branch-Protection` is scored (no `?` / token error) after next Scorecard run.
 
 ### Priority 6 — `CII-Best-Practices`
 
@@ -61,7 +61,7 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 ### Rollout strategy
 
 - [x] PR C — release provenance / signature
-- [ ] PR D — Scorecard token / auth visibility
+- [ ] PR D — Scorecard token / auth visibility (workflow wired, secret to create manually)
 - [ ] PR E — docs + best-practices badge links
 
 After each PR, re-run Scorecard and capture the delta.
