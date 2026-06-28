@@ -54,15 +54,19 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 
 ### Priority 6 — `CII-Best-Practices`
 
-- [ ] Register the project on `bestpractices.dev`.
-- [ ] Complete passing → silver → gold criteria.
-- [ ] Show the badge in the README.
+- [x] Register the project on `bestpractices.dev`. Project ID: **13423**
+- [ ] Complete passing criteria — all criteria answered; two remaining blockers:
+  - [x] Publish vulnerability reporting process — `SECURITY.md` created
+  - [x] Document private reporting channel — points to GitHub private advisory (`/security/advisories/new`)
+  - [x] Confirm "passing" badge is awarded on bestpractices.coreinfrastructure.org/projects/13423
+- [ ] Silver / Gold — deferred, requires sustained contributor activity
+- [x] Show the badge in the README — added alongside OpenSSF Scorecard badge
 
 ### Rollout strategy
 
 - [x] PR C — release provenance / signature
 - [ ] PR D — Scorecard token / auth visibility (workflow wired, secret to create manually)
-- [ ] PR E — docs + best-practices badge links
+- [x] PR E — docs + best-practices badge links
 
 After each PR, re-run Scorecard and capture the delta.
 
