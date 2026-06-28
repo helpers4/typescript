@@ -14,16 +14,14 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 ### Priority 1 — `Code-Review`
 
 - [ ] Confirm branch/ruleset settings on `main`:
-  - PR required before merge
-  - ≥1 required approving review
-  - Stale approvals dismissed on new commits
-  - Force pushes blocked
-  - Direct pushes blocked (except explicit emergency admins)
-- [ ] Maintainers do **not** bypass rules for normal merges.
-- [ ] Merge several PRs with **human approvals** (not bot approvals); the
-  Scorecard check is computed from recent merged changesets, so the score
-  only moves once enough new reviewed merges replace older ones.
-- [ ] Record evidence per PR (URL, reviewer login, merge timestamp).
+  - [x] PR required before merge (`pull_request` rule active)
+  - [x] Stale approvals dismissed on new commits (`dismiss_stale_reviews_on_push: true`)
+  - [x] Force pushes blocked (`non_fast_forward` rule)
+  - [x] Direct pushes blocked (`pull_request` rule + `bypass_actors: []`)
+  - ~~≥1 required approving review~~ — **skipped: solo project**, `required_approving_review_count` reste à 0
+- [x] Maintainers do **not** bypass rules for normal merges (`bypass_actors: []`).
+- ~~Merge several PRs with human approvals~~ — **N/A: solo project**
+- ~~Record evidence per PR~~ — **N/A: solo project**
 
 ### Priority 2 — `Token-Permissions`
 
@@ -32,14 +30,19 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 
 ### Priority 3 — `Pinned-Dependencies`
 
-- [ ] Document the pinned-SHA update process (Dependabot/Renovate config).
+- [x] Document the pinned-SHA update process (Dependabot/Renovate config).
+  - `dependabot.yml` configured for `github-actions` ecosystem, weekly schedule, grouped updates. External actions already pinned to full SHAs in all workflows.
 - [ ] Confirm Scorecard no longer reports unpinned actions.
 
 ### Priority 4 — `Signed-Releases`
 
-- [ ] Add release provenance generation to the release workflow.
-- [ ] Attach attestation/signature assets to releases.
+- [x] Add release provenance generation to the release workflow.
+  - npm provenance already in `scripts/publish/index.ts` (`provenance: Boolean(process.env.CI)` → `--provenance` passé à npm). Job `publish` a `id-token: write`.
+  - `actions/attest-build-provenance@v4.1.1` ajouté dans `release.yml` sur `build-meta.tar.gz`. Job `publish` a maintenant aussi `attestations: write`.
+- [x] Attach attestation/signature assets to releases.
+  - Attestation GitHub générée via `actions/attest-build-provenance` (stockée dans le GitHub Attestation Store, vérifiable via `gh attestation verify`).
 - [ ] Verify generated artifacts after release.
+  - À faire après la prochaine release : `gh attestation verify build-meta.tar.gz --repo helpers4/typescript`
 - [ ] Target: `Signed-Releases` ≥ 10.
 
 ### Priority 5 — `Branch-Protection`
@@ -57,7 +60,7 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 
 ### Rollout strategy
 
-- [ ] PR C — release provenance / signature
+- [x] PR C — release provenance / signature
 - [ ] PR D — Scorecard token / auth visibility
 - [ ] PR E — docs + best-practices badge links
 
@@ -65,7 +68,29 @@ After each PR, re-run Scorecard and capture the delta.
 
 ---
 
-## 2. Suggested next steps
+## 2. 🫂 Wanted: contributors
+
+> These items are blocked while the project is solo. One regular collaborator unlocks
+> the `Code-Review` Scorecard check (~+2 pts) and makes human review possible.
+
+### 2.1 Find contributors 🔴
+
+- [ ] Open "good first issue" labelled issues to attract first-timers
+- [ ] Mention the project in TS communities (TypeScript Discord, Reddit r/typescript, X/Twitter)
+- [ ] Write a clear `CONTRIBUTING.md` with devcontainer setup in 2 commands
+- [ ] Add a "PRs welcome" badge to the README
+
+### 2.2 Unlocks when a regular reviewer joins 🟡
+
+These items are marked N/A in solo mode — they become active as soon as a regular reviewer joins:
+
+- [ ] Raise `required_approving_review_count` to `1` in the `main` ruleset
+- [ ] Merge several PRs with human approvals (`Code-Review` score is computed from recent reviewed merges)
+- [ ] Record evidence per PR (URL, reviewer login, merge timestamp)
+
+---
+
+## 3. Suggested next steps
 
 1. **OpenSSF PRs C/D/E** — land in parallel with the helper roadmap.
 
@@ -112,7 +137,8 @@ Décision à prendre : rester interne (état actuel depuis PR #95) ou promouvoir
 
 `array/isNonEmpty` retourne un type guard `[T, ...T[]]`. Les versions `string/isNonEmpty` et `object/isNonEmpty` n'ont pas de type guard.
 
-- [ ] Décider si l'on ajoute `value is NonEmptyString` / `value is NonEmptyObject<T>` dans les versions string/object, ou si l'asymétrie est intentionnelle (documenter alors le choix)
+- [x] Décider si l'on ajoute `value is NonEmptyString` / `value is NonEmptyObject<T>` dans les versions string/object, ou si l'asymétrie est intentionnelle (documenter alors le choix)
+  - Décision retenue : type guards basiques (`value is string`, `value is Record<PropertyKey, unknown>`) — types brandés non justifiés. L'asymétrie avec array (`[T, ...T[]]`, type structurel) est intentionnelle.
 
 ### 3.5 Category renames 🟡
 
