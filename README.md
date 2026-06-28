@@ -19,6 +19,7 @@
   <a href="https://codecov.io/github/helpers4/typescript"><img src="https://codecov.io/github/helpers4/typescript/graph/badge.svg?token=CW88VQUMTM"/></a>
   <a href="https://dashboard.stryker-mutator.io/reports/github.com/helpers4/typescript/main"><img src="https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fhelpers4%2Ftypescript%2Fmain" alt="mutation score" /></a>
   <a href="https://securityscorecards.dev/viewer/?uri=github.com/helpers4/typescript"><img src="https://api.securityscorecards.dev/projects/github.com/helpers4/typescript/badge" alt="OpenSSF Scorecard" /></a>
+  <a href="https://bestpractices.coreinfrastructure.org/projects/13423"><img src="https://bestpractices.coreinfrastructure.org/projects/13423/badge" alt="OpenSSF Best Practices" /></a>
 </p>
 
 ---
