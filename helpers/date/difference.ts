@@ -35,6 +35,10 @@ export interface DateDifferenceOptions {
  *
  * Accepts any {@link DateLike} input (Date, timestamp, or date string).
  *
+ * Unlike the removed `daysDifference`, the default `'days'` unit is **not** rounded —
+ * it returns the exact fractional number of days. Wrap the result in `Math.round`
+ * if you need a whole-number day count.
+ *
  * @param dateA - First date
  * @param dateB - Second date
  * @param options - Difference options
@@ -42,6 +46,8 @@ export interface DateDifferenceOptions {
  * @example
  * difference('2025-01-01', '2025-01-10')
  * // => 9
+ * difference('2025-01-01T00:00:00Z', '2025-01-01T12:00:00Z')
+ * // => 0.5 (fractional — use Math.round(difference(a, b)) for a whole-day count)
  * difference('2025-01-01T00:00:00Z', '2025-01-01T02:30:00Z', { unit: 'hours' })
  * // => 2.5
  * difference('2025-01-10', '2025-01-01', { absolute: false })
