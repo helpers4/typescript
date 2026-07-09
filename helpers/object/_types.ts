@@ -114,20 +114,33 @@ export type DeepGet<T, Path extends readonly PropertyKey[]> =
       : unknown;
 
 /**
+ * Builds a brand-new nested object type from the remaining path segments and a leaf value type.
+ * Used by `DeepSet` once a path segment no longer matches an existing key on T.
+ * @ignore
+ */
+type BuildPath<Path extends readonly PropertyKey[], V> =
+  Path extends readonly [infer K extends PropertyKey, ...infer Rest extends readonly PropertyKey[]]
+    ? Record<K, BuildPath<Rest, V>>
+    : V;
+
+/**
  * Produces the type of T after setting the value at Path to V.
- * Resolves to `never` when a key in Path is not present in the corresponding level of T,
- * surfacing invalid paths at the call site rather than silently returning T unchanged.
+ * When a key in Path is not present at the corresponding level of T, that level (and
+ * everything below it) is added as a new field instead of resolving to `never` — matching
+ * the runtime behavior of `set`, which creates intermediate objects as needed.
  *
  * @ignore
  * @example
  * DeepSet<{ a: { b: number } }, ['a', 'b'], string>
  * // => { a: { b: string } }
+ * DeepSet<{ a: { b: number } }, ['a', 'c'], string>
+ * // => { a: { b: number } & { c: string } }
  */
 export type DeepSet<T, Path extends readonly PropertyKey[], V> =
   Path extends readonly []
-    ? T
-    : Path extends readonly [infer K, ...infer Rest extends readonly PropertyKey[]]
+    ? V
+    : Path extends readonly [infer K extends PropertyKey, ...infer Rest extends readonly PropertyKey[]]
       ? K extends keyof T
         ? { [P in keyof T]: P extends K ? DeepSet<T[K], Rest, V> : T[P] }
-        : never
+        : T & Record<K, BuildPath<Rest, V>>
       : never;
