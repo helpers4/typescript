@@ -38,13 +38,14 @@ Install only what you need, or grab everything at once:
 | [`@helpers4/array`](https://www.npmjs.com/package/@helpers4/array) | Array operations, chunking, comparison, and manipulation | `npm i @helpers4/array` |
 | [`@helpers4/date`](https://www.npmjs.com/package/@helpers4/date) | Date utilities, comparison, and validation | `npm i @helpers4/date` |
 | [`@helpers4/function`](https://www.npmjs.com/package/@helpers4/function) | Function composition and utility wrappers | `npm i @helpers4/function` |
+| [`@helpers4/guard`](https://www.npmjs.com/package/@helpers4/guard) | Runtime type guard utilities | `npm i @helpers4/guard` |
 | [`@helpers4/node`](https://www.npmjs.com/package/@helpers4/node) | Node.js runtime utilities (Buffer, etc.) | `npm i @helpers4/node` |
 | [`@helpers4/number`](https://www.npmjs.com/package/@helpers4/number) | Numeric operations and formatting | `npm i @helpers4/number` |
 | [`@helpers4/object`](https://www.npmjs.com/package/@helpers4/object) | Object manipulation, deep comparison, and merging | `npm i @helpers4/object` |
 | [`@helpers4/observable`](https://www.npmjs.com/package/@helpers4/observable) | RxJS Observable helpers and operators | `npm i @helpers4/observable` |
 | [`@helpers4/promise`](https://www.npmjs.com/package/@helpers4/promise) | Promise utilities, retry, delay, and error handling | `npm i @helpers4/promise` |
 | [`@helpers4/string`](https://www.npmjs.com/package/@helpers4/string) | String manipulation — capitalize, slugify, camelCase, etc. | `npm i @helpers4/string` |
-| [`@helpers4/type`](https://www.npmjs.com/package/@helpers4/type) | Type guards and type-checking utilities | `npm i @helpers4/type` |
+| [`@helpers4/type`](https://www.npmjs.com/package/@helpers4/type) | Compile-time TypeScript utility types | `npm i @helpers4/type` |
 | [`@helpers4/url`](https://www.npmjs.com/package/@helpers4/url) | URL parsing, manipulation, and normalization | `npm i @helpers4/url` |
 | [`@helpers4/version`](https://www.npmjs.com/package/@helpers4/version) | Semantic version parsing and comparison | `npm i @helpers4/version` |
 
