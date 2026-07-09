@@ -36,7 +36,8 @@ pnpm release:auto
 
 **Helper placement:**
 
-- Type predicates `is<Type>` → `type/` (return a type guard). Exception: Node.js-specific ones (`isBuffer`, `isNodeStream`) → `node/` (depend on Node globals unavailable in browsers)
+- Type predicates `is<Type>` → `guard/` (return a runtime type guard). Exception: Node.js-specific ones (`isBuffer`, `isNodeStream`) → `node/` (depend on Node globals unavailable in browsers)
+- Compile-time-only utility types (`Brand`, `DeepGet`, `DeepSet`, ...) → `type/` (no runtime footprint)
 - State predicates (`isEmpty`, `isNonEmpty`) → their own category, never `type/`
 - `compact` and `equalsShallow` exist in both `array/` and `object/` intentionally — do **not** merge (cross-package imports break tree-shaking)
 
