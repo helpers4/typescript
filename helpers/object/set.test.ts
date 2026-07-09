@@ -255,4 +255,18 @@ describe('set — type inference', () => {
     // @ts-expect-error string is not assignable to number
     set(obj, ['a', 'b'] as const, 'wrong');
   });
+
+  it('adding a brand-new key produces a well-typed result instead of never', () => {
+    const obj = { a: { b: 1 } };
+    const result = set(obj, 'a.c', 'new value');
+    expect(result.a.c).toBe('new value');
+    expectTypeOf(result.a.c).toEqualTypeOf<string>();
+  });
+
+  it('adding a deeply nested brand-new path produces a well-typed result', () => {
+    const obj = { a: { b: 1 } };
+    const result = set(obj, ['x', 'y', 'z'] as const, true);
+    expect(result.x.y.z).toBe(true);
+    expectTypeOf(result.x.y.z).toEqualTypeOf<boolean>();
+  });
 });
