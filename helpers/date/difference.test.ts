@@ -20,6 +20,10 @@ describe('difference', () => {
     it('should return absolute value by default', () => {
       expect(difference('2025-01-10', '2025-01-01')).toBeCloseTo(9, 0);
     });
+
+    it('should not round — returns the exact fractional day count', () => {
+      expect(difference('2025-01-01T00:00:00Z', '2025-01-01T12:00:00Z')).toBe(0.5);
+    });
   });
 
   describe('units', () => {
