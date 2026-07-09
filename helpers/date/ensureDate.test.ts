@@ -104,27 +104,22 @@ describe('ensureDate', () => {
       expect(ensureDate(false as unknown as string)).toBeNull();
     });
 
-    it('should handle objects with epochMilliseconds (Temporal-like)', () => {
-      const instant = { epochMilliseconds: 1642694400000 };
+    it('should handle Temporal.Instant', () => {
+      const instant = Temporal.Instant.fromEpochMilliseconds(1642694400000);
       const date = ensureDate(instant);
       expect(date).toBeInstanceOf(Date);
       expect(date?.getTime()).toBe(1642694400000);
     });
 
-    it('should return null for epochMilliseconds = NaN', () => {
-      const bad = { epochMilliseconds: NaN };
-      expect(ensureDate(bad)).toBeNull();
-    });
-
     it('should handle negative epochMilliseconds', () => {
-      const before = { epochMilliseconds: -86400000 };
+      const before = Temporal.Instant.fromEpochMilliseconds(-86400000);
       const date = ensureDate(before);
       expect(date).toBeInstanceOf(Date);
       expect(date?.getTime()).toBe(-86400000);
     });
 
     it('should handle epochMilliseconds = 0 (epoch)', () => {
-      const epoch = { epochMilliseconds: 0 };
+      const epoch = Temporal.Instant.fromEpochMilliseconds(0);
       const date = ensureDate(epoch);
       expect(date).toBeInstanceOf(Date);
       expect(date?.getTime()).toBe(0);

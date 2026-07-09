@@ -12,7 +12,7 @@ const dateObj = new Date('2025-01-19T12:00:00Z')
 const millis = 1737288000000
 const seconds = 1737288000
 const isoString = '2025-01-19T12:00:00Z'
-const epochMs = { epochMilliseconds: 1737288000000 }
+const epochMs = Temporal.Instant.fromEpochMilliseconds(1737288000000)
 
 describe('ensureDate', () => {
   bench('from Date object', () => {
@@ -27,7 +27,7 @@ describe('ensureDate', () => {
   bench('from ISO string', () => {
     ensureDate(isoString)
   })
-  bench('from EpochMilliseconds object', () => {
+  bench('from Temporal.Instant', () => {
     ensureDate(epochMs)
   })
   bench('null input', () => {
