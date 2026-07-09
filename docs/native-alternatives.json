@@ -423,7 +423,7 @@
       "native": "Date.prototype.toTemporalInstant()",
       "since": "Temporal (Stage 3)",
       "example": "const instant = new Date().toTemporalInstant()",
-      "notes": "Converts a Date to Temporal.Instant. Requires --harmony-temporal flag in Node 24"
+      "notes": "Converts a Date to Temporal.Instant. Available without a flag since Node 26 (first LTS with Temporal enabled by default)."
     },
     {
       "name": "toZonedDateTime",

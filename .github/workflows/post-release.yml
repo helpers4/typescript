@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 env:
-  NODE_VERSION: "24"
+  NODE_VERSION: "26"
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
@@ -67,7 +67,7 @@ jobs:
   coverage:
     uses: ./.github/workflows/job-tests.yml
     with:
-      node-version: "24"
+      node-version: "26"
       coverage: true
       upload-codecov: true
     secrets:

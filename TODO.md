@@ -167,9 +167,22 @@ Two category names need to change for clarity:
   - Choix retenu : `helpers/_shared/_unsafeKeys.ts` — fichier source unique, importé en `'../_shared/_unsafeKeys.js'` depuis les catégories consommatrices ; inliné dans chaque bundle à la compilation, donc pas de dépendance runtime inter-packages. Le build script skippe les dossiers préfixés `_`.
 - [x] Lors de l'implémentation, vérifier que tous les consommateurs existants (`countBy`, `groupBy`, `invert`, `map`, `cloneDeep`, `mergeDeep`, `set`) importent depuis la source unique
 
-### 3.7 DateLike / Temporal 🟢
+### 3.7 DateLike / Temporal 🟢 ✅
 
-`date/types.ts:30` a un TODO existant : quand Temporal atteint Stage 4, substituer `EpochMilliseconds` par `Temporal.Instant | Temporal.ZonedDateTime`.
+`date/types.ts:30` avait un TODO : quand Temporal atteint Stage 4, substituer `EpochMilliseconds` par `Temporal.Instant | Temporal.ZonedDateTime`.
 
-- [ ] Surveiller l'avancement TC39 — actuellement Stage 3
-- [ ] Quand disponible sans flag dans Node LTS + tous les evergreen browsers : remplacer le duck-type par les types Temporal concrets et supprimer l'interface `EpochMilliseconds`
+- [x] Décision retenue : plutôt que d'attendre TC39 Stage 4, **v3 relève le minimum supporté à Node.js ≥26** — premier LTS avec Temporal activé par défaut, sans flag (Node 24 nécessite `--harmony-temporal`). Voir 3.8.
+- [x] `EpochMilliseconds` supprimé ; `DateLike` = `Date | number | string | Temporal.Instant | Temporal.ZonedDateTime`
+- [x] `ensureDate` utilise `instanceof Temporal.Instant`/`Temporal.ZonedDateTime` quand `Temporal` est global, avec repli duck-typed pour les navigateurs sans Temporal natif
+- [x] `--harmony-temporal` retiré de `vitest.config.ts` et `stryker.config.mjs`
+
+### 3.8 Breaking change — minimum Node.js 26 🔴 ✅
+
+Décision v3 : relever le plancher `engines.node` / `runtimes.node` de `>=24.0.0`/`>=20.0.0` à `>=26.0.0` (repo dev + packages publiés), pour bénéficier de Temporal natif sans flag et simplifier tout le pipeline de test/build.
+
+- [x] `package.json` (`engines`, `runtimes`) → `>=26.0.0`
+- [x] `.template/category/package.json` (engines des packages publiés) → `>=26.0.0`
+- [x] Workflows CI (`pr-validation.yml`, `release.yml`, `post-release.yml`, `mutation-dashboard.yml`, `job-*.yml`) → Node 26
+- [x] `CONTRIBUTING.md` / `AGENTS.md` → Node.js ≥26
+- [x] Mettre à jour le changelog / release notes v3 avec ce breaking change
+- [ ] Vérifier que les runners GitHub-hosted (`ubuntu-latest`) ont bien Node 26 disponible via `actions/setup-node` au moment de la release
