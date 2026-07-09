@@ -5,7 +5,7 @@
 ## This Repository
 
 **Purpose:** Tree-shakable TypeScript utility functions, one npm package per category.
-**Stack:** Node.js ≥24 · TypeScript 5.7 strict · pnpm · Vite+Rollup · Vitest (100% coverage) · fast-check · oxlint
+**Stack:** Node.js ≥26 · TypeScript 5.7 strict · pnpm · Vite+Rollup · Vitest (100% coverage) · fast-check · oxlint
 
 ```text
 helpers/<category>/

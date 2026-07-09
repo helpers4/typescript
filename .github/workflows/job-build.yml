@@ -6,7 +6,7 @@ on:
       node-version:
         required: false
         type: string
-        default: "24"
+        default: "26"
       artifact-name:
         required: false
         type: string

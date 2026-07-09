@@ -6,14 +6,6 @@
 
 import { defineConfig } from 'vitest/config';
 
-// When running under Stryker, testRunnerNodeArgs injects --harmony-temporal into
-// the child process. Worker threads then inherit the V8 flag from the parent,
-// so passing it again via execArgv triggers ERR_WORKER_INVALID_EXEC_ARGV in
-// Node.js 24. Only set execArgv when the flag is not already present.
-const execArgv = process.execArgv.includes('--harmony-temporal')
-  ? undefined
-  : ['--harmony-temporal'];
-
 export default defineConfig({
   test: {
     benchmark: {
@@ -33,7 +25,6 @@ export default defineConfig({
       }
     },
     environment: 'happy-dom',
-    ...(execArgv && { execArgv }),
     include: ['helpers/**/*.{test,spec}.ts']
   }
 });

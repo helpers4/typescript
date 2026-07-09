@@ -4,7 +4,7 @@ Thank you for your interest in contributing! This guide explains everything you 
 
 ## Prerequisites
 
-- **Node.js** >= 24.0.0
+- **Node.js** >= 26.0.0
 - **pnpm** (enabled via corepack: `corepack enable`)
 - **Git** with [conventional commits](https://www.conventionalcommits.org/)
 

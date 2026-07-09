@@ -12,8 +12,8 @@ env:
   # Runtime versions — update these when new LTS versions are released
   # ⚠️ These env vars are only available in regular job steps, NOT in reusable workflow with: inputs.
   # Reusable workflow calls (uses:) must use literal values in with: inputs.
-  NODE_OLDEST_LTS: "20"
-  NODE_LATEST_LTS: "24"
+  NODE_OLDEST_LTS: "26"
+  NODE_LATEST_LTS: "26"
   DENO_LATEST: "2.8.3"
   BUN_LATEST: "latest"
 
@@ -61,7 +61,7 @@ jobs:
     needs: version-calculation
     uses: ./.github/workflows/job-build.yml
     with:
-      node-version: "24"
+      node-version: "26"
       upload-artifact: true
       artifact-name: build-${{ github.run_id }}
 
@@ -70,23 +70,23 @@ jobs:
     needs: version-calculation
     uses: ./.github/workflows/job-tests.yml
     with:
-      node-version: "20"
+      node-version: "26"
       coverage: true
 
   lint:
     uses: ./.github/workflows/job-lint.yml
     with:
-      node-version: "24"
+      node-version: "26"
 
   type-check:
     uses: ./.github/workflows/job-typecheck.yml
     with:
-      node-version: "24"
+      node-version: "26"
 
   security:
     uses: ./.github/workflows/job-security.yml
     with:
-      node-version: "24"
+      node-version: "26"
       audit-level: "low"
 
   conventional-commits:
@@ -188,7 +188,7 @@ jobs:
     needs: [build, test]
     uses: ./.github/workflows/job-verification.yml
     with:
-      node-version: "24"
+      node-version: "26"
       build-artifact: build-${{ github.run_id }}
 
   # Mutation testing (non-blocking, informational only)
@@ -229,7 +229,7 @@ jobs:
     needs: version-calculation
     uses: ./.github/workflows/job-bench.yml
     with:
-      node-version: "24"
+      node-version: "26"
       base-ref: ${{ github.base_ref }}
 
   # PR comment with results
