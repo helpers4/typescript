@@ -43,4 +43,11 @@ describe('compact', () => {
   it('should return undefined when given undefined', () => {
     expect(compact(undefined)).toBeUndefined();
   });
+
+  it('skips prototype-polluting own keys', () => {
+    const malicious = JSON.parse('{"a":1,"__proto__":{"polluted":"yes"},"constructor":2}');
+    const result = compact(malicious);
+    expect(result).toEqual({ a: 1 });
+    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+  });
 });

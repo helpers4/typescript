@@ -49,4 +49,11 @@ describe('pick', () => {
   it('should return undefined when given undefined', () => {
     expect(pick(undefined, ['a'])).toBeUndefined();
   });
+
+  it('skips prototype-polluting keys', () => {
+    const malicious = JSON.parse('{"a":1,"__proto__":{"polluted":"yes"}}');
+    const result = pick(malicious as Record<string, unknown>, ['a', '__proto__', 'constructor']);
+    expect(result).toEqual({ a: 1 });
+    expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
+  });
 });

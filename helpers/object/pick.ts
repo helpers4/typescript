@@ -4,8 +4,12 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { UNSAFE_KEYS } from '../_shared/_unsafeKeys.js';
+
 /**
  * Creates a new object with only the specified keys.
+ * Keys that are prototype-polluting strings (`__proto__`, `constructor`, `prototype`) are
+ * silently skipped.
  * @param obj - The source object
  * @param keys - The keys to pick
  * @returns A new object with only the picked keys
@@ -24,6 +28,7 @@ export function pick<T extends Record<string, unknown>, K extends keyof T>(
   if (obj === undefined || obj === null) return obj;
   const result = {} as Pick<T, K>;
   for (const key of keys) {
+    if (typeof key === 'string' && UNSAFE_KEYS.has(key)) continue;
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
       result[key] = obj[key];
     }

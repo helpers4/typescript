@@ -4,8 +4,12 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { UNSAFE_KEYS } from '../_shared/_unsafeKeys.js';
+
 /**
  * Removes all entries with falsy values (`false`, `null`, `undefined`, `0`, `""`, `NaN`) from an object.
+ * Own keys that are prototype-polluting strings (`__proto__`, `constructor`, `prototype`) are
+ * silently skipped.
  * @param obj - The source object
  * @returns A new object containing only entries with truthy values
  * @example
@@ -20,6 +24,7 @@ export function compact<T extends Record<string, unknown>>(obj: T | undefined | 
   if (obj === undefined || obj === null) return obj;
   const result: Partial<T> = {};
   for (const key of Object.keys(obj) as (keyof T)[]) {
+    if (UNSAFE_KEYS.has(key as string)) continue;
     if (obj[key]) {
       result[key] = obj[key];
     }
