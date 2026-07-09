@@ -5,18 +5,25 @@
  */
 
 import { normalizeTimestamp } from './timestamp';
-import type { DateLike, EpochMilliseconds } from './types';
+import type { DateLike } from './types';
 
 /**
- * Type guard that checks whether a value satisfies the {@link EpochMilliseconds}
- * structural interface (e.g. `Temporal.Instant`, `Temporal.ZonedDateTime`).
+ * Type guard that checks whether a value is a `Temporal.Instant` or
+ * `Temporal.ZonedDateTime`.
+ *
+ * Uses `instanceof` when `Temporal` is available globally (Node.js >=26), and
+ * falls back to duck-typing the `epochMilliseconds` property for environments
+ * without Temporal (e.g. browsers).
  */
-function hasEpochMilliseconds(value: unknown): value is EpochMilliseconds {
+function isEpochMillisecondsLike(value: unknown): value is Temporal.Instant | Temporal.ZonedDateTime {
+  if (typeof Temporal !== 'undefined') {
+    return value instanceof Temporal.Instant || value instanceof Temporal.ZonedDateTime;
+  }
   return (
     typeof value === 'object' &&
     value !== null &&
     'epochMilliseconds' in value &&
-    typeof (value as EpochMilliseconds).epochMilliseconds === 'number'
+    typeof value.epochMilliseconds === 'number'
   );
 }
 
@@ -54,7 +61,7 @@ export function ensureDate(input: DateLike | null | undefined): Date | null {
     return isNaN(input.getTime()) ? null : input;
   }
 
-  if (hasEpochMilliseconds(input)) {
+  if (isEpochMillisecondsLike(input)) {
     const date = new Date(input.epochMilliseconds);
     return isNaN(date.getTime()) ? null : date;
   }

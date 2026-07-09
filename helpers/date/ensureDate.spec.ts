@@ -46,10 +46,10 @@ describe('ensureDate — property-based', () => {
     );
   });
 
-  it('epochMilliseconds objects always return a Date with matching time', () => {
+  it('Temporal.Instant values always return a Date with matching time', () => {
     fc.assert(
       fc.property(fc.integer({ min: -8_640_000_000_000_000, max: 8_640_000_000_000_000 }), (ms) => {
-        const result = ensureDate({ epochMilliseconds: ms });
+        const result = ensureDate(Temporal.Instant.fromEpochMilliseconds(ms));
         expect(result).toBeInstanceOf(Date);
         expect(result?.getTime()).toBe(ms);
       })
@@ -107,20 +107,16 @@ describe('ensureDate — contract', () => {
     expect(result).toBe(d);
   });
 
-  it('epochMilliseconds object → Date', () => {
-    const instant = { epochMilliseconds: 1_737_290_400_000 };
+  it('Temporal.Instant → Date', () => {
+    const instant = Temporal.Instant.fromEpochMilliseconds(1_737_290_400_000);
     const result = ensureDate(instant);
     expect(result).toBeInstanceOf(Date);
     expect(result?.getTime()).toBe(1_737_290_400_000);
   });
 
-  it('epochMilliseconds = 0 → Date at epoch', () => {
-    const result = ensureDate({ epochMilliseconds: 0 });
+  it('Temporal.Instant at epoch (0) → Date at epoch', () => {
+    const result = ensureDate(Temporal.Instant.fromEpochMilliseconds(0));
     expect(result).toBeInstanceOf(Date);
     expect(result?.getTime()).toBe(0);
-  });
-
-  it('epochMilliseconds = NaN → null', () => {
-    expect(ensureDate({ epochMilliseconds: NaN })).toBeNull();
   });
 });
