@@ -39,10 +39,19 @@ jobs:
             echo "::error::Release workflow can only be executed on helpers4/typescript"
             exit 1
           fi
-          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
-            echo "::error::Release workflow can only be executed on main"
-            exit 1
-          fi
+
+          RELEASE_TYPE="${{ inputs.release_type }}"
+          case "$RELEASE_TYPE" in
+            alpha|beta|rc)
+              echo "✅ Prerelease type '$RELEASE_TYPE' — allowed from any branch (${{ github.ref }})"
+              ;;
+            *)
+              if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+                echo "::error::Stable release types (patch/minor/major/auto) can only be executed on main. Prerelease types (alpha/beta/rc) may run from any branch."
+                exit 1
+              fi
+              ;;
+          esac
           echo "✅ Repository ownership verified"
 
   # Step 2: Lint
