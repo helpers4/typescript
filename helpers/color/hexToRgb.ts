@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { roundTo } from '../number/roundTo';
+import { HEX_COLOR_DIGITS } from '../_shared/_hexColorGrammar.js';
+
 /**
  * An RGB(A) color with channels expressed as plain numbers, convenient for
  * further conversion or manipulation.
@@ -19,7 +22,7 @@ export interface RgbColor {
   a?: number;
 }
 
-const HEX_PATTERN = /^#?([\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i;
+const HEX_PATTERN = new RegExp(`^#?(${HEX_COLOR_DIGITS})$`, 'i');
 
 function expandShortHex(digits: string): string {
   return digits.length <= 4
@@ -50,7 +53,7 @@ export function hexToRgb(hex: string): RgbColor | null {
   const r = Number.parseInt(digits.slice(0, 2), 16);
   const g = Number.parseInt(digits.slice(2, 4), 16);
   const b = Number.parseInt(digits.slice(4, 6), 16);
-  const a = digits.length === 8 ? Math.round((Number.parseInt(digits.slice(6, 8), 16) / 255) * 1000) / 1000 : 1;
+  const a = digits.length === 8 ? roundTo(Number.parseInt(digits.slice(6, 8), 16) / 255, 3) : 1;
 
   return { r, g, b, a };
 }

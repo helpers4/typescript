@@ -5,6 +5,17 @@
  */
 
 import type { UnsafeKey } from '../_shared/_unsafeKeys.js';
+import type { UnionToIntersection } from '../type/UnionToIntersection.js';
+
+// DeepGet/DeepSet are re-exported (not reimplemented) from `type/` — see that
+// package for the canonical, publicly-documented definitions. A relative
+// cross-category import is safe here: Rollup inlines it into `@helpers4/object`'s
+// own bundle at build time (same pattern already used by `guard/isDefined.ts`
+// importing `type/Maybe`), so this never becomes an npm-level dependency on
+// `@helpers4/type`. Keeping a second, hand-maintained copy here is what caused
+// them to silently drift apart before.
+export type { DeepGet } from '../type/DeepGet.js';
+export type { DeepSet } from '../type/DeepSet.js';
 
 /**
  * Parses a `[n]` bracket index: numeric index strings become `number`, anything else stays `string`.
@@ -77,14 +88,6 @@ export type ContainsUnsafeStringKey<Keys extends readonly PropertyKey[]> =
     : false;
 
 /**
- * Converts a union to an intersection: `A | B | C` → `A & B & C`.
- * Used to derive the return type of `mergeDeep` from a tuple of source types.
- * @ignore
- */
-type UnionToIntersection<U> =
-  (U extends unknown ? (x: U) => void : never) extends (x: infer I) => void ? I : never;
-
-/**
  * Return type of `mergeDeep`: intersection of all source types.
  *
  * @ignore
@@ -93,73 +96,3 @@ type UnionToIntersection<U> =
  * MergeResult<[{ a: { b: number } }, { a: { c: string } }]>  // { a: { b: number } & { c: string } }
  */
 export type MergeResult<T extends object[]> = UnionToIntersection<T[number]>;
-
-/**
- * Returns `never` for `null`/`undefined`, otherwise `keyof T`.
- *
- * Used instead of inlining `keyof NonNullable<T>` at each `DeepGet` recursion
- * step — TypeScript doesn't evaluate that expression eagerly inside a
- * recursive generic, so `keyof` ends up applied to an unresolved conditional
- * type instead of a concrete one. That collapses the whole recursive chain to
- * `never` (rather than `unknown`) the moment a path travels through a
- * property whose value is `null`, even though `null` itself is never in
- * `Path`. Checking the null-ness first, in its own conditional, forces eager
- * resolution and keeps that case at `unknown` as intended.
- * @ignore
- */
-type KeysOf<T> = T extends null | undefined ? never : keyof T;
-
-/**
- * Resolves the value type at a given path within T.
- * Returns `unknown` when the path doesn't match the shape of T. A path segment
- * that goes through an optional property keeps the result nullable
- * (`V | undefined`) instead of degrading to `unknown`.
- *
- * @ignore
- * @example
- * DeepGet<{ a: { b: number } }, ['a', 'b']>  // => number
- * DeepGet<{ a: { b: number } }, ['a', 'x']>  // => unknown
- * DeepGet<{ a: number }, []>                  // => { a: number }
- * DeepGet<{ a?: { b: number } }, ['a', 'b']>  // => number | undefined
- * DeepGet<{ a: { b: null } }, ['a', 'b', 'c']> // => unknown (not never)
- */
-export type DeepGet<T, Path extends readonly PropertyKey[]> =
-  Path extends readonly []
-    ? T
-    : Path extends readonly [infer K, ...infer Rest extends readonly PropertyKey[]]
-      ? K extends KeysOf<T>
-        ? DeepGet<NonNullable<T>[K & keyof NonNullable<T>], Rest> | (undefined extends T ? undefined : never)
-        : unknown
-      : unknown;
-
-/**
- * Builds a brand-new nested object type from the remaining path segments and a leaf value type.
- * Used by `DeepSet` once a path segment no longer matches an existing key on T.
- * @ignore
- */
-type BuildPath<Path extends readonly PropertyKey[], V> =
-  Path extends readonly [infer K extends PropertyKey, ...infer Rest extends readonly PropertyKey[]]
-    ? Record<K, BuildPath<Rest, V>>
-    : V;
-
-/**
- * Produces the type of T after setting the value at Path to V.
- * When a key in Path is not present at the corresponding level of T, that level (and
- * everything below it) is added as a new field instead of resolving to `never` — matching
- * the runtime behavior of `set`, which creates intermediate objects as needed.
- *
- * @ignore
- * @example
- * DeepSet<{ a: { b: number } }, ['a', 'b'], string>
- * // => { a: { b: string } }
- * DeepSet<{ a: { b: number } }, ['a', 'c'], string>
- * // => { a: { b: number } & { c: string } }
- */
-export type DeepSet<T, Path extends readonly PropertyKey[], V> =
-  Path extends readonly []
-    ? V
-    : Path extends readonly [infer K extends PropertyKey, ...infer Rest extends readonly PropertyKey[]]
-      ? K extends keyof T
-        ? { [P in keyof T]: P extends K ? DeepSet<T[K], Rest, V> : T[P] }
-        : T & Record<K, BuildPath<Rest, V>>
-      : never;

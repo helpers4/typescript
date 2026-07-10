@@ -4,7 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-const HEX_COLOR = /^#(?:[\da-f]{3}|[\da-f]{4}|[\da-f]{6}|[\da-f]{8})$/i;
+import { HEX_COLOR_DIGITS } from '../_shared/_hexColorGrammar.js';
+
+const HEX_COLOR = new RegExp(`^#(?:${HEX_COLOR_DIGITS})$`, 'i');
 const FUNCTIONAL_COLOR = /^(?:rgb|rgba|hsl|hsla)\(\s*[\d.%,\s/-]+\s*\)$/i;
 const NAMED_COLOR = /^[a-z]+$/i;
 
