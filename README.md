@@ -36,6 +36,7 @@ Install only what you need, or grab everything at once:
 |---------|-------------|---------|
 | [`@helpers4/all`](https://www.npmjs.com/package/@helpers4/all) | Complete collection — all categories in one package | `npm i @helpers4/all` |
 | [`@helpers4/array`](https://www.npmjs.com/package/@helpers4/array) | Array operations, chunking, comparison, and manipulation | `npm i @helpers4/array` |
+| [`@helpers4/color`](https://www.npmjs.com/package/@helpers4/color) | Color conversion and validation utilities | `npm i @helpers4/color` |
 | [`@helpers4/date`](https://www.npmjs.com/package/@helpers4/date) | Date utilities, comparison, and validation | `npm i @helpers4/date` |
 | [`@helpers4/function`](https://www.npmjs.com/package/@helpers4/function) | Function composition and utility wrappers | `npm i @helpers4/function` |
 | [`@helpers4/guard`](https://www.npmjs.com/package/@helpers4/guard) | Runtime type guard utilities | `npm i @helpers4/guard` |
