@@ -125,6 +125,13 @@ describe('ensureDate', () => {
       expect(date?.getTime()).toBe(0);
     });
 
+    it('should return null for a duck-typed epochMilliseconds = NaN', () => {
+      // Simulates a Temporal.Instant crossing a realm boundary (vm/worker/iframe),
+      // where `instanceof` fails but the value still has a numeric `epochMilliseconds`.
+      const bad = { epochMilliseconds: NaN } as unknown as Temporal.Instant;
+      expect(ensureDate(bad)).toBeNull();
+    });
+
     // Mutation-killing: each null guard must individually trigger
     it('should return null for null and NOT a Date', () => {
       const result = ensureDate(null);
