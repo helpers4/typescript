@@ -20,4 +20,4 @@
  * @since 3.0.0
  */
 export type UnionToIntersection<U> =
-  (U extends any ? (x: U) => void : never) extends (x: infer I) => void ? I : never; // oxlint-disable-line no-explicit-any
+  (U extends unknown ? (x: U) => void : never) extends (x: infer I) => void ? I : never;
