@@ -11,6 +11,9 @@
  * intersection instead of the resolved shape. Wrapping with `Prettify`
  * forces TypeScript to expand and display the fully-resolved type.
  *
+ * Distributes over unions, so each member is prettified independently
+ * instead of collapsing to their shared keys.
+ *
  * @example
  * type A = { a: number };
  * type B = { b: string };
@@ -18,4 +21,4 @@
  * type Pretty = Prettify<Merged>; // shown as "{ a: number; b: string }"
  * @since 3.0.0
  */
-export type Prettify<T> = { [K in keyof T]: T[K] } & {};
+export type Prettify<T> = T extends unknown ? { [K in keyof T]: T[K] } & {} : never;

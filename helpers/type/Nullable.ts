@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import type { Maybe } from './Maybe';
+
 /**
  * Adds `null` to a type (`T | null`).
  *
@@ -21,8 +23,10 @@ export type Nullable<T> = T | null;
 /**
  * Adds `null` and `undefined` to a type (`T | null | undefined`).
  *
+ * Alias of {@link Maybe}.
+ *
  * @example
  * type OptionalUser = Nullish<User>; // User | null | undefined
  * @since 3.0.0
  */
-export type Nullish<T> = T | null | undefined;
+export type Nullish<T> = Maybe<T>;

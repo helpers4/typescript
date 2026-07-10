@@ -35,7 +35,9 @@ export type DeepSet<T, Path extends readonly PropertyKey[], V> =
   Path extends readonly []
     ? V
     : Path extends readonly [infer K extends PropertyKey, ...infer Rest extends readonly PropertyKey[]]
-      ? K extends keyof T
-        ? { [P in keyof T]: P extends K ? DeepSet<T[K], Rest, V> : T[P] }
-        : T & Record<K, BuildPath<Rest, V>>
+      ? T extends object
+        ? K extends keyof T
+          ? { [P in keyof T]: P extends K ? DeepSet<T[K], Rest, V> : T[P] }
+          : T & Record<K, BuildPath<Rest, V>>
+        : BuildPath<Path, V>
       : never;

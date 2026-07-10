@@ -19,6 +19,5 @@
  * // 'a' & 'b'  (resolves to never for disjoint literals)
  * @since 3.0.0
  */
-// oxlint-disable-line no-explicit-any
 export type UnionToIntersection<U> =
   (U extends any ? (x: U) => void : never) extends (x: infer I) => void ? I : never; // oxlint-disable-line no-explicit-any
