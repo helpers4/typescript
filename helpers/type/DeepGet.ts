@@ -5,6 +5,21 @@
  */
 
 /**
+ * Returns `never` for `null`/`undefined`, otherwise `keyof T`.
+ *
+ * Used instead of inlining `keyof NonNullable<T>` at each `DeepGet` recursion
+ * step — TypeScript doesn't evaluate that expression eagerly inside a
+ * recursive generic, so `keyof` ends up applied to an unresolved conditional
+ * type instead of a concrete one. That collapses the whole recursive chain to
+ * `never` (rather than `unknown`) the moment a path travels through a
+ * property whose value is `null`, even though `null` itself is never in
+ * `Path`. Checking the null-ness first, in its own conditional, forces eager
+ * resolution and keeps that case at `unknown` as intended.
+ * @ignore
+ */
+type KeysOf<T> = T extends null | undefined ? never : keyof T;
+
+/**
  * Resolves the value type at a given `Path` within `T`.
  *
  * Returns `unknown` when any key in `Path` is not present in the corresponding
@@ -28,7 +43,7 @@ export type DeepGet<T, Path extends readonly PropertyKey[]> =
   Path extends readonly []
     ? T
     : Path extends readonly [infer K, ...infer Rest extends readonly PropertyKey[]]
-      ? K extends keyof NonNullable<T>
-        ? DeepGet<NonNullable<T>[K], Rest> | (undefined extends T ? undefined : never)
+      ? K extends KeysOf<T>
+        ? DeepGet<NonNullable<T>[K & keyof NonNullable<T>], Rest> | (undefined extends T ? undefined : never)
         : unknown
       : unknown;
