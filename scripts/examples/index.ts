@@ -7,6 +7,7 @@
 import { readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { DIR } from '../constants';
+import { listHelperCategories } from '../utils';
 import type { HelperExamples } from './types';
 
 interface ExampleResult {
@@ -24,7 +25,7 @@ interface ExampleResult {
  * Exit code 0 = all assertions passed, 1 = at least one failure.
  */
 async function runExamples(): Promise<void> {
-  const categories = (await readdir(DIR.HELPERS)).toSorted().filter(c => !c.startsWith('_'));
+  const categories = await listHelperCategories(DIR.HELPERS);
   const results: ExampleResult[] = [];
   let failures = 0;
 

@@ -6,6 +6,7 @@
 
 import fs from 'fs-extra';
 import path from 'node:path';
+import { listHelperCategories } from '../../utils';
 
 /**
  * Test category packages integrity
@@ -104,14 +105,10 @@ export async function testCategoryConfigs(): Promise<void> {
   console.log("  📋 Checking source config.json consistency...");
 
   const helpersDir = path.resolve(process.cwd(), 'helpers');
-  const categories = await fs.readdir(helpersDir);
+  const categories = await listHelperCategories(helpersDir);
 
   for (const category of categories) {
-    if (category.startsWith('_')) continue;
-
     const categoryPath = path.join(helpersDir, category);
-    const stat = await fs.stat(categoryPath);
-    if (!stat.isDirectory()) continue;
 
     const configPath = path.join(categoryPath, 'config.json');
     if (!await fs.pathExists(configPath)) {
@@ -143,16 +140,12 @@ export async function testSourceStructure(): Promise<void> {
   console.log("  📋 Checking source category structure...");
 
   const helpersDir = path.resolve(process.cwd(), 'helpers');
-  const categories = await fs.readdir(helpersDir);
+  const categories = await listHelperCategories(helpersDir);
 
   const SUFFIXES = ['.test.ts', '.spec.ts', '.bench.ts', '.example.ts'];
 
   for (const category of categories) {
-    if (category.startsWith('_')) continue;
-
     const categoryPath = path.join(helpersDir, category);
-    const stat = await fs.stat(categoryPath);
-    if (!stat.isDirectory()) continue;
 
     const entries = await fs.readdir(categoryPath, { withFileTypes: true });
 
