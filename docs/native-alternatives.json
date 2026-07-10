@@ -515,5 +515,46 @@
       "example": "Temporal.PlainDate.compare(date1, date2)  // -1, 0, or 1",
       "notes": "Static method on each Temporal type; returns -1, 0, 1 — ideal for .sort()"
     }
+  ],
+  "color": [
+    {
+      "name": "lighten / darken",
+      "libraries": [
+        "chroma-js",
+        "colord",
+        "polished",
+        "tinycolor2"
+      ],
+      "native": "color-mix(in oklch, <color> <percent>, white|black)",
+      "since": "CSS Color 5 (Baseline widely available since 2023 — Chrome 111, Firefox 113, Safari 16.2)",
+      "example": "background: color-mix(in oklch, var(--brand) 80%, white);",
+      "notes": "CSS-only — only usable inside a CSS property value (inline style / stylesheet), not callable as a plain JS function and not available in Node. A JS helper is still useful for non-DOM contexts (SSR theming, CLI tools, backend color logic)."
+    },
+    {
+      "name": "withAlpha (change the alpha channel of an existing color)",
+      "libraries": [
+        "chroma-js",
+        "colord",
+        "polished",
+        "tinycolor2"
+      ],
+      "native": "rgb(from <color> r g b / <alpha>)",
+      "since": "CSS Color 5 relative color syntax (Baseline widely available since September 2024 — Chrome 119+)",
+      "example": "background: rgb(from lime r g b / 50%);",
+      "notes": "CSS-only, same caveat as color-mix() above — not a JS-callable function, unavailable in Node."
+    },
+    {
+      "name": "isLight / isDark (pick a readable text color)",
+      "libraries": [
+        "chroma-js",
+        "colord",
+        "polished",
+        "tinycolor2"
+      ],
+      "native": "contrast-color(<color>)",
+      "since": "CSS Color 6 (Baseline newly available since April 2026 — Chrome 147, Firefox 146, Safari 26.0)",
+      "example": "color: contrast-color(var(--bg));",
+      "notes": "CSS-only and very recently shipped, so real-world support is still limited. Picks black/white for you but does not expose a numeric contrast ratio — a JS contrastRatio()/isLight() helper remains useful for Node/non-DOM contexts and for anything needing the actual WCAG number."
+    }
   ]
 }
