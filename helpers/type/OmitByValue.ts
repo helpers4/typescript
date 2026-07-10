@@ -7,11 +7,14 @@
 /**
  * Constructs a type by omitting all entries of `T` whose values extend `V`.
  *
+ * Optional properties are matched by their non-nullable value type, so an
+ * optional `string` property is omitted the same as a required one.
+ *
  * @example
  * type Form = { name: string; age: number; email: string; active: boolean };
  * type NonStringFields = OmitByValue<Form, string>; // { age: number; active: boolean }
  * @since 3.0.0
  */
 export type OmitByValue<T, V> = {
-  [K in keyof T as T[K] extends V ? never : K]: T[K];
+  [K in keyof T as NonNullable<T[K]> extends V ? never : K]: T[K];
 };

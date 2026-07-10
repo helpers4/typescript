@@ -24,6 +24,4 @@ export type RequiredKeys<T> = {
  * type Opts = OptionalKeys<User>; // 'email'
  * @since 3.0.0
  */
-export type OptionalKeys<T> = {
-  [K in keyof T]-?: {} extends Pick<T, K> ? K : never;
-}[keyof T];
+export type OptionalKeys<T> = Exclude<keyof T, RequiredKeys<T>>;
