@@ -11,14 +11,11 @@ import type { DateLike } from './types';
  * Type guard that checks whether a value is a `Temporal.Instant` or
  * `Temporal.ZonedDateTime`.
  *
- * Uses `instanceof` when `Temporal` is available globally (Node.js >=26), and
- * falls back to duck-typing the `epochMilliseconds` property for environments
- * without Temporal (e.g. browsers).
+ * Duck-types the `epochMilliseconds` property rather than using `instanceof`,
+ * so values crossing a realm boundary (vm context, worker, iframe) are still
+ * recognized correctly.
  */
 function isEpochMillisecondsLike(value: unknown): value is Temporal.Instant | Temporal.ZonedDateTime {
-  if (typeof Temporal !== 'undefined') {
-    return value instanceof Temporal.Instant || value instanceof Temporal.ZonedDateTime;
-  }
   return (
     typeof value === 'object' &&
     value !== null &&
