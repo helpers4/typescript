@@ -24,7 +24,7 @@ interface ExampleResult {
  * Exit code 0 = all assertions passed, 1 = at least one failure.
  */
 async function runExamples(): Promise<void> {
-  const categories = (await readdir(DIR.HELPERS)).toSorted();
+  const categories = (await readdir(DIR.HELPERS)).toSorted().filter(c => !c.startsWith('_'));
   const results: ExampleResult[] = [];
   let failures = 0;
 

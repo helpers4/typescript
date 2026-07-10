@@ -38,7 +38,7 @@ async function runSmokeTests(): Promise<void> {
     process.exit(1);
   }
 
-  const categories = (await readdir(DIR.HELPERS)).toSorted();
+  const categories = (await readdir(DIR.HELPERS)).toSorted().filter(c => !c.startsWith('_'));
   const results: SmokeResult[] = [];
   let failures = 0;
 

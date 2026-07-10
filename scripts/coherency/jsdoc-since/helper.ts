@@ -38,6 +38,8 @@ export async function checkJsDocSince(): Promise<void> {
 
   const categories = await fs.readdir(helpersDir);
   for (const category of categories) {
+    if (category.startsWith('_')) continue;
+
     const categoryPath = path.join(helpersDir, category);
     const stat = await fs.stat(categoryPath);
     if (!stat.isDirectory()) continue;
