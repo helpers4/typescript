@@ -10,6 +10,7 @@ import fs from 'fs-extra';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isHelperSourceFile } from '../coherency/jsdoc-since/helper';
+import { listHelperCategories } from '../utils';
 import { isPrerelease } from '../../helpers/version/isPrerelease';
 
 /**
@@ -41,13 +42,9 @@ export async function injectSinceVersion(
 
   const modified: string[] = [];
 
-  const categories = await fs.readdir(helpersDir);
+  const categories = await listHelperCategories(helpersDir);
   for (const category of categories) {
-    if (category.startsWith('_')) continue;
-
     const categoryPath = path.join(helpersDir, category);
-    const stat = await fs.stat(categoryPath);
-    if (!stat.isDirectory()) continue;
 
     const files = await fs.readdir(categoryPath);
     for (const filename of files) {

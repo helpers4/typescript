@@ -8,6 +8,7 @@ import { ensureDir } from "fs-extra";
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { DIR } from "../constants";
+import { listHelperCategories } from "../utils";
 import {
   compileTypeScript,
   copyStaticCategoryFiles,
@@ -23,7 +24,7 @@ import {
  */
 export async function buildCategories(): Promise<string[]> {
   // Read categories in the /helpers directory, excluding internal shared dirs (e.g. _shared/).
-  const categories = (await readdir(DIR.HELPERS)).sort().filter(c => !c.startsWith('_'));
+  const categories = await listHelperCategories(DIR.HELPERS);
   const validCategories: string[] = [];
 
   // Build individual categories

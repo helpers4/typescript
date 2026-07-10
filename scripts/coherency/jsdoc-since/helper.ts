@@ -6,6 +6,7 @@
 
 import fs from 'fs-extra';
 import path from 'node:path';
+import { listHelperCategories } from '../../utils';
 
 /** File suffixes that are not helper implementations */
 export const SKIP_SUFFIXES = ['.test.ts', '.spec.ts', '.bench.ts', '.example.ts'];
@@ -36,13 +37,9 @@ export async function checkJsDocSince(): Promise<void> {
 
   const errors: string[] = [];
 
-  const categories = await fs.readdir(helpersDir);
+  const categories = await listHelperCategories(helpersDir);
   for (const category of categories) {
-    if (category.startsWith('_')) continue;
-
     const categoryPath = path.join(helpersDir, category);
-    const stat = await fs.stat(categoryPath);
-    if (!stat.isDirectory()) continue;
 
     const files = await fs.readdir(categoryPath);
     for (const filename of files) {

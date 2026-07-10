@@ -8,6 +8,7 @@ import { readdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 import { DIR } from '../constants';
+import { listHelperCategories } from '../utils';
 
 interface SmokeResult {
   readonly category: string;
@@ -38,7 +39,7 @@ async function runSmokeTests(): Promise<void> {
     process.exit(1);
   }
 
-  const categories = (await readdir(DIR.HELPERS)).toSorted().filter(c => !c.startsWith('_'));
+  const categories = await listHelperCategories(DIR.HELPERS);
   const results: SmokeResult[] = [];
   let failures = 0;
 
