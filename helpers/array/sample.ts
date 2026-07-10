@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { clamp } from '../number/clamp';
 import { shuffle } from './shuffle';
 
 /**
@@ -32,6 +33,6 @@ export function sample<T>(array: readonly T[] | null | undefined, count?: number
     return array[Math.floor(Math.random() * array.length)];
   }
 
-  const clamped = Math.max(0, Math.min(count, array.length));
+  const clamped = clamp(count, 0, array.length);
   return shuffle(array).slice(0, clamped);
 }

@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { roundTo } from '../number/roundTo';
 import type { RgbColor } from './hexToRgb';
 
 /**
@@ -18,10 +19,6 @@ export interface HslColor {
   l: number;
   /** Alpha channel, 0-1. Defaults to 1 (opaque) when omitted. */
   a?: number;
-}
-
-function round1(n: number): number {
-  return Math.round(n * 10) / 10;
 }
 
 /**
@@ -64,5 +61,5 @@ export function rgbToHsl({ r, g, b, a = 1 }: RgbColor): HslColor {
   }
   if (h < 0) h += 360;
 
-  return { h: round1(h), s: round1(s * 100), l: round1(l * 100), a };
+  return { h: roundTo(h, 1), s: roundTo(s * 100, 1), l: roundTo(l * 100, 1), a };
 }

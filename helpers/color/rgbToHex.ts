@@ -4,14 +4,11 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { clamp } from '../number/clamp';
 import type { RgbColor } from './hexToRgb';
 
-function clampByte(n: number): number {
-  return Math.min(255, Math.max(0, Math.round(n)));
-}
-
 function toHexByte(n: number): string {
-  return clampByte(n).toString(16).padStart(2, '0');
+  return Math.round(clamp(n, 0, 255)).toString(16).padStart(2, '0');
 }
 
 /**
@@ -29,7 +26,7 @@ function toHexByte(n: number): string {
  * @since next
  */
 export function rgbToHex({ r, g, b, a = 1 }: RgbColor): string {
-  const alpha = Math.min(1, Math.max(0, a));
+  const alpha = clamp(a, 0, 1);
   const base = `#${toHexByte(r)}${toHexByte(g)}${toHexByte(b)}`;
   return alpha >= 1 ? base : `${base}${toHexByte(alpha * 255)}`;
 }
