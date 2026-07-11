@@ -97,11 +97,11 @@ describe("get", () => {
     expect(get(obj, [])).toBe(obj);
   });
 
-  // --- parsePath edge-case regressions ---
+  // --- parsePropertyPath edge-case regressions ---
 
   it('should traverse the empty-string key for a bare dot path "."', () => {
     // '.' is treated as a leading dot (stripped) leaving '' → [''] — one empty-string key.
-    // Regression: parsePath('.') previously returned [], causing a silent no-op.
+    // Regression: parsePropertyPath('.') previously returned [], causing a silent no-op.
     const o: Record<string, unknown> = { '': 'empty-key-value' };
     expect(get(o, '.')).toBe('empty-key-value');
   });

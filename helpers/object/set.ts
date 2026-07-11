@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { parsePath } from './_parsePath.js';
+import { parsePropertyPath } from './parsePropertyPath.js';
 import type { ContainsUnsafeStringKey, DeepGet, DeepSet, ParsePath } from './_types.js';
 import { UNSAFE_KEYS } from '../_shared/_unsafeKeys.js';
 
@@ -58,7 +58,7 @@ export function set<
   value: V,
 ): string extends P ? T : readonly PropertyKey[] extends P ? T : ContainsUnsafeStringKey<ParsePath<P>> extends true ? T : DeepSet<T, ParsePath<P>, V>;
 export function set(obj: object, path: string | PropertyKey[], value: unknown): object {
-  const keys: readonly PropertyKey[] = typeof path === 'string' ? parsePath(path) : path;
+  const keys: readonly PropertyKey[] = typeof path === 'string' ? parsePropertyPath(path) : path;
 
   if (keys.length === 0) return obj;
   if (keys.some((k) => typeof k === 'string' && UNSAFE_KEYS.has(k))) return obj;
