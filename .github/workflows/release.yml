@@ -187,6 +187,7 @@ jobs:
     permissions:
       id-token: write
       actions: read
+      attestations: write
     outputs:
       new-version: ${{ needs.build-and-verify.outputs.new-version }}
 
@@ -325,6 +326,28 @@ jobs:
         run: |
           gh release upload "v${{ steps.version.outputs.new-version }}" \
             /tmp/build-meta.tar.gz \
+            --clobber
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
+
+      - name: Attest release assets
+        if: ${{ !inputs.dry-run }}
+        id: attest
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373 # v4.1.1
+        with:
+          subject-path: '/tmp/build-meta.tar.gz'
+
+      - name: Upload provenance bundle to release
+        # OpenSSF Scorecard's Signed-Releases check doesn't read the GitHub
+        # Attestations store (see https://github.com/ossf/scorecard/issues/4080) —
+        # it only recognizes a release *asset* whose name ends in `.intoto.jsonl`.
+        # Re-upload the same Sigstore bundle attest-build-provenance already
+        # generated, under that suffix, so both mechanisms point at one artifact.
+        if: ${{ !inputs.dry-run }}
+        run: |
+          cp "${{ steps.attest.outputs.bundle-path }}" /tmp/build-meta.tar.gz.intoto.jsonl
+          gh release upload "v${{ steps.version.outputs.new-version }}" \
+            /tmp/build-meta.tar.gz.intoto.jsonl \
             --clobber
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
