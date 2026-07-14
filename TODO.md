@@ -13,9 +13,20 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 
 - [x] 🔴 Audit `@deprecated` tags before cutting v3 — checked (2026-07-14): zero matches across
   `helpers/`, `scripts/`, and everything else except this TODO. Nothing to remove.
-- [ ] 🔴 Confirm CHANGELOG / migration notes cover all breaking changes introduced since the last
-  major (v2).
-- [ ] 🔴 Publish v3 — only after the two items above are done and explicitly confirmed by baxyz.
+- [x] 🔴 Confirm CHANGELOG / migration notes cover all breaking changes since v2 — they didn't
+  (2026-07-14): the 6 breaking refactor commits (`type`→`guard` split + 5 removed deprecated
+  aliases) used prose like "Breaking change for v3." instead of the Conventional Commits
+  `BREAKING CHANGE:` footer, so git-cliff silently never flagged them. Fixed: added
+  [MIGRATION.md](MIGRATION.md) with a proper `BREAKING CHANGE:` footer commit, linked it from
+  `cliff.toml`'s header, and regenerated `CHANGELOG.md` (which was also stale since
+  2.0.0-alpha.11 — every release through 2.1.0 plus all of v3 was missing from it).
+- [ ] 🟡 **New finding**: `v3.0.0-alpha.1`/`v3.0.0-alpha.2` git tags are **not ancestors** of the
+  current `v3` branch HEAD (orphaned, likely by the earlier `v3` rebase onto `main`). Any
+  release tooling that diffs against "the last tag" may misbehave. Needs a decision before
+  release: re-tag, delete + let the next real tag be `v3.0.0-alpha.3`/`v3.0.0`, or confirm the
+  release script doesn't actually rely on tag ancestry. **Not resolved — needs baxyz input**,
+  tag manipulation is not something to do unilaterally.
+- [ ] 🔴 Publish v3 — only after every item above is resolved and explicitly confirmed by baxyz.
 
 ---
 
