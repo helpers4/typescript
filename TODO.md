@@ -50,6 +50,30 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
   tree-shaking") contradicted by 20+ existing cross-category imports — fixed, and documented
   the real `BREAKING CHANGE:` footer requirement for `git-cliff`. Auto-memory store was
   completely empty despite months of session history — seeded with the findings above.
+- [x] 🟡 Contributor-facing Claude Code skill — added `/add-helper` (2026-07-14,
+  `.claude/skills/add-helper/SKILL.md`): scaffolds a new helper's 4 files following
+  `CONTRIBUTING.md`, bakes in conventions that only live in `AGENTS.md`/session history
+  (naming: no lodash/math jargon, cross-category imports are safe, verification command order,
+  per-turn commit authorization).
+- [ ] 🟢 **Consumer-facing Claude Code skill** (not built — needs a separate design pass):
+  unlike `/add-helper` (helps people contribute *to* this repo), this would help people *using*
+  `@helpers4/*` as a dependency in their own project avoid reinventing a utility that already
+  exists here. Sketch:
+  - Trigger: before writing a new small utility function (array/object/string/date manipulation,
+    a type guard, etc.), check whether `@helpers4/<category>` already has it.
+  - Source of truth: the per-package `llms.txt` already generated at build time (see item above)
+    — no new data pipeline needed, just point the skill at it (fetched from npm/unpkg, or from
+    `node_modules/@helpers4/<category>/llms.txt` if the package is already installed).
+  - Distribution is the hard part, same issue as the "good first issue" outreach blocker: a
+    skill nobody installs has zero effect. Needs to ship through something with actual reach —
+    a Claude Code plugin/marketplace listing, or bundled as an optional install step in
+    `CONTRIBUTING.md`/README for people already using the lib — not just dropped in this repo's
+    `.claude/skills/` (which only helps people already working *in* this repo, i.e. the
+    `/add-helper` use case, not the "instead of writing my own debounce, use helpers4" use
+    case).
+  - Worth prototyping once there's an actual channel to distribute it through — building it
+    before that exists is the same mistake as opening good-first-issues before there was
+    traffic to see them.
 
 ---
 
