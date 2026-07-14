@@ -8,6 +8,22 @@ Thank you for your interest in contributing! This guide explains everything you 
 - **pnpm** (enabled via corepack: `corepack enable`)
 - **Git** with [conventional commits](https://www.conventionalcommits.org/)
 
+### Option A — DevContainer (recommended, 2 commands)
+
+The [`helpers4/.dev`](https://github.com/helpers4/.dev) repo ships a single DevContainer with
+Node, pnpm, and everything preconfigured — no local toolchain setup needed.
+
+```bash
+gh repo clone helpers4/.dev
+code .dev/helpers4.code-workspace
+```
+
+Then *Reopen in Container* when VS Code prompts (or run **Dev Containers: Reopen in Container**
+from the command palette). On first start the container clones this repo (and the other
+helpers4 siblings) alongside `.dev/` and runs `pnpm install` automatically.
+
+### Option B — Local clone
+
 ```bash
 git clone https://github.com/helpers4/typescript.git
 cd typescript
