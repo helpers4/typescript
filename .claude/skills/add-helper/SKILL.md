@@ -8,9 +8,13 @@ name/behavior first if it wasn't already specified.
 
 ## 1. Placement
 
-- Pick the right category under `helpers/<category>/` — see `AGENTS.md`'s "Helper placement"
-  rules (type predicates → `guard/`, compile-time-only types → `type/`, Node-only APIs →
-  `node/`, state predicates like `isEmpty` → their own category, never `type/`).
+- `<category>` throughout this skill means one of the **existing** directories under
+  `helpers/` — run `ls helpers/` (or check each `helpers/*/config.json`) for the current list,
+  don't hardcode or guess one, it drifts. Pick the right one using `AGENTS.md`'s "Helper
+  placement" rules (type predicates → `guard/`, compile-time-only types → `type/`, Node-only
+  APIs → `node/`, state predicates like `isEmpty` → their own category, never `type/`). If
+  nothing fits, see `CONTRIBUTING.md`'s "Adding a new category" section before creating one —
+  don't default to inventing a new category.
 - Check `docs/native-alternatives.json` first — don't add a helper that duplicates a native
   JS/TS API.
 - Naming: prefer a plain-English, self-describing name over lodash/radashi/math jargon (e.g.
