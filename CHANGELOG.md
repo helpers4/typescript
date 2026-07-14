@@ -5,13 +5,457 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
+
 
 ## [Unreleased]
 
 ### 🚀 Features
+- **array**: add replaceOrAppend function with examples and tests for upserting items in an array
+- **array**: add toggle function with examples and tests for toggling items in an array
+- **array**: add symmetricDifference function with examples and tests for array difference
+- **array**: add createSortByBooleanFn utility and corresponding tests/examples
+- **array**: add combineSortFns utility and corresponding tests/examples
+- **clone**: add shallow clone function with tests and examples for various data types
+- **color**: refactor color conversion functions to improve precision and reusability with shared regex for hex color formats
+- **color**: add color manipulation functions with examples and notes for lighten/darken, withAlpha, and isLight/isDark
+- **color**: add hslToRgb function with examples and tests for HSL to RGB conversion
+- **color**: add rgbToHex function with examples and tests for RGB to hex conversion
+- **color**: add rgbToHsl function with examples and tests for RGB to HSL conversion
+- **color**: add hexToRgb function with examples and tests for hex color parsing
+- **color**: add argbToRgb function and corresponding examples/tests
+- **color**: add color utility with conversion and validation functions
+- **date**: add parseDuration function with examples and tests for parsing duration strings into milliseconds
+- **date**: add test for duck-typed epochMilliseconds = NaN and simplify isEpochMillisecondsLike function
+- **docs**: update CONTRIBUTING.md with DevContainer setup and add "PRs welcome" badge to README
+- **function**: add unary function with examples and tests for single argument restriction
+- **guard**: add isWeakMap function with examples and tests for checking WeakMap instances
+- **guard**: add isWeakSet function with examples and tests for checking WeakSet instances
+- **guard**: add isSet helper with examples and tests for Set instance validation
+- **guard**: add isCssColor function with tests and examples for color validation
+- **helper**: refactor category handling by introducing listHelperCategories utility function
+- **object**: add unflatten function with examples and tests for rebuilding nested objects from dot-notation keys
+- **object**: add pickBy function with examples and tests for filtering object entries
+- **object**: add omitBy function with examples and tests for filtering object entries
+- **object**: add flatten function with examples and tests for nested object flattening
+- **object**: add unset function with examples and tests for object key removal
+- **object**: implement parsePropertyPath for dot/bracket-notation path parsing with caching and edge-case handling
+- **object**: introduce KeysOf type for improved null handling in DeepGet
+- **promise**: add settle function and corresponding examples and tests
+- **release**: add attestation generation for release assets
+- **release**: attest and attach SLSA provenance for release assets
+- **scorecard**: add SCORECARD_TOKEN to workflow and update TODO for manual setup
+- **security**: add SECURITY.md for vulnerability reporting and policy
+- **string**: add removeDiacritics function with examples and tests for stripping diacritical marks
+- **string**: add dedent function with examples and tests for stripping leading whitespace from multi-line strings
+- **string**: add unescapeHtml function with examples and tests for HTML entity unescaping
+- **string**: add escapeRegExp function with examples and tests for regex metacharacter escaping
+- **todos**: update OpenSSF Scorecard snapshot and improve documentation for token permissions and branch protection
+- **type**: refactor OmitByValue and PickByValue to utilize KeysOfType for improved type handling
+- **type**: enhance type utilities with improved handling of optional properties and nullability
+- **type**: promote compile-time utility types as public API
+- **update**: add update function with examples and tests for object property updates
+- filter out categories starting with '_' in helper source file checks
+
+### 🐛 Bug Fixes
+- **CI-CD**: fix malformed scopes.json and add missing scopes
+- **CI-CD**: scope post-release contents:write to the mutation job only
+- **coherency**: skip _-prefixed dirs in category coherency checks
+- **object**: guard compact() and pick() against proto pollution
+- **object**: mirror DeepSet fix and test set() new-key inference
+- **scorecard**: wire SCORECARD_TOKEN into scorecard.yml on main
+- **type**: update UnionToIntersection type to use 'unknown' instead of 'any' for better type safety
+- **type**: fix DeepSet empty-path and new-key type resolution
+
+### 🔧 Miscellaneous
+- **CI-CD**: bump version to 3.0.0-alpha.0
+- **CI-CD**: remove conventional commits configuration and migrate scopes
+- **deps-dev**: bump @typescript/native-preview
+- **deps-dev**: bump the dev-dependencies group with 6 updates
+- **deps-dev**: bump @typescript/native-preview
+- **deps-dev**: bump the dev-dependencies group across 1 directory with 6 updates
+- upgrade minimum Node.js version to 26 across workflows and documentation
+
+### ♻️ Refactoring
+- **date**: replace epochMilliseconds with Temporal.Instant in ensureDate
+- **date**: remove deprecated daysDifference
+- **date**: remove deprecated safeDate and dateToISOString
+- **guard**: rename helpers/type → helpers/guard
+- **object**: remove deprecated deepMerge
+- **object**: remove deprecated deepClone
+- **promise**: fix unsound as T casts in OrThrow helpers
+- **shared**: extract _unsafeKeys into helpers/_shared/
+- **type**: remove deprecated isEmpty
+
+### 📝 Documentation
+- **agents**: align helper placement rule with guard/type split
+- **date**: clarify unrounded fractional days in difference()
+- add v3 migration guide [**BREAKING**]
+- confirm no @deprecated tags remain before v3
+- fix stale @helpers4/type row, add @helpers4/guard row
+
+### 👷 CI/CD
+- **CI-CD**: allow prerelease release types from any branch
+
+### 📌 Dependencies
+- **deps**: bump github/codeql-action/upload-sarif in the actions group
+- **deps**: bump the actions group with 2 updates
+
+## [2.1.0] - 2026-06-23
+
+### 🚀 Features
+- **array**: add UNSAFE_KEYS set for prototype-pollution guard
+
+### 🔧 Miscellaneous
+- **deps-dev**: bump the dev-dependencies group across 1 directory with 5 updates
+- **deps-dev**: bump @typescript/native-preview
+- **deps-dev**: bump @types/node from 25.9.3 to 26.0.0
+- **object**: update visibility of internal documentation tags
+
+### ♻️ Refactoring
+- **array**: update sort example to use non-mutating toSorted
+- **array**: change array parameters to readonly type
+- **object**: handle null and undefined in object functions
+- **object**: replace deepMerge and deepClone by mergeDeep and cloneDeep
+- **string**: handle null and undefined in string helpers
+
+### 📝 Documentation
+- **array**: update isEmpty examples for clarity and type safety - rename example title and description for better understanding - ensure type narrowing in guard function for empty arrays
+
+### ✅ Tests
+- **array**: add benchmarks for intersects function
+- add tests for narrowing null and undefined types
+
+### 📌 Dependencies
+- **deps**: bump actions/checkout from 6.0.3 to 7.0.0
+
+## [2.0.4] - 2026-06-21
+
+### 🚀 Features
+- **CI-CD**: add content scanning and comment range utilities
+- **function**: add error handling and retry logic for wrapped function
+- **function**: add maxSize option and update cache key handling
+- **number**: add benchmarks for correctFloat function
+- **object**: add support for merging symbol keys in deepMerge
+- **type**: add notes for DeepPartial and DeepWritable types
+
+### 🐛 Bug Fixes
+- **array**: filter NaN dates in sortBy spec and fix bench precision literal
+
+### 🔧 Miscellaneous
+- **CI-CD**: update @typescript/native-preview to 7.0.0-dev.20260620.1
+- **array**: move mean and sum to array
+
+### ♻️ Refactoring
+- **coherency**: simplify test execution with promise handling
+
+### 📝 Documentation
+- **CI-CD**: update @since rules for exports
+
+### ✅ Tests
+- **function**: cover first.done branch in memoize with maxSize:0
+- **number**: add tests for leading-dot decimals
+
+### 📦 Build
+- **deps**: update pnpm-lock.yaml for @typescript/native-preview 7.0.0-dev.20260620.1
+
+### 👷 CI/CD
+- **CI-CD**: update tag retrieval command for releases
+
+## [2.0.3] - 2026-06-16
+
+### 🚀 Features
+- **CI-C CD**: add runtimes field for consumer compatibility
+- **CI-CD**: read type definitions from source files for accuracy
+- **number**: add isPositiveNumber function with tests
+- **type**: add isInfinite example and notes to native alternatives
+
+### 🐛 Bug Fixes
+- **CI-CD**: improve comments for built-in module check
+- **ci**: fix lint and build failures
+- **review**: address code review findings
+- **security**: override markdown-it to >=14.2.0
+
+### 🔧 Miscellaneous
+- **deps-dev**: bump @typescript/native-preview
+- **deps-dev**: bump the dev-dependencies group with 3 updates
+- remove isNonEmptyArray and isNonEmptyString implementations and tests
+
+### 📝 Documentation
+- **type**: update links to use date/isValid
+
+## [2.0.2] - 2026-06-13
+
+### 🚀 Features
+- **array**: add max() that avoids call-stack overflow on large arrays
+- **array**: add min() that avoids call-stack overflow on large arrays
+- **array**: add natural sort helpers with lazy Intl.Collator init
+- **array**: add multi-key createSortByStringFn/NumberFn/DateFn, extract from sort.ts
+- **number**: add correctFloat() to eliminate floating-point drift
+- **type**: add DeepWritable to strip readonly recursively
+- **type**: add DeepPartial with tuple, array, and opaque-type support
+
+### 🐛 Bug Fixes
+- **ci**: auto-detect latest release tag in post-release workflow
+- **ci**: add tag input to post-release workflow_dispatch
+- **ci**: address post-release review findings
+- **security**: force esbuild >=0.28.1 via pnpm override (GHSA-gv7w-rqvm-qjhr)
+
+### 🔧 Miscellaneous
+- **CI-CD**: remove devcontainer configuration file
+- **deps-dev**: bump the dev-dependencies group across 1 directory with 7 updates
+- **deps-dev**: bump @typescript/native-preview
+- update badge styles and add coverage link
+
+### 📌 Dependencies
+- **deps**: bump github/codeql-action in the actions group
+- **deps**: bump codecov/codecov-action from 5.5.4 to 7.0.0
+
+## [2.0.1] - 2026-06-03
+
+### 🚀 Features
+- **CI-CD**: add peerDependencies from config.json
+
+### 🐛 Bug Fixes
+- **deps**: update rxjs to peerDependencies and add to devDependencies
+- **node**: resolve config peer dep versions from root package.json
+- **type**: improve isEmpty predicate and fix peer dep versioning
+
+### 🔧 Miscellaneous
+- **CI-CD**: update commit message guidelines and scopes
+- **deps-dev**: bump @typescript/native-preview
+- **deps-dev**: bump the dev-dependencies group with 2 updates
+- **deps-dev**: bump @typescript/native-preview
+- update license link in contributing guidelines
+- format commit message generation instructions
+- update Node.js version and documentation link
+
+### 📌 Dependencies
+- **deps**: bump the actions group with 2 updates
+- **deps**: bump github/codeql-action in the actions group
+
+## [2.0.0] - 2026-05-21
+
+### 🐛 Bug Fixes
+- **deps**: add pnpm overrides for brace-expansion and ws security vulnerabilities
+
+### 🔧 Miscellaneous
+- **deps-dev**: bump the dev-dependencies group across 1 directory with 8 updates
+- **deps-dev**: bump @typescript/native-preview
+
+### 📌 Dependencies
+- **deps**: bump the actions group with 2 updates
+
+## [2.0.0-beta.3] - 2026-05-16
+
+### 🚀 Features
+- **CI-CD**: add source structure validation and integrate into tests
+- **array**: add without function and related examples/tests
+- **array**: add countBy function with examples and tests
+- **array**: add intersects helper and related tests/examples
+- **ci**: add CI/CD workflow status utilities configuration
+- **function**: add pipe function and examples with tests
+- **function**: add compose function and related examples and tests
+- **id**: add uuid7 generation and related tests/examples
+- **markdown**: add cell option to escape function for table safety
+- **markdown**: add markdown utilities configuration
+- **number**: add mean function and related examples/tests
+- **object**: add deep and shallow equality checks for objects
+- **promise**: add resolveRecord function and related examples/tests
+- **string**: add words function with examples and tests
+- **string**: add escapeHtml function with examples and tests
+- **string**: add options to capitalize function for casing control
+
+### 🐛 Bug Fixes
+- **CI-CD**: make mutation job non-blocking
+- **CI-CD**: fix build and test failures
+- **CI-CD**: resolve all 33 typecheck errors in PR
+
+### 🔧 Miscellaneous
+- **CI-CD**: update fast-uri to version 3.1.2
+- **CI-CD**: add 'deps' to conventional commits scopes
+- **deps-dev**: bump @typescript/native-preview
+- **deps-dev**: bump the dev-dependencies group with 5 updates
+- **deps-dev**: bump @typescript/native-preview
+- **deps-dev**: bump oxlint in the dev-dependencies group
+- **function**: add missing example files, remove leftover coverage folder
+- delete stale old-named equality files, clarify since/bench conventions
+
+### ♻️ Refactoring
+- **array**: remove deepEquals and equals implementations
+
+### 📝 Documentation
+- **CI-CD**: add initial TODO list for helpers4/typescript
+- document intentional cross-category duplicates, fix stale math references
+
+### ✅ Tests
+- **url**: refine property test for withoutLeadingSlash function
+
+### 📌 Dependencies
+- **deps**: bump github/codeql-action in the actions group
+- **deps**: bump github/codeql-action in the actions group
+
+## [2.0.0-beta.0] - 2026-04-30
+
+### 🔧 Miscellaneous
+- **CI-CD**: remove commit message generation instructions
+- **CI-CD**: remove psi-header configuration and templates
+
+### 📝 Documentation
+- **CI-CD**: update gitmoji table with detailed types and usage
+- **CI-CD**: update commit message table with detailed types and emojis
+- **CI-CD**: update commit message generation instructions
+
+### 👷 CI/CD
+- **CI-CD**: add write permission for triggering website docs update
+
+## [2.0.0-alpha.24] - 2026-04-29
+
+### 🔧 Miscellaneous
+- **CI-CD**: remove push trigger from scorecard workflow
+- **CI-CD**: remove summary steps from lint, security, and typecheck jobs
+
+## [2.0.0-alpha.23] - 2026-04-27
+
+### 🔧 Miscellaneous
+- **CI-CD**: add summary step for lint, security, and typecheck jobs
+- **CI-CD**: update mutation testing configuration and scripts
+
+## [2.0.0-alpha.22] - 2026-04-27
+
+### 🚀 Features
+- **object**: enhance safeJsonParse to handle undefined fallback
+- **object**: add safeJsonParse helper with tests and examples
+- **string**: add injectWordBreaks function with tests and examples
+- **string**: enhance truncate to handle null and undefined inputs
+- **string**: add truncate helper with examples and tests
+
+### 🐛 Bug Fixes
+- **CI-CD**: correct optional chaining for return type
+
+### 🔧 Miscellaneous
+- **CI-CD**: remove write permission for website docs trigger
+- **CI-CD**: add GH_REPO environment variable for mutation report upload
+- **deps-dev**: bump @typescript/native-preview
+- **deps-dev**: bump the dev-dependencies group with 5 updates
+
+### ✅ Tests
+- **url**: fix cleanPath property-based test for leading slash inputs
+
+## [2.0.0-alpha.21] - 2026-04-26
+
+### 🚀 Features
+- **CI-CD**: update commit scopes
+- **CI-CD**: add config for Conventional Commits parsing utilities
+- **commit**: add buildConventionalCommitRegex function and tests
+- **commit**: add parseConventionalCommit function and tests
+
+### 🔧 Miscellaneous
+- **CI-CD**: update commit scopes in generation instructions
+- **CI-CD**: update actions to latest SHA
+- **CI-CD**: update permissions to read-all in workflow files
+
+### ♻️ Refactoring
+- **CI-CD**: update import path for analyzeCommits helper
+- **CI-CD**: simplify analyzeCommits using helper function
+- **string**: rename errorToReadableMessage into extractErrorMessage
+
+### ✅ Tests
+- **commit**: add tests for detecting BREAKING CHANGE in commit body
+- **helper**: add CRLF handling for isConventionalCommit
+
+## [2.0.0-alpha.19] - 2026-04-25
+
+### 🚀 Features
+- **CI-CD**: add version injection and helper upload for stable releases
+- **number**: add formatSize helper with examples and tests
+- **type**: enhance processMember to support method signatures
+- **workflows**: add trigger for website docs update after release
+
+### 🐛 Bug Fixes
+- **CI-CD**: compute new version correctly in dry-run mode
+- **build**: handle predicate type serialization in build process
+- **string**: constrain titleCase property test to non-whitespace words
+
+### 🔧 Miscellaneous
+- **CI-CD**: add postcss override in pnpm configuration
+
+### ♻️ Refactoring
+- **helper**: replace array with Set for SKIP_FILENAMES
+- **url**: remove gist.github.com from DOMAIN_TO_HOST
+- **version**: simplify script execution check
+
+### 👷 CI/CD
+- **release**: add continue-on-error for website docs trigger
+
+### 📌 Dependencies
+- **deps**: bump ossf/scorecard-action in the actions group
+- **deps**: bump github/codeql-action from 3 to 4
+
+## [2.0.0-alpha.18] - 2026-04-20
+
+### 🚀 Features
+- **build**: add browser compatibility to engines field
+- **workflows**: add mutation score reporting to Stryker dashboard
+
+### 🐛 Bug Fixes
+- **build**: robustly derive repoSlug from package.json repository field
+
+### 🔧 Miscellaneous
+- **deps-dev**: bump @typescript/native-preview
+- **deps-dev**: bump the dev-dependencies group with 5 updates
+
+### 👷 CI/CD
+- **release**: add mutation testing summary and json reporter
+
+## [2.0.0-alpha.17] - 2026-04-19
+
+### 🚀 Features
+- **config**: add harmony-temporal flag for Node.js 24 compatibility
+- **function**: add noop function and related tests
+- **function**: add identity function and related tests
+
+## [2.0.0-alpha.16] - 2026-04-19
+
+### 🚀 Features
+- **date**: add timestamp conversion and validation helpers
+
+### 🐛 Bug Fixes
+- **CI-CD**: fix test timeout and mutation score extraction
+- **CI-CD**: skip @helpers4/* internal refs in external dependency scan
+- **date**: address PR review comments
+- **url**: strip all trailing slashes in withoutTrailingSlash
+
+### 🔧 Miscellaneous
+- **docs**: reorganize native alternatives and update references
+
+### ✅ Tests
+- **array**: add security edge cases for chunk and unique helpers
+
+### 👷 CI/CD
+- add release type and version to dashboard
+
+## [2.0.0-alpha.15] - 2026-04-18
+
+### 🚀 Features
+- **date**: update config structure with label and descriptions
+- **function**: add optional native alternatives metadata to output
+
+### 🐛 Bug Fixes
+- **CI-CD**: correct dry-run command formatting in publish step
+- **CI-CD**: correct dry-run command formatting in release workflow
+
+## [2.0.0-alpha.14] - 2026-04-17
+
+### 🚀 Features
 - **CI-CD**: add codespace-specific devcontainer without local-mount features
 - **CI-CD**: add runtime compatibility checks for Node, Deno, and Bun
+- **array**: add toSorted native alternative with examples
+- **array**: add ensureArray helper with examples and tests
+- **array**: add range helper with examples and tests
+- **array**: add partition helper with examples and tests
 - **array**: add shuffle helper with examples and tests
+- **category**: add llms.txt and additional metadata files to checks
 - **promise**: add timeout helper with examples and tests
 - **promise**: add tryit function and examples for error handling
 - **promise**: add parallel helper with examples and tests
@@ -19,20 +463,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **type**: add various type checking helpers
 
 ### 🐛 Bug Fixes
+- **array**: correct flattening assertion in ensureArray examples
 - **array**: update description for sample function behavior
+- **promise**: correct array initialization for results
 - **promise**: update isPromise return type to PromiseLike
 
 ### 🔧 Miscellaneous
+- **CI-CD**: disable local mounts due to Codespace limitations
+- **devcontainer**: enable local mounts and pnpm store features
 - **string**: update version in pascalCase documentation
+- **version**: skip version 2.0.0-alpha.13
 
 ### ♻️ Refactoring
 - **CI-CD**: update node version references for consistency
+- **object**: cast result type for nested property assertion
+- **observable**: improve filtering logic in combineLatest function
+- **promise**: simplify retry logic and remove unnecessary loop
+
+### 📝 Documentation
+- **CI-CD**: add OpenSSF Scorecard badge to README
+- add contributing guidelines for helpers4
 
 ### ✅ Tests
+- **function**: add tests for returnOrThrowError function
+- add property-based and contract spec files for all 105 helpers
 - add null and undefined handling tests for helpers
 
 ### 💄 Style
+- **publish**: fix comment casing and format import statement
 - reorder imports for consistency across benchmark files
+
+### 👷 CI/CD
+- **CI-CD**: add OpenSSF Scorecard workflow
+- **CI-CD**: update job-bench workflow to continue on error
+- **CI-CD**: update node versions in workflow jobs
+- **pr-validation**: remove continue-on-error from jobs
+- **release**: format needs array and escape client-payload string
 
 ### 📌 Dependencies
 - **deps**: bump actions/github-script from 8 to 9
@@ -320,7 +786,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
-[Unreleased]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.11...HEAD
+[Unreleased]: https://github.com/helpers4/typescript/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/helpers4/typescript/compare/v2.0.4...v2.1.0
+[2.0.4]: https://github.com/helpers4/typescript/compare/v2.0.3...v2.0.4
+[2.0.3]: https://github.com/helpers4/typescript/compare/v2.0.2...v2.0.3
+[2.0.2]: https://github.com/helpers4/typescript/compare/v2.0.1...v2.0.2
+[2.0.1]: https://github.com/helpers4/typescript/compare/v2.0.0...v2.0.1
+[2.0.0]: https://github.com/helpers4/typescript/compare/v2.0.0-beta.3...v2.0.0
+[2.0.0-beta.3]: https://github.com/helpers4/typescript/compare/v2.0.0-beta.0...v2.0.0-beta.3
+[2.0.0-beta.0]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.24...v2.0.0-beta.0
+[2.0.0-alpha.24]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.23...v2.0.0-alpha.24
+[2.0.0-alpha.23]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.22...v2.0.0-alpha.23
+[2.0.0-alpha.22]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.21...v2.0.0-alpha.22
+[2.0.0-alpha.21]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.19...v2.0.0-alpha.21
+[2.0.0-alpha.19]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.18...v2.0.0-alpha.19
+[2.0.0-alpha.18]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.17...v2.0.0-alpha.18
+[2.0.0-alpha.17]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.16...v2.0.0-alpha.17
+[2.0.0-alpha.16]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.15...v2.0.0-alpha.16
+[2.0.0-alpha.15]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.14...v2.0.0-alpha.15
+[2.0.0-alpha.14]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.11...v2.0.0-alpha.14
 [2.0.0-alpha.11]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.10...v2.0.0-alpha.11
 [2.0.0-alpha.10]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.9...v2.0.0-alpha.10
 [2.0.0-alpha.9]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.8...v2.0.0-alpha.9
