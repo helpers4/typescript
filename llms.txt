@@ -1,0 +1,45 @@
+# @helpers4/typescript
+
+> Zero-dependency, tree-shakable TypeScript utility functions. Each of the 18 categories below
+> ships as its own npm package (`@helpers4/<category>`); `@helpers4/all` bundles everything.
+> Every function is individually importable, fully typed, has 100% test coverage, and its JSDoc
+> `@example` block is smoke-tested — treat those examples as verified-correct usage.
+
+## Conventions
+
+- One function per file: `helpers/<category>/<functionName>.ts`. Import from the package, not
+  the file path: `import { chunk } from '@helpers4/array'`.
+- No mutation — functions return new values instead of mutating arguments, unless documented
+  otherwise.
+- `readonly` array/object parameters where the function doesn't mutate.
+- `any` is never used in this codebase; APIs use `unknown` or generics instead.
+- JSDoc `@example` blocks on every export are runnable, verified documentation — safe to copy.
+
+## Packages
+
+- array — array manipulation, chunking, comparison
+- ci — CI/CD workflow status formatting (PR comments, pipeline reports)
+- color — color conversion and validation
+- commit — Conventional Commits parsing, validation, analysis
+- date — date/time utilities, comparison, validation
+- function — function composition and wrappers (memoize, retry, debounce, …)
+- guard — runtime type guards (`isString`, `isArray`, `isDefined`, …)
+- id — unique identifier generation (UUID v7, …)
+- markdown — Markdown formatting/escaping
+- node — Node.js-specific utilities
+- number — numeric operations and formatting
+- object — object manipulation, deep comparison, merging, path get/set
+- observable — RxJS Observable helpers and operators
+- promise — promise utilities: retry, delay, timeout, error handling
+- string — string manipulation: capitalize, slugify, camelCase, …
+- type — compile-time-only TypeScript utility types (`DeepPartial`, `Maybe`, `Prettify`, …)
+- url — URL parsing, manipulation, normalization
+- version — semantic version parsing and comparison
+
+## Docs
+
+- [README.md](README.md): quick start, full package table, key features
+- [Full API docs](https://helpers4.dev/typescript): per-function reference generated from JSDoc
+- [CONTRIBUTING.md](CONTRIBUTING.md): how to add a helper, project conventions, devcontainer setup
+- [MIGRATION.md](MIGRATION.md): breaking changes and upgrade steps for the current major version
+- [CHANGELOG.md](CHANGELOG.md): full release history
