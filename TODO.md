@@ -41,8 +41,32 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
   (2026-07-14). Turns out each package **already** ships its own much richer auto-generated
   `llms.txt` (full signatures/params/examples from `meta/api.json`, see
   `scripts/build/build-llms-txt.ts`) — the root one is complementary, for repo-level
-  orientation, not a replacement. `llms-full.txt` / helpers4.dev version not done — low value
-  until the site itself needs it.
+  orientation, not a replacement. Confirmed compliant with the llmstxt.org spec (only a H1 is
+  actually required; our blockquote + H2 link-list sections already follow the
+  `[name](url): notes` format).
+- [ ] 🟡 **`llms.txt` on helpers4.dev** (the actual public site, not just the repo) — this is
+  where the llms.txt discovery directories (llmstxt.site, llms-txt-hub, directory.llmstxt.cloud)
+  actually crawl; a repo-root file doesn't get picked up there. **Not a copy of
+  `@helpers4/all`'s llms.txt** (307KB, TS-only) — helpers4.dev documents 3 products
+  (typescript, devcontainer, action, per `website/AGENTS.md`), so the site-level file needs its
+  own root file with H2 sections per product, *linking to* the already-generated
+  `@helpers4/all` llms.txt for the TS deep-dive rather than duplicating it (publish
+  `build/all/llms.txt` somewhere under the site, e.g. `/typescript/llms-full.txt`). This lives
+  in the `website` repo, not this one.
+- [ ] 🟢 Submit to llms.txt discovery directories once the helpers4.dev one exists —
+  [llmstxt.site](https://llmstxt.site/submit) (form) and
+  [llms-txt-hub](https://github.com/thedaviddias/llms-txt-hub) (PR-based). Low cost, do after
+  the site-level file above.
+- [ ] 🟢 List helpers4 on general (non-AI) TypeScript discovery sites — the cheapest, most
+  established option is a PR to a curated "awesome" list, e.g.
+  [awesome-typescript](https://github.com/dzharii/awesome-typescript). Aggregator sites
+  (libraries.io, npmtrends) don't need submission, they index npm automatically.
+- [ ] 🟢 Package `/add-helper` (or the not-yet-built consumer-facing skill) as a real Claude
+  Code **plugin** (`.claude-plugin/marketplace.json`) and submit to
+  [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) —
+  only makes sense for the consumer-facing skill (see item below); `/add-helper` is
+  project-scoped by nature and gains nothing from external listing since it only helps people
+  already working in this repo.
 - [x] 🟡 Audit AI-agent config consistency across the workspace (2026-07-14) — found and fixed:
   `.dev/AGENTS.md`'s "never git commit" rule read as absolute despite explicit per-turn
   authorization being a normal thing to grant — clarified it's per-turn, not standing.
