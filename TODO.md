@@ -11,9 +11,8 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 > Publishing a major version is a public, irreversible action — always confirm explicitly
 > before triggering it, and only once the checklist below is clean.
 
-- [ ] 🔴 Audit and remove/resolve every `@deprecated` tag before cutting v3 — a major version is
-  the right moment to drop what's been marked deprecated; check via
-  `grep -rn "@deprecated" helpers/`.
+- [x] 🔴 Audit `@deprecated` tags before cutting v3 — checked (2026-07-14): zero matches across
+  `helpers/`, `scripts/`, and everything else except this TODO. Nothing to remove.
 - [ ] 🔴 Confirm CHANGELOG / migration notes cover all breaking changes introduced since the last
   major (v2).
 - [ ] 🔴 Publish v3 — only after the two items above are done and explicitly confirmed by baxyz.
