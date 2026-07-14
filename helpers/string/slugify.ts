@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { removeDiacritics } from './removeDiacritics';
+
 /**
  * Converts a string into a URL-friendly slug.
  *
@@ -20,9 +22,7 @@ export function slugify(str: undefined): undefined;
 export function slugify(str: null): null;
 export function slugify(str: string | undefined | null): string | undefined | null {
   if (str === undefined || str === null) return str;
-  return str
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
+  return removeDiacritics(str)
     .toLowerCase()
     .trim()
     .replace(/['’]/g, '')
