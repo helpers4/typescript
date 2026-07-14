@@ -37,11 +37,16 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 > execute on the maintainer's behalf — a good `llms.txt` + structured docs *is* the promotion,
 > agents that crawl the repo or the docs site will pick it up naturally.
 
-- [ ] 🔴 Add an `llms.txt` (and/or `llms-full.txt`) at the repo root and/or on helpers4.dev —
-  package list, signatures, and canonical examples in a compact LLM-readable format.
-- [ ] 🟡 Audit AI-agent config consistency across the workspace: `AGENTS.md`/`CLAUDE.md` in each
-  sibling repo vs. the canonical one in `.dev/AGENTS.md`, plus the auto-memory store — look for
-  drift, duplication, or stale entries.
+- [x] 🔴 Add an `llms.txt` at the repo root — package list, conventions, doc links
+  (2026-07-14). `llms-full.txt` / helpers4.dev version not done — low value until the site
+  itself needs it.
+- [x] 🟡 Audit AI-agent config consistency across the workspace (2026-07-14) — found and fixed:
+  `.dev/AGENTS.md`'s "never git commit" rule read as absolute despite explicit per-turn
+  authorization being a normal thing to grant — clarified it's per-turn, not standing.
+  `typescript/AGENTS.md` had a factually wrong claim ("cross-package imports break
+  tree-shaking") contradicted by 20+ existing cross-category imports — fixed, and documented
+  the real `BREAKING CHANGE:` footer requirement for `git-cliff`. Auto-memory store was
+  completely empty despite months of session history — seeded with the findings above.
 
 ---
 
