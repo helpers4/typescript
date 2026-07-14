@@ -90,8 +90,19 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 - [ ] 🟡 Improve mutation score — check current score on the
   [Stryker dashboard](https://dashboard.stryker-mutator.io/reports/github.com/helpers4/typescript/main)
   first to decide whether/where the effort is worth it.
-- [ ] 🟡 Verify browser compatibility — check `tsconfig.json` `target`/`lib`, confirm no
-  Node-only APIs leak outside `helpers/node/`, consider a browserslist/compat report.
+- [x] 🟡 Verify browser compatibility — checked (2026-07-14): no Node-only APIs leak outside
+  `helpers/node/` (the 2 grep hits on `Buffer`/`process` were a JSDoc word and a string-literal
+  constructor-name check — both browser-safe). **But found a real gap**: `package.json`'s
+  `runtimes.browser: "ES2022+"` claim doesn't hold for the `Temporal`-based date helpers
+  (`ensureDate`, `range`, `timeAgo`, `formatDuration`, `timezone` + 6 `guard/isTemporal*`
+  guards) — `Temporal` is not part of the ES2022 spec, ships zero-dependency (no polyfill), and
+  as of 2026-07-14 has ~64% global coverage: Chrome 144+ and Firefox 139+ support it natively,
+  but **Safari has no stable support** (behind a flag in Technical Preview only; WebKit signals
+  full support "late 2026"). CI only tests Node/Deno/Bun, never an actual browser. **Needs a
+  maintainer decision, not a silent fix**: document the Safari caveat next to the `browser`
+  badge/claim, scope it down (e.g. `"browser: Chrome 144+, Firefox 139+"`), or accept a
+  polyfill as an optional peer dependency for the `date`/`guard` packages specifically.
+  ([caniuse](https://caniuse.com/temporal), [web-features](https://web-platform-dx.github.io/web-features-explorer/features/temporal/))
 - [ ] 🟢 Publish packages to JSR in addition to npm — needs a `jsr.json` per package and a check
   against JSR's "slow types" restriction (likely close to compliant already, given strict typing
   via tsgo).
