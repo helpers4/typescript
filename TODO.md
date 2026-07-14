@@ -106,11 +106,17 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 > Blocked while the project is solo. One regular collaborator unlocks the `Code-Review`
 > Scorecard check (~+2 pts) and makes human review possible.
 
-- [ ] 🔴 Open "good first issue" labelled issues to attract first-timers — **reconsidered
-  (2026-07-14)**: drafted a candidate (missing `.bench.ts` files, 202/241 helpers), but opening
-  it now is premature — nobody currently watches this repo's issue tracker, so a "good first
-  issue" label attracts no one without the outreach/visibility item below happening first.
-  Sequence matters: outreach → traffic → then issues are worth opening.
+- [x] 🔴 Open "good first issue" labelled issues to attract first-timers — **reconsidered twice
+  (2026-07-14)**: first drafted the missing-`.bench.ts` gap as an issue candidate, then realized
+  opening it was premature (nobody watches this repo's issue tracker yet, so the label attracts
+  no one without outreach happening first — sequence matters: outreach → traffic → issues). Since
+  there was nothing stopping *me* from just doing the mechanical work directly instead of waiting
+  for a first-timer, wrote the 98 missing benchmark files myself (97 candidates + `markdown/escape`
+  caught on a final audit pass) rather than leave it queued. Deliberately skipped `ci/*` (3),
+  `promise/*` (11), `observable/combine`+`combineLatest`+`isObservable` (3), and `version/stripV`
+  (1) — thin wrappers / trivial one-liners, per CONTRIBUTING.md's own "type guards and thin
+  wrappers do not need benchmarks" policy. All new files pass `typecheck`/`lint`, and every
+  category's full bench suite was run once to confirm no runtime errors.
 - [ ] 🔴 Mention the project in TS communities (TypeScript Discord, Reddit r/typescript,
   X/Twitter) — outreach, not something an agent can do on the maintainer's behalf.
 - [x] 🔴 Write a clear `CONTRIBUTING.md` with devcontainer setup in 2 commands — added, pointing
