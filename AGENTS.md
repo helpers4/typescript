@@ -39,7 +39,14 @@ pnpm release:auto
 - Type predicates `is<Type>` → `guard/` (return a runtime type guard). Exception: Node.js-specific ones (`isBuffer`, `isNodeStream`) → `node/` (depend on Node globals unavailable in browsers)
 - Compile-time-only utility types (`Brand`, `DeepGet`, `DeepSet`, ...) → `type/` (no runtime footprint)
 - State predicates (`isEmpty`, `isNonEmpty`) → their own category, never `type/`
-- `compact` and `equalsShallow` exist in both `array/` and `object/` intentionally — do **not** merge (cross-package imports break tree-shaking)
+- `compact` and `equalsShallow` exist in both `array/` and `object/` intentionally — do **not**
+  merge: the implementations are genuinely different (array-element filtering vs.
+  object-entry filtering), not copy-pasted duplicates
+- Cross-category imports of **public** helpers are safe and an established pattern (e.g.
+  `array/sample.ts` imports `number/clamp`, `object/diff.ts` imports `array/equalsDeep` and
+  `date/compare`) — Rollup inlines them per-package at build time (`build/<category>/package.json`
+  has no `dependencies`), so tree-shaking and package independence are unaffected. `_shared/` is
+  only for logic with no natural public "owner" on either side.
 
 **License header (all source files):**
 
