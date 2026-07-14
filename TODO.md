@@ -87,9 +87,10 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 
 ## 5. Code quality & tooling
 
-- [ ] 🟡 Improve mutation score — check current score on the
+- [x] 🟢 Improve mutation score — checked (2026-07-14): **92.5%**, already high. Downgraded to
+  low priority — chasing the remaining ~7.5% is diminishing returns until the
   [Stryker dashboard](https://dashboard.stryker-mutator.io/reports/github.com/helpers4/typescript/main)
-  first to decide whether/where the effort is worth it.
+  is checked for a specific weak file worth targeting.
 - [x] 🟡 Verify browser compatibility — checked (2026-07-14): no Node-only APIs leak outside
   `helpers/node/` (the 2 grep hits on `Buffer`/`process` were a JSDoc word and a string-literal
   constructor-name check — both browser-safe). **But found a real gap**: `package.json`'s
