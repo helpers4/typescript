@@ -38,8 +38,11 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 > agents that crawl the repo or the docs site will pick it up naturally.
 
 - [x] 🔴 Add an `llms.txt` at the repo root — package list, conventions, doc links
-  (2026-07-14). `llms-full.txt` / helpers4.dev version not done — low value until the site
-  itself needs it.
+  (2026-07-14). Turns out each package **already** ships its own much richer auto-generated
+  `llms.txt` (full signatures/params/examples from `meta/api.json`, see
+  `scripts/build/build-llms-txt.ts`) — the root one is complementary, for repo-level
+  orientation, not a replacement. `llms-full.txt` / helpers4.dev version not done — low value
+  until the site itself needs it.
 - [x] 🟡 Audit AI-agent config consistency across the workspace (2026-07-14) — found and fixed:
   `.dev/AGENTS.md`'s "never git commit" rule read as absolute despite explicit per-turn
   authorization being a normal thing to grant — clarified it's per-turn, not standing.
