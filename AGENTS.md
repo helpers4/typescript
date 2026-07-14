@@ -33,6 +33,9 @@ pnpm release:auto
   - Existing `@since x.x.x` → **never change** (records first published version)
 - 100% coverage: lines, functions, branches, statements — no exceptions
 - Tree-shakable exports only (no side effects)
+- Breaking changes: use the real Conventional Commits `BREAKING CHANGE:` footer (own paragraph,
+  literal uppercase token) — `git-cliff` (CHANGELOG.md generation, see `cliff.toml`) only detects
+  that exact syntax. Prose like "Breaking change for v3." in the body is invisible to it.
 
 **Helper placement:**
 
