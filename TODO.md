@@ -58,10 +58,11 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 > Blocked while the project is solo. One regular collaborator unlocks the `Code-Review`
 > Scorecard check (~+2 pts) and makes human review possible.
 
-- [ ] 🔴 Open "good first issue" labelled issues to attract first-timers — label exists and is
-  unused; needs specific issue proposals (candidates to be drafted with maintainer sign-off
-  before opening, since issue creation is a public action). Candidate: missing `.bench.ts` files
-  (202/241 helpers currently lack one — optional per CONTRIBUTING.md, low-risk starter task).
+- [ ] 🔴 Open "good first issue" labelled issues to attract first-timers — **reconsidered
+  (2026-07-14)**: drafted a candidate (missing `.bench.ts` files, 202/241 helpers), but opening
+  it now is premature — nobody currently watches this repo's issue tracker, so a "good first
+  issue" label attracts no one without the outreach/visibility item below happening first.
+  Sequence matters: outreach → traffic → then issues are worth opening.
 - [ ] 🔴 Mention the project in TS communities (TypeScript Discord, Reddit r/typescript,
   X/Twitter) — outreach, not something an agent can do on the maintainer's behalf.
 - [x] 🔴 Write a clear `CONTRIBUTING.md` with devcontainer setup in 2 commands — added, pointing
