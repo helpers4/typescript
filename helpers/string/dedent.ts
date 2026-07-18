@@ -22,7 +22,7 @@
  * // => 'Hello\n  World'
  * @example
  * dedent('  a\n  b') // => 'a\nb'
- * @since next
+ * @since 3.0.0
  */
 export function dedent(str: string): string {
   const lines = str.split('\n');

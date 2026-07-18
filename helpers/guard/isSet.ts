@@ -12,7 +12,7 @@
  * isSet(new Set())        // => true
  * isSet(new Set([1, 2]))  // => true
  * isSet([])                // => false
- * @since next
+ * @since 3.0.0
  */
 export function isSet(value: unknown): value is Set<unknown> {
   return value instanceof Set;

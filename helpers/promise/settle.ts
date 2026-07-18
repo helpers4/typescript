@@ -18,7 +18,7 @@
  *   Promise.resolve(3),
  * ])
  * // => { fulfilled: [1, 3], rejected: [Error('boom')] }
- * @since next
+ * @since 3.0.0
  */
 export async function settle<T>(
   promises: readonly Promise<T>[],

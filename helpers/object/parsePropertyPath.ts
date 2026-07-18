@@ -37,7 +37,7 @@ const pathCache = new Map<string, readonly (string | number)[]>();
  * parsePropertyPath('layers[1].x') // => ['layers', 1, 'x']
  * parsePropertyPath('.[0]')        // => [0]              (leading dot stripped)
  * parsePropertyPath('a..b')        // => ['a', '', 'b']   (empty segment preserved)
- * @since next
+ * @since 3.0.0
  */
 export function parsePropertyPath(path: string): readonly (string | number)[] {
   const cached = pathCache.get(path);

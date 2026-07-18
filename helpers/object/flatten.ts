@@ -39,7 +39,7 @@ function flattenInto(obj: Record<string, unknown>, prefix: string, result: Recor
  * @example
  * flatten({ a: [1, 2], b: new Date(0) })
  * // => { a: [1, 2], b: Date }  (arrays and special objects stay as leaves)
- * @since next
+ * @since 3.0.0
  */
 export function flatten(obj: Record<string, unknown>): Record<string, unknown> {
   const result: Record<string, unknown> = {};

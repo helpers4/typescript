@@ -29,7 +29,7 @@ import type { ContainsUnsafeStringKey, DeepGet, DeepSet, ParsePath } from './_ty
  * // Missing intermediate objects are created, just like set()
  * update({}, 'stats.hits', (n: number | undefined) => (n ?? 0) + 1)
  * // => { stats: { hits: 1 } }
- * @since next
+ * @since 3.0.0
  */
 export function update<
   T extends object,

@@ -14,7 +14,7 @@
  * @example
  * symmetricDifference([1, 2, 3], [2, 3, 4])
  * // => [1, 4]
- * @since next
+ * @since 3.0.0
  */
 export function symmetricDifference<T>(
   array1: readonly T[] | null | undefined,

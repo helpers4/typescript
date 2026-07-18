@@ -25,7 +25,7 @@ import { UNSAFE_KEYS } from '../_shared/_unsafeKeys.js';
  * clone(new Date('2024-01-01')) // => new Date with the same timestamp
  * clone(new Map([['a', 1]]))    // => new Map with the same entries
  * clone([1, 2, 3])              // => new array, same elements
- * @since next
+ * @since 3.0.0
  */
 export function clone<T>(value: T): T {
   if (value === null || typeof value !== 'object') return value;
