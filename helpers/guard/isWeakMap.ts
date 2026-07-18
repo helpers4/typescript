@@ -11,7 +11,7 @@
  * @example
  * isWeakMap(new WeakMap())  // => true
  * isWeakMap(new Map())      // => false
- * @since 4.0.0
+ * @since next
  */
 export function isWeakMap(value: unknown): value is WeakMap<object, unknown> {
   return value instanceof WeakMap;

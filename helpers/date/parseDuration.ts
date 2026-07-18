@@ -28,7 +28,7 @@ const UNIT_MS: Record<string, number> = {
  * parseDuration('45s')        // => 45000
  * parseDuration('-1h 30m')    // => -5400000
  * parseDuration('garbage')    // => null
- * @since 4.0.0
+ * @since next
  */
 export function parseDuration(str: string): number | null {
   const trimmed = str.trim();

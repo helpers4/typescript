@@ -23,7 +23,7 @@ function toHexByte(n: number): string {
  * @example
  * rgbToHex({ r: 255, g: 0, b: 0 })         // => '#ff0000'
  * rgbToHex({ r: 0, g: 255, b: 0, a: 0.5 }) // => '#00ff0080'
- * @since 4.0.0
+ * @since next
  */
 export function rgbToHex({ r, g, b, a = 1 }: RgbColor): string {
   const alpha = clamp(a, 0, 1);

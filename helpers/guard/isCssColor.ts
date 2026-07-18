@@ -30,7 +30,7 @@ const NAMED_COLOR = /^[a-z]+$/i;
  * isCssColor('rebeccapurple')       // => true
  * isCssColor('red; color: blue')    // => false (would inject a second declaration)
  * isCssColor(42)                    // => false (not a string)
- * @since 4.0.0
+ * @since next
  */
 export function isCssColor(value: unknown): value is string {
   if (typeof value !== 'string') return false;

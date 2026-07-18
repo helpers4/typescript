@@ -27,7 +27,7 @@ import { UNSAFE_KEYS } from '../_shared/_unsafeKeys.js';
  * @example
  * unset({ a: 1 }, 'x.y') // path doesn't exist — no-op
  * // => { a: 1 }
- * @since 4.0.0
+ * @since next
  */
 export function unset<T extends object>(obj: T, path: string | readonly PropertyKey[]): T {
   const keys: readonly PropertyKey[] = typeof path === 'string' ? parsePropertyPath(path) : path;

@@ -43,7 +43,7 @@ function expandShortHex(digits: string): string {
  * hexToRgb('#ff0000')     // => { r: 255, g: 0, b: 0, a: 1 }
  * hexToRgb('0f08')        // => { r: 0, g: 255, b: 0, a: 0.533 }
  * hexToRgb('not-a-color') // => null
- * @since 4.0.0
+ * @since next
  */
 export function hexToRgb(hex: string): RgbColor | null {
   const match = HEX_PATTERN.exec(hex.trim());

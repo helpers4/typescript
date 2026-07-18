@@ -22,7 +22,7 @@ const REGEXP_SPECIAL_CHARS = /[.*+?^${}()|[\]\\]/g;
  * @example
  * const search = escapeRegExp(userInput);
  * new RegExp(search).test(text) // userInput is matched literally
- * @since 4.0.0
+ * @since next
  */
 export function escapeRegExp(str: string): string {
   return str.replace(REGEXP_SPECIAL_CHARS, '\\$&');

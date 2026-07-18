@@ -22,7 +22,7 @@ import type { SortFn } from './sort';
  * @example
  * // Combine with a string sort to break ties alphabetically
  * items.sort(combineSortFns(createSortByBooleanFn('isDefault'), createSortByStringFn('label')))
- * @since 4.0.0
+ * @since next
  */
 export function createSortByBooleanFn<T extends Record<string, unknown>>(
   property: keyof T,

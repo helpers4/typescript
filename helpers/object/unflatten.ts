@@ -20,7 +20,7 @@ import { set } from './set.js';
  * @example
  * unflatten({ 'a.b.c': 1, 'a.d': 2 })
  * // => { a: { b: { c: 1 }, d: 2 } }
- * @since 4.0.0
+ * @since next
  */
 export function unflatten(obj: Record<string, unknown>): Record<string, unknown> {
   const result: Record<string, unknown> = {};

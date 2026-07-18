@@ -15,7 +15,7 @@
  * @example
  * argbToRgb(0xffff0000) // => 'rgb(255,0,0)'  (opaque red)
  * argbToRgb(0x8000ff00) // => 'rgb(0,255,0)'  (alpha byte is ignored)
- * @since 4.0.0
+ * @since next
  */
 export function argbToRgb(argb: number): string {
   const r = (argb >>> 16) & 0xff;

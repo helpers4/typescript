@@ -19,7 +19,7 @@
  * @example
  * replaceOrAppend([{ id: 1 }], { id: 2 }, (x) => x.id === 2)
  * // => [{ id: 1 }, { id: 2 }]  (no match — appended)
- * @since 4.0.0
+ * @since next
  */
 export function replaceOrAppend<T>(
   array: readonly T[] | null | undefined,

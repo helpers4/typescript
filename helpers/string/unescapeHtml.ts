@@ -31,7 +31,7 @@ const HTML_UNESCAPE_REGEX = /&(?:amp|lt|gt|quot|#39);/g;
  * @example
  * unescapeHtml(escapeHtml("It's a <test> & more")) === "It's a <test> & more"
  * // => true
- * @since 4.0.0
+ * @since next
  */
 export function unescapeHtml(str: string): string {
   return str.replace(HTML_UNESCAPE_REGEX, (entity) => HTML_UNESCAPES[entity] as string);

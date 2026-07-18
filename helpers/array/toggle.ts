@@ -25,7 +25,7 @@
  * // Toggle by a derived key instead of reference equality
  * toggle([{ id: 1 }, { id: 2 }], { id: 1 }, (x) => x.id)
  * // => [{ id: 2 }]
- * @since 4.0.0
+ * @since next
  */
 export function toggle<T>(
   array: readonly T[] | null | undefined,

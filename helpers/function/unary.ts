@@ -21,7 +21,7 @@
  * @example
  * ['1', '2', '3'].map(parseInt)
  * // => [1, NaN, NaN]  (the bug unary() prevents — index is passed as radix)
- * @since 4.0.0
+ * @since next
  */
 export function unary<F extends (...args: never[]) => unknown>(
   fn: F,
