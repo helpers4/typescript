@@ -9,8 +9,17 @@
  * rejecting on the first failure, unlike `Promise.all`.
  * Built on top of `Promise.allSettled`, but returns fulfilled values and rejection
  * reasons already split apart so callers don't need to inspect `status` themselves.
+ *
+ * No concurrency limit, and none is possible here: `promises` are already-constructed
+ * `Promise` objects, and a promise starts running the moment it's created — by the time
+ * `settle` receives the array, every promise in it is already in flight. There is
+ * nothing left to throttle. If you need to cap how many run at once (e.g. many file
+ * reads or requests), use {@link parallelSettle} instead, which takes functions
+ * (`() => Promise<T>`) so it controls *when* each one starts.
+ *
  * @param promises - Promises to run concurrently
  * @returns An object with `fulfilled` values and `rejected` reasons, each in input order
+ * @see {@link parallelSettle} for the same partitioning with a concurrency limit
  * @example
  * const { fulfilled, rejected } = await settle([
  *   Promise.resolve(1),
