@@ -7,7 +7,7 @@
 /**
  * Options for {@link formatProgressBar}.
  *
- * @since next
+ * @since 3.0.1
  */
 export interface ProgressBarOptions {
   /** Number of cells in the bar (each cell repeats `filledChar`/`emptyChar` once). Defaults to `20`. */
@@ -37,7 +37,7 @@ export interface ProgressBarOptions {
  * @example
  * formatProgressBar(3, { width: 10, max: 5, filledChar: '#', emptyChar: '-' })
  * // => '######----'
- * @since next
+ * @since 3.0.1
  */
 export function formatProgressBar(value: number, options: ProgressBarOptions = {}): string {
   const { width = 20, filledChar = '▓', emptyChar = '░', max = 100 } = options;

@@ -7,7 +7,7 @@
 /**
  * A percentage threshold and the icon/color/label to use once a value reaches it.
  *
- * @since next
+ * @since 3.0.1
  */
 export interface PercentageTier {
   /** The minimum percentage (inclusive) for this tier to apply. */
@@ -24,7 +24,7 @@ export interface PercentageTier {
  * Default tiers, geared towards coverage/quality-gate style percentages.
  * Follows shields.io color conventions: brightgreen >= 100, green >= 90, yellow >= 80, orange >= 60.
  *
- * @since next
+ * @since 3.0.1
  */
 export const DEFAULT_PERCENTAGE_TIERS: readonly PercentageTier[] = [
   { min: 100, icon: '✅', color: 'brightgreen', label: 'perfect' },
@@ -62,7 +62,7 @@ const DESCENDING_MIN = (a: PercentageTier, b: PercentageTier): number => b.min -
  * @example
  * percentageToTier(-5)
  * // => { min: 0, icon: '🔴', color: 'red', label: 'poor' } (fallback to lowest tier)
- * @since next
+ * @since 3.0.1
  */
 export function percentageToTier(
   value: number,

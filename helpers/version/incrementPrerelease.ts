@@ -37,7 +37,7 @@ import { stringify } from './stringify';
  * @example
  * incrementPrerelease('v1.2.4-alpha.3', 'beta')
  * // => 'v1.2.4-beta.0'
- * @since next
+ * @since 3.0.1
  */
 export function incrementPrerelease(version: string, prereleaseId: string): string;
 export function incrementPrerelease(version: undefined, prereleaseId: string): undefined;
