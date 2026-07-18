@@ -10,6 +10,8 @@
  * @param functions - Array of functions that return promises
  * @param limit - Maximum number of concurrent executions
  * @returns Promise that resolves with an array of results in the same order as the input
+ * @see {@link parallelSettle} for the same concurrency limit, but partitioning outcomes
+ *   instead of rejecting on the first failure
  * @example
  * const results = await parallel(
  *   [() => fetchUser(1), () => fetchUser(2), () => fetchUser(3)],
