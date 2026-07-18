@@ -20,10 +20,20 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
   [MIGRATION.md](MIGRATION.md) with a proper `BREAKING CHANGE:` footer commit, linked it from
   `cliff.toml`'s header, and regenerated `CHANGELOG.md` (which was also stale since
   2.0.0-alpha.11 — every release through 2.1.0 plus all of v3 was missing from it).
-- [x] 🟡 `v3.0.0-alpha.1`/`v3.0.0-alpha.2` git tags are **not ancestors** of the current `v3`
-  branch HEAD (orphaned by the earlier `v3` rebase onto `main`). **Decided (2026-07-14,
-  baxyz)**: no action now — merging `v3` into `main` will itself rebase, which would orphan any
-  tag re-created today anyway. Re-tag *after* that merge, once the branch is in its final shape.
+- [x] 🟡 `v3.0.0-alpha.1`/`v3.0.0-alpha.2` git tags were **not ancestors** of `v3` (orphaned by
+  the rebase onto `main`). **Resolved (2026-07-15)**: `v3` merged into `main` directly (no PR —
+  confirmed via `gh pr list`). Both tags re-pointed from their orphaned commits to the matching
+  `chore(release): bump version to 3.0.0-alpha.N` commits now on `main` (verified identical
+  `package.json` version field before moving), re-signed, force-pushed. Both now correctly
+  resolve as ancestors of `main`.
+  **New finding while doing this**: the merge only carried `v3` up through the "resolve
+  orphaned-tags" commit — the entire two-round bug-fix code review session that followed
+  (24 commits, 7 real bugs: prototype pollution in `omitBy`/`flatten`, `DeepSet` empty-path type,
+  `parseDuration` misparsing `"500ms"`, `toggle()` NaN handling, `EpochMilliseconds` restoration,
+  `cloneDeep` silently losing Map/Set data, color-clamp fixes, plus the `@since` coherency check)
+  was never pushed and is **not on `main`**. Recovered into a local branch
+  (`v3-fixes-recovery`, not yet pushed) so nothing is lost — integrating it is a separate,
+  not-yet-decided follow-up.
 - [ ] 🔴 Publish v3 — only after every item above is resolved and explicitly confirmed by baxyz.
 
 ---
