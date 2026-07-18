@@ -19,7 +19,7 @@ import { UNSAFE_KEYS } from '../_shared/_unsafeKeys.js';
  * @example
  * pickBy({ a: 1, b: 0, c: 2 }, (value) => value > 0)
  * // => { a: 1, c: 2 }
- * @since next
+ * @since 4.0.0
  */
 export function pickBy<T extends Record<string, unknown>>(
   obj: T | undefined | null,

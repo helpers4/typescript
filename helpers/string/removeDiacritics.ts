@@ -20,7 +20,7 @@ const COMBINING_DIACRITICAL_MARKS = /[\u0300-\u036f]/g;
  * removeDiacritics('naïve')  // => 'naive'
  * removeDiacritics('ÉCOLE')  // => 'ECOLE'
  * removeDiacritics('hello')  // => 'hello'  (unchanged, no diacritics)
- * @since next
+ * @since 4.0.0
  */
 export function removeDiacritics(str: string): string {
   return str.normalize('NFKD').replace(COMBINING_DIACRITICAL_MARKS, '');

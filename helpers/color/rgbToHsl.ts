@@ -32,7 +32,7 @@ export interface HslColor {
  * @example
  * rgbToHsl({ r: 255, g: 0, b: 0 })
  * // => { h: 0, s: 100, l: 50, a: 1 }
- * @since next
+ * @since 4.0.0
  */
 export function rgbToHsl({ r, g, b, a = 1 }: RgbColor): HslColor {
   const rN = r / 255;

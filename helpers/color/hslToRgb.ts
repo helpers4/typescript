@@ -17,7 +17,7 @@ import type { HslColor } from './rgbToHsl';
  * @example
  * hslToRgb({ h: 0, s: 100, l: 50 })
  * // => { r: 255, g: 0, b: 0, a: 1 }
- * @since next
+ * @since 4.0.0
  */
 export function hslToRgb({ h, s, l, a = 1 }: HslColor): RgbColor {
   const sN = s / 100;

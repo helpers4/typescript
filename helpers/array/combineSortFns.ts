@@ -26,7 +26,7 @@ import type { SortFn } from './sort';
  *   (x, y) => x.b - y.b,
  * ))
  * // => [{ a: 1, b: 1 }, { a: 1, b: 2 }]
- * @since next
+ * @since 4.0.0
  */
 export function combineSortFns<T>(...fns: readonly SortFn<T>[]): SortFn<T> {
   return (a: T, b: T) => {

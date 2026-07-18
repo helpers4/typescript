@@ -17,7 +17,7 @@
  * @example
  * omitBy({ a: 1, b: undefined, c: 2 }, (value) => value === undefined)
  * // => { a: 1, c: 2 }
- * @since next
+ * @since 4.0.0
  */
 export function omitBy<T extends Record<string, unknown>>(
   obj: T | undefined | null,
