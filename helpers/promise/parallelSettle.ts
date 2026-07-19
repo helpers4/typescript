@@ -28,7 +28,7 @@
  * @example
  * await parallelSettle([() => Promise.resolve(1), () => Promise.reject('boom')], 2)
  * // => { fulfilled: [1], rejected: ['boom'] }
- * @since next
+ * @since 3.0.2
  */
 export async function parallelSettle<T>(
   functions: readonly (() => Promise<T>)[],

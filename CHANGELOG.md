@@ -8,18 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
-## [Unreleased]
+## [3.0.2] - 2026-07-19
 
 ### 🚀 Features
 - **promise**: add parallelSettle function for concurrency-limited execution with outcome partitioning
+- **release**: add changelog generation during release
 
 ### 🐛 Bug Fixes
+- **release**: exclude scripts/ from the 100%-coverage gate
+- **release**: strip npm's leading -- separator before forwarding args to git-cliff
 - check off Signed-Releases in TODO (forgot to flip the box)
 
 ### 📝 Documentation
 - add DeepWiki badge to README
 - update and fix score OpenSSF in TODO
 - refresh TODO (v3 shipped, llms.txt landed, drop stale items)
+
+### ✅ Tests
+- **release**: add regression tests for the publish pipeline
+- **release**: add regression tests for version-manager.ts
+- **release**: add regression test for the changelog CLI arg bug
 
 ## [3.0.1] - 2026-07-18
 
@@ -852,7 +860,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
-[Unreleased]: https://github.com/helpers4/typescript/compare/v3.0.1...HEAD
+[3.0.2]: https://github.com/helpers4/typescript/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/helpers4/typescript/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/helpers4/typescript/compare/v3.0.0-alpha.2...v3.0.0
 [3.0.0-alpha.2]: https://github.com/helpers4/typescript/compare/v3.0.0-alpha.1...v3.0.0-alpha.2
