@@ -11,13 +11,89 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 ## [Unreleased]
 
 ### 🚀 Features
+- **promise**: add parallelSettle function for concurrency-limited execution with outcome partitioning
+
+### 🐛 Bug Fixes
+- check off Signed-Releases in TODO (forgot to flip the box)
+
+### 📝 Documentation
+- add DeepWiki badge to README
+- update and fix score OpenSSF in TODO
+- refresh TODO (v3 shipped, llms.txt landed, drop stale items)
+
+## [3.0.1] - 2026-07-18
+
+### 🚀 Features
+- **ci**: add percentageToTier helper
+- **string**: add formatProgressBar function and related tests/examples
+- **version**: add incrementPrerelease function
+
+## [3.0.0] - 2026-07-18
+
+### 🚀 Features
 - **array**: add replaceOrAppend function with examples and tests for upserting items in an array
 - **array**: add toggle function with examples and tests for toggling items in an array
 - **array**: add symmetricDifference function with examples and tests for array difference
-- **array**: add createSortByBooleanFn utility and corresponding tests/examples
-- **array**: add combineSortFns utility and corresponding tests/examples
 - **clone**: add shallow clone function with tests and examples for various data types
 - **color**: refactor color conversion functions to improve precision and reusability with shared regex for hex color formats
+- **date**: add parseDuration function with examples and tests for parsing duration strings into milliseconds
+- **docs**: update CONTRIBUTING.md with DevContainer setup and add "PRs welcome" badge to README
+- **function**: add unary function with examples and tests for single argument restriction
+- **guard**: add isWeakMap function with examples and tests for checking WeakMap instances
+- **guard**: add isWeakSet function with examples and tests for checking WeakSet instances
+- **guard**: add isSet helper with examples and tests for Set instance validation
+- **object**: add unflatten function with examples and tests for rebuilding nested objects from dot-notation keys
+- **object**: add pickBy function with examples and tests for filtering object entries
+- **object**: add omitBy function with examples and tests for filtering object entries
+- **object**: add flatten function with examples and tests for nested object flattening
+- **object**: add unset function with examples and tests for object key removal
+- **object**: implement parsePropertyPath for dot/bracket-notation path parsing with caching and edge-case handling
+- **string**: add removeDiacritics function with examples and tests for stripping diacritical marks
+- **string**: add dedent function with examples and tests for stripping leading whitespace from multi-line strings
+- **string**: add unescapeHtml function with examples and tests for HTML entity unescaping
+- **string**: add escapeRegExp function with examples and tests for regex metacharacter escaping
+- **todos**: update OpenSSF Scorecard snapshot and improve documentation for token permissions and branch protection
+- **update**: add update function with examples and tests for object property updates
+- add /add-helper Claude Code skill for scaffolding new helpers
+- update TODO.md for v3 release readiness and enhance AI-friendly documentation
+
+### 📝 Documentation
+- record the v3 alpha tag fix and recovered-but-unmerged fix commits
+- resolve orphaned-tags item — retag after the v3 merge/rebase
+- expand JSR investigation to all 18 categories — cross-category imports break per-package publishing
+- mark good-first-issue bench-file gap as done (did it myself)
+- add discoverability TODOs (site llms.txt, awesome-lists, plugin listing)
+- clarify  means an existing helpers/ dir, not free-form
+- mark add-helper skill done, detail consumer-facing skill idea
+- defer good-first-issue creation until there's visibility
+- record JSR publishing investigation and concrete recipe
+- note existing per-package llms.txt generation
+- record current mutation score (92.5%), downgrade priority
+- flag Temporal/Safari browser-compat gap found during audit
+- mark AI-friendly TODO items done
+- document the BREAKING CHANGE footer requirement for git-cliff
+- fix stale cross-package-import claim in AGENTS.md
+- add llms.txt and fill in missing README packages
+- update TODO with CHANGELOG audit results and orphaned v3 tags finding
+- add v3 migration guide [**BREAKING**]
+- confirm no @deprecated tags remain before v3
+
+### ✅ Tests
+- **array**: add missing benchmark files
+- **color**: add missing benchmark files
+- **date**: add missing benchmark files
+- **function**: add missing benchmark files
+- **markdown**: add missing benchmark file
+- **number**: add missing benchmark files
+- **object**: add missing benchmark files
+- **string**: add missing benchmark files
+- **version**: add missing benchmark files
+
+## [3.0.0-alpha.2] - 2026-07-17
+
+### 🚀 Features
+- **array**: add createSortByBooleanFn utility and corresponding tests/examples
+- **array**: add combineSortFns utility and corresponding tests/examples
 - **color**: add color manipulation functions with examples and notes for lighten/darken, withAlpha, and isLight/isDark
 - **color**: add hslToRgb function with examples and tests for HSL to RGB conversion
 - **color**: add rgbToHex function with examples and tests for RGB to hex conversion
@@ -25,37 +101,32 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **color**: add hexToRgb function with examples and tests for hex color parsing
 - **color**: add argbToRgb function and corresponding examples/tests
 - **color**: add color utility with conversion and validation functions
-- **date**: add parseDuration function with examples and tests for parsing duration strings into milliseconds
 - **date**: add test for duck-typed epochMilliseconds = NaN and simplify isEpochMillisecondsLike function
-- **docs**: update CONTRIBUTING.md with DevContainer setup and add "PRs welcome" badge to README
-- **function**: add unary function with examples and tests for single argument restriction
-- **guard**: add isWeakMap function with examples and tests for checking WeakMap instances
-- **guard**: add isWeakSet function with examples and tests for checking WeakSet instances
-- **guard**: add isSet helper with examples and tests for Set instance validation
 - **guard**: add isCssColor function with tests and examples for color validation
 - **helper**: refactor category handling by introducing listHelperCategories utility function
-- **object**: add unflatten function with examples and tests for rebuilding nested objects from dot-notation keys
-- **object**: add pickBy function with examples and tests for filtering object entries
-- **object**: add omitBy function with examples and tests for filtering object entries
-- **object**: add flatten function with examples and tests for nested object flattening
-- **object**: add unset function with examples and tests for object key removal
-- **object**: implement parsePropertyPath for dot/bracket-notation path parsing with caching and edge-case handling
 - **object**: introduce KeysOf type for improved null handling in DeepGet
+- **type**: refactor OmitByValue and PickByValue to utilize KeysOfType for improved type handling
+- **type**: enhance type utilities with improved handling of optional properties and nullability
+- filter out categories starting with '_' in helper source file checks
+
+### 🐛 Bug Fixes
+- **type**: update UnionToIntersection type to use 'unknown' instead of 'any' for better type safety
+
+### 🔧 Miscellaneous
+- upgrade minimum Node.js version to 26 across workflows and documentation
+
+### ♻️ Refactoring
+- **date**: replace epochMilliseconds with Temporal.Instant in ensureDate
+
+## [3.0.0-alpha.1] - 2026-07-17
+
+### 🚀 Features
 - **promise**: add settle function and corresponding examples and tests
 - **release**: add attestation generation for release assets
 - **release**: attest and attach SLSA provenance for release assets
 - **scorecard**: add SCORECARD_TOKEN to workflow and update TODO for manual setup
 - **security**: add SECURITY.md for vulnerability reporting and policy
-- **string**: add removeDiacritics function with examples and tests for stripping diacritical marks
-- **string**: add dedent function with examples and tests for stripping leading whitespace from multi-line strings
-- **string**: add unescapeHtml function with examples and tests for HTML entity unescaping
-- **string**: add escapeRegExp function with examples and tests for regex metacharacter escaping
-- **todos**: update OpenSSF Scorecard snapshot and improve documentation for token permissions and branch protection
-- **type**: refactor OmitByValue and PickByValue to utilize KeysOfType for improved type handling
-- **type**: enhance type utilities with improved handling of optional properties and nullability
 - **type**: promote compile-time utility types as public API
-- **update**: add update function with examples and tests for object property updates
-- filter out categories starting with '_' in helper source file checks
 
 ### 🐛 Bug Fixes
 - **CI-CD**: fix malformed scopes.json and add missing scopes
@@ -64,7 +135,6 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **object**: guard compact() and pick() against proto pollution
 - **object**: mirror DeepSet fix and test set() new-key inference
 - **scorecard**: wire SCORECARD_TOKEN into scorecard.yml on main
-- **type**: update UnionToIntersection type to use 'unknown' instead of 'any' for better type safety
 - **type**: fix DeepSet empty-path and new-key type resolution
 
 ### 🔧 Miscellaneous
@@ -74,10 +144,8 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **deps-dev**: bump the dev-dependencies group with 6 updates
 - **deps-dev**: bump @typescript/native-preview
 - **deps-dev**: bump the dev-dependencies group across 1 directory with 6 updates
-- upgrade minimum Node.js version to 26 across workflows and documentation
 
 ### ♻️ Refactoring
-- **date**: replace epochMilliseconds with Temporal.Instant in ensureDate
 - **date**: remove deprecated daysDifference
 - **date**: remove deprecated safeDate and dateToISOString
 - **guard**: rename helpers/type → helpers/guard
@@ -90,8 +158,6 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 ### 📝 Documentation
 - **agents**: align helper placement rule with guard/type split
 - **date**: clarify unrounded fractional days in difference()
-- add v3 migration guide [**BREAKING**]
-- confirm no @deprecated tags remain before v3
 - fix stale @helpers4/type row, add @helpers4/guard row
 
 ### 👷 CI/CD
@@ -786,7 +852,11 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
-[Unreleased]: https://github.com/helpers4/typescript/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/helpers4/typescript/compare/v3.0.1...HEAD
+[3.0.1]: https://github.com/helpers4/typescript/compare/v3.0.0...v3.0.1
+[3.0.0]: https://github.com/helpers4/typescript/compare/v3.0.0-alpha.2...v3.0.0
+[3.0.0-alpha.2]: https://github.com/helpers4/typescript/compare/v3.0.0-alpha.1...v3.0.0-alpha.2
+[3.0.0-alpha.1]: https://github.com/helpers4/typescript/compare/v2.1.0...v3.0.0-alpha.1
 [2.1.0]: https://github.com/helpers4/typescript/compare/v2.0.4...v2.1.0
 [2.0.4]: https://github.com/helpers4/typescript/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/helpers4/typescript/compare/v2.0.2...v2.0.3
