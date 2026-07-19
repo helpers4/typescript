@@ -22,8 +22,16 @@ function normalizeChangelogSpacing(content: string): string {
     .replace(LEADING_NEWLINE_PATTERN, '');
 }
 
+// `pnpm run changelog -- --tag v3.0.2` forwards a literal leading `--` into this script's
+// argv (npm/pnpm's own args-follow separator, not meant for git-cliff) — passing it through
+// verbatim makes git-cliff treat everything after it as positional args instead of flags.
+function stripLeadingArgSeparator(args: string[]): string[] {
+  return args[0] === '--' ? args.slice(1) : args;
+}
+
 async function generateChangelog(): Promise<void> {
-  await execFileAsync('git-cliff', ['-o', CHANGELOG_PATH, ...process.argv.slice(2)]);
+  const cliArgs = stripLeadingArgSeparator(process.argv.slice(2));
+  await execFileAsync('git-cliff', ['-o', CHANGELOG_PATH, ...cliArgs]);
 
   const content = await readFile(CHANGELOG_PATH, 'utf8');
   await writeFile(CHANGELOG_PATH, normalizeChangelogSpacing(content));
