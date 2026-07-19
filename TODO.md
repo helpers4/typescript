@@ -144,7 +144,7 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 > As of 2026-07-13: **7.3**, trending up after PRs #108/#109/#110 (Branch-Protection,
 > Token-Permissions, Signed-Releases fixes — see git history for the investigation).
 
-- [ ] 🟡 **Signed-Releases → target ≥ 10**: verified (2026-07-19) — `gh release view v3.0.1 --json
+- [x] 🟡 **Signed-Releases → target ≥ 10**: verified (2026-07-19) — `gh release view v3.0.1 --json
   assets` confirms `build-meta.tar.gz.intoto.jsonl` is present on the release, so the provenance
   mechanism works as intended. The live Scorecard score is still showing `Signed-Releases: 0`,
   but that scan is dated 2026-07-13, **before** v3.0.0/v3.0.1 existed — it hasn't rescanned since.
