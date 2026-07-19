@@ -16,7 +16,7 @@ const CHANGELOG_PATH = 'CHANGELOG.md';
 const RELEASE_HEADING_PATTERN = /^## \[/gm;
 const LEADING_NEWLINE_PATTERN = /^\n/;
 
-function normalizeChangelogSpacing(content: string): string {
+export function normalizeChangelogSpacing(content: string): string {
   return content
     .replace(RELEASE_HEADING_PATTERN, '\n## [')
     .replace(LEADING_NEWLINE_PATTERN, '');
@@ -25,7 +25,7 @@ function normalizeChangelogSpacing(content: string): string {
 // `pnpm run changelog -- --tag v3.0.2` forwards a literal leading `--` into this script's
 // argv (npm/pnpm's own args-follow separator, not meant for git-cliff) — passing it through
 // verbatim makes git-cliff treat everything after it as positional args instead of flags.
-function stripLeadingArgSeparator(args: string[]): string[] {
+export function stripLeadingArgSeparator(args: string[]): string[] {
   return args[0] === '--' ? args.slice(1) : args;
 }
 
@@ -37,7 +37,10 @@ async function generateChangelog(): Promise<void> {
   await writeFile(CHANGELOG_PATH, normalizeChangelogSpacing(content));
 }
 
-generateChangelog().catch((error: unknown) => {
-  console.error(error);
-  process.exit(1);
-});
+// CLI usage
+if (import.meta.url.endsWith(process.argv[1]!)) {
+  generateChangelog().catch((error: unknown) => {
+    console.error(error);
+    process.exit(1);
+  });
+}
