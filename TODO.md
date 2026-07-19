@@ -1,6 +1,6 @@
 # TODO — `helpers4/typescript`
 
-> Last refresh: 2026-07-14.
+> Last refresh: 2026-07-19.
 
 Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 
@@ -141,8 +141,17 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 ## 4. OpenSSF Scorecard
 
 > Live score: check `curl -s https://api.securityscorecards.dev/projects/github.com/helpers4/typescript`.
-> As of 2026-07-13: **7.3**, trending up after PRs #108/#109/#110 (Branch-Protection,
-> Token-Permissions, Signed-Releases fixes — see git history for the investigation).
+> As of 2026-07-13: **7** (not 7.3 — corrected 2026-07-19, the API returns a plain integer, no
+> decimal precision available). PRs #108/#109/#110 claim Branch-Protection, Token-Permissions,
+> and Signed-Releases fixes, but this same 2026-07-13 scan still shows `Token-Permissions: 0`
+> and `Branch-Protection: 3` (not maximal) — only Signed-Releases has been independently
+> re-verified as actually fixed (see below). **Unverified**: whether Token-Permissions and
+> Branch-Protection are genuinely fixed in the live repo config and just waiting on the same
+> "scan predates the fix" rescan lag as Signed-Releases, or whether those two PRs didn't fully
+> land — `gh api repos/helpers4/typescript/rulesets` returned `[]` (empty) when checked
+> 2026-07-19, but the token used lacks admin rights to confirm that's a real absence of rules
+> vs. a permissions gap in the check itself. Needs a maintainer check with an admin token before
+> trusting either check's fix as confirmed.
 
 - [x] 🟡 **Signed-Releases → target ≥ 10**: verified (2026-07-19) — `gh release view v3.0.1 --json
   assets` confirms `build-meta.tar.gz.intoto.jsonl` is present on the release, so the provenance
