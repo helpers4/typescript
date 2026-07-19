@@ -33,7 +33,7 @@ interface VersionUpdateOptions {
 /**
  * Parse version string into components
  */
-function parseVersion(version: string): VersionComponents {
+export function parseVersion(version: string): VersionComponents {
   const prereleaseMatch = version.match(/^(\d+)\.(\d+)\.(\d+)-(\w+)\.(\d+)$/);
   if (prereleaseMatch) {
     return {
@@ -62,7 +62,7 @@ function parseVersion(version: string): VersionComponents {
 /**
  * Convert version components back to string
  */
-function stringifyVersion(components: VersionComponents): string {
+export function stringifyVersion(components: VersionComponents): string {
   const base = `${components.major}.${components.minor}.${components.patch}`;
   if (components.prerelease) {
     return `${base}-${components.prerelease.type}.${components.prerelease.version}`;
@@ -73,7 +73,7 @@ function stringifyVersion(components: VersionComponents): string {
 /**
  * Increment version based on type
  */
-function incrementVersion(currentVersion: string, versionType: VersionType, prereleaseId?: 'alpha' | 'beta' | 'rc'): string {
+export function incrementVersion(currentVersion: string, versionType: VersionType, prereleaseId?: 'alpha' | 'beta' | 'rc'): string {
   const components = parseVersion(currentVersion);
 
   switch (versionType) {
