@@ -25,6 +25,6 @@ export default defineConfig({
       }
     },
     environment: 'happy-dom',
-    include: ['helpers/**/*.{test,spec}.ts']
+    include: ['helpers/**/*.{test,spec}.ts', 'scripts/**/*.test.ts']
   }
 });
