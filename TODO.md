@@ -34,7 +34,7 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
   was never pushed and is **not on `main`**. Recovered into a local branch
   (`v3-fixes-recovery`, not yet pushed) so nothing is lost — integrating it is a separate,
   not-yet-decided follow-up.
-- [ ] 🔴 Publish v3 — only after every item above is resolved and explicitly confirmed by baxyz.
+- [x] 🔴 Publish v3 — done: v3.0.0 published, followed by v3.0.1 (2026-07-18).
 
 ---
 
@@ -52,23 +52,25 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
   orientation, not a replacement. Confirmed compliant with the llmstxt.org spec (only a H1 is
   actually required; our blockquote + H2 link-list sections already follow the
   `[name](url): notes` format).
-- [ ] 🟡 **`llms.txt` on helpers4.dev** (the actual public site, not just the repo) — this is
-  where the llms.txt discovery directories (llmstxt.site, llms-txt-hub, directory.llmstxt.cloud)
-  actually crawl; a repo-root file doesn't get picked up there. **Not a copy of
-  `@helpers4/all`'s llms.txt** (307KB, TS-only) — helpers4.dev documents 3 products
-  (typescript, devcontainer, action, per `website/AGENTS.md`), so the site-level file needs its
-  own root file with H2 sections per product, *linking to* the already-generated
-  `@helpers4/all` llms.txt for the TS deep-dive rather than duplicating it (publish
-  `build/all/llms.txt` somewhere under the site, e.g. `/typescript/llms-full.txt`). This lives
-  in the `website` repo, not this one.
+- [x] 🟡 **`llms.txt` on helpers4.dev** — done (2026-07-19, `website` repo, `next-feat` branch,
+  not yet merged): hand-authored `public/llms.txt` at the site root, H2 per product (typescript,
+  devcontainer, action), linking to `/typescript/llms-full.txt` for the TS deep-dive instead of
+  duplicating it. That deep-dive file is `build/all/llms.txt` copied by
+  `generate-typescript-docs.js` into `public/<DOCS_TARGET>/llms-full.txt` on every doc-gen run
+  (one per version slot — `typescript/`, `typescript/next/`, archived `typescript/vN/` all get
+  their own snapshot; the major-version archiving step now carries its slot's copy along too).
+  Verified end-to-end: ran the generator for real, built the site, confirmed both files serve at
+  the right URLs with real content (316KB / 12356 lines for the TS deep-dive).
 - [ ] 🟢 Submit to llms.txt discovery directories once the helpers4.dev one exists —
   [llmstxt.site](https://llmstxt.site/submit) (form) and
   [llms-txt-hub](https://github.com/thedaviddias/llms-txt-hub) (PR-based). Low cost, do after
   the site-level file above.
-- [ ] 🟢 List helpers4 on general (non-AI) TypeScript discovery sites — the cheapest, most
-  established option is a PR to a curated "awesome" list, e.g.
-  [awesome-typescript](https://github.com/dzharii/awesome-typescript). Aggregator sites
-  (libraries.io, npmtrends) don't need submission, they index npm automatically.
+- [ ] 🟢 List helpers4 on general (non-AI) TypeScript discovery sites — the previously-suggested
+  target, [dzharii/awesome-typescript](https://github.com/dzharii/awesome-typescript), has been
+  **archived (read-only) since 2026-02-11** — verified via `gh repo view`, not a valid PR target
+  anymore. Needs a currently-maintained curated TS list found and confirmed active before
+  attempting a submission; none of the guessed alternative repo names existed. Aggregator sites
+  (libraries.io, npmtrends) still don't need submission, they index npm automatically.
 - [ ] 🟢 Package `/add-helper` (or the not-yet-built consumer-facing skill) as a real Claude
   Code **plugin** (`.claude-plugin/marketplace.json`) and submit to
   [anthropics/claude-plugins-official](https://github.com/anthropics/claude-plugins-official) —
@@ -142,10 +144,12 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 > As of 2026-07-13: **7.3**, trending up after PRs #108/#109/#110 (Branch-Protection,
 > Token-Permissions, Signed-Releases fixes — see git history for the investigation).
 
-- [ ] 🟡 **Signed-Releases → target ≥ 10**: provenance mechanism (`attest-build-provenance` +
-  `.intoto.jsonl` release asset) landed on `main` via PR #110, but only observable at the
-  **next real release** — a Scorecard rescan alone won't show it. After the next release:
-  `gh release view vX.Y.Z --json assets` should list `*.intoto.jsonl`, then re-check the score.
+- [ ] 🟡 **Signed-Releases → target ≥ 10**: verified (2026-07-19) — `gh release view v3.0.1 --json
+  assets` confirms `build-meta.tar.gz.intoto.jsonl` is present on the release, so the provenance
+  mechanism works as intended. The live Scorecard score is still showing `Signed-Releases: 0`,
+  but that scan is dated 2026-07-13, **before** v3.0.0/v3.0.1 existed — it hasn't rescanned since.
+  Nothing left to fix; just re-check `https://api.securityscorecards.dev/projects/github.com/helpers4/typescript`
+  after the next scan (Scorecard rescans periodically; no manual trigger available for public repos).
 - [ ] 🟢 **CII-Best-Practices Silver/Gold** — deferred, requires sustained contributor activity
   (currently solo project).
 
@@ -170,46 +174,6 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
   badge/claim, scope it down (e.g. `"browser: Chrome 144+, Firefox 139+"`), or accept a
   polyfill as an optional peer dependency for the `date`/`guard` packages specifically.
   ([caniuse](https://caniuse.com/temporal), [web-features](https://web-platform-dx.github.io/web-features-explorer/features/temporal/))
-- [ ] 🟢 Publish packages to JSR in addition to npm — investigated across **all 18 categories**
-  (2026-07-14, real `npx jsr publish --dry-run` per category, alpha branch, no pipeline changes
-  committed). Bigger than originally scoped — a real architectural question, not just tooling:
-  1. `jsr.json`'s `exports` must point at **TypeScript source** (e.g. `helpers/<category>/index.ts`),
-     not `build/<category>/`.
-  2. `helpers/<category>/index.ts` is gitignored (generated by `pnpm build`) — needs
-     `publish.exclude: ["!helpers/<category>/index.ts"]` to un-exclude it from JSR's
-     gitignore-mirroring default (`error[excluded-module]` otherwise).
-  3. Needs an explicit `publish.include` scoped to `helpers/<category>/**/*.ts` (minus
-     test/spec/example/bench files) — otherwise JSR bundles the entire monorepo.
-  4. **The real finding**: 7 of 18 categories have **cross-category imports** reaching outside
-     their own folder — safe and inlined for the npm build (Rollup), but JSR publishes raw
-     source per-package with no bundler, so each cross-category import is a *second*
-     `error[excluded-module]` (the imported file lives outside that category's `publish.include`
-     scope). Exact per-category breakdown:
-     - `array` → `guard/isArray`, `guard/isFalsy`, `guard/isPlainObject`, `number/clamp`,
-       `object/equalsShallow`, `_shared/_unsafeKeys` (6 files)
-     - `object` → `array/equalsDeep`, `date/compare`, `date/ensureDate`, `date/timestamp`,
-       `date/types`, `guard/isNullish`, `guard/isPlainObject`, `guard/isSpecialObject`,
-       `type/DeepGet`, `type/DeepSet`, `type/UnionToIntersection`, `_shared/_unsafeKeys`
-       (11 files — the worst case)
-     - `color` → `number/clamp`, `number/roundTo`, `_shared/_hexColorGrammar` (3 files)
-     - `guard` → `type/Maybe`, `_shared/_hexColorGrammar` (2 files)
-     - `observable` → `guard/isDefined`, `type/Maybe` (2 files)
-     - `function` → `guard/isNullish` (1 file)
-     - `string` → `guard/isPlainObject` (1 file)
-     - Clean with zero cross-category imports (pass as-is): `ci`, `commit`, `date`, `id`,
-       `markdown`, `node`, `number`, `promise`, `type`, `url`, `version`.
-     `id`/`uuid7.ts`'s slow-types check (the thing I originally worried about) passed cleanly —
-     turned out to be the easy part. The real blocker is structural.
-  **Needs a design decision, not implementation, next**: either (a) physically include each
-  category's transitive cross-category `.ts` files in its own JSR publish set (works, but each
-  JSR package stops being a clean single-owner unit — e.g. `@helpers4/array` would ship its own
-  copy of `guard/isFalsy.ts`), or (b) declare real JSR-to-JSR package dependencies
-  (`@helpers4/guard` as an actual `jsr:` import) plus a publish-time import-rewrite step
-  (relative `'../guard/isFalsy'` → bare `'@helpers4/guard'` specifier) — more correct, but needs
-  new build tooling and 17 packages need to publish in dependency order.
-  Remaining work either way: a `jsr.json` generator in the build pipeline, a `jsr publish` step
-  in `scripts/version/release.ts`, and (path b only) an import-rewrite step. Still 🟢 — not
-  urgent, but no longer a small task.
 
 ---
 
