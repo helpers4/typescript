@@ -198,3 +198,52 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
   through classic `typescript@^6`. `tsgo` (`@typescript/native-preview`) is still a preview/dev
   build without full emit parity — revisit at each new tsgo release rather than migrating now,
   since `.d.ts` output is a published deliverable, not an internal detail.
+
+---
+
+## 7. Competitive gap analysis (2026-07-19)
+
+> Researched which lodash/ramda-style competitors are still actively maintained, beyond
+> radashi/remeda (already in `website`'s comparisons). Found: **es-toolkit** (Toss-backed, very
+> active), **rambda** (TS-native Ramda alternative), **moderndash** (smaller, newer). Full
+> writeups live in the `website` repo's `comparisons/` pages — this section is the "what's
+> actually missing from helpers4" distillation, prioritized. `@mobily/ts-belt` checked and
+> excluded (last published 2023-01-10, not active). Effect-TS excluded — different category
+> (FP platform/runtime, not a utility library).
+
+- [ ] 🔴 **`Map`/`Set` utilities — a whole missing category.** es-toolkit ships full parallel
+  utility sets for native `Map`/`Set` (`forEach`, `filter`, `map`, `reduce`, `some`, `every`,
+  `keyBy`, `countBy`, `findKey`/`findValue`). helpers4 currently has **zero** manipulation
+  utilities for these — only guards (`isMap`, `isSet`). Highest priority because it's not a
+  missing function here and there, it's an entire category gap, and `Map`/`Set` are common
+  first-class collections in modern TS code. Needs a design decision: new `@helpers4/map` +
+  `@helpers4/set` categories, or fold into an existing one? Probably not — precedent here is one
+  category per collection-ish concern (`array`, `object`), so two new categories is likely the
+  right shape, not a bolt-on.
+- [ ] 🟡 **Concurrency primitives in `@helpers4/promise`.** Converges across *two* competitors
+  independently — es-toolkit has `Mutex`, `Semaphore`, `delay`, `timeout`/`withTimeout`;
+  moderndash has `sleep`, `timeout`, `retry`, `Queue`. helpers4's `@helpers4/promise` has
+  `settle`/`parallel`/`parallelSettle`/typed guards but no lock/semaphore primitives, no generic
+  `delay`, no `withTimeout` wrapper. `delay` and `withTimeout` are the cheapest, most clearly
+  in-scope additions; `Mutex`/`Semaphore` are a bigger design surface (stateful, class-shaped —
+  first non-trivial departure from this repo's all-functions convention, worth a deliberate
+  decision rather than copying es-toolkit's shape by default).
+- [ ] 🟡 **Number statistics: `median`, `percentile`, `*By` iteratee variants.** helpers4's
+  `@helpers4/array` has `mean`/`sum` but no `median`, no `percentile`, and no iteratee variants
+  (`meanBy`/`sumBy`) — both es-toolkit and moderndash have `median`. Cheap, well-scoped, no
+  design ambiguity — good candidate for a first-timer/contributor issue (see §3).
+- [ ] 🟢 **Bulk object-key case transforms: `toCamelCaseKeys`/`toSnakeCaseKeys`.** es-toolkit
+  recursively transforms every key of an object to a case style in one call; helpers4 has
+  `camelCase`/`snakeCase` for individual strings but nothing that walks an object's keys in bulk.
+  Lower priority than the above — real gap, but narrower use case.
+- [ ] 🟢 **Async-aware array iteration** (`mapAsync`/`filterAsync`/`forEachAsync` with optional
+  concurrency limiting, à la es-toolkit's `limitAsync`). Not a clear add: helpers4 already has
+  `parallel`/`parallelSettle` as standalone promise helpers covering similar ground — this would
+  need a real design pass to decide whether `Array.prototype`-shaped async methods add enough
+  over composing the existing promise helpers to be worth a second API surface for the same
+  problem. Flagging as "needs discussion," not "needs implementation."
+- [ ] 🟢 **Environment/JSON guards**: `isBrowser`/`isNode` (environment detection), `isJSON`/
+  `isJSONArray`/`isJSONObject`/`isJSONValue` (JSON-shape validation), `isLength` (valid
+  array-like length) — all present in es-toolkit, absent from `@helpers4/guard`. Lowest priority
+  of this list: genuinely useful but narrow, no urgency signal from more than one competitor
+  (unlike the concurrency-primitives finding above).
