@@ -6,7 +6,9 @@
 
 /**
  * Runs an array of async functions with a concurrency limit.
- * At most `limit` functions will be running at any time.
+ * At most `limit` functions will be running at any time. `Infinity` means no cap (every
+ * function starts immediately); any other non-finite or non-positive value (`NaN`, `0`,
+ * negative) is clamped to `1` (fully sequential) rather than rejected.
  * @param functions - Array of functions that return promises
  * @param limit - Maximum number of concurrent executions
  * @returns Promise that resolves with an array of results in the same order as the input
@@ -24,7 +26,12 @@ export async function parallel<T>(
   limit: number,
 ): Promise<T[]> {
   const results: T[] = [];
-  const clampedLimit = Number.isFinite(limit) ? Math.max(1, Math.floor(limit)) : 1;
+  const clampedLimit =
+    limit === Number.POSITIVE_INFINITY
+      ? functions.length
+      : Number.isFinite(limit)
+        ? Math.max(1, Math.floor(limit))
+        : 1;
   let nextIndex = 0;
 
   async function runNext(): Promise<void> {

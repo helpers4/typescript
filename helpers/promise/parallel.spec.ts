@@ -67,9 +67,18 @@ describe('parallel — contract', () => {
   });
 
   it('limit=Infinity runs all concurrently', async () => {
-    const fns = [10, 20, 30].map(v => () => Promise.resolve(v));
+    let concurrent = 0;
+    let maxConcurrent = 0;
+    const fns = [10, 20, 30].map(v => async () => {
+      concurrent++;
+      maxConcurrent = Math.max(maxConcurrent, concurrent);
+      await Promise.resolve();
+      concurrent--;
+      return v;
+    });
     const results = await parallel(fns, Infinity);
     expect(results).toEqual([10, 20, 30]);
+    expect(maxConcurrent).toBe(3);
   });
 
   it('limit=2 with 5 functions returns correct ordered results', async () => {
