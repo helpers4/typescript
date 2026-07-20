@@ -279,7 +279,7 @@
       "native": "Map.groupBy(map.entries(), ([k, v]) => groupFn(v, k))",
       "since": "ES2024",
       "example": "Map.groupBy(map.entries(), ([k, v]) => v % 2 === 0 ? 'even' : 'odd')",
-      "notes": "Map.groupBy groups into arrays of matching entries (multiple items per key) — not the same as countBy (counts per group) or keyBy (single last-write-wins item per key). Deriving either from Map.groupBy's output is a real extra step, so both remain genuinely useful."
+      "notes": "Map.groupBy groups into arrays of matching entries (multiple items per key) — not the same as countBy (counts per group) or the classic keyBy idea (single last-write-wins item per key, implemented here as toMapByKey — see that function's own docs for why it's not named keyBy). Deriving either from Map.groupBy's output is a real extra step, so both remain genuinely useful."
     }
   ],
   "set": [
@@ -321,7 +321,7 @@
       "native": "Map.groupBy(set.values(), fn)",
       "since": "ES2024",
       "example": "Map.groupBy(set.values(), v => v % 2 === 0 ? 'even' : 'odd')",
-      "notes": "Same distinction as helpers4/map's countBy/keyBy: Map.groupBy groups into arrays, it doesn't count or index-by-last-write."
+      "notes": "Same distinction as helpers4/map's countBy/toMapByKey: Map.groupBy groups into arrays, it doesn't count or index-by-last-write."
     },
     {
       "name": "union / intersection / difference / symmetricDifference",
