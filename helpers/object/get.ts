@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { walkPropertyPath } from '../_shared/_walkPropertyPath.js';
 import { parsePropertyPath } from './parsePropertyPath.js';
 import type { DeepGet, ParsePath } from './_types.js';
 
@@ -50,14 +51,6 @@ export function get<T extends object, const P extends string | readonly Property
 export function get(obj: unknown, path: string | readonly PropertyKey[], defaultValue?: unknown): unknown {
   if (obj == null) return defaultValue;
   const keys: readonly PropertyKey[] = typeof path === 'string' ? parsePropertyPath(path) : path;
-  let result: unknown = obj;
-
-  for (const key of keys) {
-    if (result == null || typeof result !== 'object') {
-      return defaultValue;
-    }
-    result = (result as Record<PropertyKey, unknown>)[key];
-  }
-
+  const result = walkPropertyPath(obj, keys);
   return result !== undefined ? result : defaultValue;
 }
