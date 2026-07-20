@@ -29,7 +29,29 @@ describe("camelCase", () => {
   });
 
   it("should handle leading dash", () => {
-    expect(camelCase("-leading")).toBe("Leading");
+    expect(camelCase("-leading")).toBe("leading");
+  });
+
+  it("should convert snake_case to camelCase", () => {
+    expect(camelCase("user_name")).toBe("userName");
+  });
+
+  it("should convert PascalCase to camelCase", () => {
+    expect(camelCase("UserName")).toBe("userName");
+  });
+
+  it("should convert space-separated words to camelCase", () => {
+    expect(camelCase("user name")).toBe("userName");
+  });
+
+  it("should handle mixed separators", () => {
+    expect(camelCase("user_name-here too")).toBe("userNameHereToo");
+  });
+
+  it("should treat an embedded acronym as a word boundary, lowercasing all but its last letter", () => {
+    expect(camelCase("userID")).toBe("userId");
+    expect(camelCase("parseHTMLString")).toBe("parseHtmlString");
+    expect(camelCase("apiURL")).toBe("apiUrl");
   });
 
   it('should return null when given null', () => {
