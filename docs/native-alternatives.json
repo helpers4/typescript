@@ -272,7 +272,7 @@
       "notes": "Thin wrapper for readability — Map.prototype.has() checks keys, not values, which is the actual reason this needs its own name."
     },
     {
-      "name": "countBy / keyBy",
+      "name": "groupBy",
       "libraries": [
         "es-toolkit"
       ],
@@ -314,7 +314,7 @@
       "notes": "Iterator Helpers give the transform; reconstructing a Set from the result is the part still worth a named helper for."
     },
     {
-      "name": "countBy / keyBy",
+      "name": "groupBy",
       "libraries": [
         "es-toolkit"
       ],
@@ -324,14 +324,47 @@
       "notes": "Same distinction as helpers4/map's countBy/toMapByKey: Map.groupBy groups into arrays, it doesn't count or index-by-last-write."
     },
     {
-      "name": "union / intersection / difference / symmetricDifference",
+      "name": "union",
       "libraries": [
         "lodash",
         "es-toolkit"
       ],
-      "native": "Set.prototype.union() / .intersection() / .difference() / .symmetricDifference()",
+      "native": "Set.prototype.union()",
       "since": "ES2025 (Set methods)",
-      "example": "setA.union(setB)\nsetA.intersection(setB)\nsetA.difference(setB)",
+      "example": "setA.union(setB)",
+      "notes": "Landed natively as of the Set methods proposal — also .isSubsetOf() / .isSupersetOf() / .isDisjointFrom(). Not implemented here; native coverage is already complete for set-algebra operations."
+    },
+    {
+      "name": "intersection",
+      "libraries": [
+        "lodash",
+        "es-toolkit"
+      ],
+      "native": "Set.prototype.intersection()",
+      "since": "ES2025 (Set methods)",
+      "example": "setA.intersection(setB)",
+      "notes": "Landed natively as of the Set methods proposal — also .isSubsetOf() / .isSupersetOf() / .isDisjointFrom(). Not implemented here; native coverage is already complete for set-algebra operations."
+    },
+    {
+      "name": "difference",
+      "libraries": [
+        "lodash",
+        "es-toolkit"
+      ],
+      "native": "Set.prototype.difference()",
+      "since": "ES2025 (Set methods)",
+      "example": "setA.difference(setB)",
+      "notes": "Landed natively as of the Set methods proposal — also .isSubsetOf() / .isSupersetOf() / .isDisjointFrom(). Not implemented here; native coverage is already complete for set-algebra operations."
+    },
+    {
+      "name": "symmetricDifference",
+      "libraries": [
+        "lodash",
+        "es-toolkit"
+      ],
+      "native": "Set.prototype.symmetricDifference()",
+      "since": "ES2025 (Set methods)",
+      "example": "setA.symmetricDifference(setB)",
       "notes": "Landed natively as of the Set methods proposal — also .isSubsetOf() / .isSupersetOf() / .isDisjointFrom(). Not implemented here; native coverage is already complete for set-algebra operations."
     }
   ],
