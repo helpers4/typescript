@@ -4,10 +4,15 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { percentile } from './percentile.js';
+
 /**
  * Calculates the median (middle value) of an array of numbers. For an even-length array,
  * returns the average of the two middle values. Returns `NaN` for an empty array.
  * Does not mutate the input array.
+ *
+ * The median is the 50th {@link percentile} — this delegates to it rather than duplicating
+ * its sort/interpolation logic.
  * @param array - The array of numbers
  * @returns The median value, or `NaN` if the array is empty
  * @example
@@ -17,8 +22,5 @@
  * @since next
  */
 export function median(array: readonly number[]): number {
-  if (array.length === 0) return NaN;
-  const sorted = array.toSorted((a, b) => a - b);
-  const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 === 0 ? (sorted[mid - 1]! + sorted[mid]!) / 2 : sorted[mid]!;
+  return percentile(array, 50);
 }
