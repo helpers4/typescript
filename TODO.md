@@ -264,16 +264,23 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
   more useful, distinct meaning than a plain alias: checks whether a **string** is valid
   parseable JSON (pairs with `@helpers4/object`'s `safeJsonParse`), rather than duplicating
   `isJSONValue`'s already-parsed-value shape check.
-- [ ] 🟡 **Concurrency primitives in `@helpers4/promise` — narrower than originally scoped.**
-  `delay` (since v1.9.0) and `timeout`/`withTimeout` (since v2.0.0, with its own `TimeoutError`)
-  **already existed** — the original gap-analysis entry was wrong on these two. Only
-  `Mutex`/`Semaphore` remain a real gap. Explained the concrete use case (deduplicating
-  concurrent token-refresh calls; rate-limiting calls to an external API) and confirmed it's
-  worth doing, **but deliberately left out of the 2026-07-19 implementation pass** — bigger
-  design surface (would be this repo's first stateful/class-shaped API — every other export
-  here is a plain function) and needs its own decision, not a default "copy es-toolkit's shape."
-  If picked up: factory functions (`createMutex()`/`createSemaphore()`) were the leaning, to stay
-  function-shaped rather than `export class`.
+- [x] 🟡 **Concurrency primitives in `@helpers4/promise`** (2026-07-20) — added `createSemaphore`
+  (limits concurrent holders to `permits`, FIFO-queueing excess `acquire()` callers) and
+  `createMutex` (a semaphore with a single permit, for mutual exclusion — internally just
+  `createSemaphore(1)` with a renamed `isLocked()` accessor instead of `available()`). Kept
+  `delay`/`timeout`/`withTimeout` as-is — those already existed (the original gap-analysis entry
+  was wrong on them, see below).
+  Factory functions returning a closure-backed object, not `export class` — matches this
+  package's other stateful helpers (`debounce`, `throttle`), so this isn't actually the "first
+  stateful API" the original entry worried it'd be. `acquire()` resolves to a one-shot release
+  function (not a bare `release(): void`) plus a `run(fn)` convenience that acquires, runs, and
+  releases even if `fn` throws (mirrors `defer`'s try/finally guarantee) — `run()` is the
+  documented preferred way to use either. **Revised (2026-07-21, code review)**: a bare shared
+  `release()` counter can't tell a legitimate release from a double-release once there's
+  contention — verified directly that a stray extra `release()` call could silently hand a
+  phantom permit to an unrelated queued waiter, breaking mutual exclusion. Fixed by having
+  `acquire()` resolve to a per-acquisition release function with its own already-released
+  state, so a double-release is always caught, not just when the semaphore is fully idle.
 - [ ] 🟢 **Async-aware array iteration** (`mapAsync`/`filterAsync`/`forEachAsync` with optional
   concurrency limiting, à la es-toolkit's `limitAsync`). Deliberately left out of the 2026-07-19
   pass — real overlap with existing `parallel`/`parallelSettle`, needs a design pass to decide
