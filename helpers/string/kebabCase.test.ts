@@ -33,6 +33,28 @@ describe("kebabCase", () => {
     expect(kebabCase("Hello")).toBe("hello");
   });
 
+  it("should convert snake_case to kebab-case", () => {
+    expect(kebabCase("user_name")).toBe("user-name");
+  });
+
+  it("should convert space-separated words to kebab-case", () => {
+    expect(kebabCase("user name")).toBe("user-name");
+  });
+
+  it("should handle mixed separators", () => {
+    expect(kebabCase("user_name here")).toBe("user-name-here");
+  });
+
+  it("should not produce leading/trailing hyphens for leading/trailing separators", () => {
+    expect(kebabCase("  leading spaces")).toBe("leading-spaces");
+    expect(kebabCase("trailing  ")).toBe("trailing");
+    expect(kebabCase("_id")).toBe("id");
+  });
+
+  it("should not produce a double hyphen for adjacent separators", () => {
+    expect(kebabCase("foo_-bar")).toBe("foo-bar");
+  });
+
   it('should return null when given null', () => {
     expect(kebabCase(null)).toBeNull();
   });
