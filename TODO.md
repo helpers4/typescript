@@ -211,39 +211,72 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 > excluded (last published 2023-01-10, not active). Effect-TS excluded — different category
 > (FP platform/runtime, not a utility library).
 
-- [ ] 🔴 **`Map`/`Set` utilities — a whole missing category.** es-toolkit ships full parallel
-  utility sets for native `Map`/`Set` (`forEach`, `filter`, `map`, `reduce`, `some`, `every`,
-  `keyBy`, `countBy`, `findKey`/`findValue`). helpers4 currently has **zero** manipulation
-  utilities for these — only guards (`isMap`, `isSet`). Highest priority because it's not a
-  missing function here and there, it's an entire category gap, and `Map`/`Set` are common
-  first-class collections in modern TS code. Needs a design decision: new `@helpers4/map` +
-  `@helpers4/set` categories, or fold into an existing one? Probably not — precedent here is one
-  category per collection-ish concern (`array`, `object`), so two new categories is likely the
-  right shape, not a bolt-on.
-- [ ] 🟡 **Concurrency primitives in `@helpers4/promise`.** Converges across *two* competitors
-  independently — es-toolkit has `Mutex`, `Semaphore`, `delay`, `timeout`/`withTimeout`;
-  moderndash has `sleep`, `timeout`, `retry`, `Queue`. helpers4's `@helpers4/promise` has
-  `settle`/`parallel`/`parallelSettle`/typed guards but no lock/semaphore primitives, no generic
-  `delay`, no `withTimeout` wrapper. `delay` and `withTimeout` are the cheapest, most clearly
-  in-scope additions; `Mutex`/`Semaphore` are a bigger design surface (stateful, class-shaped —
-  first non-trivial departure from this repo's all-functions convention, worth a deliberate
-  decision rather than copying es-toolkit's shape by default).
-- [ ] 🟡 **Number statistics: `median`, `percentile`, `*By` iteratee variants.** helpers4's
-  `@helpers4/array` has `mean`/`sum` but no `median`, no `percentile`, and no iteratee variants
-  (`meanBy`/`sumBy`) — both es-toolkit and moderndash have `median`. Cheap, well-scoped, no
-  design ambiguity — good candidate for a first-timer/contributor issue (see §3).
-- [ ] 🟢 **Bulk object-key case transforms: `toCamelCaseKeys`/`toSnakeCaseKeys`.** es-toolkit
-  recursively transforms every key of an object to a case style in one call; helpers4 has
-  `camelCase`/`snakeCase` for individual strings but nothing that walks an object's keys in bulk.
-  Lower priority than the above — real gap, but narrower use case.
+- [x] 🔴 **`Map`/`Set` utilities** (2026-07-19, revised same day after checking against native
+  JS) — added as two separate categories, not a combined `@helpers4/collection`: the repo's own
+  precedent (`array`/`object` share `compact`/`equalsShallow` **on purpose**, documented in
+  `CONTRIBUTING.md`'s "Intentional cross-category duplicates") already answers "one category
+  per type vs. one for the operation-kind" in favor of per-type, and `guard`/`type` (the
+  operation-kind categories) don't fit Map/Set's shape.
+  `@helpers4/map` (11 functions): `filter`, `reduce`, `some`, `every`, `countBy`, `toMapByKey`,
+  `findKey`, `findValue`, `hasValue`, `mapKeys`, `mapValues`.
+  `@helpers4/set` (4 functions): `filter`, `countBy`, `toMapByKey`, `map`.
+  (`keyBy` renamed to `toMapByKey` after review — lodash's `_.keyBy` returns a plain object,
+  not a `Map`, so the bare name risked exactly that wrong assumption; the `to<Type>` prefix
+  disambiguates the same way `toSorted`/`toReversed` do.)
+  **Checked against native JS on the actual Node 26 baseline before finalizing** (not just
+  assumed) — dropped 6 of the originally-planned functions as genuine duplicates:
+  `map.forEach`/`set.forEach` (native `Map`/`Set.prototype.forEach` already exist, identical
+  signature) and `set.reduce`/`some`/`every`/`find` (native since Node 22's Iterator Helpers —
+  `set.values().reduce/some/every/find(fn)` — and unlike `Map`, `Set` already iterates plain
+  values with no tuple to destructure, so there was no real convenience left to add). Kept
+  `map`'s `reduce`/`some`/`every`/`findKey`/`findValue`/`hasValue` — those *do* still save a
+  `[key, value]` tuple destructure over the native `map.entries().foo()` equivalent. Documented
+  all of this (including what's *not* implemented and why) in `docs/native-alternatives.json`'s
+  new `map`/`set` sections, consumed by the website build.
+- [x] 🟡 **Number statistics: `median`, `percentile`, `meanBy`, `sumBy`** (2026-07-19) — added to
+  `@helpers4/array` alongside the existing `mean`/`sum`. `percentile` uses linear interpolation
+  between closest ranks (so `percentile(arr, 50)` matches `median`).
+- [x] 🟢 **Bulk object-key case transforms** (2026-07-19, revised same day after review) — landed
+  as **5** functions, not 2: `camelCaseKeys`, `snakeCaseKeys`, `kebabCaseKeys`, `pascalCaseKeys`,
+  `titleCaseKeys` (renamed from the original `toCamelCaseKeys`/`toSnakeCaseKeys` — dropped the
+  `to` prefix to match `@helpers4/string`'s own naming: `camelCase`/`snakeCase`/`kebabCase`, no
+  `to`). Also added `@helpers4/object/mapDeep` — the recursive sibling to the existing `map`
+  (same shallow/deep pairing convention as `clone`/`cloneDeep`) — and rebuilt all 5 `*Keys`
+  functions as thin wrappers over it instead of each hand-rolling its own recursion.
+  Found along the way: `@helpers4/string`'s `camelCase`/`kebabCase` are narrower than their
+  siblings — `camelCase` only handles kebab-case input, `kebabCase` only handles
+  camelCase/PascalCase input, unlike `snakeCase`/`pascalCase`/`titleCase` which all handle any
+  input format. `snakeCaseKeys`/`pascalCaseKeys`/`titleCaseKeys` reuse those public (already
+  robust) functions directly; `camelCaseKeys`/`kebabCaseKeys` use a local, equally-robust
+  `words()`-based helper instead (`object/_caseKeysHelpers.ts`) so they work correctly regardless
+  of whether/when `camelCase`/`kebabCase` themselves get fixed — see the follow-up item below.
+  Also added `sortKeys` (shallow) as a closely-related function while in this area.
+- [x] 🟡 **Fixed `@helpers4/string`'s `camelCase`/`kebabCase` narrowness** (2026-07-19) — both
+  now tokenize the same way `snakeCase`/`pascalCase`/`titleCase` already did (handle
+  snake_case/kebab-case/PascalCase/spaces, not just one specific input format each). Real
+  **`BREAKING CHANGE`** to shipped functions (`@since 1.9.0`) — e.g. `camelCase('-leading')`
+  now returns `'leading'`, not `'Leading'`; `camelCase('UPPER-CASE')` now returns `'upperCase'`,
+  not `'UPPER-CASE'` unchanged. `camelCaseKeys`/`kebabCaseKeys` dropped their local
+  `_caseKeysHelpers.ts` workaround (deleted) and now delegate to the public functions directly,
+  same as the other three `*Keys` variants.
+- [x] 🟢 **Environment/JSON guards** (2026-07-19) — added `isBrowser`, `isNode`, `isLength`,
+  `isJSONValue`, `isJSONArray`, `isJSONObject` to `@helpers4/guard`. `isJSON` ended up with a
+  more useful, distinct meaning than a plain alias: checks whether a **string** is valid
+  parseable JSON (pairs with `@helpers4/object`'s `safeJsonParse`), rather than duplicating
+  `isJSONValue`'s already-parsed-value shape check.
+- [ ] 🟡 **Concurrency primitives in `@helpers4/promise` — narrower than originally scoped.**
+  `delay` (since v1.9.0) and `timeout`/`withTimeout` (since v2.0.0, with its own `TimeoutError`)
+  **already existed** — the original gap-analysis entry was wrong on these two. Only
+  `Mutex`/`Semaphore` remain a real gap. Explained the concrete use case (deduplicating
+  concurrent token-refresh calls; rate-limiting calls to an external API) and confirmed it's
+  worth doing, **but deliberately left out of the 2026-07-19 implementation pass** — bigger
+  design surface (would be this repo's first stateful/class-shaped API — every other export
+  here is a plain function) and needs its own decision, not a default "copy es-toolkit's shape."
+  If picked up: factory functions (`createMutex()`/`createSemaphore()`) were the leaning, to stay
+  function-shaped rather than `export class`.
 - [ ] 🟢 **Async-aware array iteration** (`mapAsync`/`filterAsync`/`forEachAsync` with optional
-  concurrency limiting, à la es-toolkit's `limitAsync`). Not a clear add: helpers4 already has
-  `parallel`/`parallelSettle` as standalone promise helpers covering similar ground — this would
-  need a real design pass to decide whether `Array.prototype`-shaped async methods add enough
-  over composing the existing promise helpers to be worth a second API surface for the same
-  problem. Flagging as "needs discussion," not "needs implementation."
-- [ ] 🟢 **Environment/JSON guards**: `isBrowser`/`isNode` (environment detection), `isJSON`/
-  `isJSONArray`/`isJSONObject`/`isJSONValue` (JSON-shape validation), `isLength` (valid
-  array-like length) — all present in es-toolkit, absent from `@helpers4/guard`. Lowest priority
-  of this list: genuinely useful but narrow, no urgency signal from more than one competitor
-  (unlike the concurrency-primitives finding above).
+  concurrency limiting, à la es-toolkit's `limitAsync`). Deliberately left out of the 2026-07-19
+  pass — real overlap with existing `parallel`/`parallelSettle`, needs a design pass to decide
+  whether `Array.prototype`-shaped async methods add enough over composing the existing promise
+  helpers to justify a second API surface for the same problem. Still "needs discussion," not
+  "needs implementation."
