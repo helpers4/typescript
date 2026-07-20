@@ -234,6 +234,107 @@
       "notes": "For deep merge, use mergeDeep from helpers4"
     }
   ],
+  "map": [
+    {
+      "name": "forEach",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "Map.prototype.forEach((value, key, map) => ...)",
+      "since": "ES2015",
+      "example": "map.forEach((value, key) => console.log(key, value))",
+      "notes": "Not implemented — native Map.prototype.forEach already has this exact (value, key, map) signature, nothing to add."
+    },
+    {
+      "name": "reduce / some / every",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "map.entries().reduce(fn, init) / .some(fn) / .every(fn)",
+      "since": "ES2025 (Iterator Helpers)",
+      "example": "map.entries().reduce((acc, [k, v]) => acc + v, 0)\nmap.entries().some(([k, v]) => v > 10)",
+      "notes": "Iterator Helpers make these one-liners on map.entries()/.values() — but the callback receives a [key, value] tuple to destructure every time. helpers4/map's versions take (value, key) directly, matching Map.prototype.forEach's own argument order, so they're still provided."
+    },
+    {
+      "name": "findKey / findValue",
+      "libraries": [],
+      "native": "map.entries().find(([k, v]) => pred(v, k))?.[0 or 1]",
+      "since": "ES2025 (Iterator Helpers)",
+      "example": "map.entries().find(([k, v]) => v > 10)?.[0]  // key\nmap.entries().find(([k, v]) => v > 10)?.[1]  // value",
+      "notes": "Composable via Iterator Helpers' .find(), but needs a tuple destructure plus an optional-chained index every call site — helpers4/map's versions are still provided for that reason."
+    },
+    {
+      "name": "hasValue",
+      "libraries": [],
+      "native": "map.values().some(v => Object.is(v, value))",
+      "since": "ES2025 (Iterator Helpers)",
+      "example": "map.values().some(v => Object.is(v, target))",
+      "notes": "Thin wrapper for readability — Map.prototype.has() checks keys, not values, which is the actual reason this needs its own name."
+    },
+    {
+      "name": "countBy / keyBy",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "Map.groupBy(map.entries(), ([k, v]) => groupFn(v, k))",
+      "since": "ES2024",
+      "example": "Map.groupBy(map.entries(), ([k, v]) => v % 2 === 0 ? 'even' : 'odd')",
+      "notes": "Map.groupBy groups into arrays of matching entries (multiple items per key) — not the same as countBy (counts per group) or keyBy (single last-write-wins item per key). Deriving either from Map.groupBy's output is a real extra step, so both remain genuinely useful."
+    }
+  ],
+  "set": [
+    {
+      "name": "forEach",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "Set.prototype.forEach((value, value2, set) => ...)",
+      "since": "ES2015",
+      "example": "set.forEach(value => console.log(value))",
+      "notes": "Not implemented — native Set.prototype.forEach already covers this."
+    },
+    {
+      "name": "reduce / some / every / find",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "set.values().reduce(fn, init) / .some(fn) / .every(fn) / .find(fn)",
+      "since": "ES2025 (Iterator Helpers)",
+      "example": "set.values().reduce((acc, v) => acc + v, 0)\nset.values().find(v => v > 10)",
+      "notes": "Not implemented — unlike Map (whose entries are [key, value] tuples needing a destructure), Set already iterates plain values with no shape mismatch against these native methods. There's no real convenience left to add over calling them directly on set.values()."
+    },
+    {
+      "name": "map / filter",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "new Set(set.values().map(fn)) / new Set(set.values().filter(fn))",
+      "since": "ES2025 (Iterator Helpers)",
+      "example": "new Set(set.values().map(v => v * 2))\nnew Set(set.values().filter(v => v > 0))",
+      "notes": "Iterator Helpers give the transform; reconstructing a Set from the result is the part still worth a named helper for."
+    },
+    {
+      "name": "countBy / keyBy",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "Map.groupBy(set.values(), fn)",
+      "since": "ES2024",
+      "example": "Map.groupBy(set.values(), v => v % 2 === 0 ? 'even' : 'odd')",
+      "notes": "Same distinction as helpers4/map's countBy/keyBy: Map.groupBy groups into arrays, it doesn't count or index-by-last-write."
+    },
+    {
+      "name": "union / intersection / difference / symmetricDifference",
+      "libraries": [
+        "lodash",
+        "es-toolkit"
+      ],
+      "native": "Set.prototype.union() / .intersection() / .difference() / .symmetricDifference()",
+      "since": "ES2025 (Set methods)",
+      "example": "setA.union(setB)\nsetA.intersection(setB)\nsetA.difference(setB)",
+      "notes": "Landed natively as of the Set methods proposal — also .isSubsetOf() / .isSupersetOf() / .isDisjointFrom(). Not implemented here; native coverage is already complete for set-algebra operations."
+    }
+  ],
   "string": [
     {
       "name": "trim / trimStart / trimEnd",
