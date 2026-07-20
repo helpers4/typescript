@@ -19,7 +19,7 @@ import { mapDeep } from './mapDeep.js';
  * @example
  * pascalCaseKeys({ user_name: 'Alice', home_address: { zip_code: '12345' } })
  * // => { UserName: 'Alice', HomeAddress: { ZipCode: '12345' } }
- * @since next
+ * @since 3.0.3
  */
 export function pascalCaseKeys<T>(value: T): T {
   return mapDeep(value, undefined, pascalCase);

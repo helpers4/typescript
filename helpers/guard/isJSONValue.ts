@@ -41,7 +41,7 @@ function transform(value: unknown, seen: Set<unknown>): boolean {
  * isJSONValue(new Date())                           // => false
  * isJSONValue(undefined)                             // => false
  * isJSONValue(Number.NaN)                             // => false
- * @since next
+ * @since 3.0.3
  */
 export function isJSONValue(value: unknown): boolean {
   return transform(value, new Set());

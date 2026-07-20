@@ -17,7 +17,7 @@
  * @example
  * toMapByKey([{ id: 'a', n: 1 }, { id: 'b', n: 2 }], item => item.id)
  * // => Map(2) { 'a' => { id: 'a', n: 1 }, 'b' => { id: 'b', n: 2 } }
- * @since next
+ * @since 3.0.3
  */
 export function toMapByKey<T, K>(items: Iterable<T>, fn: (item: T) => K): Map<K, T> {
   const result = new Map<K, T>();

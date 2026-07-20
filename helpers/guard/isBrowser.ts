@@ -15,7 +15,7 @@
  * @returns `true` if `window` and `window.document` are both defined
  * @example
  * isBrowser() // => true in a real browser, false in plain Node.js
- * @since next
+ * @since 3.0.3
  */
 export function isBrowser(): boolean {
   return typeof window !== 'undefined' && typeof window.document !== 'undefined';

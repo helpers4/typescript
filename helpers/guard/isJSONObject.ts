@@ -16,7 +16,7 @@ import { isPlainObject } from './isPlainObject';
  * isJSONObject({ a: 1, b: 'two' })  // => true
  * isJSONObject({ a: undefined })    // => false
  * isJSONObject([])                  // => false
- * @since next
+ * @since 3.0.3
  */
 export function isJSONObject(value: unknown): value is Record<string, unknown> {
   return isPlainObject(value) && Object.values(value).every(isJSONValue);

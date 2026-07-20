@@ -15,7 +15,7 @@
  * @returns `true` if `process.versions.node` is defined
  * @example
  * isNode() // => true in Node.js, false in a real browser
- * @since next
+ * @since 3.0.3
  */
 export function isNode(): boolean {
   return typeof process !== 'undefined' && typeof process.versions?.node === 'string';

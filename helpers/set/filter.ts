@@ -12,7 +12,7 @@
  * @example
  * filter(new Set([1, 2, 3, 4]), value => value % 2 === 0)
  * // => Set(2) { 2, 4 }
- * @since next
+ * @since 3.0.3
  */
 export function filter<T>(set: ReadonlySet<T>, predicate: (value: T) => boolean): Set<T> {
   const result = new Set<T>();

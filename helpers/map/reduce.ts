@@ -13,7 +13,7 @@
  * @example
  * reduce(new Map([['a', 1], ['b', 2]]), (acc, value) => acc + value, 0)
  * // => 3
- * @since next
+ * @since 3.0.3
  */
 export function reduce<K, V, R>(
   map: ReadonlyMap<K, V>,

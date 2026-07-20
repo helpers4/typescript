@@ -12,7 +12,7 @@
  * @example
  * some(new Map([['a', 1], ['b', 2]]), value => value > 1)
  * // => true
- * @since next
+ * @since 3.0.3
  */
 export function some<K, V>(
   map: ReadonlyMap<K, V>,

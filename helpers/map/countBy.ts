@@ -12,7 +12,7 @@
  * @example
  * countBy(new Map([['a', 1], ['b', 2], ['c', 3]]), value => value % 2 === 0 ? 'even' : 'odd')
  * // => Map(2) { 'odd' => 2, 'even' => 1 }
- * @since next
+ * @since 3.0.3
  */
 export function countBy<K, V, R>(
   map: ReadonlyMap<K, V>,

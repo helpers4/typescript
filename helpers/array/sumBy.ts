@@ -18,7 +18,7 @@ import type { ByAccessor } from './_byAccessor.js';
  * // => 30
  * sumBy([{ price: 10 }, { price: 20 }], 'price')
  * // => 30
- * @since next
+ * @since 3.0.3
  */
 export function sumBy<T>(array: readonly T[] | null | undefined, accessor: ByAccessor<T>): number {
   if (array == null) return 0;

@@ -61,7 +61,7 @@ function transform(
  * @example
  * mapDeep({ tags: [1, 2, 3] }, v => (typeof v === 'number' ? v * 10 : v))
  * // => { tags: [10, 20, 30] }
- * @since next
+ * @since 3.0.3
  */
 export function mapDeep<T>(
   obj: T,

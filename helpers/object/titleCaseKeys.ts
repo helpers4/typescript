@@ -23,7 +23,7 @@ import { mapDeep } from './mapDeep.js';
  * @example
  * titleCaseKeys({ user_name: 'Alice', home_address: { zip_code: '12345' } })
  * // => { 'User Name': 'Alice', 'Home Address': { 'Zip Code': '12345' } }
- * @since next
+ * @since 3.0.3
  */
 export function titleCaseKeys<T>(value: T): T {
   return mapDeep(value, undefined, titleCase);

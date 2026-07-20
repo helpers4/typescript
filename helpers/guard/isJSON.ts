@@ -23,7 +23,7 @@ const PARSE_FAILED = Symbol('isJSON.parseFailed');
  * isJSON('{"a":1}')  // => true
  * isJSON('not json') // => false
  * isJSON(42)         // => false (not even a string)
- * @since next
+ * @since 3.0.3
  */
 export function isJSON(value: unknown): value is string {
   if (typeof value !== 'string') return false;

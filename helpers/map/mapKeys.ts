@@ -13,7 +13,7 @@
  * @example
  * mapKeys(new Map([['a', 1], ['b', 2]]), key => key.toUpperCase())
  * // => Map(2) { 'A' => 1, 'B' => 2 }
- * @since next
+ * @since 3.0.3
  */
 export function mapKeys<K, V, R>(
   map: ReadonlyMap<K, V>,

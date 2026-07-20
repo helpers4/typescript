@@ -14,7 +14,7 @@
  * percentile([1, 2, 3, 4], 50)  // => 2.5 (the median)
  * percentile([1, 2, 3, 4], 0)   // => 1 (the min)
  * percentile([1, 2, 3, 4], 100) // => 4 (the max)
- * @since next
+ * @since 3.0.3
  */
 export function percentile(array: readonly number[], p: number): number {
   if (array.length === 0) return NaN;

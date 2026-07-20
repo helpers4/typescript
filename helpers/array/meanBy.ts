@@ -24,7 +24,7 @@ import { sumBy } from './sumBy.js';
  * // => 15
  * meanBy(null, item => item.price)
  * // => NaN
- * @since next
+ * @since 3.0.3
  */
 export function meanBy<T>(array: readonly T[] | null | undefined, accessor: ByAccessor<T>): number {
   const length = array?.length ?? 0;

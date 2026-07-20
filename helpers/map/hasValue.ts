@@ -13,7 +13,7 @@
  * @example
  * hasValue(new Map([['a', 1], ['b', 2]]), 2)
  * // => true
- * @since next
+ * @since 3.0.3
  */
 export function hasValue<K, V>(map: ReadonlyMap<K, V>, value: V): boolean {
   for (const v of map.values()) {

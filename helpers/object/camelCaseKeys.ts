@@ -19,7 +19,7 @@ import { mapDeep } from './mapDeep.js';
  * @example
  * camelCaseKeys({ user_name: 'Alice', home_address: { zip_code: '12345' } })
  * // => { userName: 'Alice', homeAddress: { zipCode: '12345' } }
- * @since next
+ * @since 3.0.3
  */
 export function camelCaseKeys<T>(value: T): T {
   return mapDeep(value, undefined, camelCase);

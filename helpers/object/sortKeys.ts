@@ -21,7 +21,7 @@ import { UNSAFE_KEYS } from '../_shared/_unsafeKeys.js';
  * @example
  * sortKeys({ b: 2, a: 1, c: 3 })
  * // => { a: 1, b: 2, c: 3 }
- * @since next
+ * @since 3.0.3
  */
 export function sortKeys<T extends Record<string, unknown>>(
   obj: T,

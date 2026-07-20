@@ -15,7 +15,7 @@ import { isJSONValue } from './isJSONValue';
  * isJSONArray([1, 'two', null])  // => true
  * isJSONArray([1, undefined])    // => false
  * isJSONArray({})                // => false
- * @since next
+ * @since 3.0.3
  */
 export function isJSONArray(value: unknown): value is unknown[] {
   return Array.isArray(value) && value.every(isJSONValue);

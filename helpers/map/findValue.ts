@@ -12,7 +12,7 @@
  * @example
  * findValue(new Map([['a', 1], ['b', 2]]), value => value > 1)
  * // => 2
- * @since next
+ * @since 3.0.3
  */
 export function findValue<K, V>(
   map: ReadonlyMap<K, V>,

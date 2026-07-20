@@ -19,7 +19,7 @@ import { percentile } from './percentile.js';
  * median([1, 2, 3])     // => 2
  * median([1, 2, 3, 4])  // => 2.5
  * median([])            // => NaN
- * @since next
+ * @since 3.0.3
  */
 export function median(array: readonly number[]): number {
   return percentile(array, 50);

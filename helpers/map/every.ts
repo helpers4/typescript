@@ -12,7 +12,7 @@
  * @example
  * every(new Map([['a', 1], ['b', 2]]), value => value > 0)
  * // => true
- * @since next
+ * @since 3.0.3
  */
 export function every<K, V>(
   map: ReadonlyMap<K, V>,

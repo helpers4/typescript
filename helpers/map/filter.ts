@@ -12,7 +12,7 @@
  * @example
  * filter(new Map([['a', 1], ['b', 2], ['c', 3]]), value => value % 2 === 0)
  * // => Map(1) { 'b' => 2 }
- * @since next
+ * @since 3.0.3
  */
 export function filter<K, V>(
   map: ReadonlyMap<K, V>,

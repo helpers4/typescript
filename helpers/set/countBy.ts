@@ -12,7 +12,7 @@
  * @example
  * countBy(new Set([1, 2, 3, 4]), value => value % 2 === 0 ? 'even' : 'odd')
  * // => Map(2) { 'odd' => 2, 'even' => 2 }
- * @since next
+ * @since 3.0.3
  */
 export function countBy<T, R>(set: ReadonlySet<T>, fn: (value: T) => R): Map<R, number> {
   const counts = new Map<R, number>();

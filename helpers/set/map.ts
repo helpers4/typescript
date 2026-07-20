@@ -13,7 +13,7 @@
  * @example
  * map(new Set([1, 2, 3]), value => value * 10)
  * // => Set(3) { 10, 20, 30 }
- * @since next
+ * @since 3.0.3
  */
 export function map<T, R>(set: ReadonlySet<T>, fn: (value: T) => R): Set<R> {
   const result = new Set<R>();

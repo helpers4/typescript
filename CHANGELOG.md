@@ -8,6 +8,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.0.3] - 2026-07-20
+
+### 🚀 Features
+- **array**: add percentile helper
+- **array**: add median helper
+- **array**: add meanBy helper
+- **array**: add sumBy helper
+- **array**: add toByAccessorFn utility
+- **guard**: add isLength helper
+- **guard**: add isJSONValue helper
+- **guard**: add isJSONObject helper
+- **guard**: add isJSONArray helper
+- **guard**: add isJSON helper
+- **guard**: add isNode helper
+- **guard**: add isBrowser helper
+- **map**: clarify map alternatives
+- **map**: add toMapByKey helper
+- **map**: add reduce helper
+- **map**: add some helper
+- **map**: add mapValues helper
+- **map**: add mapKeys helper
+- **map**: add hasValue helper
+- **map**: add findValue helper
+- **map**: add findKey helper
+- **map**: add filter helper
+- **map**: add every helper
+- **map**: add countBy helper
+- **map**: add new category
+- **object**: add titleCaseKeys helper
+- **object**: add snakeCaseKeys helper
+- **object**: add pascalCaseKeys helper
+- **object**: add kebabCaseKeys helper
+- **object**: add camelCaseKeys helper
+- **object**: add mapDeep helper
+- **object**: add sortKeys helper
+- **object**: add walkPropertyPath utility
+- **set**: add toMapByKey helper
+- **set**: add map helper
+- **set**: add filter helper
+- **set**: add countBy helper
+- **set**: add new set category
+- **string**: enhance kebabCase helper [**BREAKING**]
+- **string**: enhance CamelCase helper [**BREAKING**]
+- add new methods and examples for Map and Set
+
+### 🔧 Miscellaneous
+- **deps-dev**: bump the dev-dependencies group with 4 updates
+
+### 📝 Documentation
+- update TODO
+- add prioritized competitive gap analysis to TODO
+
 ## [3.0.2] - 2026-07-19
 
 ### 🚀 Features
@@ -860,6 +912,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.0.3]: https://github.com/helpers4/typescript/compare/v3.0.2...v3.0.3
 [3.0.2]: https://github.com/helpers4/typescript/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/helpers4/typescript/compare/v3.0.0...v3.0.1
 [3.0.0]: https://github.com/helpers4/typescript/compare/v3.0.0-alpha.2...v3.0.0

@@ -15,7 +15,7 @@
  * isLength(-1)     // => false
  * isLength(1.5)    // => false
  * isLength('3')    // => false
- * @since next
+ * @since 3.0.3
  */
 export function isLength(value: unknown): value is number {
   return (

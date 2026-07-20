@@ -17,7 +17,7 @@
  * @example
  * toMapByKey(new Set([{ id: 'a' }, { id: 'b' }]), item => item.id)
  * // => Map(2) { 'a' => { id: 'a' }, 'b' => { id: 'b' } }
- * @since next
+ * @since 3.0.3
  */
 export function toMapByKey<T, K>(set: ReadonlySet<T>, fn: (value: T) => K): Map<K, T> {
   const result = new Map<K, T>();

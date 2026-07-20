@@ -19,7 +19,7 @@ import { mapDeep } from './mapDeep.js';
  * @example
  * kebabCaseKeys({ userName: 'Alice', homeAddress: { zipCode: '12345' } })
  * // => { 'user-name': 'Alice', 'home-address': { 'zip-code': '12345' } }
- * @since next
+ * @since 3.0.3
  */
 export function kebabCaseKeys<T>(value: T): T {
   return mapDeep(value, undefined, kebabCase);

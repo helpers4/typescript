@@ -12,7 +12,7 @@
  * @example
  * mapValues(new Map([['a', 1], ['b', 2]]), value => value * 10)
  * // => Map(2) { 'a' => 10, 'b' => 20 }
- * @since next
+ * @since 3.0.3
  */
 export function mapValues<K, V, R>(
   map: ReadonlyMap<K, V>,
