@@ -109,9 +109,19 @@ describe('parallel', () => {
     expect(result).toEqual([1, 2]);
   });
 
-  it('should fallback to 1 for Infinity limit', async () => {
-    const fns = [() => Promise.resolve(1), () => Promise.resolve(2)];
+  it('should treat Infinity as no cap, running everything concurrently', async () => {
+    let concurrent = 0;
+    let maxConcurrent = 0;
+    const task = async (n: number) => {
+      concurrent++;
+      maxConcurrent = Math.max(maxConcurrent, concurrent);
+      await new Promise((r) => setTimeout(r, 5));
+      concurrent--;
+      return n;
+    };
+    const fns = [1, 2, 3, 4].map((n) => () => task(n));
     const result = await parallel(fns, Infinity);
-    expect(result).toEqual([1, 2]);
+    expect(result).toEqual([1, 2, 3, 4]);
+    expect(maxConcurrent).toBe(4);
   });
 });
