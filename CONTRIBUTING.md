@@ -305,7 +305,7 @@ Before submitting, run:
 
 ```bash
 pnpm test          # Tests pass with 100% coverage
-pnpm typecheck     # No type errors (uses tsgo)
+pnpm typecheck     # No type errors (uses the native TypeScript 7 tsc)
 pnpm lint          # No lint issues (uses oxlint)
 pnpm coherency     # Bundle/version/category consistency
 ```

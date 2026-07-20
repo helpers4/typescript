@@ -193,11 +193,24 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
   **Not a `helpers/` category** — configs don't compile/tree-shake like functions, so this
   should be a separate package or sibling repo, not a folder under `helpers/`. Needs a design
   decision before implementation.
-- [ ] 🟢 Full migration to TS 7.x (`tsgo`) for build + emit, not just `typecheck` — currently
-  `tsgo --noEmit` is used for fast type-checking only; the actual build/`.d.ts` emit still goes
-  through classic `typescript@^6`. `tsgo` (`@typescript/native-preview`) is still a preview/dev
-  build without full emit parity — revisit at each new tsgo release rather than migrating now,
-  since `.d.ts` output is a published deliverable, not an internal detail.
+- [x] 🟡 **`typecheck` migrated to real TypeScript 7** (2026-07-20) — TS 7.0 shipped stable
+  2026-07-08, as `typescript@latest` (7.0.2) itself; `@typescript/native-preview` (the old
+  `tsgo`-named preview package we depended on) is now obsolete, frozen on a dev-build predating
+  the stable release. Switched via npm aliasing: `"@typescript/native": "npm:typescript@^7.0.2"`
+  (fast native compiler, bin `tsc`) plus `"typescript": "npm:@typescript/typescript6@^6.0.2"`
+  (classic-API compatibility package, bin `tsc6`, so anything doing `require('typescript')` —
+  i.e. `rollup-plugin-dts` — keeps working unchanged). `typecheck` script updated from
+  `tsgo --noEmit` to `tsc --noEmit` (bin renamed back to `tsc` in the stable release).
+  **Build/`.d.ts` emit still blocked, and it's a different blocker than previously thought**:
+  our `.d.ts` bundling goes through `rollup-plugin-dts`, which depends on the classic TS
+  Compiler API (`ts.createProgram` etc.) — and TypeScript 7.0's main package export is now
+  *only* `version`/`versionMajorMinor` (verified directly: `require('typescript@7.0.2').createProgram`
+  is `undefined`), no compiler API at all outside explicitly-`unstable/*` subpaths. Not
+  something we can fix from this repo — tracked upstream at
+  [Swatinem/rollup-plugin-dts#395](https://github.com/Swatinem/rollup-plugin-dts/issues/395)
+  (open; maintainer has a working fix on a branch using the same `@typescript/typescript6`
+  alias pattern, not yet merged/released). Revisit once that ships, or once TS 7.1 (already in
+  `next` as of today) delivers the promised new stable API.
 
 ---
 
@@ -281,9 +294,25 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
   phantom permit to an unrelated queued waiter, breaking mutual exclusion. Fixed by having
   `acquire()` resolve to a per-acquisition release function with its own already-released
   state, so a double-release is always caught, not just when the semaphore is fully idle.
-- [ ] 🟢 **Async-aware array iteration** (`mapAsync`/`filterAsync`/`forEachAsync` with optional
-  concurrency limiting, à la es-toolkit's `limitAsync`). Deliberately left out of the 2026-07-19
-  pass — real overlap with existing `parallel`/`parallelSettle`, needs a design pass to decide
-  whether `Array.prototype`-shaped async methods add enough over composing the existing promise
-  helpers to justify a second API surface for the same problem. Still "needs discussion," not
-  "needs implementation."
+- [x] 🟢 **Async-aware array iteration** (2026-07-20) — added `mapAsync`/`filterAsync`/
+  `forEachAsync` to `@helpers4/array`, mirroring `Array.prototype.map`/`filter`/`forEach`'s
+  calling convention (`(item, index) => ...`) directly against the array, instead of requiring
+  callers to pre-wrap each item as a `() => Promise<T>` thunk for `parallel`. `concurrency` is
+  optional (unlike `parallel`'s required `limit`) — omitted means unlimited, matching
+  `Promise.all(array.map(fn))`; `0`/negative/`NaN` throw `RangeError` rather than silently
+  falling back to a default, unlike `parallel`'s existing clamp-to-1 behavior (a deliberate,
+  stricter contract for this new, optional parameter — not a change to `parallel` itself).
+  Rejects on the first error, same as `Promise.all`/`parallel` (no settle/partition variant —
+  use `parallelSettle` directly for that). Shared queueing logic lives in an in-category
+  internal helper, `array/_concurrentMap.ts` (matches the `_sortHelpers.ts`/`_byAccessor.ts`
+  convention), used by all three.
+  **Revised (2026-07-21, code review)**: `runConcurrentMap` (used by `mapAsync`/`filterAsync`)
+  now delegates its actual scheduling to `promise/parallel` instead of a second, independent
+  worker-pool implementation — `concurrency` is validated/clamped first, so `parallel`'s own
+  (more permissive) clamping never comes into play and its behavior for direct callers is
+  unaffected. `forEachAsync` keeps its own lean loop via `runConcurrentEach`, since it has no
+  use for `parallel`'s results array. Also found and fixed: the same Infinity-clamped-to-1 bug
+  this entry's `parallel` comparison was written against also existed in `parallelSettle` —
+  fixed there too. The "positive count, floor non-integer, throw on invalid" validation is now
+  shared (`_shared/_validatePositiveCount.ts`) between `createSemaphore` and this file instead
+  of two near-identical inline checks.

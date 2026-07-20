@@ -13,7 +13,7 @@
   <a href="https://www.npmjs.com/package/@helpers4/all"><img src="https://img.shields.io/npm/dm/@helpers4/all?color=blue" alt="npm downloads" /></a>
   <br>
   <a href="https://github.com/helpers4/typescript/blob/main/LICENSE"><img src="https://img.shields.io/github/license/helpers4/typescript?color=blue" alt="license" /></a>
-  <img src="https://img.shields.io/badge/tsgo-7-blue?logo=typescript&logoColor=white" alt="tsgo" />
+  <img src="https://img.shields.io/badge/TypeScript-7-blue?logo=typescript&logoColor=white" alt="TypeScript 7" />
   <img src="https://img.shields.io/badge/tree--shakable-✓-blue" alt="tree-shakable" />
   <a href="./CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome" /></a>
   <br>
