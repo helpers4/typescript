@@ -25,6 +25,14 @@ describe('kebabCase — property-based', () => {
       }),
     );
   });
+
+  it('never starts/ends with a hyphen and never has consecutive hyphens', () => {
+    fc.assert(
+      fc.property(fc.string(), (str) => {
+        expect(kebabCase(str)).not.toMatch(/^-|-$|--/);
+      }),
+    );
+  });
 });
 
 describe('kebabCase — contract', () => {
@@ -54,5 +62,18 @@ describe('kebabCase — contract', () => {
 
   it('already lowercase string unchanged', () => {
     expect(kebabCase('alreadykebab')).toBe('alreadykebab');
+  });
+
+  it('snake_case converts correctly', () => {
+    expect(kebabCase('user_name')).toBe('user-name');
+  });
+
+  it('is idempotent — applying it twice equals applying it once', () => {
+    fc.assert(
+      fc.property(fc.string(), (str) => {
+        const once = kebabCase(str);
+        expect(kebabCase(once)).toBe(once);
+      }),
+    );
   });
 });
