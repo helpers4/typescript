@@ -26,9 +26,9 @@ name/behavior first if it wasn't already specified.
   caution. `array`/`object` having *intentionally duplicated* `compact`/`equalsShallow` is the
   one deliberate exception — see `AGENTS.md`.
 
-## 2. Create the four files
+## 2. Create the files
 
-Follow `CONTRIBUTING.md`'s "Creating a new helper" section (Steps 1–3) for the exact file
+Follow `CONTRIBUTING.md`'s "Creating a new helper" section (Steps 1–3, 5) for the exact file
 templates:
 
 - `helpers/<category>/<name>.ts` — implementation + LGPL-3.0-or-later license header + JSDoc
@@ -41,6 +41,10 @@ templates:
 - `helpers/<category>/<name>.example.ts` — a `HelperExamples` default export (see
   `scripts/examples/types.ts`) with ≥2 examples, each with a `title`, `description`, `code`
   string, and a throwing `assert()`
+- `helpers/<category>/<name>.bench.ts` — **optional**; match the category's own convention rather
+  than guessing: `ls helpers/<category>/*.bench.ts | wc -l` vs. the function count tells you
+  whether that category typically has one or typically doesn't. `vitest bench` supports async
+  callbacks, so a helper that `await`s real work isn't a reason to skip it.
 
 Do **not** hand-edit `helpers/<category>/index.ts` — it's generated at build time and
 gitignored; the build discovers new files automatically.
@@ -56,7 +60,9 @@ pnpm typecheck && pnpm lint && pnpm test:coverage && pnpm build && pnpm coherenc
 ```
 
 All must pass. Check `pnpm test:coverage`'s per-file output for the new files specifically —
-100% on the aggregate can hide a gap in exactly the file just added.
+100% on the aggregate can hide a gap in exactly the file just added. If a `.bench.ts` was added,
+also run `npx vitest bench helpers/<category>/<name>.bench.ts --run` to confirm it executes
+cleanly (`pnpm bench` on its own runs the *entire* suite, slow and unnecessary for one file).
 
 ## 4. Commit
 
