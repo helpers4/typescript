@@ -2,7 +2,7 @@
   "name": "@helpers4/all",
   "version": "{{version}}",
   "description": "Complete collection of helpers4 utilities - all categories in one convenient package.",
-  "author": "baxyz <baxy@etik.com>",
+  "author": "baxyz <craft@baxyz.dev>",
   "license": "LGPL-3.0",
   "homepage": "https://helpers4.dev/typescript/",
   "repository": {
