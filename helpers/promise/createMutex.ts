@@ -50,7 +50,7 @@ export interface Mutex {
  *     return cachedToken;
  *   });
  * }
- * @since next
+ * @since 3.0.4
  */
 export function createMutex(): Mutex {
   const semaphore = createSemaphore(1);

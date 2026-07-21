@@ -63,7 +63,7 @@ export interface Semaphore {
  * } finally {
  *   release(); // throws if called again
  * }
- * @since next
+ * @since 3.0.4
  */
 export function createSemaphore(permits: number): Semaphore {
   const totalPermits = validatePositiveCount(permits, 'createSemaphore: permits');

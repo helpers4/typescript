@@ -31,7 +31,7 @@ import { runConcurrentMap } from './_concurrentMap.js';
  * @example
  * await mapAsync(urls, (url) => fetch(url), 2)
  * // at most 2 concurrent fetch() calls
- * @since next
+ * @since 3.0.4
  */
 export async function mapAsync<T, R>(
   array: readonly T[],

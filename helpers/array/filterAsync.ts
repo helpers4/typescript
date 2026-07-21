@@ -21,7 +21,7 @@ import { runConcurrentMap } from './_concurrentMap.js';
  * @example
  * await filterAsync(files, (file) => fileExists(file))
  * // => only the files that actually exist, checked concurrently
- * @since next
+ * @since 3.0.4
  */
 export async function filterAsync<T>(
   array: readonly T[],

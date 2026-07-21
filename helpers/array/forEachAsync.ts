@@ -19,7 +19,7 @@ import { runConcurrentEach } from './_concurrentMap.js';
  * @example
  * await forEachAsync(files, (file) => uploadFile(file), 3)
  * // uploads at most 3 files at once
- * @since next
+ * @since 3.0.4
  */
 export async function forEachAsync<T>(
   array: readonly T[],

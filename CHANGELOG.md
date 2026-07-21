@@ -8,6 +8,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.0.4] - 2026-07-21
+
+### 🚀 Features
+- **array**: add mapAsync helper
+- **array**: add forEachAsync helper
+- **array**: add filterAsync helper
+- **array**: add resolveConcurrency and runConcurrentMap utilities
+- **promise**: add createMutex helper
+- **promise**: add createSemaphore helper
+- **set**: add native Set methods for union, intersection, difference, and symmetricDifference
+- **shared**: add validatePositiveCount helper
+
+### 🐛 Bug Fixes
+- **promise**: treat Infinity as no cap in parallelSettle()
+- **promise**: treat Infinity as no cap in parallel()
+- update npm downloads badge to reflect array package
+- update TypeScript references and typecheck script in configuration files
+
+### 📝 Documentation
+- update TODO
+
+### 📌 Dependencies
+- **deps**: bump the actions group with 2 updates
+- **deps**: bump actions/setup-node from 6.4.0 to 7.0.0
+
 ## [3.0.3] - 2026-07-20
 
 ### 🚀 Features
@@ -912,6 +937,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.0.4]: https://github.com/helpers4/typescript/compare/v3.0.3...v3.0.4
 [3.0.3]: https://github.com/helpers4/typescript/compare/v3.0.2...v3.0.3
 [3.0.2]: https://github.com/helpers4/typescript/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/helpers4/typescript/compare/v3.0.0...v3.0.1
