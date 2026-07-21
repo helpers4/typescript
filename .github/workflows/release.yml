@@ -281,9 +281,13 @@ jobs:
       - name: Package build metadata for website
         if: ${{ !inputs.dry-run }}
         run: |
-          # Package all meta/ directories for the website to consume
+          # Package all meta/ directories plus each category's llms.txt for the website to
+          # consume — llms.txt lives at build/<category>/llms.txt, outside meta/, so it needs
+          # its own match; without it, generate-typescript-docs.js silently skips regenerating
+          # llms-full.txt (warns "not found", never fails the workflow) and the site keeps
+          # serving whatever version it last had, indefinitely.
           cd build
-          find . -path '*/meta/*.json' | tar -czf /tmp/build-meta.tar.gz -T -
+          find . \( -path '*/meta/*.json' -o -name 'llms.txt' \) | tar -czf /tmp/build-meta.tar.gz -T -
           echo "📦 Packaged build metadata ($(du -h /tmp/build-meta.tar.gz | cut -f1))"
 
       - name: Create verified tag and GitHub Release
