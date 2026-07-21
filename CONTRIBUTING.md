@@ -44,7 +44,7 @@ helpers/
     config.json                # Category metadata
 ```
 
-Categories: `array`, `ci`, `color`, `commit`, `date`, `function`, `guard`, `id`, `markdown`, `node`, `number`, `object`, `observable`, `promise`, `string`, `type`, `url`, `version`.
+Categories: `array`, `ci`, `color`, `commit`, `date`, `function`, `guard`, `id`, `map`, `markdown`, `node`, `number`, `object`, `observable`, `promise`, `set`, `string`, `type`, `url`, `version`.
 
 ## Creating a new helper
 
