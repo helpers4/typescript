@@ -15,7 +15,9 @@
  * function starts.
  *
  * @param functions - Array of functions that return promises
- * @param concurrency - Maximum number of concurrent executions
+ * @param concurrency - Maximum number of concurrent executions. `Infinity` means no cap; any
+ *   other non-finite or non-positive value (`NaN`, `0`, negative) is clamped to `1` (fully
+ *   sequential) rather than rejected.
  * @returns An object with `fulfilled` values and `rejected` reasons, each in input order
  * @see {@link parallel} for concurrency-limited execution that rejects on the first failure
  * @see {@link settle} for unlimited-concurrency partitioning (input is already-running promises)
@@ -34,7 +36,12 @@ export async function parallelSettle<T>(
   functions: readonly (() => Promise<T>)[],
   concurrency: number,
 ): Promise<{ fulfilled: T[]; rejected: unknown[] }> {
-  const clampedConcurrency = Number.isFinite(concurrency) ? Math.max(1, Math.floor(concurrency)) : 1;
+  const clampedConcurrency =
+    concurrency === Number.POSITIVE_INFINITY
+      ? functions.length
+      : Number.isFinite(concurrency)
+        ? Math.max(1, Math.floor(concurrency))
+        : 1;
   const results: ({ status: 'fulfilled'; value: T } | { status: 'rejected'; reason: unknown })[] = Array.from({
     length: functions.length,
   });

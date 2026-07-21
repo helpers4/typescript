@@ -147,9 +147,19 @@ describe('parallelSettle', () => {
     expect(result.fulfilled).toEqual([1, 2]);
   });
 
-  it('falls back to 1 for an Infinity concurrency', async () => {
-    const fns = [() => Promise.resolve(1), () => Promise.resolve(2)];
+  it('treats Infinity as no cap, running everything concurrently', async () => {
+    let concurrent = 0;
+    let maxConcurrent = 0;
+    const task = async (n: number) => {
+      concurrent++;
+      maxConcurrent = Math.max(maxConcurrent, concurrent);
+      await new Promise((r) => setTimeout(r, 5));
+      concurrent--;
+      return n;
+    };
+    const fns = [1, 2].map((n) => () => task(n));
     const result = await parallelSettle(fns, Infinity);
     expect(result.fulfilled).toEqual([1, 2]);
+    expect(maxConcurrent).toBe(2);
   });
 });
