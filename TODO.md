@@ -79,10 +79,11 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
   than wait for 3.0.5. Also fixed the root `public/llms.txt`'s hand-authored counts (still
   18/274, now 20/312) — stays hand-authored, so it'll drift again after future releases unless
   someone remembers to update it (not automated).
-- [ ] 🟢 Submit to llms.txt discovery directories once the helpers4.dev one exists —
+- [x] 🟢 Submit to llms.txt discovery directories (2026-07-21) — submitted to
   [llmstxt.site](https://llmstxt.site/submit) (form) and
-  [llms-txt-hub](https://github.com/thedaviddias/llms-txt-hub) (PR-based). Low cost, do after
-  the site-level file above.
+  [llms-txt-hub](https://github.com/thedaviddias/llms-txt-hub/pull/1396) (PR #1396). The
+  llms-txt-hub form dropped the "Additional content" field on submit (form bug on their end) —
+  added it back as a PR comment instead.
 - [ ] 🟢 List helpers4 on general (non-AI) TypeScript discovery sites — the previously-suggested
   target, [dzharii/awesome-typescript](https://github.com/dzharii/awesome-typescript), has been
   **archived (read-only) since 2026-02-11** — verified via `gh repo view`, not a valid PR target
