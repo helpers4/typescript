@@ -52,15 +52,33 @@ Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
   orientation, not a replacement. Confirmed compliant with the llmstxt.org spec (only a H1 is
   actually required; our blockquote + H2 link-list sections already follow the
   `[name](url): notes` format).
-- [x] 🟡 **`llms.txt` on helpers4.dev** — done (2026-07-19, `website` repo, `next-feat` branch,
-  not yet merged): hand-authored `public/llms.txt` at the site root, H2 per product (typescript,
-  devcontainer, action), linking to `/typescript/llms-full.txt` for the TS deep-dive instead of
-  duplicating it. That deep-dive file is `build/all/llms.txt` copied by
-  `generate-typescript-docs.js` into `public/<DOCS_TARGET>/llms-full.txt` on every doc-gen run
-  (one per version slot — `typescript/`, `typescript/next/`, archived `typescript/vN/` all get
-  their own snapshot; the major-version archiving step now carries its slot's copy along too).
-  Verified end-to-end: ran the generator for real, built the site, confirmed both files serve at
-  the right URLs with real content (316KB / 12356 lines for the TS deep-dive).
+- [x] 🟡 **`llms.txt` on helpers4.dev** — done (2026-07-19, `website` repo, merged): hand-authored
+  `public/llms.txt` at the site root, H2 per product (typescript, devcontainer, action), linking
+  to `/typescript/llms-full.txt` for the TS deep-dive instead of duplicating it. That deep-dive
+  file is `build/all/llms.txt` copied by `generate-typescript-docs.js` into
+  `public/<DOCS_TARGET>/llms-full.txt` on every doc-gen run (one per version slot —
+  `typescript/`, `typescript/next/`, archived `typescript/vN/` all get their own snapshot).
+  **Found broken and fixed (2026-07-21)**: despite this, the live `llms-full.txt` had been stuck
+  at v3.0.1 through 3.0.2/3.0.3/3.0.4 — three independent bugs, all now fixed, all verified
+  live in prod (curl'd the real URL, confirmed "Version: 3.0.4 / ~312 functions / 20
+  categories"):
+  1. `typescript` repo's `release.yml` only packaged `*/meta/*.json` into `build-meta.tar.gz`
+     for the website to consume — `llms.txt` lives outside `meta/`, so it was never included;
+     the website generator warned and silently skipped regenerating `llms-full.txt` every time.
+  2. Same gap in the website's npm-package fallback path (`fetch_from_npm_packages`) — fixed
+     for defense-in-depth even though the primary path is what's actually in use.
+  3. Even with (1)/(2) fixed, `on-typescript-release.yml`'s commit step only staged
+     `src/content/docs/<target>/` and `src/data/versions.json` — never `public/typescript/`,
+     where `llms-full.txt` actually lives — so it could be correctly regenerated on disk and
+     still silently never get committed ("No changes to commit").
+  Retroactively repaired the already-stale v3.0.4 release too: rebuilt from the exact tag,
+  confirmed the corrected `build-meta.tar.gz` is a byte-identical superset of the original
+  (only `buildDate` differs) before re-uploading it to the live GitHub release — **this
+  invalidated that asset's Sigstore provenance attestation** (signed against the old content),
+  a real Signed-Releases scorecard tradeoff accepted to fix the live content immediately rather
+  than wait for 3.0.5. Also fixed the root `public/llms.txt`'s hand-authored counts (still
+  18/274, now 20/312) — stays hand-authored, so it'll drift again after future releases unless
+  someone remembers to update it (not automated).
 - [ ] 🟢 Submit to llms.txt discovery directories once the helpers4.dev one exists —
   [llmstxt.site](https://llmstxt.site/submit) (form) and
   [llms-txt-hub](https://github.com/thedaviddias/llms-txt-hub) (PR-based). Low cost, do after
