@@ -86,9 +86,18 @@ describe('parallelSettle — contract', () => {
     expect(called).toBe(true);
   });
 
-  it('concurrency=Infinity is clamped to 1 (not finite), same as parallel()', async () => {
-    const fns = [10, 20, 30].map(v => () => Promise.resolve(v));
+  it('concurrency=Infinity means no cap, same as parallel()', async () => {
+    let concurrent = 0;
+    let maxConcurrent = 0;
+    const fns = [10, 20, 30].map((v) => async () => {
+      concurrent++;
+      maxConcurrent = Math.max(maxConcurrent, concurrent);
+      await Promise.resolve();
+      concurrent--;
+      return v;
+    });
     const result = await parallelSettle(fns, Infinity);
     expect(result.fulfilled).toEqual([10, 20, 30]);
+    expect(maxConcurrent).toBe(3);
   });
 });
