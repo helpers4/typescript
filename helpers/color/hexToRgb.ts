@@ -22,7 +22,7 @@ export interface RgbColor {
   a?: number;
 }
 
-const HEX_PATTERN = new RegExp(`^#?(${HEX_COLOR_DIGITS})$`, 'i');
+const HEX_PATTERN = /* @__PURE__ */ new RegExp(`^#?(${HEX_COLOR_DIGITS})$`, 'i');
 
 function expandShortHex(digits: string): string {
   return digits.length <= 4

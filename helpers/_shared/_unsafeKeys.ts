@@ -13,4 +13,4 @@ const UNSAFE_KEY_LIST = ['__proto__', 'constructor', 'prototype'] as const;
 /** @ignore */
 export type UnsafeKey = (typeof UNSAFE_KEY_LIST)[number];
 
-export const UNSAFE_KEYS = new Set<string>(UNSAFE_KEY_LIST);
+export const UNSAFE_KEYS = /* @__PURE__ */ new Set<string>(UNSAFE_KEY_LIST);

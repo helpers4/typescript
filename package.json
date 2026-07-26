@@ -76,11 +76,11 @@
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitest/coverage-v8": "^4.1.10",
     "fast-check": "^4.9.0",
-    "fs-extra": "^11.3.6",
+    "fs-extra": "^11.4.0",
     "git-cliff": "^2.13.1",
     "glob": "^13.0.6",
-    "happy-dom": "^20.11.0",
-    "oxlint": "^1.74.0",
+    "happy-dom": "^20.11.1",
+    "oxlint": "^1.75.0",
     "rollup": "^4.62.2",
     "rollup-plugin-dts": "^6.4.1",
     "rxjs": "^7.0.0",
@@ -90,7 +90,7 @@
     "vite": "^8.1.5",
     "vitest": "^4.1.10"
   },
-  "packageManager": "pnpm@10.28.2+sha512.41872f037ad22f7348e3b1debbaf7e867cfd448f2726d9cf74c08f19507c31d2c8e7a11525b983febc2df640b5438dee6023ebb1f84ed43cc2d654d2bc326264",
+  "packageManager": "pnpm@11.17.0+sha512.cca3cea332ad254bb84145f966d19f4879615210346fc92c79a047f23a0d7b3cca3c3792f0076ba1f1831d277efbcf0a9119b31a9a60eca7fb3d6231f331ef72",
   "engines": {
     "node": ">=26.0.0",
     "browser": "ES2022+"
@@ -98,17 +98,5 @@
   "runtimes": {
     "node": ">=26.0.0",
     "browser": "ES2022+"
-  },
-  "pnpm": {
-    "overrides": {
-      "postcss": ">=8.5.10",
-      "fast-uri": ">=3.1.2",
-      "brace-expansion": ">=5.0.6",
-      "qs": ">=6.15.2",
-      "ws": ">=8.20.1",
-      "esbuild": ">=0.28.1",
-      "@babel/core": ">=7.29.6",
-      "markdown-it": ">=14.2.0"
-    }
   }
 }
