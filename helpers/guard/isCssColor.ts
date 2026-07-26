@@ -6,7 +6,7 @@
 
 import { HEX_COLOR_DIGITS } from '../_shared/_hexColorGrammar.js';
 
-const HEX_COLOR = new RegExp(`^#(?:${HEX_COLOR_DIGITS})$`, 'i');
+const HEX_COLOR = /* @__PURE__ */ new RegExp(`^#(?:${HEX_COLOR_DIGITS})$`, 'i');
 const FUNCTIONAL_COLOR = /^(?:rgb|rgba|hsl|hsla)\(\s*[\d.%,\s/-]+\s*\)$/i;
 const NAMED_COLOR = /^[a-z]+$/i;
 

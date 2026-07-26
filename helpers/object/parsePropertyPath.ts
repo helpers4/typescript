@@ -12,7 +12,7 @@ const BRACKET = /\[(\d+)\]/g;
 // call is pure waste. Capped so a caller who *does* build many distinct,
 // dynamic path strings can't grow this into an unbounded memory leak.
 const MAX_CACHE_SIZE = 500;
-const pathCache = new Map<string, readonly (string | number)[]>();
+const pathCache = /* @__PURE__ */ new Map<string, readonly (string | number)[]>();
 
 /**
  * Parses a dot/bracket-notation property path into an array of string/number
