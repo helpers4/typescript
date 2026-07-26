@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.0.5] - 2026-07-26
+
+### 🐛 Bug Fixes
+- **CI-CD**: include llms.txt in the website build-metadata artifact
+- fix tree-shaking dead-code leak and CI security-audit failure
+- correct public author email to craft@baxyz.dev
+- update categories in documentation to include 'map' and 'set' utilities
+
+### 📝 Documentation
+- update TODO.md with recent changes and fixes
+- have /add-helper check benchmark convention per category
+- mark llms.txt discovery-directory submission done
+- record the llms-full.txt staleness saga and its fixes
+
+### ✅ Tests
+- **array**: add missing benchmarks for the new stats/async-iteration helpers
+- **map**: add benchmarks for all 11 functions
+- **object**: add missing benchmarks for mapDeep, sortKeys, and the *CaseKeys helpers
+- **promise**: add benchmarks for createMutex and createSemaphore
+- **set**: add benchmarks for all 4 functions
+
 ## [3.0.4] - 2026-07-21
 
 ### 🚀 Features
@@ -937,6 +958,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.0.5]: https://github.com/helpers4/typescript/compare/v3.0.4...v3.0.5
 [3.0.4]: https://github.com/helpers4/typescript/compare/v3.0.3...v3.0.4
 [3.0.3]: https://github.com/helpers4/typescript/compare/v3.0.2...v3.0.3
 [3.0.2]: https://github.com/helpers4/typescript/compare/v3.0.1...v3.0.2
