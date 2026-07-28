@@ -50,6 +50,31 @@ const examples: HelperExamples = {
         if (Object.keys(result).length !== 0) throw new Error('Expected {}');
       },
     },
+    {
+      title: 'Also reads JSONC (comments + trailing commas)',
+      description:
+        'tsconfig.json/settings.json-style content — line/block comments and a trailing comma — parses too.',
+      code: `safeReadJsonFile('./tsconfig.json')
+// {
+//   // enable strict type-checking
+//   "compilerOptions": { "strict": true },
+// }
+// => { compilerOptions: { strict: true } }`,
+      assert: () => {
+        const dir = mkdtempSync(join(tmpdir(), 'helpers4-example-'));
+        try {
+          const filePath = join(dir, 'tsconfig.json');
+          writeFileSync(
+            filePath,
+            '{\n  // enable strict type-checking\n  "compilerOptions": { "strict": true },\n}',
+          );
+          const result = safeReadJsonFile<{ compilerOptions: { strict: boolean } }>(filePath);
+          if (result?.compilerOptions.strict !== true) throw new Error('Expected compilerOptions.strict === true');
+        } finally {
+          rmSync(dir, { recursive: true, force: true });
+        }
+      },
+    },
   ],
 };
 
