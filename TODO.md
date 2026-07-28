@@ -98,3 +98,22 @@ Only open items live here. Anything finished is in git history / `CHANGELOG.md` 
 - [ ] 🟢 New "settings" package for shared tool configs (vite/vitest/oxc/lint/cspell…), customized
   for helpers4/baxyz instead of a third-party preset. Not a `helpers/` category — configs don't
   tree-shake like functions — needs a design decision on package/repo shape before implementation.
+- [ ] 🟡 **Cross-category name collisions**: `isEmpty` alone exists as `array/isEmpty.ts`,
+  `object/isEmpty.ts`, *and* `string/isEmpty.ts` (verified 2026-07-26) — fine as long as each
+  category is imported separately, but a real problem the moment anything flattens them into one
+  namespace (`@helpers4/all`, a future `import * as h4`, etc.). Idea: also publish each helper
+  under a category-suffixed alias (`isEmpty4Array`, `isEmpty4Object`, `isEmpty4String`) alongside
+  the plain name, so collision-prone call sites have an unambiguous escape hatch without forcing
+  everyone to use the suffixed form. Needs a design pass: which helpers actually collide (audit
+  first, don't guess), where the alias is generated (build step vs. hand-written export), and
+  whether it's worth the doubled public API surface for names that don't collide.
+- [ ] 🔴 **`@helpers4/all` doesn't actually install the whole library**: checked
+  `.template/bundle/package.json` (2026-07-26) — it lists every category as a `peerDependency`,
+  not a `dependency`, and ships no JS at all (no `main`/`exports`, `files` is just
+  `LICENSE.md`/`package.json`/`README.md`/`meta/`/`llms.txt`). `peerDependencies` aren't
+  auto-installed by pnpm by default, and even fully installed there's no code in the package to
+  import from — so `@helpers4/all` today is a metadata shell, not a working "install everything"
+  package. Needs a real fix: likely re-exporting every category's `index.ts` as `dependencies`
+  (not peer) with an actual bundled `lib/index.js`, generated the same way each category's own
+  bundle already is — check `buildBundle`/`prepareBundlePackageJson` in
+  `scripts/build/build-bundle.ts` for where this needs to change.
