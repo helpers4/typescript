@@ -63,4 +63,22 @@ describe('safeReadJsonFile', () => {
     const fallback = { error: true };
     expect(safeReadJsonFile(join(dir, 'missing.json'), fallback)).toBe(fallback);
   });
+
+  it('parses a JSONC file with line comments', () => {
+    const filePath = join(dir, 'tsconfig.json');
+    writeFileSync(filePath, '{\n  // enable strict mode\n  "strict": true\n}');
+    expect(safeReadJsonFile<{ strict: boolean }>(filePath)).toEqual({ strict: true });
+  });
+
+  it('parses a JSONC file with block comments and a trailing comma', () => {
+    const filePath = join(dir, 'settings.json');
+    writeFileSync(filePath, '{\n  "a": 1, /* trailing comma below */\n  "b": 2,\n}');
+    expect(safeReadJsonFile<{ a: number; b: number }>(filePath)).toEqual({ a: 1, b: 2 });
+  });
+
+  it('still returns the fallback for content that is invalid even as JSONC', () => {
+    const filePath = join(dir, 'broken.json');
+    writeFileSync(filePath, '{ this is not json at all');
+    expect(safeReadJsonFile(filePath, 'fallback')).toBe('fallback');
+  });
 });
