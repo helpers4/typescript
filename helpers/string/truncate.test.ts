@@ -24,17 +24,23 @@ describe('truncate', () => {
     expect(truncate('Hello', 5)).toBe('Hello');
   });
 
-  it('truncates with default ellipsis (…)', () => {
-    expect(truncate('Hello, world!', 8)).toBe('Hello, …');
+  it('truncates with default ellipsis (…), trimming a trailing space at the cut', () => {
+    expect(truncate('Hello, world!', 8)).toBe('Hello,…');
   });
 
   it('truncates with custom ellipsis', () => {
     expect(truncate('Hello, world!', 8, '...')).toBe('Hello...');
   });
 
-  it('result length equals maxLength when truncated (default ellipsis)', () => {
-    const result = truncate('Hello, world!', 8);
+  it('result length equals maxLength when the cut does not land on whitespace', () => {
+    const result = truncate('Hello world!', 8);
+    expect(result).toBe('Hello w…');
     expect(result.length).toBe(8);
+  });
+
+  it('result is shorter than maxLength when the cut lands right after whitespace', () => {
+    const result = truncate('Hello, world!', 8);
+    expect(result.length).toBe(7);
   });
 
   it('result length equals maxLength when truncated (custom ellipsis)', () => {

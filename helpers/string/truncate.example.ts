@@ -13,11 +13,11 @@ const examples: HelperExamples = {
   examples: [
     {
       title: 'Truncate with default ellipsis',
-      description: 'Appends … when the string exceeds the limit.',
+      description: 'Appends … when the string exceeds the limit, trimming a trailing space at the cut point.',
       code: `truncate('Hello, world!', 8)
-// => 'Hello, …'`,
+// => 'Hello,…'`,
       assert: () => {
-        if (truncate('Hello, world!', 8) !== 'Hello, …') throw new Error('Unexpected result');
+        if (truncate('Hello, world!', 8) !== 'Hello,…') throw new Error('Unexpected result');
       },
     },
     {
