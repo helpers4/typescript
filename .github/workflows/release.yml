@@ -389,52 +389,12 @@ jobs:
       cancel-in-progress: false
 
     steps:
-      - name: Get Trigganator token
-        id: trigganator
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
-        with:
-          client-id: ${{ vars.TRIGGANATOR_ID }}
-          private-key: ${{ secrets.TRIGGANATOR_KEY }}
-          owner: helpers4
-          repositories: website
-          permission-contents: write
-
       - name: Trigger website docs update
-        id: trigger_docs_primary
-        continue-on-error: true
-        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697
+        uses: helpers4/action/trigger-website-update@215739f023134ab5ed2158607074084ec530a830
         with:
-          token: ${{ steps.trigganator.outputs.token }}
-          repository: helpers4/website
           event-type: typescript-release
-          client-payload: '{"version": "${{ needs.publish.outputs.new-version }}"}'
-
-      - name: Get Pushinator token fallback
-        if: steps.trigger_docs_primary.outcome != 'success'
-        id: pushinator_fallback
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
-        with:
-          client-id: ${{ vars.PUSHINATOR_ID }}
-          private-key: ${{ secrets.PUSHINATOR_KEY }}
-          owner: helpers4
-          repositories: website
-          permission-contents: write
-
-      - name: Retry website docs update with fallback token
-        if: steps.trigger_docs_primary.outcome != 'success'
-        id: trigger_docs_fallback
-        continue-on-error: true
-        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697
-        with:
-          token: ${{ steps.pushinator_fallback.outputs.token }}
-          repository: helpers4/website
-          event-type: typescript-release
-          client-payload: '{"version": "${{ needs.publish.outputs.new-version }}"}'
-
-      - name: Trigger summary
-        run: |
-          if [ "${{ steps.trigger_docs_primary.outcome }}" = "success" ] || [ "${{ steps.trigger_docs_fallback.outcome }}" = "success" ]; then
-            echo "✅ Website docs trigger dispatched for v${{ needs.publish.outputs.new-version }}"
-          else
-            echo "⚠️  Website docs trigger failed (non-blocking) for v${{ needs.publish.outputs.new-version }}"
-          fi
+          payload: '{"version": "${{ needs.publish.outputs.new-version }}"}'
+          app-id: ${{ vars.TRIGGANATOR_ID }}
+          app-private-key: ${{ secrets.TRIGGANATOR_KEY }}
+          fallback-app-id: ${{ vars.PUSHINATOR_ID }}
+          fallback-app-private-key: ${{ secrets.PUSHINATOR_KEY }}

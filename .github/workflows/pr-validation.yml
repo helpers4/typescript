@@ -37,16 +37,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+      - name: Setup pnpm
+        uses: helpers4/action/setup-pnpm@215739f023134ab5ed2158607074084ec530a830
         with:
           node-version: ${{ env.NODE_LATEST_LTS }}
-
-      - name: Enable corepack
-        run: corepack enable
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
       - name: Get current version
         id: version
@@ -94,23 +88,12 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    outputs:
-      status: ${{ steps.status.outputs.status }}
     steps:
       - name: Check conventional commits
         uses: helpers4/action/conventional-commits@397ddbfecdab62efa1416012576b165abf2d7ee4
         with:
           checkout: "true"
           pr-comment: "error"
-      - name: Set status
-        id: status
-        if: always()
-        run: |
-          if [ ${{ job.status }} == 'success' ]; then
-            echo "status=success" >> $GITHUB_OUTPUT
-          else
-            echo "status=failure" >> $GITHUB_OUTPUT
-          fi
 
   # Runtime compatibility (Node, Deno, Bun)
   runtime-compat:
@@ -129,16 +112,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
-      - name: Setup Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+      - name: Setup pnpm
+        uses: helpers4/action/setup-pnpm@215739f023134ab5ed2158607074084ec530a830
         with:
           node-version: ${{ env.NODE_LATEST_LTS }}
-
-      - name: Enable corepack
-        run: corepack enable
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
       - name: Setup Deno
         uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed
@@ -204,16 +181,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
 
-      - name: Setup Node.js
-        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+      - name: Setup pnpm
+        uses: helpers4/action/setup-pnpm@215739f023134ab5ed2158607074084ec530a830
         with:
           node-version: ${{ env.NODE_LATEST_LTS }}
-
-      - name: Enable corepack
-        run: corepack enable
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
 
       - name: Run mutation tests
         id: mutation
@@ -255,25 +226,11 @@ jobs:
     if: always()
 
     steps:
-      - name: Update PR comment
+      - name: Build extra sections
+        id: extra
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const createJobsTable = (jobs) => {
-              const rows = Object.entries(jobs).map(([job, status]) => {
-                const icon = status === 'success' ? '✅' :
-                           status === 'failure' ? '❌' :
-                           status === 'skipped' ? '⏭️' : '⚠️';
-                const statusBadge = status === 'success' ? '`passing`' :
-                                   status === 'failure' ? '`failing`' :
-                                   status === 'skipped' ? '`skipped`' : '`unknown`';
-                return `| ${icon} | **${job}** | ${statusBadge} |`;
-              }).join('\n');
-
-              return `| | Job | Status |\n|:---:|-----|:------:|\n${rows}`;
-            };
-
             const createCoverageSection = (coverage) => {
               const target = 100;
               const getStatus = (value) => {
@@ -325,17 +282,6 @@ jobs:
                 '',
                 '> 🧬 *Informational only, does not block the PR*',
               ].join('\n');
-            };
-
-            const jobs = {
-              '🔢 Version': "${{ needs.version-calculation.outputs.status || 'unknown' }}",
-              '🏗️ Build': "${{ needs.build.outputs.status || 'unknown' }}",
-              '🧪 Tests': "${{ needs.test.outputs.status || 'unknown' }}",
-              '📝 Lint': "${{ needs.lint.outputs.status || 'unknown' }}",
-              '📘 TypeCheck': "${{ needs.type-check.outputs.status || 'unknown' }}",
-              '🔐 Security Audit': "${{ needs.security.outputs.status || 'unknown' }}",
-              '🧾 Conventional Commits': "${{ needs.conventional-commits.outputs.status || 'unknown' }}",
-              '🔗 Coherency': "${{ needs.verification.outputs.status || 'unknown' }}",
             };
 
             const coverage = {
@@ -398,29 +344,7 @@ jobs:
               ].join('\n');
             };
 
-            const passedCount = Object.values(jobs).filter(s => s === 'success').length;
-            const totalJobs = Object.keys(jobs).length;
-            const allPassed = passedCount === totalJobs;
-            const avgCoverage = (Object.values(coverage).reduce((a, b) => a + parseFloat(b), 0) / 4).toFixed(1);
-            const coverageOk = parseFloat(avgCoverage) >= 100;
-
-            const statusBanner = allPassed && coverageOk
-              ? '## ✅ PR Validation Passed\n\n> All checks passed and coverage target reached!'
-              : allPassed
-                ? `## 🟡 PR Validation Passed\n\n> All checks passed • Coverage: ${avgCoverage}% (target: 100%)`
-                : `## ❌ PR Validation Failed\n\n> ${passedCount}/${totalJobs} checks passed`;
-
-            const comment = `${statusBanner}
-
-            ---
-
-            ### 📋 Pipeline Status
-
-            ${createJobsTable(jobs)}
-
-            ---
-
-            ### 📊 Code Coverage
+            const extraMarkdown = `### 📊 Code Coverage
 
             ${createCoverageSection(coverage)}
 
@@ -453,40 +377,22 @@ jobs:
             - 🔄 This comment updates automatically with each push
             - 📈 Coverage is measured using Vitest + v8
 
-            </details>
+            </details>`;
 
-            <sub>🤖 Generated by **@helpers4** CI • ${new Date().toISOString().split('T')[0]}</sub>`;
+            core.setOutput('markdown', extraMarkdown);
 
-            try {
-              const { data: comments } = await github.rest.issues.listComments({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-              });
-
-              const botComment = comments.find(comment =>
-                comment.user.type === 'Bot' && comment.body.includes('PR Validation')
-              );
-
-              if (botComment) {
-                await github.rest.issues.updateComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  comment_id: botComment.id,
-                  body: comment
-                });
-                console.log('Updated existing comment');
-              } else {
-                await github.rest.issues.createComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: context.issue.number,
-                  body: comment
-                });
-                console.log('Created new comment');
-              }
-            } catch (error) {
-              console.error('Error updating PR comment:', error);
-              console.log('Comment update failed, but continuing workflow...');
+      - name: Update PR comment
+        uses: helpers4/action/pr-status-comment@215739f023134ab5ed2158607074084ec530a830
+        with:
+          jobs: |
+            {
+              "🔢 Version": "${{ needs.version-calculation.outputs.status || 'unknown' }}",
+              "🏗️ Build": "${{ needs.build.outputs.status || 'unknown' }}",
+              "🧪 Tests": "${{ needs.test.outputs.status || 'unknown' }}",
+              "📝 Lint": "${{ needs.lint.outputs.status || 'unknown' }}",
+              "📘 TypeCheck": "${{ needs.type-check.outputs.status || 'unknown' }}",
+              "🔐 Security Audit": "${{ needs.security.outputs.status || 'unknown' }}",
+              "🧾 Conventional Commits": "${{ needs.conventional-commits.result }}",
+              "🔗 Coherency": "${{ needs.verification.outputs.status || 'unknown' }}"
             }
-            return true;
+          extra-markdown: ${{ steps.extra.outputs.markdown }}
