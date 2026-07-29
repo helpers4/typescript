@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { assertValidTrimMode } from './_trimCharClasses';
 import { trimStart } from './trimStart';
 import { type TrimMode, trimEnd } from './trimEnd';
 
@@ -22,6 +23,9 @@ export type { TrimMode };
  * @param input - The string to trim.
  * @param mode - How aggressively to trim. Defaults to `'whitespace'`.
  * @returns The trimmed string, or the input itself when `null`/`undefined`.
+ * @throws {TypeError} If `mode` is passed but isn't a valid {@link TrimMode}
+ *   (only enforceable at runtime — plain-JS callers aren't checked by the
+ *   TypeScript overloads below).
  * @example
  * trim('   Hello   ') // => 'Hello' (default 'whitespace' mode)
  * @example
@@ -39,5 +43,6 @@ export function trim(input: null, mode?: TrimMode): null;
 export function trim(input: string | null | undefined, mode: TrimMode = 'whitespace'): string | null | undefined {
   if (input == null) return input;
   if (mode === 'whitespace') return input.trim();
+  assertValidTrimMode(mode, 'trim');
   return trimStart(trimEnd(input, mode), mode);
 }

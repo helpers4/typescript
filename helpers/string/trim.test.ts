@@ -54,8 +54,12 @@ describe('trim', () => {
   });
 
   it('throws a TypeError on an invalid mode instead of silently no-op-ing', () => {
-    // Delegates to trimEnd internally, which is what actually validates.
+    // Validated directly in trim() itself (not just inherited from trimEnd's
+    // own check via delegation) so the error names the function the caller
+    // actually invoked, not an internal implementation detail.
     // @ts-expect-error - intentionally invalid at the type level too
     expect(() => trim('   Hello   ', 'whitepsace')).toThrow(TypeError);
+    // @ts-expect-error
+    expect(() => trim('   Hello   ', 'whitepsace')).toThrow(/^trim: mode must be one of/);
   });
 });
