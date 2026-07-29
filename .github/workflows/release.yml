@@ -390,7 +390,7 @@ jobs:
 
     steps:
       - name: Trigger website docs update
-        uses: helpers4/action/dispatch-with-fallback@655d5518ee59c3181234460c5b4bbc7ae47ed86d
+        uses: helpers4/action/dispatch-with-fallback@c66ddc3b4c9c46c4c3f4b9a8c87e16bb188321bd
         with:
           target-owner: helpers4
           target-repo: website
