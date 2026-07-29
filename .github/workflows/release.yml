@@ -390,8 +390,10 @@ jobs:
 
     steps:
       - name: Trigger website docs update
-        uses: helpers4/action/trigger-website-update@215739f023134ab5ed2158607074084ec530a830
+        uses: helpers4/action/dispatch-with-fallback@655d5518ee59c3181234460c5b4bbc7ae47ed86d
         with:
+          target-owner: helpers4
+          target-repo: website
           event-type: typescript-release
           payload: '{"version": "${{ needs.publish.outputs.new-version }}"}'
           app-id: ${{ vars.TRIGGANATOR_ID }}
