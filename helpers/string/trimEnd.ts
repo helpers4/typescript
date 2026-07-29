@@ -24,6 +24,8 @@ export type { TrimMode };
  * @throws {TypeError} If `mode` is passed but isn't a valid {@link TrimMode}
  *   (only enforceable at runtime — plain-JS callers aren't checked by the
  *   TypeScript overloads below).
+ * @see {@link trimStart} — the mirror-image leading-side helper.
+ * @see {@link trim} — both ends at once.
  * @example
  * trimEnd('Hello   ') // => 'Hello' (default 'whitespace' mode)
  * @example

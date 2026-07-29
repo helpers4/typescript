@@ -22,6 +22,8 @@ import { TRIM_START_REGEX, type TrimMode, assertValidTrimMode } from './_trimCha
  * @throws {TypeError} If `mode` is passed but isn't a valid {@link TrimMode}
  *   (only enforceable at runtime — plain-JS callers aren't checked by the
  *   TypeScript overloads below).
+ * @see {@link trimEnd} — the mirror-image trailing-side helper.
+ * @see {@link trim} — both ends at once.
  * @example
  * trimStart('   Hello') // => 'Hello' (default 'whitespace' mode)
  * @example

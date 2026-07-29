@@ -26,6 +26,8 @@ export type { TrimMode };
  * @throws {TypeError} If `mode` is passed but isn't a valid {@link TrimMode}
  *   (only enforceable at runtime — plain-JS callers aren't checked by the
  *   TypeScript overloads below).
+ * @see {@link trimStart} — only the leading side.
+ * @see {@link trimEnd} — only the trailing side.
  * @example
  * trim('   Hello   ') // => 'Hello' (default 'whitespace' mode)
  * @example
