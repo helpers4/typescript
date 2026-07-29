@@ -47,6 +47,19 @@ describe('truncate — property-based', () => {
       ),
     );
   });
+
+  it('result is always well-formed UTF-16, even with astral characters (surrogate pairs) in the input', () => {
+    fc.assert(
+      fc.property(
+        fc.string({ unit: 'grapheme', minLength: 1, maxLength: 100 }),
+        fc.integer({ min: 0, max: 20 }),
+        (input, maxLength) => {
+          const result = truncate(input, maxLength);
+          expect(result).toBe(result.toWellFormed());
+        },
+      ),
+    );
+  });
 });
 
 describe('truncate — contract', () => {

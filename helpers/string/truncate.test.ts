@@ -76,4 +76,34 @@ describe('truncate', () => {
     expect(result.length).toBe(10);
     expect(result.endsWith('…')).toBe(true);
   });
+
+  it('does not trim a non-breaking space (U+00A0) at the cut point', () => {
+    const result = truncate('Hello, world!', 8);
+    expect(result).toBe('Hello, …');
+    expect(result.length).toBe(8);
+  });
+
+  it('drops an incomplete surrogate pair at the cut point instead of emitting malformed UTF-16', () => {
+    const result = truncate('a😀b', 3);
+    expect(result).toBe('a…');
+    expect(result).toBe(result.toWellFormed());
+  });
+
+  it('drops both a trailing space and the incomplete surrogate it exposes', () => {
+    // Cutting at 4 lands on the high surrogate of 😀; after dropping it, the
+    // space right before it becomes the new trailing character and must also
+    // be trimmed (regular space, not NBSP).
+    const result = truncate('hi 😀', 4);
+    expect(result).toBe('hi…');
+    expect(result).toBe(result.toWellFormed());
+  });
+
+  it('handles a slice that is only a lone high surrogate (nothing else left)', () => {
+    // '😀x' is 3 UTF-16 code units (high surrogate, low surrogate, 'x'); slicing
+    // to 1 code unit (maxLength 2 - ellipsis 1) keeps only the high surrogate,
+    // which then gets dropped entirely, leaving just the ellipsis.
+    const result = truncate('😀x', 2);
+    expect(result).toBe('…');
+    expect(result).toBe(result.toWellFormed());
+  });
 });
