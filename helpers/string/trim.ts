@@ -38,5 +38,6 @@ export function trim(input: undefined, mode?: TrimMode): undefined;
 export function trim(input: null, mode?: TrimMode): null;
 export function trim(input: string | null | undefined, mode: TrimMode = 'whitespace'): string | null | undefined {
   if (input == null) return input;
+  if (mode === 'whitespace') return input.trim();
   return trimStart(trimEnd(input, mode), mode);
 }

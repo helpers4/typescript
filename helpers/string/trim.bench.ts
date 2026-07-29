@@ -11,13 +11,19 @@ const short = '   Hello   ';
 const long = '   ' + 'Hello, world! '.repeat(200) + '   ';
 
 describe('trim', () => {
-  bench('short string, default (whitespace) mode', () => {
+  bench('short string, default (whitespace) mode - native fast path', () => {
     trim(short);
   });
-  bench('long string, default (whitespace) mode', () => {
+  bench('short string, wrappable mode - regex path', () => {
+    trim(short, 'wrappable');
+  });
+  bench('long string, default (whitespace) mode - native fast path', () => {
     trim(long);
   });
-  bench('long string, wrappable mode', () => {
+  bench('long string, wrappable mode - regex path', () => {
     trim(long, 'wrappable');
+  });
+  bench('long string, unicode mode - regex path', () => {
+    trim(long, 'unicode');
   });
 });
