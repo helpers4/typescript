@@ -414,7 +414,15 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
 
   // Double-safety: exclude anything without an explicit @since tag.
   // Primary guard is @internal + excludeInternal:true in TypeDoc options.
-  if (since === 'unknown') return undefined;
+  // Types/interfaces are exempt: the repo's own convention (see AGENTS.md and
+  // e.g. RgbColor, CapitalizeOptions) is that a companion type documented
+  // alongside its function does *not* get its own @since — it inherits
+  // relevance from whatever function(s) it's attached to below, and `since`
+  // isn't read from WebsiteRelatedType at all. Applying this check to types
+  // silently dropped every convention-following companion type from the
+  // website (verified: CapitalizeOptions, RgbColor, TrimMode were all missing
+  // from their function's relatedTypes because of this).
+  if (since === 'unknown' && kind !== 'type' && kind !== 'interface') return undefined;
 
   const examples = extractExamples(comment?.blockTags as CommentTag[] | undefined);
 
