@@ -52,4 +52,10 @@ describe('trim', () => {
   it('leaves a string with no leading/trailing whitespace unchanged', () => {
     expect(trim('Hello')).toBe('Hello');
   });
+
+  it('throws a TypeError on an invalid mode instead of silently no-op-ing', () => {
+    // Delegates to trimEnd internally, which is what actually validates.
+    // @ts-expect-error - intentionally invalid at the type level too
+    expect(() => trim('   Hello   ', 'whitepsace')).toThrow(TypeError);
+  });
 });

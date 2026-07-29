@@ -101,4 +101,15 @@ describe('trimEnd', () => {
   it('does not touch leading or interior whitespace', () => {
     expect(trimEnd('  Hello  World  ')).toBe('  Hello  World');
   });
+
+  it('throws a TypeError on an invalid mode instead of silently no-op-ing', () => {
+    // A plain-JS caller (or a typo'd/forwarded mode string) isn't caught by
+    // the TypeScript overloads — without validation, TRIM_END_REGEX[mode] is
+    // undefined and string.replace(undefined, '') silently searches for the
+    // literal text "undefined" instead of trimming anything.
+    // @ts-expect-error - intentionally invalid at the type level too
+    expect(() => trimEnd('Hello   ', 'whitepsace')).toThrow(TypeError);
+    // @ts-expect-error
+    expect(() => trimEnd('Hello   ', 'whitepsace')).toThrow(/mode must be one of/);
+  });
 });

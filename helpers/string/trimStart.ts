@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { TRIM_START_REGEX, type TrimMode } from './_trimCharClasses';
+import { TRIM_START_REGEX, type TrimMode, assertValidTrimMode } from './_trimCharClasses';
 
 /**
  * Trims leading characters from a string, at a configurable level of
@@ -19,6 +19,9 @@ import { TRIM_START_REGEX, type TrimMode } from './_trimCharClasses';
  * @param input - The string to trim.
  * @param mode - How aggressively to trim. Defaults to `'whitespace'`.
  * @returns The trimmed string, or the input itself when `null`/`undefined`.
+ * @throws {TypeError} If `mode` is passed but isn't a valid {@link TrimMode}
+ *   (only enforceable at runtime — plain-JS callers aren't checked by the
+ *   TypeScript overloads below).
  * @example
  * trimStart('   Hello') // => 'Hello' (default 'whitespace' mode)
  * @example
@@ -39,5 +42,6 @@ export function trimStart(
 ): string | null | undefined {
   if (input == null) return input;
   if (mode === 'whitespace') return input.trimStart();
+  assertValidTrimMode(mode, 'trimStart');
   return input.replace(TRIM_START_REGEX[mode], '');
 }

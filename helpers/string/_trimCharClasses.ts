@@ -74,3 +74,22 @@ export const TRIM_START_REGEX: Record<TrimMode, RegExp> = {
   whitespace: /* @__PURE__ */ new RegExp(`^[${WHITESPACE}]+`, 'u'),
   unicode: /* @__PURE__ */ new RegExp(`^[${UNICODE}]+`, 'u'),
 };
+
+/** @ignore */
+export const TRIM_MODES: readonly TrimMode[] = ['wrappable', 'separator', 'whitespace', 'unicode'];
+
+/**
+ * Validates `mode` at runtime — TypeScript's `TrimMode` union only guards
+ * callers using the type checker. A plain-JS caller (this is a tree-shakable
+ * JS utility lib, not TS-only) or a mistyped/forwarded mode string would
+ * otherwise silently no-op: `TRIM_END_REGEX[mode]` is `undefined` for an
+ * unknown key, and `string.replace(undefined, '')` coerces to searching for
+ * the literal text `"undefined"` instead of trimming anything, with no error.
+ * @throws {TypeError} If `mode` isn't one of the values in {@link TRIM_MODES}
+ * @ignore
+ */
+export function assertValidTrimMode(mode: TrimMode, label: string): void {
+  if (!TRIM_MODES.includes(mode)) {
+    throw new TypeError(`${label}: mode must be one of ${TRIM_MODES.join(', ')}, got ${JSON.stringify(mode)}`);
+  }
+}
