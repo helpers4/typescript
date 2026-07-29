@@ -43,27 +43,34 @@ const WHITESPACE = `${SEPARATOR}\\uFEFF`;
 // JOINER (contiguous U+200B–U+200D), and WORD JOINER (U+2060).
 const UNICODE = `${WHITESPACE}\\u200B-\\u200D\\u2060`;
 
-const CHAR_CLASS: Record<TrimMode, string> = {
-  wrappable: WRAPPABLE,
-  separator: SEPARATOR,
-  whitespace: WHITESPACE,
-  unicode: UNICODE,
-};
-
-const MODES = Object.keys(CHAR_CLASS) as TrimMode[];
-
 // Precompiled once per mode at module load — trimEnd/trimStart are called
 // per-string, so rebuilding a RegExp from a template string on every call
 // would be wasted work. The 'whitespace' entries are never read (that mode
 // takes the native String.prototype.trim*() fast path instead) but are still
 // built for a uniform Record<TrimMode, RegExp> type across all four modes.
+//
+// Written as an explicit per-mode object literal (not
+// Object.fromEntries(modes.map(...))): tested against Rollup directly, and
+// with two such Object.fromEntries(...)+.map() calls in the same module —
+// exactly this file's shape, one for TRIM_END_REGEX and one for
+// TRIM_START_REGEX — /* @__PURE__ */ alone was NOT enough to fully eliminate
+// the unused one when a consumer only imports trimEnd (not trimStart): the
+// binding was dropped but the call itself was still left behind as an
+// orphaned statement. The same values built as a plain object literal, each
+// entry individually /* @__PURE__ */-annotated, tree-shakes correctly.
 
 /** @ignore */
-export const TRIM_END_REGEX: Record<TrimMode, RegExp> = Object.fromEntries(
-  MODES.map((mode) => [mode, new RegExp(`[${CHAR_CLASS[mode]}]+$`, 'u')]),
-) as Record<TrimMode, RegExp>;
+export const TRIM_END_REGEX: Record<TrimMode, RegExp> = {
+  wrappable: /* @__PURE__ */ new RegExp(`[${WRAPPABLE}]+$`, 'u'),
+  separator: /* @__PURE__ */ new RegExp(`[${SEPARATOR}]+$`, 'u'),
+  whitespace: /* @__PURE__ */ new RegExp(`[${WHITESPACE}]+$`, 'u'),
+  unicode: /* @__PURE__ */ new RegExp(`[${UNICODE}]+$`, 'u'),
+};
 
 /** @ignore */
-export const TRIM_START_REGEX: Record<TrimMode, RegExp> = Object.fromEntries(
-  MODES.map((mode) => [mode, new RegExp(`^[${CHAR_CLASS[mode]}]+`, 'u')]),
-) as Record<TrimMode, RegExp>;
+export const TRIM_START_REGEX: Record<TrimMode, RegExp> = {
+  wrappable: /* @__PURE__ */ new RegExp(`^[${WRAPPABLE}]+`, 'u'),
+  separator: /* @__PURE__ */ new RegExp(`^[${SEPARATOR}]+`, 'u'),
+  whitespace: /* @__PURE__ */ new RegExp(`^[${WHITESPACE}]+`, 'u'),
+  unicode: /* @__PURE__ */ new RegExp(`^[${UNICODE}]+`, 'u'),
+};
