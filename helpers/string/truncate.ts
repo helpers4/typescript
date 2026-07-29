@@ -4,15 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-/**
- * Trims trailing "breakable" whitespace (space, tab, newline, CR, form feed,
- * vertical tab) only — deliberately narrower than `String.prototype.trimEnd`,
- * which also strips non-breaking spaces (U+00A0) and other Unicode space
- * separators that are placed specifically to *not* act as a break point.
- */
-function trimTrailingBreakableWhitespace(text: string): string {
-  return text.replace(/[ \t\n\r\f\v]+$/, '');
-}
+import { trimEnd } from './trimEnd';
 
 /**
  * Drops a trailing lone UTF-16 high surrogate (0xD800–0xDBFF) — left behind
@@ -68,7 +60,7 @@ export function truncate(
   let previous: string;
   do {
     previous = cut;
-    cut = dropTrailingLoneSurrogate(trimTrailingBreakableWhitespace(cut));
+    cut = dropTrailingLoneSurrogate(trimEnd(cut, 'wrappable'));
   } while (cut !== previous);
 
   return cut + ellipsis;
