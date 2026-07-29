@@ -78,8 +78,12 @@ describe('truncate', () => {
   });
 
   it('does not trim a non-breaking space (U+00A0) at the cut point', () => {
-    const result = truncate('Hello, world!', 8);
-    expect(result).toBe('Hello, …');
+    // Built explicitly from parts rather than a literal NBSP character in
+    // source, to avoid any ambiguity about whether it's really there.
+    const NBSP = String.fromCharCode(0x00a0);
+    const input = 'Hello,' + NBSP + 'world!';
+    const result = truncate(input, 8);
+    expect(result).toBe('Hello,' + NBSP + '…');
     expect(result.length).toBe(8);
   });
 
@@ -105,5 +109,48 @@ describe('truncate', () => {
     const result = truncate('😀x', 2);
     expect(result).toBe('…');
     expect(result).toBe(result.toWellFormed());
+  });
+
+  it('excludes a whole ZWJ emoji sequence rather than cutting it in half', () => {
+    // A "family" ZWJ sequence (4 people joined by 3 zero-width joiners) is 11
+    // UTF-16 units — much larger than a bare surrogate pair. Any cut landing
+    // inside it (checked across the whole span, not just one boundary) drops
+    // the entire sequence rather than a visually broken partial family. Built
+    // explicitly from code points rather than a literal sequence, to avoid
+    // any ambiguity about which invisible joiner characters are actually there.
+    const zwj = String.fromCharCode(0x200d);
+    const family =
+      String.fromCodePoint(0x1f468) + zwj + String.fromCodePoint(0x1f469) + zwj + String.fromCodePoint(0x1f467) + zwj + String.fromCodePoint(0x1f466);
+    const input = 'hi ' + family + '!';
+    for (let maxLength = 4; maxLength <= 10; maxLength++) {
+      const result = truncate(input, maxLength);
+      expect(result).toBe('hi…');
+      expect(result).toBe(result.toWellFormed());
+    }
+  });
+
+  it('excludes a whole flag (regional indicator pair) rather than cutting it in half', () => {
+    // Flag emoji are two separate "regional indicator" code points (each
+    // itself astral, so 4 UTF-16 units total) that only form a flag together
+    // — splitting them leaves one indicator letter boxed/circled on its own.
+    const flag = String.fromCodePoint(0x1f1eb) + String.fromCodePoint(0x1f1f7); // France
+    const input = 'flag ' + flag + '!';
+    // budget 8: "flag " (5) + one of the two indicator units (2) fits, not both
+    const result = truncate(input, 9);
+    expect(result).toBe('flag…');
+  });
+
+  it('excludes a base character together with its combining mark, not just the mark', () => {
+    // Decomposed 'e' + COMBINING ACUTE ACCENT (U+0301) — 5 UTF-16 units total
+    // for "caf" + the accented 'e'. A cut that would split the base 'e' from
+    // its accent drops the whole cluster, not just the accent. Built
+    // explicitly from parts (not a literal precomposed accented character) so
+    // the assertions compare against the exact same decomposed sequence used
+    // to build the input.
+    const combiningAcute = String.fromCharCode(0x0301);
+    const accentedE = 'e' + combiningAcute;
+    const input = 'caf' + accentedE + ' test';
+    expect(truncate(input, 6)).toBe('caf' + accentedE + '…'); // budget 5 exactly fits the whole cluster
+    expect(truncate(input, 5)).toBe('caf…'); // budget 4 can't fit the cluster (5 units), drops it whole
   });
 });
