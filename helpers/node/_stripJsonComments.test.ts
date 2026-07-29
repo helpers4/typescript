@@ -112,6 +112,19 @@ describe('stripJsonComments', () => {
     expect(() => stripJsonComments('{"a":"end\\')).not.toThrow();
   });
 
+  it('stops a line comment at a bare \\r (classic Mac line ending), not just \\n', () => {
+    // Regression test: the line-comment scan used to only check for '\n', so a
+    // lone '\r' with no following '\n' never ended the comment, silently
+    // swallowing everything up to the next real '\n' (or EOF) as comment text.
+    const jsonc = '{"a":1, // trailing comment\r"b":2}';
+    expect(JSON.parse(stripJsonComments(jsonc))).toEqual({ a: 1, b: 2 });
+  });
+
+  it('stops a line comment at \\r\\n the same as at \\n', () => {
+    const jsonc = '{\r\n  "a": 1 // the answer\r\n}';
+    expect(JSON.parse(stripJsonComments(jsonc))).toEqual({ a: 1 });
+  });
+
   it('handles an unterminated block comment gracefully (no infinite loop)', () => {
     // Malformed input — JSON.parse on the result will fail, but stripJsonComments
     // itself must still terminate rather than looping forever.
