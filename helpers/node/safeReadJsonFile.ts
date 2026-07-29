@@ -29,7 +29,7 @@ import { stripJsonComments } from './_stripJsonComments';
  * @example
  * // tsconfig.json-style JSONC (comments + trailing comma) also parses:
  * safeReadJsonFile('./tsconfig.json') // => { compilerOptions: { strict: true }, ... }
- * @since next
+ * @since 3.0.6
  */
 export function safeReadJsonFile<T>(filePath: string): T | null;
 export function safeReadJsonFile<T>(filePath: string, fallback: T): T;

@@ -31,7 +31,7 @@ import { TRIM_START_REGEX, type TrimMode, assertValidTrimMode } from './_trimCha
  * const glued = NBSP + 'Hello,' + NBSP + 'world!';
  * trimStart(glued);              // NBSP stripped -> 'Hello,' + NBSP + 'world!'
  * trimStart(glued, 'wrappable'); // unchanged -> NBSP + 'Hello,' + NBSP + 'world!'
- * @since next
+ * @since 3.0.6
  */
 export function trimStart(input: string, mode?: TrimMode): string;
 export function trimStart(input: undefined, mode?: TrimMode): undefined;

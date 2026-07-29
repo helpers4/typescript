@@ -8,6 +8,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.0.6] - 2026-07-29
+
+### 🚀 Features
+- **node**: make safeReadJsonFile tolerate JSONC
+- **node**: add safeReadJsonFile helper
+- **string**: truncate() never cuts inside a grapheme cluster
+- **string**: add trim/trimStart/trimEnd with a configurable TrimMode
+
+### 🐛 Bug Fixes
+- **CI-CD**: re-pin dispatch-with-fallback to main SHA after #15 merged
+- **CI-CD**: grant pull-requests:write to pr-comment job
+- **node**: stop JSONC line comments at bare \r, not just \n
+- **string**: validate mode directly in trim(), not just via delegation
+- **string**: fix truncate() algorithmic complexity on pathological input
+- **string**: throw on an invalid TrimMode instead of silently no-op-ing
+- **string**: give trim() a single-call native fast path
+- **string**: add missing PURE annotations to TRIM_END/START_REGEX
+- **string**: fix truncate() surrogate splitting, stop stripping NBSP
+- **string**: trim trailing whitespace before truncate()'s ellipsis [**BREAKING**]
+
+### 🔧 Miscellaneous
+- **CI-CD**: remove dead job-pr-comment.yml workflow
+- **deps-dev**: bump the dev-dependencies group across 1 directory with 3 updates
+
+### ♻️ Refactoring
+- **CI-CD**: adopt renamed dispatch-with-fallback action
+- **CI-CD**: adopt helpers4/action setup-pnpm/pr-status-comment/trigger-website-update
+
+### 📝 Documentation
+- add new TODO items for cross-category name collisions and @helpers4/all installation issue
+
+### ✅ Tests
+- **node**: add benchmark for safeReadJsonFile
+
 ## [3.0.5] - 2026-07-26
 
 ### 🐛 Bug Fixes
@@ -958,6 +992,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.0.6]: https://github.com/helpers4/typescript/compare/v3.0.5...v3.0.6
 [3.0.5]: https://github.com/helpers4/typescript/compare/v3.0.4...v3.0.5
 [3.0.4]: https://github.com/helpers4/typescript/compare/v3.0.3...v3.0.4
 [3.0.3]: https://github.com/helpers4/typescript/compare/v3.0.2...v3.0.3

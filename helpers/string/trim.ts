@@ -35,7 +35,7 @@ export type { TrimMode };
  * const glued = NBSP + 'Hello,' + NBSP + 'world!' + NBSP;
  * trim(glued);              // NBSP stripped -> 'Hello,' + NBSP + 'world!'
  * trim(glued, 'wrappable'); // unchanged -> the original string
- * @since next
+ * @since 3.0.6
  */
 export function trim(input: string, mode?: TrimMode): string;
 export function trim(input: undefined, mode?: TrimMode): undefined;
