@@ -153,4 +153,24 @@ describe('truncate', () => {
     expect(truncate(input, 6)).toBe('caf' + accentedE + '…'); // budget 5 exactly fits the whole cluster
     expect(truncate(input, 5)).toBe('caf…'); // budget 4 can't fit the cluster (5 units), drops it whole
   });
+
+  it('handles a cluster longer than the initial search window (forces the window to expand)', () => {
+    // A base char plus 100 stacked combining marks is 101 UTF-16 units — well
+    // past the 40-unit starting window, so finding the true cluster boundary
+    // requires the window to double at least once. There's a plain "hi "
+    // prefix before it, so this doesn't reach all the way back to index 0.
+    const combiningAcute = String.fromCharCode(0x0301);
+    const longCluster = 'e' + combiningAcute.repeat(100);
+    const input = 'hi ' + longCluster + '!';
+    expect(truncate(input, 90)).toBe('hi…');
+  });
+
+  it('handles a cluster spanning the entire string, from index 0 (window expands to the very start)', () => {
+    // No plain prefix at all — the whole input is one giant cluster, so the
+    // window keeps doubling until it reaches index 0 and gives up there,
+    // rather than looping forever.
+    const combiningAcute = String.fromCharCode(0x0301);
+    const wholeStringIsOneCluster = 'e' + combiningAcute.repeat(100);
+    expect(truncate(wholeStringIsOneCluster, 90)).toBe('…');
+  });
 });

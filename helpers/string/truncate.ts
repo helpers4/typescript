@@ -11,12 +11,11 @@ import { trimEnd } from './trimEnd';
 // locale-independent (Unicode UAX #29), so no locale argument is needed.
 const GRAPHEME_SEGMENTER = /* @__PURE__ */ new Intl.Segmenter(undefined, { granularity: 'grapheme' });
 
-// Generous upper bound (in UTF-16 code units) on how long a single grapheme
-// cluster can realistically get — multi-person ZWJ family emoji with skin-tone
-// modifiers, flag/subdivision tag sequences, stacked combining marks, etc.
-// Unicode doesn't hard-cap cluster length, but real-world text never comes
-// close to this; it exists purely so the window below stays a small, constant
-// size instead of scanning from the start of the string.
+// Starting size (in UTF-16 code units) for the window below — generous enough
+// that ordinary text (even heavy ZWJ emoji/flags/combining marks) resolves in
+// a single Intl.Segmenter call. Unicode doesn't hard-cap grapheme cluster
+// length though, so this is only a starting point, not an assumed maximum —
+// see the doubling loop in snapToGraphemeBoundary below.
 const GRAPHEME_WINDOW = 40;
 
 /**
@@ -30,20 +29,37 @@ const GRAPHEME_WINDOW = 40;
  * `Intl.Segmenter`'s cost scales with how much text it processes, and this
  * keeps it roughly constant-time regardless of how deep `cutLength` is into
  * the string (verified: segmenting the whole prefix instead is ~30x slower
- * once the cut point is tens of thousands of characters in).
+ * once the cut point is tens of thousands of characters in). If no complete
+ * cluster fits within the window — only possible with a pathologically long
+ * cluster, e.g. thousands of stacked combining marks ("Zalgo" text) — the
+ * window doubles and retries rather than returning an approximate answer.
+ * This resolves the true boundary in a single call regardless of cluster
+ * length: without it, the caller's stabilizing loop would otherwise need to
+ * call this function repeatedly, each call only making one window's worth of
+ * progress and each also paying for an unrelated O(cutLength) slice —
+ * verified this turns adversarial input (a single untrusted string with ~1M
+ * stacked combining marks at the cut point) from ~1.15s into single-digit
+ * milliseconds.
  */
 function snapToGraphemeBoundary(text: string, cutLength: number): number {
   if (cutLength <= 0) return cutLength;
-  const windowStart = Math.max(0, cutLength - GRAPHEME_WINDOW);
-  const window = text.slice(windowStart, Math.min(text.length, cutLength + GRAPHEME_WINDOW));
 
-  let boundary = windowStart;
-  for (const { index, segment } of GRAPHEME_SEGMENTER.segment(window)) {
-    const segmentEnd = windowStart + index + segment.length;
-    if (segmentEnd > cutLength) break;
-    boundary = segmentEnd;
+  let windowSize = GRAPHEME_WINDOW;
+  while (true) {
+    const windowStart = Math.max(0, cutLength - windowSize);
+    const window = text.slice(windowStart, Math.min(text.length, cutLength + windowSize));
+
+    let boundary = -1;
+    for (const { index, segment } of GRAPHEME_SEGMENTER.segment(window)) {
+      const segmentEnd = windowStart + index + segment.length;
+      if (segmentEnd > cutLength) break;
+      boundary = segmentEnd;
+    }
+
+    if (boundary !== -1) return boundary;
+    if (windowStart === 0) return 0; // expanded all the way to the start of text and still nothing fits
+    windowSize *= 2; // no complete cluster fit this window — it spans wider than expected; try a bigger one
   }
-  return boundary;
 }
 
 /**

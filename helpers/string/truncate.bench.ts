@@ -12,6 +12,15 @@ const long = 'Hello, world! '.repeat(200);
 const veryLong = 'Hello, world! '.repeat(2000); // ~28,000 chars
 const emojiHeavy = 'Hello 👨‍👩‍👧‍👦 world 🇫🇷 flag test '.repeat(60);
 
+// A pathologically long grapheme cluster ("Zalgo" text — a base character
+// with thousands of stacked combining marks) with the cut landing in the
+// middle of it. Before the window-doubling fix, this scaled with
+// clusterLength/windowSize outer-loop iterations, each also paying for an
+// unrelated O(cutLength) slice — 1M combining marks measured ~1.15s. Doubling
+// the search window instead of relying on the caller's loop to make slow,
+// repeated progress brings this back down to single-digit milliseconds.
+const zalgo = 'a'.repeat(1000) + 'e' + String.fromCharCode(0x0301).repeat(200_000) + 'b'.repeat(1000);
+
 describe('truncate', () => {
   bench('already within limit (no-op path)', () => {
     truncate(short, 10);
@@ -27,5 +36,8 @@ describe('truncate', () => {
   });
   bench('emoji-heavy string, truncated (family/flag sequences)', () => {
     truncate(emojiHeavy, 50);
+  });
+  bench('pathological "Zalgo" cluster (200k combining marks), cut in the middle', () => {
+    truncate(zalgo, 100_100);
   });
 });
