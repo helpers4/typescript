@@ -60,6 +60,33 @@ describe('truncate — property-based', () => {
       ),
     );
   });
+
+  it('result (excluding the ellipsis) always ends exactly at a grapheme-cluster boundary of the input', () => {
+    const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+    fc.assert(
+      fc.property(
+        fc.string({ unit: 'grapheme', minLength: 1, maxLength: 100 }),
+        fc.integer({ min: 1, max: 20 }),
+        (input, maxLength) => {
+          const ellipsis = '…';
+          fc.pre(maxLength > ellipsis.length); // otherwise the result isn't ellipsis-suffixed input at all
+          const result = truncate(input, maxLength, ellipsis);
+          if (result === input) return; // no truncation happened, nothing to check
+          expect(result.endsWith(ellipsis)).toBe(true);
+          const withoutEllipsis = result.slice(0, result.length - ellipsis.length);
+          expect(input.startsWith(withoutEllipsis)).toBe(true);
+
+          const boundaries = new Set([0]);
+          let pos = 0;
+          for (const { segment } of segmenter.segment(input)) {
+            pos += segment.length;
+            boundaries.add(pos);
+          }
+          expect(boundaries.has(withoutEllipsis.length)).toBe(true);
+        },
+      ),
+    );
+  });
 });
 
 describe('truncate — contract', () => {
