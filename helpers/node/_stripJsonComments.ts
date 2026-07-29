@@ -61,7 +61,10 @@ export function stripJsonComments(input: string): string {
 
     if (char === '/' && input[i + 1] === '/') {
       i += 2;
-      while (i < input.length && input[i] !== '\n') i++;
+      // Stop at any line-ending character, not just \n — a bare \r (classic
+      // Mac line endings, or a lone \r before a later \n) also ends the line,
+      // otherwise everything up to the next \n (or EOF) gets silently eaten.
+      while (i < input.length && input[i] !== '\n' && input[i] !== '\r') i++;
       continue;
     }
 
