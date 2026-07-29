@@ -84,4 +84,11 @@ describe('trimStart', () => {
   it('does not touch trailing or interior whitespace', () => {
     expect(trimStart('  Hello  World  ')).toBe('Hello  World  ');
   });
+
+  it('throws a TypeError on an invalid mode instead of silently no-op-ing', () => {
+    // @ts-expect-error - intentionally invalid at the type level too
+    expect(() => trimStart('   Hello', 'whitepsace')).toThrow(TypeError);
+    // @ts-expect-error
+    expect(() => trimStart('   Hello', 'whitepsace')).toThrow(/mode must be one of/);
+  });
 });
