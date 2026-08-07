@@ -10,10 +10,8 @@ updates:
     groups:
       dev-dependencies:
         dependency-type: "development"
-        update-types: ["minor", "patch"]
       prod-dependencies:
         dependency-type: "production"
-        update-types: ["minor", "patch"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -24,7 +22,6 @@ updates:
     groups:
       actions:
         patterns: ["*"]
-        update-types: ["minor", "patch"]
 
   - package-ecosystem: "devcontainers"
     directory: "/"
@@ -32,3 +29,6 @@ updates:
       interval: "monthly"
     labels:
       - "dependencies"
+    groups:
+      devcontainers:
+        patterns: ["*"]
