@@ -92,7 +92,7 @@ function claimCache<C extends object>(cache: C): C {
  *   (config: object) => expensiveDerive(config),
  *   () => new WeakMap(),
  * );
- * @since next
+ * @since 3.0.7
  */
 export function createCachedResolver<K extends object, V>(
   compute: (key: K) => V,

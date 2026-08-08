@@ -8,6 +8,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.0.7] - 2026-08-08
+
+### 🚀 Features
+- **function**: add createCachedResolver helper
+
+### 🐛 Bug Fixes
+- **CI-CD**: fix generics, companion-type attachment and @since guard in website metadata
+- **function**: cover null-key branch in createCachedResolver's WeakMap guard
+- **function**: fix createCachedResolver cache-sharing, reentrancy and key-type bugs
+- **security**: bound the nanoid override to 3.x
+- **security**: patch 3 newly-published CVEs (fast-uri, brace-expansion, nanoid)
+- stop dropping companion types without their own @since tag
+
+### 🔧 Miscellaneous
+- **CI-CD**: separate major bumps from minor/patch in dependabot groups
+- **CI-CD**: group major-version dependency bumps too, group devcontainer updates
+- **deps-dev**: bump vite in the dev-dependencies group
+- **scorecard**: bump codeql-action/upload-sarif to v4.37.4
+
+### 📝 Documentation
+- **string**: make TrimMode's docs public, cross-link trim/trimStart/trimEnd
+
+### ✅ Tests
+- **function**: fix createCachedResolver benchmarks to measure steady-state cost
+
 ## [3.0.6] - 2026-07-29
 
 ### 🚀 Features
@@ -992,6 +1017,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.0.7]: https://github.com/helpers4/typescript/compare/v3.0.6...v3.0.7
 [3.0.6]: https://github.com/helpers4/typescript/compare/v3.0.5...v3.0.6
 [3.0.5]: https://github.com/helpers4/typescript/compare/v3.0.4...v3.0.5
 [3.0.4]: https://github.com/helpers4/typescript/compare/v3.0.3...v3.0.4
