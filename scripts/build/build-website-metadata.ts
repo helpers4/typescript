@@ -133,6 +133,11 @@ function extractExamples(tags: CommentTag[] | undefined): string[] {
     .filter(Boolean);
 }
 
+/** A type alias or an interface — as opposed to a function or a variable. */
+function isTypeOrInterface(kind: WebsiteFunction['kind']): boolean {
+  return kind === 'type' || kind === 'interface';
+}
+
 function serializeType(type: unknown): string {
   if (!type) return 'unknown';
   const t = type as Record<string, unknown>;
@@ -422,7 +427,7 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
   // silently dropped every convention-following companion type from the
   // website (verified: CapitalizeOptions, RgbColor, TrimMode were all missing
   // from their function's relatedTypes because of this).
-  if (since === 'unknown' && kind !== 'type' && kind !== 'interface') return undefined;
+  if (since === 'unknown' && !isTypeOrInterface(kind)) return undefined;
 
   const examples = extractExamples(comment?.blockTags as CommentTag[] | undefined);
 
@@ -483,6 +488,15 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
       typeDefinition = `type ${child.name}${generics} = ${typeStr}`;
     }
   } else if (kind === 'interface') {
+    const typeParams = child.typeParameters
+      ?.map((tp: TypeParameterReflection) => {
+        let s = tp.name;
+        if (tp.type) s += ` extends ${serializeType(tp.type)}`;
+        if (tp.default) s += ` = ${serializeType(tp.default)}`;
+        return s;
+      })
+      .join(', ');
+    const generics = typeParams ? `<${typeParams}>` : '';
     const members = ((child as unknown as Record<string, unknown>).children as DeclarationReflection[] | undefined) ?? [];
     const memberDefinitions = members.flatMap(m => {
       if (m.kind === ReflectionKind.Property) {
@@ -496,8 +510,8 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
     });
     const body = memberDefinitions.join(';\n');
     typeDefinition = memberDefinitions.length > 0
-      ? `interface ${child.name} {\n${body};\n}`
-      : `interface ${child.name} {}`;
+      ? `interface ${child.name}${generics} {\n${body};\n}`
+      : `interface ${child.name}${generics} {}`;
   }
 
   // Source file name
@@ -707,47 +721,38 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
     );
 
     for (const fn of functions) {
-      if (fn.kind !== 'type' && fn.kind !== 'interface') continue;
+      if (!isTypeOrInterface(fn.kind)) continue;
 
-      const sharedWithFunctions = funcNamesBySourceFile.get(fn.sourceFile) ?? [];
       const related: WebsiteRelatedType = {
         name: fn.name,
         description: fn.description,
         typeDefinition: fn.typeDefinition ?? fn.name,
       };
 
-      if (sharedWithFunctions.length === 1) {
-        // 1:1 companion — embed in the single function of the file.
-        companionTypeNames.add(fn.name);
-        attachCompanion(sharedWithFunctions[0], related);
-        continue;
-      }
+      // Consumers = every function declared in the same source file (the type
+      // was presumably introduced for it) PLUS every function anywhere else in
+      // the category whose signature references this type by name — a
+      // companion type isn't only used by the function(s) it was declared
+      // alongside (e.g. RgbColor, declared in hexToRgb.ts, is also a param or
+      // return type for rgbToHex, rgbToHsl and hslToRgb, each in its own file).
+      const colocated = funcNamesBySourceFile.get(fn.sourceFile) ?? [];
+      const otherConsumers = functions
+        .filter(other => other.kind === 'function' && !colocated.includes(other.name))
+        .filter(other => referencesType(functionTextCache.get(other) ?? '', fn.name))
+        .map(other => other.name);
+      const consumers = [...colocated, ...otherConsumers];
 
-      if (sharedWithFunctions.length > 1) {
-        // 1:N companion — embed in every function of the file.
-        companionTypeNames.add(fn.name);
-        for (const fnName of sharedWithFunctions) attachCompanion(fnName, related);
-        continue;
-      }
-
-      // 1:0 (orphan) — type lives alone in its file (typically *.model.ts).
-      // Attach it to every function in the category that references it in a signature.
-      const consumers = functions.filter(
-        other => other.kind === 'function' && referencesType(functionTextCache.get(other) ?? '', fn.name),
-      );
       if (consumers.length > 0) {
         companionTypeNames.add(fn.name);
-        for (const consumer of consumers) attachCompanion(consumer.name, related);
+        for (const consumer of consumers) attachCompanion(consumer, related);
       }
-      // If no consumer is found, keep the standalone page as a fallback.
+      // If no consumer is found anywhere, keep the standalone page as a fallback.
     }
 
     // Transitive pass — a type referenced only inside another companion type's
     // definition (e.g. `DateLike = ... | EpochMilliseconds`) should follow its
     // referrer and stop being a standalone page. Iterate to fixpoint.
-    const orphanTypes = functions.filter(
-      fn => (fn.kind === 'type' || fn.kind === 'interface') && !companionTypeNames.has(fn.name),
-    );
+    const orphanTypes = functions.filter(fn => isTypeOrInterface(fn.kind) && !companionTypeNames.has(fn.name));
     let changed = true;
     while (changed) {
       changed = false;
@@ -774,7 +779,12 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
     }
 
     const enrichedFunctions = functions
-      .filter(fn => !companionTypeNames.has(fn.name)) // exclude 1:1 companion types
+      .filter(fn => !companionTypeNames.has(fn.name)) // exclude companion types (embedded in their consumer(s) instead)
+      // processMember exempts every type/interface from the @since guard because a
+      // *companion* type inherits relevance from the function(s) it's attached to. A
+      // type that never became anyone's companion is about to get its own standalone
+      // page instead — hold it to the same @since guard functions already get.
+      .filter(fn => !(isTypeOrInterface(fn.kind) && fn.since === 'unknown'))
       .map(fn => {
         const fileExamples = exampleMap.get(fn.name);
         const relatedTypes = companionTypesMap.get(fn.name) ?? [];
