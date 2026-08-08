@@ -137,4 +137,12 @@ describe('createCachedResolver', () => {
     expect(() => resolve(5 as any)).toThrow(TypeError);
     expect(compute).not.toHaveBeenCalled();
   });
+
+  it('throws a TypeError with a distinct "null" message for a null key on a WeakMap-backed resolver', () => {
+    const compute = vi.fn((key: object) => key);
+    const { resolve } = createCachedResolver(compute, () => new WeakMap());
+
+    expect(() => resolve(null as any)).toThrow(/got null/);
+    expect(compute).not.toHaveBeenCalled();
+  });
 });
