@@ -9,22 +9,30 @@ import { createCachedResolver } from './createCachedResolver';
 
 const compute = (n: number) => n * 2;
 
+// Constructed once, outside any timed bench body, and primed with one
+// resolve() up front — the same shape as the sibling memoize.bench.ts's
+// 'cache hit' bench — so these two benches time only the steady-state hit,
+// not construction plus the first-call miss.
+const hitMapResolver = createCachedResolver(compute);
+hitMapResolver.resolve(1);
+
+const hitWeakMapKey = {};
+const hitWeakMapResolver = createCachedResolver((k: object) => k, () => new WeakMap());
+hitWeakMapResolver.resolve(hitWeakMapKey);
+
+const clearResolver = createCachedResolver(compute);
+
 describe('createCachedResolver', () => {
   bench('create a resolver', () => {
     createCachedResolver(compute);
   });
 
   bench('resolve(), cache hit (Map-backed)', () => {
-    const { resolve } = createCachedResolver(compute);
-    resolve(1);
-    resolve(1);
+    hitMapResolver.resolve(1);
   });
 
   bench('resolve(), cache hit (WeakMap-backed)', () => {
-    const key = {};
-    const { resolve } = createCachedResolver((k: object) => k, () => new WeakMap());
-    resolve(key);
-    resolve(key);
+    hitWeakMapResolver.resolve(hitWeakMapKey);
   });
 
   bench('resolve(), 100 distinct keys (all misses)', () => {
@@ -32,9 +40,17 @@ describe('createCachedResolver', () => {
     for (let i = 0; i < 100; i++) resolve(i);
   });
 
-  bench('clear(), Map-backed (calls Map.clear())', () => {
-    const { resolve, clear } = createCachedResolver(compute);
-    for (let i = 0; i < 100; i++) resolve(i);
-    clear();
-  });
+  bench(
+    'clear(), Map-backed (calls Map.clear())',
+    () => {
+      clearResolver.clear();
+    },
+    {
+      // Untimed: repopulates the cache clear() is about to wipe, so the
+      // timed function below measures only the clear() call itself.
+      beforeEach: () => {
+        for (let i = 0; i < 100; i++) clearResolver.resolve(i);
+      },
+    },
+  );
 });
