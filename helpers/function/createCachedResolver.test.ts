@@ -99,4 +99,42 @@ describe('createCachedResolver', () => {
     expect(a.resolve(5)).toBe(10);
     expect(b.resolve(5)).toBe(15);
   });
+
+  it('throws if createCache() returns an instance already claimed by another resolver', () => {
+    const sharedMap = new Map<number, number>();
+    const factory = () => sharedMap;
+
+    createCachedResolver((n: number) => n * 2, factory);
+
+    expect(() => createCachedResolver((n: number) => n * 3, factory)).toThrow(/already used by another createCachedResolver/);
+  });
+
+  it('does not revive a stale entry when compute() reentrantly calls clear()', () => {
+    const compute = vi.fn((n: number) => {
+      if (n === 7) clear();
+      return n * 2;
+    });
+    const { resolve, clear } = createCachedResolver(compute);
+
+    resolve(7);
+    resolve(7);
+
+    expect(compute).toHaveBeenCalledTimes(2);
+  });
+
+  it('throws instead of overflowing the call stack on a circular resolve()', () => {
+    const a: { resolve: (n: number) => number } = createCachedResolver((n: number) => a.resolve(n) + 1);
+
+    expect(() => a.resolve(1)).toThrow(/circular dependency/);
+  });
+
+  it('throws a TypeError instead of silently discarding the result for a non-object key on a WeakMap-backed resolver', () => {
+    // Typed as `object` to satisfy the overloads; the `as any` below simulates
+    // a plain-JS caller (no type checker) passing the wrong kind of key.
+    const compute = vi.fn((key: object) => key);
+    const { resolve } = createCachedResolver(compute, () => new WeakMap());
+
+    expect(() => resolve(5 as any)).toThrow(TypeError);
+    expect(compute).not.toHaveBeenCalled();
+  });
 });
