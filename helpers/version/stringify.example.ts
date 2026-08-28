@@ -15,10 +15,10 @@ const examples: HelperExamples = {
     {
       title: 'Reconstruct a stable version',
       description: 'Converts a ParsedVersion object back to a version string.',
-      code: `stringify({ major: 1, minor: 2, patch: 3, prerelease: [], build: [] })
+      code: `stringify({ scheme: 'semver', major: 1, minor: 2, patch: 3, prerelease: [], build: [] })
 // => '1.2.3'`,
       assert: () => {
-        const result = stringify({ major: 1, minor: 2, patch: 3, prerelease: [], build: [] });
+        const result = stringify({ scheme: 'semver', major: 1, minor: 2, patch: 3, prerelease: [], build: [] });
         if (result !== '1.2.3') throw new Error(`Unexpected: ${result}`);
       },
     },
@@ -33,6 +33,16 @@ stringify(parse('1.0.0-beta+exp.sha.5114f85'))
       assert: () => {
         if (stringify(parse('2.0.0-alpha.1')) !== '2.0.0-alpha.1') throw new Error('Round-trip failed');
         if (stringify(parse('1.0.0-beta+exp.sha.5114f85')) !== '1.0.0-beta+exp.sha.5114f85') throw new Error('Round-trip failed');
+      },
+    },
+    {
+      title: 'Reconstruct a Gentoo/Portage version',
+      description: 'The scheme is read from the parsed object itself, not passed separately.',
+      code: `stringify({ scheme: 'gentoo', components: [1, 2, 3], letter: 'b', suffixes: [{ type: 'rc', number: 1 }], revision: 2 })
+// => '1.2.3b_rc1-r2'`,
+      assert: () => {
+        const result = stringify({ scheme: 'gentoo', components: [1, 2, 3], letter: 'b', suffixes: [{ type: 'rc', number: 1 }], revision: 2 });
+        if (result !== '1.2.3b_rc1-r2') throw new Error(`Unexpected: ${result}`);
       },
     },
   ],

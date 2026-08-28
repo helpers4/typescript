@@ -55,6 +55,6 @@ describe('stringify — contract', () => {
   it('null passthrough', () => expect(stringify(null)).toBeNull());
   it('undefined passthrough', () => expect(stringify(undefined)).toBeUndefined());
   it('result for stable version has format X.Y.Z', () => {
-    expect(stringify({ major: 1, minor: 2, patch: 3, prerelease: [], build: [] })).toMatch(/^\d+\.\d+\.\d+$/);
+    expect(stringify({ scheme: 'semver', major: 1, minor: 2, patch: 3, prerelease: [], build: [] })).toMatch(/^\d+\.\d+\.\d+$/);
   });
 });

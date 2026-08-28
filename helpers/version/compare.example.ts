@@ -32,6 +32,15 @@ compare('2.0.0', '1.0.0') // => 1`,
         if (compare('1.0.0-alpha', '1.0.0') !== -1) throw new Error('Expected -1');
       },
     },
+    {
+      title: 'Gentoo: a revision sorts above its base version',
+      description: "Unlike SemVer's '-' (prerelease, sorts below release), Gentoo's '-r' revision sorts above it.",
+      code: `compare('1.2.3', '1.2.3-r1', 'gentoo')
+// => -1`,
+      assert: () => {
+        if (compare('1.2.3', '1.2.3-r1', 'gentoo') !== -1) throw new Error('Expected -1');
+      },
+    },
   ],
 };
 
