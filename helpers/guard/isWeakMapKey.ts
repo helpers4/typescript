@@ -24,7 +24,7 @@
  * isWeakMapKey(Symbol.for('x')) // => false  (registered symbol — lives forever)
  * isWeakMapKey(null)            // => false
  * isWeakMapKey(42)              // => false
- * @since next
+ * @since 3.0.8
  */
 export function isWeakMapKey(value: unknown): value is object | symbol {
   if (typeof value === 'object') return value !== null;
