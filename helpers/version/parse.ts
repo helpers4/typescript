@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { assertNeverScheme } from './_assertNeverScheme';
 import { parseGentoo } from './_gentoo';
 import { parseSemVer } from './_semver';
 import type { ParsedGentooVersion, ParsedSemVerVersion, ParsedVersion, VersionScheme } from './types';
@@ -40,5 +41,12 @@ export function parse(version: undefined, scheme?: VersionScheme): undefined;
 export function parse(version: null, scheme?: VersionScheme): null;
 export function parse(version: string | undefined | null, scheme: VersionScheme = 'semver'): ParsedVersion | undefined | null {
   if (version === undefined || version === null) return version;
-  return scheme === 'gentoo' ? parseGentoo(version) : parseSemVer(version);
+  switch (scheme) {
+    case 'semver':
+      return parseSemVer(version);
+    case 'gentoo':
+      return parseGentoo(version);
+    default:
+      return assertNeverScheme(scheme);
+  }
 }
