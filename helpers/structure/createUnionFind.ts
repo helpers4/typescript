@@ -75,16 +75,16 @@ export function createUnionFind<T>(): UnionFind<T> {
       if (rootA === rootB) return;
 
       // Union by rank: attach the shallower tree under the deeper one's root, so
-      // repeated unions don't degenerate into a single long chain.
+      // repeated unions don't degenerate into a single long chain. On equal
+      // ranks, either attach direction is fine, but the resulting tree grew
+      // one level deeper, so the new root's rank must be bumped.
       const rankA = rank.get(rootA)!;
       const rankB = rank.get(rootB)!;
       if (rankA < rankB) {
         parent.set(rootA, rootB);
-      } else if (rankA > rankB) {
-        parent.set(rootB, rootA);
       } else {
         parent.set(rootB, rootA);
-        rank.set(rootA, rankA + 1);
+        if (rankA === rankB) rank.set(rootA, rankA + 1);
       }
     },
     connected(a: T, b: T): boolean {
