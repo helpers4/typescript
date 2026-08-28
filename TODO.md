@@ -1,6 +1,6 @@
 # TODO — `helpers4/typescript`
 
-> Last refresh: 2026-07-21.
+> Last refresh: 2026-08-28.
 
 Legend: 🔴 High priority · 🟡 Medium · 🟢 Low
 
@@ -90,6 +90,44 @@ Only open items live here. Anything finished is in git history / `CHANGELOG.md` 
   at [Swatinem/rollup-plugin-dts#395](https://github.com/Swatinem/rollup-plugin-dts/issues/395)
   (maintainer has a working fix on a branch, not yet merged). Revisit once that ships, or once
   TS 7.1 delivers a stable new API.
+
+---
+
+## Version schemes beyond SemVer/Gentoo
+
+> `parse`/`compare`/`stringify` gained a `scheme: VersionScheme` param (`'semver' | 'gentoo'`,
+> default `'semver'`) — see `helpers/version/types.ts`, `_semver.ts`, `_gentoo.ts`. Adding a new
+> scheme means: one interface in `types.ts` (discriminated by `scheme: '<name>'`), one literal
+> added to `VersionScheme`, one `_<name>.ts` with `parse<Name>`/`compare<Name>`/`stringify<Name>`,
+> one overload per function, and a `switch`/ternary dispatch update in each of `parse.ts`/
+> `compare.ts`/`stringify.ts` — no other public API changes needed. `ParsedVersion` is a
+> discriminated union (narrow on `.scheme`); `stringify` doesn't take a `scheme` param at all,
+> it reads the parsed object's own `.scheme` field.
+
+- [ ] 🟢 **Debian** (`[epoch:]upstream_version[-debian_revision]`, `dpkg --compare-versions`
+  rules). Not started — no consuming project need yet. The one rule that's easy to get subtly
+  wrong: `~` sorts *before everything*, including before the empty string (so `1.0~beta` <
+  `1.0`), which the alternating-digit/non-digit-run comparison algorithm has to special-case.
+- [ ] 🟢 **RPM** (Fedora/RHEL/openSUSE — `[epoch:]version-release`). Not started. Shares the
+  same digit/non-digit alternating-run lineage as Debian's algorithm but isn't identical;
+  modern RPM also added `~` and `^` extensions on top of the classic algorithm — worth deciding
+  whether to support those too or just the classic subset.
+- [ ] 🟢 **PEP 440** (Python — epoch + release segments + pre/post/dev-release + local version).
+  Not started. The most involved of the five: needs a normalization table for pre-release
+  qualifier spelling variants (`alpha`→`a`, `c`→`rc`, etc. — see the PEP 440 spec's own table)
+  before comparison even starts. Highest risk of subtle non-compliance without testing against
+  Python's actual `packaging` library test vectors as a reference.
+- [ ] 🟢 **Maven** (`ComparableVersion` — items split by `.`/`-`/digit-non-digit transitions,
+  with a qualifier ordering table: alpha < beta < milestone < rc/cr < snapshot < release < sp).
+  Not started.
+- [ ] 🟢 **Pacman/ALPM** (Arch Linux — `vercmp`, `epoch:pkgver-pkgrel`). Not started. Similar
+  lineage to RPM/Debian; naming question to resolve first — `pacman` (the CLI, more
+  recognizable) vs `alpm` (the actual library name, more precise) as the `VersionScheme` literal.
+
+All five: no demonstrated consumer need today (unlike Gentoo, which came from auditing
+`tuxery/catalog`'s hand-rolled `versionSortKey`) — don't build speculatively. Each is a
+multi-file, multi-day-equivalent effort once a real need shows up, given this repo's
+100%-branch-coverage + property-based-test bar per function.
 
 ---
 
