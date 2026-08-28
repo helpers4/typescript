@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import type { ParsedVersion } from './parse';
+import type { ParsedSemVerVersion } from './types';
 
 /**
  * Returns `true` when the version string has a prerelease suffix
@@ -23,17 +23,17 @@ export function isPrerelease(version: string): boolean;
 /**
  * Returns `true` when the parsed version has at least one prerelease identifier.
  *
- * @param version - A {@link ParsedVersion} object (as returned by {@link parse}).
+ * @param version - A {@link ParsedSemVerVersion} object (as returned by {@link parse}).
  * @returns `true` if `version.prerelease` is non-empty, `false` otherwise.
  * @example
  * isPrerelease(parse('2.0.0-alpha.1')) // true
  * isPrerelease(parse('1.0.0'))         // false
  * @since 2.0.0
  */
-export function isPrerelease(version: ParsedVersion): boolean;
+export function isPrerelease(version: ParsedSemVerVersion): boolean;
 export function isPrerelease(version: undefined): undefined;
 export function isPrerelease(version: null): null;
-export function isPrerelease(version: string | ParsedVersion | undefined | null): boolean | undefined | null {
+export function isPrerelease(version: string | ParsedSemVerVersion | undefined | null): boolean | undefined | null {
   if (version === undefined || version === null) return version;
   if (typeof version === 'string') return version.split('+')[0].includes('-');
   return version.prerelease.length > 0;

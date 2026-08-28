@@ -10,10 +10,11 @@ import { stringify } from './stringify'
 
 describe('stringify', () => {
   bench('core version only', () => {
-    stringify({ major: 1, minor: 2, patch: 3, prerelease: [], build: [] })
+    stringify({ scheme: 'semver', major: 1, minor: 2, patch: 3, prerelease: [], build: [] })
   })
   bench('with prerelease and build metadata', () => {
     stringify({
+      scheme: 'semver',
       major: 1,
       minor: 0,
       patch: 0,

@@ -255,4 +255,20 @@ describe("compare", () => {
       expect(compare("1.0.5", "1.0.5")).toBe(0);
     });
   });
+
+  describe("gentoo scheme", () => {
+    it("defaults to semver when scheme is omitted", () => {
+      expect(compare("1.9.0", "1.10.0")).toBe(-1);
+    });
+
+    it("compares gentoo versions when scheme is 'gentoo'", () => {
+      expect(compare("1.2.3", "1.2.4", "gentoo")).toBe(-1);
+    });
+
+    it("a gentoo revision sorts above its base version, unlike a semver prerelease", () => {
+      expect(compare("1.2.3", "1.2.3-r1", "gentoo")).toBe(-1);
+      // Contrast: the same strings under semver treat "-r1" as a prerelease (sorts below).
+      expect(compare("1.2.3", "1.2.3-r1", "semver")).toBe(1);
+    });
+  });
 });

@@ -54,7 +54,7 @@ describe('parse — property-based', () => {
 
 describe('parse — contract', () => {
   it('"1.0.0" → {major:1, minor:0, patch:0, prerelease:[], build:[]}', () => {
-    expect(parse('1.0.0')).toEqual({ major: 1, minor: 0, patch: 0, prerelease: [], build: [] });
+    expect(parse('1.0.0')).toEqual({ scheme: 'semver', major: 1, minor: 0, patch: 0, prerelease: [], build: [] });
   });
 
   it('"v2.3.4" → {major:2, minor:3, patch:4}', () => {

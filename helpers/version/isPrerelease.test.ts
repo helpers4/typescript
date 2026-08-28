@@ -29,9 +29,9 @@ describe('isPrerelease — ParsedVersion input', () => {
   it('parse(stable) → false', () => expect(isPrerelease(parse('1.0.0'))).toBe(false));
   it('parse(stable with build) → false', () => expect(isPrerelease(parse('2.0.0+build.1'))).toBe(false));
   it('direct object with non-empty prerelease → true', () =>
-    expect(isPrerelease({ major: 1, minor: 0, patch: 0, prerelease: ['alpha', '1'], build: [] })).toBe(true));
+    expect(isPrerelease({ scheme: 'semver', major: 1, minor: 0, patch: 0, prerelease: ['alpha', '1'], build: [] })).toBe(true));
   it('direct object with empty prerelease → false', () =>
-    expect(isPrerelease({ major: 1, minor: 0, patch: 0, prerelease: [], build: [] })).toBe(false));
+    expect(isPrerelease({ scheme: 'semver', major: 1, minor: 0, patch: 0, prerelease: [], build: [] })).toBe(false));
 });
 
 describe('isPrerelease — null / undefined passthrough', () => {

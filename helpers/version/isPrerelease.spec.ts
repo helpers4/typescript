@@ -51,7 +51,7 @@ describe('isPrerelease — property-based (ParsedVersion)', () => {
       fc.property(
         fc.tuple(fc.nat(99), fc.nat(99), fc.nat(99)),
         ([major, minor, patch]) => {
-          expect(isPrerelease({ major, minor, patch, prerelease: [], build: [] })).toBe(false);
+          expect(isPrerelease({ scheme: 'semver', major, minor, patch, prerelease: [], build: [] })).toBe(false);
         },
       ),
     );
@@ -62,7 +62,7 @@ describe('isPrerelease — property-based (ParsedVersion)', () => {
       fc.property(
         fc.tuple(fc.nat(99), fc.nat(99), fc.nat(99), fc.array(fc.string(), { minLength: 1 })),
         ([major, minor, patch, prerelease]) => {
-          expect(isPrerelease({ major, minor, patch, prerelease, build: [] })).toBe(true);
+          expect(isPrerelease({ scheme: 'semver', major, minor, patch, prerelease, build: [] })).toBe(true);
         },
       ),
     );

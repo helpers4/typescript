@@ -4,25 +4,29 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import type { ParsedVersion } from './parse';
+import { stringifyGentoo } from './_gentoo';
+import { stringifySemVer } from './_semver';
+import type { ParsedVersion } from './types';
 
 /**
- * Reconstruct a semantic version string from a {@link ParsedVersion} object.
+ * Reconstructs a version string from a {@link ParsedVersion} object — the scheme is read from
+ * the object's own `scheme` field, not passed separately (a `ParsedGentooVersion` can only ever
+ * stringify as Gentoo, so there's nothing to disambiguate).
  *
  * This is the inverse of {@link parse}:
- * `stringify(parse(v)) === stripV(v)` for any valid SemVer string `v`.
+ * `stringify(parse(v)) === stripV(v)` for any valid version string `v`, in either scheme.
  *
- * @param parsed - A parsed semantic version object.
+ * @param parsed - A parsed version object, as returned by {@link parse}.
  * @returns The reconstructed version string (without leading `v`).
  * @example
- * stringify({ major: 1, minor: 2, patch: 3, prerelease: [], build: [] })
+ * stringify({ scheme: 'semver', major: 1, minor: 2, patch: 3, prerelease: [], build: [] })
  * // => '1.2.3'
  * @example
- * stringify({ major: 2, minor: 0, patch: 0, prerelease: ['alpha', '1'], build: [] })
+ * stringify({ scheme: 'semver', major: 2, minor: 0, patch: 0, prerelease: ['alpha', '1'], build: [] })
  * // => '2.0.0-alpha.1'
  * @example
- * stringify({ major: 1, minor: 0, patch: 0, prerelease: ['beta'], build: ['exp', 'sha', '5114f85'] })
- * // => '1.0.0-beta+exp.sha.5114f85'
+ * stringify({ scheme: 'gentoo', components: [1, 2, 3], letter: 'b', suffixes: [{ type: 'rc', number: 1 }], revision: 2 })
+ * // => '1.2.3b_rc1-r2'
  * @since 2.0.0
  */
 export function stringify(parsed: ParsedVersion): string;
@@ -30,8 +34,5 @@ export function stringify(parsed: undefined): undefined;
 export function stringify(parsed: null): null;
 export function stringify(parsed: ParsedVersion | undefined | null): string | undefined | null {
   if (parsed === undefined || parsed === null) return parsed;
-  const base = `${parsed.major}.${parsed.minor}.${parsed.patch}`;
-  const prerelease = parsed.prerelease.length > 0 ? `-${parsed.prerelease.join('.')}` : '';
-  const build = parsed.build.length > 0 ? `+${parsed.build.join('.')}` : '';
-  return `${base}${prerelease}${build}`;
+  return parsed.scheme === 'gentoo' ? stringifyGentoo(parsed) : stringifySemVer(parsed);
 }
