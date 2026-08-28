@@ -179,6 +179,19 @@ function serializeType(type: unknown): string {
   return String(t.name || t.type || 'unknown');
 }
 
+/** Renders a declaration's type parameters as `<T extends X = Y, ...>`, or `''` if it has none. */
+function formatTypeParams(typeParameters: readonly TypeParameterReflection[] | undefined): string {
+  const typeParams = typeParameters
+    ?.map((tp: TypeParameterReflection) => {
+      let s = tp.name;
+      if (tp.type) s += ` extends ${serializeType(tp.type)}`;
+      if (tp.default) s += ` = ${serializeType(tp.default)}`;
+      return s;
+    })
+    .join(', ');
+  return typeParams ? `<${typeParams}>` : '';
+}
+
 function buildSignatureString(sig: SignatureReflection): string {
   const params = sig.parameters
     ?.map((p: ParameterReflection) => {
@@ -187,15 +200,7 @@ function buildSignatureString(sig: SignatureReflection): string {
     })
     .join(', ') ?? '';
   const ret = serializeType(sig.type);
-  const typeParams = sig.typeParameters
-    ?.map((tp: TypeParameterReflection) => {
-      let s = tp.name;
-      if (tp.type) s += ` extends ${serializeType(tp.type)}`;
-      if (tp.default) s += ` = ${serializeType(tp.default)}`;
-      return s;
-    })
-    .join(', ');
-  const generics = typeParams ? `<${typeParams}>` : '';
+  const generics = formatTypeParams(sig.typeParameters);
   return `${sig.name}${generics}(${params}): ${ret}`;
 }
 
@@ -476,27 +481,11 @@ function processMember(child: DeclarationReflection): WebsiteFunction | undefine
     if (!typeDefinition && (child as unknown as Record<string, unknown>).type) {
       const rawType = (child as unknown as Record<string, unknown>).type;
       const typeStr = serializeType(rawType);
-      const typeParams = child.typeParameters
-        ?.map((tp: TypeParameterReflection) => {
-          let s = tp.name;
-          if (tp.type) s += ` extends ${serializeType(tp.type)}`;
-          if (tp.default) s += ` = ${serializeType(tp.default)}`;
-          return s;
-        })
-        .join(', ');
-      const generics = typeParams ? `<${typeParams}>` : '';
+      const generics = formatTypeParams(child.typeParameters);
       typeDefinition = `type ${child.name}${generics} = ${typeStr}`;
     }
   } else if (kind === 'interface') {
-    const typeParams = child.typeParameters
-      ?.map((tp: TypeParameterReflection) => {
-        let s = tp.name;
-        if (tp.type) s += ` extends ${serializeType(tp.type)}`;
-        if (tp.default) s += ` = ${serializeType(tp.default)}`;
-        return s;
-      })
-      .join(', ');
-    const generics = typeParams ? `<${typeParams}>` : '';
+    const generics = formatTypeParams(child.typeParameters);
     const members = ((child as unknown as Record<string, unknown>).children as DeclarationReflection[] | undefined) ?? [];
     const memberDefinitions = members.flatMap(m => {
       if (m.kind === ReflectionKind.Property) {
@@ -664,8 +653,11 @@ export async function buildWebsiteMetadata(validCategories: string[]): Promise<v
     // Merge .example.ts examples into functions (richer than JSDoc @example)
     const exampleMap = await loadExampleFiles(category);
 
-    // --- Detect 1:1 companion types (type that shares sourceFile with exactly one function) ---
-    // These will be embedded in their companion function's page instead of having a standalone page.
+    // --- Index functions by source file, one input to the companion-type detection below ---
+    // A type attaches to every function it's colocated with (same file) *and* to any other
+    // function elsewhere in the category whose signature references it by name — see the
+    // combined `colocated`/`otherConsumers` pass further down. Attached types are embedded in
+    // their companion function's page instead of having a standalone page.
     const funcNamesBySourceFile = new Map<string, string[]>();
     for (const fn of functions) {
       if (fn.kind === 'function') {
