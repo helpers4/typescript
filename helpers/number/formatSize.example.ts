@@ -25,6 +25,19 @@ formatSize(1_073_741_824) // '1.0GB'`,
         if (formatSize(1_048_576) !== '1.0MB') throw new Error(`Unexpected: ${formatSize(1_048_576)}`);
       },
     },
+    {
+      title: 'Space before the unit, and a bare integer below the first unit',
+      description: 'unitSeparator inserts a separator before the unit; integerBelowFirstUnit drops the decimal for byte counts under 1024.',
+      code: `formatSize(1536, { unitSeparator: ' ' })                            // '1.5 KB'
+formatSize(512, { integerBelowFirstUnit: true })                    // '512B'
+formatSize(512, { unitSeparator: ' ', integerBelowFirstUnit: true }) // '512 B'`,
+      assert: () => {
+        if (formatSize(1536, { unitSeparator: ' ' }) !== '1.5 KB') throw new Error(`Unexpected: ${formatSize(1536, { unitSeparator: ' ' })}`);
+        if (formatSize(512, { integerBelowFirstUnit: true }) !== '512B') throw new Error(`Unexpected: ${formatSize(512, { integerBelowFirstUnit: true })}`);
+        const both = formatSize(512, { unitSeparator: ' ', integerBelowFirstUnit: true });
+        if (both !== '512 B') throw new Error(`Unexpected: ${both}`);
+      },
+    },
   ],
 };
 
