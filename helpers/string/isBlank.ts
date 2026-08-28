@@ -16,7 +16,7 @@
  * **Zero-width characters** (U+200B zero-width space, U+200C, U+200D, U+2060)
  * are **not** treated as whitespace — they are Unicode "Format" (Cf) characters,
  * not spaces. Strip them explicitly if needed:
- * `isBlank(value.replace(/[​-‍⁠]/g, ''))`
+ * `isBlank(value.replace(/[\u200B-\u200D\u2060]/g, ''))`
  *
  * @param value - The string to check
  * @returns `true` if the string is empty, contains only whitespace, or is `null`/`undefined`
