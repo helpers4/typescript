@@ -5,6 +5,7 @@
  */
 
 import { isWeakMap } from '../guard/isWeakMap';
+import { isWeakMapKey } from '../guard/isWeakMapKey';
 
 /** A cached resolver created by {@link createCachedResolver}. */
 export interface CachedResolver<K, V> {
@@ -12,7 +13,8 @@ export interface CachedResolver<K, V> {
    * Returns the cached value for `key`, computing it (via the `compute`
    * function given to {@link createCachedResolver}) and caching it first if
    * this is the first time `key` is seen since creation or the last {@link clear}.
-   * @throws {TypeError} If the resolver is WeakMap-backed and `key` isn't an object.
+   * @throws {TypeError} If the resolver is WeakMap-backed and `key` isn't a valid WeakMap key
+   * (see {@link isWeakMapKey} — objects, functions, and unregistered symbols only).
    * @throws {Error} If `compute` for this key transitively calls `resolve()` for
    * the same key again (a circular dependency) before returning.
    */
@@ -115,13 +117,11 @@ export function createCachedResolver<K, V>(
 
   return {
     resolve(key: K): V {
-      // WeakMap.has()/.get() silently treat a non-object key as "absent" (per
+      // WeakMap.has()/.get() silently treat an unsupported key as "absent" (per
       // spec), so without this check a bad key would run compute() only to
       // lose the result when .set() throws below. Checked eagerly instead.
-      if (isWeakMap(cache) && (typeof key !== 'object' || key === null)) {
-        throw new TypeError(
-          `createCachedResolver: this resolver's cache is a WeakMap, which requires object keys — got ${key === null ? 'null' : typeof key}`,
-        );
+      if (isWeakMap(cache) && !isWeakMapKey(key)) {
+        throw new TypeError(`createCachedResolver: this resolver's cache is a WeakMap, which requires object, function, or (unregistered) symbol keys — got ${key === null ? 'null' : typeof key}`);
       }
       if (cache.has(key)) return cache.get(key) as V;
       if (inProgress.has(key)) {

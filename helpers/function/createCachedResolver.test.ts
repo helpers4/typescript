@@ -145,4 +145,30 @@ describe('createCachedResolver', () => {
     expect(() => resolve(null as any)).toThrow(/got null/);
     expect(compute).not.toHaveBeenCalled();
   });
+
+  it('accepts a function as a key on a WeakMap-backed resolver (functions are valid WeakMap keys)', () => {
+    const compute = vi.fn((_key: object) => 'computed');
+    const { resolve } = createCachedResolver(compute, () => new WeakMap());
+    const fnKey = () => {};
+
+    expect(() => resolve(fnKey as any)).not.toThrow();
+    expect(compute).toHaveBeenCalledExactlyOnceWith(fnKey);
+  });
+
+  it('accepts a symbol as a key on a WeakMap-backed resolver (symbols are valid WeakMap keys since ES2023)', () => {
+    const compute = vi.fn((_key: object) => 'computed');
+    const { resolve } = createCachedResolver(compute, () => new WeakMap());
+    const symbolKey = Symbol('test');
+
+    expect(() => resolve(symbolKey as any)).not.toThrow();
+    expect(compute).toHaveBeenCalledExactlyOnceWith(symbolKey);
+  });
+
+  it('throws for a registered symbol (Symbol.for) on a WeakMap-backed resolver, unlike a plain symbol', () => {
+    const compute = vi.fn((_key: object) => 'computed');
+    const { resolve } = createCachedResolver(compute, () => new WeakMap());
+
+    expect(() => resolve(Symbol.for('createCachedResolver-test') as any)).toThrow(TypeError);
+    expect(compute).not.toHaveBeenCalled();
+  });
 });
