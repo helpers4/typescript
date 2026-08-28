@@ -282,6 +282,10 @@ describe('parse', () => {
     it('parse(v, "semver") is equivalent to parse(v)', () => {
       expect(parse('1.2.3', 'semver')).toEqual(parse('1.2.3'));
     });
+
+    it('throws for an unrecognized scheme (bypassing the type system, as a plain-JS caller would)', () => {
+      expect(() => parse('1.2.3', 'bogus' as any)).toThrow(/Unhandled version scheme/);
+    });
   });
 
   // --- Mutation-killing tests ---

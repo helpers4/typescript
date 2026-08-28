@@ -270,5 +270,9 @@ describe("compare", () => {
       // Contrast: the same strings under semver treat "-r1" as a prerelease (sorts below).
       expect(compare("1.2.3", "1.2.3-r1", "semver")).toBe(1);
     });
+
+    it("throws for an unrecognized scheme (bypassing the type system, as a plain-JS caller would)", () => {
+      expect(() => compare("1.2.3", "1.2.4", "bogus" as any)).toThrow(/Unhandled version scheme/);
+    });
   });
 });

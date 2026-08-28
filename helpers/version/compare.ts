@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { assertNeverScheme } from './_assertNeverScheme';
 import { compareGentoo } from './_gentoo';
 import { compareSemVer } from './_semver';
 import type { VersionScheme } from './types';
@@ -38,5 +39,12 @@ import type { VersionScheme } from './types';
  * @since 1.9.0
  */
 export function compare(version1: string, version2: string, scheme: VersionScheme = 'semver'): number {
-  return scheme === 'gentoo' ? compareGentoo(version1, version2) : compareSemVer(version1, version2);
+  switch (scheme) {
+    case 'semver':
+      return compareSemVer(version1, version2);
+    case 'gentoo':
+      return compareGentoo(version1, version2);
+    default:
+      return assertNeverScheme(scheme);
+  }
 }

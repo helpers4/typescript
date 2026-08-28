@@ -57,4 +57,8 @@ describe('stringify — gentoo scheme', () => {
       expect(stringify(parse(v, 'gentoo'))).toBe(v);
     }
   });
+
+  it('throws for an unrecognized scheme (bypassing the type system, as a plain-JS caller would)', () => {
+    expect(() => stringify({ scheme: 'bogus' } as any)).toThrow(/Unhandled version scheme/);
+  });
 });
