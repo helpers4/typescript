@@ -41,3 +41,16 @@ describe('formatSize — decimal formatting', () => {
     }
   });
 });
+
+describe('formatSize — unitSeparator option', () => {
+  it('defaults to no separator', () => expect(formatSize(1536)).toBe('1.5KB'));
+  it('inserts the given separator between number and unit', () => expect(formatSize(1536, { unitSeparator: ' ' })).toBe('1.5 KB'));
+  it('works together with the base unit', () => expect(formatSize(512, { unitSeparator: ' ' })).toBe('512.0 B'));
+});
+
+describe('formatSize — integerBelowFirstUnit option', () => {
+  it('defaults to false (keeps the decimal below the first unit)', () => expect(formatSize(512)).toBe('512.0B'));
+  it('prints a bare integer below the first unit when enabled', () => expect(formatSize(512, { integerBelowFirstUnit: true })).toBe('512B'));
+  it('does not affect units at KB and above', () => expect(formatSize(1536, { integerBelowFirstUnit: true })).toBe('1.5KB'));
+  it('combines with unitSeparator', () => expect(formatSize(512, { unitSeparator: ' ', integerBelowFirstUnit: true })).toBe('512 B'));
+});

@@ -69,3 +69,31 @@ describe('formatSize — contract', () => {
   it('exactly 1 MB', () => expect(formatSize(1024 * 1024)).toBe('1.0MB'));
   it('exactly 1 GB', () => expect(formatSize(1024 * 1024 * 1024)).toBe('1.0GB'));
 });
+
+describe('formatSize — options, property-based', () => {
+  it('unitSeparator is always inserted verbatim right before the unit', () => {
+    fc.assert(
+      fc.property(fc.nat(10 ** 12), fc.constantFrom('', ' ', '-', '__'), (bytes, unitSeparator) => {
+        const withSeparator = formatSize(bytes, { unitSeparator });
+        const withoutSeparator = formatSize(bytes);
+        expect(withSeparator).toBe(withoutSeparator.replace(/(B|KB|MB|GB|TB)$/, `${unitSeparator}$1`));
+      }),
+    );
+  });
+
+  it('integerBelowFirstUnit never introduces a decimal point below the first unit', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: 0, max: 1023 }), (bytes) => {
+        expect(formatSize(bytes, { integerBelowFirstUnit: true })).not.toContain('.');
+      }),
+    );
+  });
+
+  it('integerBelowFirstUnit leaves units at KB and above unchanged', () => {
+    fc.assert(
+      fc.property(fc.integer({ min: 1024, max: 10 ** 12 }), (bytes) => {
+        expect(formatSize(bytes, { integerBelowFirstUnit: true })).toBe(formatSize(bytes));
+      }),
+    );
+  });
+});
