@@ -71,6 +71,8 @@ describe('isPrerelease — gentoo scheme', () => {
   });
 
   it('throws for an unrecognized scheme, object input (bypassing the type system)', () => {
-    expect(() => isPrerelease({ scheme: 'bogus' } as any)).toThrow(/Unhandled version scheme/);
+    // Asserts the actual bad object is rendered as JSON, not the useless "[object Object]" a
+    // bare String(version) would produce.
+    expect(() => isPrerelease({ scheme: 'bogus' } as any)).toThrow('Unhandled version scheme: {"scheme":"bogus"}');
   });
 });

@@ -59,6 +59,8 @@ describe('stringify — gentoo scheme', () => {
   });
 
   it('throws for an unrecognized scheme (bypassing the type system, as a plain-JS caller would)', () => {
-    expect(() => stringify({ scheme: 'bogus' } as any)).toThrow(/Unhandled version scheme/);
+    // Asserts the actual bad object is rendered as JSON, not the useless "[object Object]" a
+    // bare String(parsed) would produce — regression test for assertNeverScheme's object case.
+    expect(() => stringify({ scheme: 'bogus' } as any)).toThrow('Unhandled version scheme: {"scheme":"bogus"}');
   });
 });
