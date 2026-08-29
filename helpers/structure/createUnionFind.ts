@@ -39,7 +39,7 @@ export interface UnionFind<T> {
  * uf.union('b', 'c');
  * uf.connected('a', 'c'); // true — merged transitively through 'b'
  * uf.connected('a', 'd'); // false — 'd' was never unioned with anything
- * @since 3.0.8
+ * @since next
  */
 export function createUnionFind<T>(): UnionFind<T> {
   const parent = new Map<T, T>();

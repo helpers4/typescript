@@ -9,7 +9,7 @@ const UNITS = ['B', 'KB', 'MB', 'GB', 'TB'] as const;
 
 /**
  * Options for {@link formatSize}.
- * @since 3.0.8
+ * @since next
  */
 export interface FormatSizeOptions {
   /**
