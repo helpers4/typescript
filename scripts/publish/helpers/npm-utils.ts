@@ -209,14 +209,8 @@ export interface UnpublishOptions {
   dryRun?: boolean;
 }
 
-export interface UnpublishResult {
-  packageName: string;
-  version: string;
-  success: boolean;
-  error?: Error;
-  skipped?: boolean;
-  skipReason?: string;
-}
+/** Same shape as {@link PublishResult} — an npm-operation outcome doesn't vary by which operation it was. */
+export type UnpublishResult = PublishResult;
 
 /**
  * Unpublish a single package version.
