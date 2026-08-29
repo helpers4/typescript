@@ -51,4 +51,19 @@ describe('incrementPrerelease', () => {
   it('resets counter when current prerelease number is empty string', () => {
     expect(incrementPrerelease('1.2.4-alpha.', 'alpha')).toBe('1.2.4-alpha.0');
   });
+
+  describe('gentoo scheme', () => {
+    it('defaults to semver when scheme is omitted', () => {
+      expect(incrementPrerelease('1.2.3', 'alpha')).toBe('1.2.4-alpha.0');
+    });
+
+    it('increments a gentoo prerelease when scheme is "gentoo"', () => {
+      expect(incrementPrerelease('1.2.3', 'alpha', 'gentoo')).toBe('1.2.4_alpha');
+      expect(incrementPrerelease('1.2.4_alpha', 'alpha', 'gentoo')).toBe('1.2.4_alpha1');
+    });
+
+    it('throws for an unrecognized scheme (bypassing the type system)', () => {
+      expect(() => incrementPrerelease('1.2.3', 'alpha', 'bogus' as any)).toThrow(/Unhandled version scheme/);
+    });
+  });
 });

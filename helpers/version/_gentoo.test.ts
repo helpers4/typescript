@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { compareGentoo, parseGentoo, stringifyGentoo } from './_gentoo';
+import { compareGentoo, incrementGentoo, incrementPrereleaseGentoo, parseGentoo, satisfiesRangeGentoo, stringifyGentoo } from './_gentoo';
 
 describe('parseGentoo', () => {
   it('parses a bare numeric version', () => {
@@ -180,5 +180,109 @@ describe('stringifyGentoo', () => {
     for (const v of ['1.2.3', '1.2.3b', '1.2.3_rc1', '1.2.3-r2', '1.2.3b_rc1-r2', '5', '1.2.3.4.5']) {
       expect(stringifyGentoo(parseGentoo(v))).toBe(v);
     }
+  });
+});
+
+describe('incrementGentoo', () => {
+  it('bumps patch (3rd component), leaving major/minor alone', () => {
+    expect(incrementGentoo('1.2.3', 'patch')).toBe('1.2.4');
+  });
+
+  it('bumps minor and resets patch', () => {
+    expect(incrementGentoo('1.2.3', 'minor')).toBe('1.3.0');
+  });
+
+  it('bumps major and resets minor and patch', () => {
+    expect(incrementGentoo('1.2.3', 'major')).toBe('2.0.0');
+  });
+
+  it('resets components after the bumped one, even beyond the first three', () => {
+    expect(incrementGentoo('1.2.3.4', 'minor')).toBe('1.3.0.0');
+  });
+
+  it('pads missing components before bumping', () => {
+    expect(incrementGentoo('1', 'minor')).toBe('1.1.0');
+    expect(incrementGentoo('1.2', 'patch')).toBe('1.2.1');
+  });
+
+  it('drops the letter, suffixes, and revision', () => {
+    expect(incrementGentoo('1.2.3b_rc1-r2', 'patch')).toBe('1.2.4');
+  });
+
+  it('throws for an invalid increment type (bypassing the type system)', () => {
+    expect(() => incrementGentoo('1.2.3', 'invalid' as any)).toThrow(/Invalid increment type/);
+  });
+});
+
+describe('incrementPrereleaseGentoo', () => {
+  it('starts a new prerelease line when there is no current suffix', () => {
+    expect(incrementPrereleaseGentoo('1.2.3', 'alpha')).toBe('1.2.4_alpha');
+  });
+
+  it('increments the counter for the same suffix type', () => {
+    expect(incrementPrereleaseGentoo('1.2.3_alpha1', 'alpha')).toBe('1.2.3_alpha2');
+  });
+
+  it('resets the counter to 0 for a different suffix type', () => {
+    expect(incrementPrereleaseGentoo('1.2.3_alpha1', 'beta')).toBe('1.2.3_beta');
+  });
+
+  it('treats a plain release with only a revision as "no current prerelease"', () => {
+    expect(incrementPrereleaseGentoo('1.2.3-r5', 'rc')).toBe('1.2.4_rc');
+  });
+
+  it('treats a p suffix as "no current prerelease" (p is not a prerelease)', () => {
+    expect(incrementPrereleaseGentoo('1.2.3_p1', 'alpha')).toBe('1.2.4_alpha');
+  });
+
+  it('preserves the letter suffix', () => {
+    expect(incrementPrereleaseGentoo('1.2.3b_alpha1', 'alpha')).toBe('1.2.3b_alpha2');
+  });
+
+  it('throws for a prerelease id outside the fixed Gentoo suffix vocabulary', () => {
+    expect(() => incrementPrereleaseGentoo('1.2.3', 'next')).toThrow(/not a valid Gentoo suffix type/);
+  });
+});
+
+describe('satisfiesRangeGentoo', () => {
+  it('exact match', () => {
+    expect(satisfiesRangeGentoo('1.2.3', '1.2.3')).toBe(true);
+    expect(satisfiesRangeGentoo('1.2.3', '1.2.4')).toBe(false);
+  });
+
+  it('treats a bare version and an explicit -r0 as the same exact match', () => {
+    expect(satisfiesRangeGentoo('1.2.3-r0', '1.2.3')).toBe(true);
+    expect(satisfiesRangeGentoo('1.2.3-r1', '1.2.3')).toBe(false);
+  });
+
+  it('>= operator', () => {
+    expect(satisfiesRangeGentoo('1.2.3', '>=1.2.0')).toBe(true);
+    expect(satisfiesRangeGentoo('1.2.3', '>=1.2.3')).toBe(true);
+    expect(satisfiesRangeGentoo('1.2.3', '>=1.3.0')).toBe(false);
+  });
+
+  it('> operator', () => {
+    expect(satisfiesRangeGentoo('1.2.3', '>1.2.0')).toBe(true);
+    expect(satisfiesRangeGentoo('1.2.3', '>1.2.3')).toBe(false);
+  });
+
+  it('<= operator', () => {
+    expect(satisfiesRangeGentoo('1.2.3', '<=1.2.3')).toBe(true);
+    expect(satisfiesRangeGentoo('1.2.3', '<=1.2.0')).toBe(false);
+  });
+
+  it('< operator', () => {
+    expect(satisfiesRangeGentoo('1.2.3', '<1.3.0')).toBe(true);
+    expect(satisfiesRangeGentoo('1.2.3', '<1.2.3')).toBe(false);
+  });
+
+  it('throws for ^ and ~ — no Gentoo/Portage equivalent', () => {
+    expect(() => satisfiesRangeGentoo('1.2.3', '^1.0.0')).toThrow(/no Gentoo\/Portage equivalent/);
+    expect(() => satisfiesRangeGentoo('1.2.3', '~1.2.0')).toThrow(/no Gentoo\/Portage equivalent/);
+  });
+
+  it('an operator character with no valid prefix is an unsupported range format', () => {
+    // '=' alone is not '>=', '<=', or an exact match (no operator character at all)
+    expect(satisfiesRangeGentoo('1.2.3', '=1.2.3')).toBe(false);
   });
 });

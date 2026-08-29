@@ -4,83 +4,44 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { assertNeverScheme } from './_assertNeverScheme';
+import { satisfiesRangeGentoo } from './_gentoo';
+import { satisfiesRangeSemVer } from './_semver';
+import type { VersionScheme } from './types';
+
 /**
- * Checks if a version satisfies a range (simple implementation)
+ * Checks if a version satisfies a range, according to the given `scheme` (simple
+ * implementation — see each scheme's own doc for exactly which operators are supported).
+ *
+ * **`'semver'`** (default) — `>=`, `>`, `<=`, `<`, `^` (caret, patch+minor updates within the
+ * same major), `~` (tilde, patch updates within the same major.minor), or an exact match.
+ *
+ * **`'gentoo'`** — `>=`, `>`, `<=`, `<`, or an exact match, compared per Gentoo/Portage
+ * ordering (see {@link compare}). `^`/`~` throw: Portage's own atom syntax gives those
+ * characters different, unrelated meanings, so silently reusing SemVer's semantics for them
+ * would be actively misleading rather than merely unsupported.
+ *
  * @param version - Version to check
  * @param range - Range pattern (e.g., ">=1.0.0", "~1.2.0", "^1.0.0")
+ * @param scheme - Which version scheme to interpret `version`/`range` as. Defaults to `'semver'`.
  * @returns True if version satisfies the range
+ * @example
+ * satisfiesRange('1.2.3', '>=1.0.0') // true
+ * satisfiesRange('1.2.3', '^1.0.0')  // true
+ * satisfiesRange('2.0.0', '^1.0.0')  // false
+ * @example
+ * satisfiesRange('1.2.3', '>=1.2.0', 'gentoo') // true
+ * satisfiesRange('1.2.3-r1', '1.2.3', 'gentoo') // false — different revisions, not an exact match
+ * satisfiesRange('1.2.3-r0', '1.2.3', 'gentoo') // true — '-r0' is the implicit default, same version
  * @since 1.9.0
  */
-export function satisfiesRange(version: string, range: string): boolean {
-  const normalizedVersion = version.replace(/^v/, '');
-
-  // Handle exact match
-  if (!range.match(/[~^<>=]/)) {
-    return normalizedVersion === range.replace(/^v/, '');
+export function satisfiesRange(version: string, range: string, scheme: VersionScheme = 'semver'): boolean {
+  switch (scheme) {
+    case 'semver':
+      return satisfiesRangeSemVer(version, range);
+    case 'gentoo':
+      return satisfiesRangeGentoo(version, range);
+    default:
+      return assertNeverScheme(scheme);
   }
-
-  // Handle >= operator
-  if (range.startsWith('>=')) {
-    const targetVersion = range.slice(2).replace(/^v/, '');
-    return compareVersionsSimple(normalizedVersion, targetVersion) >= 0;
-  }
-
-  // Handle > operator
-  if (range.startsWith('>')) {
-    const targetVersion = range.slice(1).replace(/^v/, '');
-    return compareVersionsSimple(normalizedVersion, targetVersion) > 0;
-  }
-
-  // Handle <= operator
-  if (range.startsWith('<=')) {
-    const targetVersion = range.slice(2).replace(/^v/, '');
-    return compareVersionsSimple(normalizedVersion, targetVersion) <= 0;
-  }
-
-  // Handle < operator
-  if (range.startsWith('<')) {
-    const targetVersion = range.slice(1).replace(/^v/, '');
-    return compareVersionsSimple(normalizedVersion, targetVersion) < 0;
-  }
-
-  // Handle caret range (^1.2.3 allows patch and minor updates)
-  if (range.startsWith('^')) {
-    const targetVersion = range.slice(1).replace(/^v/, '');
-    const [targetMajor] = targetVersion.split('.').map(Number);
-    const [versionMajor] = normalizedVersion.split('.').map(Number);
-
-    return versionMajor === targetMajor &&
-      compareVersionsSimple(normalizedVersion, targetVersion) >= 0;
-  }
-
-  // Handle tilde range (~1.2.3 allows patch updates)
-  if (range.startsWith('~')) {
-    const targetVersion = range.slice(1).replace(/^v/, '');
-    const [targetMajor, targetMinor] = targetVersion.split('.').map(Number);
-    const [versionMajor, versionMinor] = normalizedVersion.split('.').map(Number);
-
-    return versionMajor === targetMajor &&
-      versionMinor === targetMinor &&
-      compareVersionsSimple(normalizedVersion, targetVersion) >= 0;
-  } else {
-    // Unsupported range format
-    return false;
-  }
-}
-
-function compareVersionsSimple(version1: string, version2: string): number {
-  const parts1 = version1.split('.').map(Number);
-  const parts2 = version2.split('.').map(Number);
-
-  const maxLength = Math.max(parts1.length, parts2.length);
-
-  for (let i = 0; i < maxLength; i++) {
-    const part1 = parts1[i] || 0;
-    const part2 = parts2[i] || 0;
-
-    if (part1 < part2) return -1;
-    if (part1 > part2) return 1;
-  }
-
-  return 0;
 }

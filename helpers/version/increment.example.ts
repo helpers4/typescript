@@ -38,6 +38,15 @@ const examples: HelperExamples = {
         if (increment('v1.0.0', 'major') !== 'v2.0.0') throw new Error('Unexpected result');
       },
     },
+    {
+      title: 'Increment a Gentoo/Portage version',
+      description: 'Drops any letter/suffix/revision and resets components after the bumped one, same as the SemVer scheme.',
+      code: `increment('1.2.3_rc1', 'patch', 'gentoo')
+// => '1.2.4'`,
+      assert: () => {
+        if (increment('1.2.3_rc1', 'patch', 'gentoo') !== '1.2.4') throw new Error('Unexpected result');
+      },
+    },
   ],
 };
 

@@ -7,7 +7,9 @@
  * Not exported from the package barrel — tests live in _gentoo.test.ts.
  */
 
-import type { GentooSuffix, GentooSuffixType, ParsedGentooVersion } from './types';
+import { combineSortFns } from '../array/combineSortFns';
+import type { SortFn } from '../array/sort';
+import type { GentooSuffix, GentooSuffixType, IncrementType, ParsedGentooVersion } from './types';
 
 /** @ignore */
 const GENTOO_VERSION_RE = /^(\d+(?:\.\d+)*)([a-z])?((?:_(?:alpha|beta|pre|rc|p)\d*)*)(?:-r(\d+))?$/;
@@ -97,21 +99,20 @@ export function isPrereleaseGentoo(parsed: ParsedGentooVersion): boolean {
   return SUFFIX_RANK[last?.type ?? 'release'] < SUFFIX_RANK.release;
 }
 
+// The four precedence steps, in order, composed via combineSortFns (array/) instead of a
+// hand-rolled "if not equal, return" chain — each step is independently readable, and the
+// precedence order is just the argument order rather than implicit in early-return control flow.
+const compareByComponents: SortFn<ParsedGentooVersion> = (a, b) => compareComponents(a.components, b.components);
+const compareByLetter: SortFn<ParsedGentooVersion> = (a, b) => (a.letter === b.letter ? 0 : a.letter < b.letter ? -1 : 1);
+const compareBySuffixes: SortFn<ParsedGentooVersion> = (a, b) => compareSuffixes(a.suffixes, b.suffixes);
+const compareByRevision: SortFn<ParsedGentooVersion> = (a, b) => (a.revision === b.revision ? 0 : a.revision < b.revision ? -1 : 1);
+
+/** @ignore */
+const compareParsedGentoo = combineSortFns<ParsedGentooVersion>(compareByComponents, compareByLetter, compareBySuffixes, compareByRevision);
+
 /** @ignore */
 export function compareGentoo(version1: string, version2: string): number {
-  const v1 = parseGentoo(version1);
-  const v2 = parseGentoo(version2);
-
-  const componentsCmp = compareComponents(v1.components, v2.components);
-  if (componentsCmp !== 0) return componentsCmp;
-
-  if (v1.letter !== v2.letter) return v1.letter < v2.letter ? -1 : 1;
-
-  const suffixCmp = compareSuffixes(v1.suffixes, v2.suffixes);
-  if (suffixCmp !== 0) return suffixCmp;
-
-  if (v1.revision !== v2.revision) return v1.revision < v2.revision ? -1 : 1;
-  return 0;
+  return compareParsedGentoo(parseGentoo(version1), parseGentoo(version2));
 }
 
 /**
@@ -125,4 +126,82 @@ export function stringifyGentoo(parsed: ParsedGentooVersion): string {
   const suffixes = parsed.suffixes.map((s) => `_${s.type}${s.number > 0 ? s.number : ''}`).join('');
   const revision = parsed.revision > 0 ? `-r${parsed.revision}` : '';
   return `${base}${parsed.letter}${suffixes}${revision}`;
+}
+
+/** @ignore */
+const INCREMENT_COMPONENT_INDEX: Record<IncrementType, number> = { major: 0, minor: 1, patch: 2 };
+
+/**
+ * Bumps the component at `type`'s position (`major` → index 0, `minor` → 1, `patch` → 2 — the
+ * same positional convention as SemVer, generalized since Gentoo's `components` array can be
+ * any length), zeroing every component after it and dropping the letter/suffixes/revision —
+ * matching {@link incrementSemVer}'s "bumping X resets everything finer-grained" behavior.
+ * @ignore
+ */
+export function incrementGentoo(version: string, type: IncrementType): string {
+  const index = INCREMENT_COMPONENT_INDEX[type];
+  if (index === undefined) {
+    throw new Error(`Invalid increment type: ${type}`);
+  }
+
+  const parsed = parseGentoo(version);
+  const components = [...parsed.components];
+  // Always at least major.minor.patch, like SemVer — a bare "1" incrementing "minor" should
+  // produce "1.1.0", not "1.1" (extra pre-existing components beyond 3 are left in place).
+  while (components.length < 3) components.push(0);
+  components[index]!++;
+  for (let i = index + 1; i < components.length; i++) components[i] = 0;
+
+  return stringifyGentoo({ scheme: 'gentoo', components, letter: '', suffixes: [], revision: 0 });
+}
+
+/** @ignore */
+const GENTOO_SUFFIX_TYPES: readonly GentooSuffixType[] = ['alpha', 'beta', 'pre', 'rc', 'p'];
+
+/**
+ * Gentoo equivalent of `incrementPrereleaseSemVer` — no current prerelease suffix bumps the
+ * last numeric component and starts a fresh suffix at `0` (bare, e.g. `_alpha`); the same
+ * suffix type increments its counter; a different type resets it to `0`. `prereleaseId` must be
+ * one of the five real Gentoo suffix types (`alpha`/`beta`/`pre`/`rc`/`p`) — unlike SemVer's
+ * free-form prerelease identifiers, Portage's suffix vocabulary is fixed by spec.
+ * @ignore
+ */
+export function incrementPrereleaseGentoo(version: string, prereleaseId: string): string {
+  if (!GENTOO_SUFFIX_TYPES.includes(prereleaseId as GentooSuffixType)) {
+    throw new Error(`incrementPrerelease: "${prereleaseId}" is not a valid Gentoo suffix type (expected one of ${GENTOO_SUFFIX_TYPES.join(', ')})`);
+  }
+  const suffixType = prereleaseId as GentooSuffixType;
+  const parsed = parseGentoo(version);
+
+  if (!isPrereleaseGentoo(parsed)) {
+    // parseGentoo's grammar requires at least one numeric component, so this index is always valid.
+    const components = [...parsed.components];
+    components[components.length - 1]!++;
+    return stringifyGentoo({ ...parsed, components, suffixes: [{ type: suffixType, number: 0 }], revision: 0 });
+  }
+
+  const current = parsed.suffixes[parsed.suffixes.length - 1]!;
+  const shouldIncrement = current.type === suffixType;
+  return stringifyGentoo({ ...parsed, suffixes: [{ type: suffixType, number: shouldIncrement ? current.number + 1 : 0 }], revision: 0 });
+}
+
+/**
+ * Gentoo range check, mirroring `satisfiesRangeSemVer`'s operator set except `^`/`~` — Portage's
+ * own atom syntax gives those characters different, unrelated meanings (dependency-atom
+ * revision matching, not SemVer-style caret/tilde ranges), so reusing SemVer's semantics for
+ * them here would be actively misleading rather than merely unsupported.
+ * @ignore
+ */
+export function satisfiesRangeGentoo(version: string, range: string): boolean {
+  if (range.startsWith('^') || range.startsWith('~')) {
+    throw new Error(`satisfiesRange: '${range[0]}' ranges are SemVer-specific and have no Gentoo/Portage equivalent — use >=, >, <=, <, or an exact version instead`);
+  }
+  if (!/[<>=]/.test(range)) {
+    return compareGentoo(version, range) === 0;
+  }
+  if (range.startsWith('>=')) return compareGentoo(version, range.slice(2)) >= 0;
+  if (range.startsWith('>')) return compareGentoo(version, range.slice(1)) > 0;
+  if (range.startsWith('<=')) return compareGentoo(version, range.slice(2)) <= 0;
+  if (range.startsWith('<')) return compareGentoo(version, range.slice(1)) < 0;
+  return false;
 }
