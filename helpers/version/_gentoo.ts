@@ -86,6 +86,17 @@ function compareSuffixes(a: readonly GentooSuffix[], b: readonly GentooSuffix[])
   return 0;
 }
 
+/**
+ * A gentoo version is a "prerelease" exactly when its last suffix segment ranks below the
+ * plain release — `alpha`/`beta`/`pre`/`rc`. `p` (patch level) doesn't count: it ranks above
+ * release, and neither does a `-r` revision, which isn't a suffix segment at all.
+ * @ignore
+ */
+export function isPrereleaseGentoo(parsed: ParsedGentooVersion): boolean {
+  const last = parsed.suffixes[parsed.suffixes.length - 1];
+  return SUFFIX_RANK[last?.type ?? 'release'] < SUFFIX_RANK.release;
+}
+
 /** @ignore */
 export function compareGentoo(version1: string, version2: string): number {
   const v1 = parseGentoo(version1);

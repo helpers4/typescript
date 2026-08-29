@@ -38,3 +38,39 @@ describe('isPrerelease — null / undefined passthrough', () => {
   it('undefined → undefined', () => expect(isPrerelease(undefined)).toBeUndefined());
   it('null → null', () => expect(isPrerelease(null)).toBeNull());
 });
+
+describe('isPrerelease — gentoo scheme', () => {
+  it('alpha/beta/pre/rc suffixes → true', () => {
+    expect(isPrerelease('1.2.3_alpha1', 'gentoo')).toBe(true);
+    expect(isPrerelease('1.2.3_beta', 'gentoo')).toBe(true);
+    expect(isPrerelease('1.2.3_pre2', 'gentoo')).toBe(true);
+    expect(isPrerelease('1.2.3_rc1', 'gentoo')).toBe(true);
+  });
+
+  it('p suffix → false (sorts above release, not a prerelease)', () => {
+    expect(isPrerelease('1.2.3_p1', 'gentoo')).toBe(false);
+  });
+
+  it('plain release → false', () => {
+    expect(isPrerelease('1.2.3', 'gentoo')).toBe(false);
+  });
+
+  it('a -r revision is not a prerelease, unlike a semver "-" suffix', () => {
+    expect(isPrerelease('1.2.3-r1', 'gentoo')).toBe(false);
+    // Contrast: the same string under semver treats "-r1" as a prerelease.
+    expect(isPrerelease('1.2.3-r1', 'semver')).toBe(true);
+  });
+
+  it('accepts a pre-parsed ParsedGentooVersion object, scheme read from it', () => {
+    expect(isPrerelease(parse('1.2.3_rc1', 'gentoo'))).toBe(true);
+    expect(isPrerelease(parse('1.2.3', 'gentoo'))).toBe(false);
+  });
+
+  it('throws for an unrecognized scheme, string input (bypassing the type system)', () => {
+    expect(() => isPrerelease('1.2.3', 'bogus' as any)).toThrow(/Unhandled version scheme/);
+  });
+
+  it('throws for an unrecognized scheme, object input (bypassing the type system)', () => {
+    expect(() => isPrerelease({ scheme: 'bogus' } as any)).toThrow(/Unhandled version scheme/);
+  });
+});
