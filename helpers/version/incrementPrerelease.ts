@@ -4,14 +4,17 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { parse } from './parse';
-import { stringify } from './stringify';
+import { assertNeverScheme } from './_assertNeverScheme';
+import { incrementPrereleaseGentoo } from './_gentoo';
+import { incrementPrereleaseSemVer } from './_semver';
+import type { VersionScheme } from './types';
 
 /**
- * Increments the prerelease portion of a semantic version — the semantics `npm version
- * prerelease --preid <id>` uses, not covered by {@link increment} (which only handles
- * `'major' | 'minor' | 'patch'`).
+ * Increments the prerelease portion of a version, according to the given `scheme` — the
+ * semantics `npm version prerelease --preid <id>` uses, not covered by {@link increment} (which
+ * only handles `'major' | 'minor' | 'patch'`).
  *
+ * **`'semver'`** (default):
  * - No current prerelease (a release version) → bumps `patch` and starts a new prerelease line
  *   at `<prereleaseId>.0` (a prerelease of the version itself, e.g. `1.2.3`, would already be
  *   released).
@@ -24,8 +27,15 @@ import { stringify } from './stringify';
  * A leading `v` is preserved if present, matching {@link increment}'s behavior (`parse`/
  * `stringify` alone would strip it — see their docs).
  *
+ * **`'gentoo'`** — the same rules, but `prereleaseId` must be one of the five real Gentoo
+ * suffix types (`alpha`/`beta`/`pre`/`rc`/`p`), not a free-form string — Portage's suffix
+ * vocabulary is fixed by spec, unlike SemVer's arbitrary prerelease identifiers. No current
+ * prerelease suffix bumps the last numeric component instead of specifically `patch`, since
+ * Gentoo's `components` array can be any length.
+ *
  * @param version - The version to increment
  * @param prereleaseId - The prerelease type/identifier (e.g. `'alpha'`, `'beta'`, `'rc'`)
+ * @param scheme - Which version scheme to interpret `version` as. Defaults to `'semver'`.
  * @returns The version with an incremented or newly-started prerelease
  * @see {@link increment} for major/minor/patch increments
  * @example
@@ -37,40 +47,26 @@ import { stringify } from './stringify';
  * @example
  * incrementPrerelease('v1.2.4-alpha.3', 'beta')
  * // => 'v1.2.4-beta.0'
+ * @example
+ * incrementPrerelease('1.2.3', 'alpha', 'gentoo')       // => '1.2.4_alpha'
+ * incrementPrerelease('1.2.3_alpha', 'alpha', 'gentoo')  // => '1.2.3_alpha1'
  * @since 3.0.1
  */
-export function incrementPrerelease(version: string, prereleaseId: string): string;
-export function incrementPrerelease(version: undefined, prereleaseId: string): undefined;
-export function incrementPrerelease(version: null, prereleaseId: string): null;
+export function incrementPrerelease(version: string, prereleaseId: string, scheme?: VersionScheme): string;
+export function incrementPrerelease(version: undefined, prereleaseId: string, scheme?: VersionScheme): undefined;
+export function incrementPrerelease(version: null, prereleaseId: string, scheme?: VersionScheme): null;
 export function incrementPrerelease(
   version: string | undefined | null,
-  prereleaseId: string
+  prereleaseId: string,
+  scheme: VersionScheme = 'semver',
 ): string | undefined | null {
   if (version === undefined || version === null) return version;
-
-  const hasV = version.startsWith('v');
-  const parsed = parse(version);
-  const [currentId, currentNum] = parsed.prerelease;
-
-  // Only increment counter if: same prerelease ID, currentNum is a non-empty string, and is a finite number
-  // Otherwise, reset counter to 0 (handles non-numeric, empty, null, or different prerelease ID)
-  const shouldIncrement =
-    currentId === prereleaseId &&
-    typeof currentNum === 'string' &&
-    currentNum !== '' &&
-    Number.isFinite(Number(currentNum));
-
-  const result =
-    parsed.prerelease.length === 0
-      ? stringify({ ...parsed, patch: parsed.patch + 1, prerelease: [prereleaseId, '0'], build: [] })
-      : stringify({
-          ...parsed,
-          prerelease: [
-            prereleaseId,
-            shouldIncrement ? String(Number(currentNum) + 1) : '0',
-          ],
-          build: [],
-        });
-
-  return hasV ? `v${result}` : result;
+  switch (scheme) {
+    case 'semver':
+      return incrementPrereleaseSemVer(version, prereleaseId);
+    case 'gentoo':
+      return incrementPrereleaseGentoo(version, prereleaseId);
+    default:
+      return assertNeverScheme(scheme);
+  }
 }

@@ -65,4 +65,18 @@ describe("increment", () => {
     expect(result.length).toBeGreaterThan(0);
     expect(result).toMatch(/^\d+\.\d+\.\d+$/);
   });
+
+  describe('gentoo scheme', () => {
+    it('defaults to semver when scheme is omitted', () => {
+      expect(increment('1.2.3', 'patch')).toBe('1.2.4');
+    });
+
+    it('increments a gentoo version when scheme is "gentoo"', () => {
+      expect(increment('1.2.3_rc1', 'patch', 'gentoo')).toBe('1.2.4');
+    });
+
+    it('throws for an unrecognized scheme (bypassing the type system)', () => {
+      expect(() => increment('1.2.3', 'patch', 'bogus' as any)).toThrow(/Unhandled version scheme/);
+    });
+  });
 });

@@ -166,4 +166,23 @@ describe("satisfiesRange", () => {
     expect(satisfiesRange("1.0.0", "<=1.0.0")).toBe(true);
     expect(satisfiesRange("1.0.0", "<1.0.0")).toBe(false);
   });
+
+  describe("gentoo scheme", () => {
+    it("defaults to semver when scheme is omitted", () => {
+      expect(satisfiesRange("1.2.3", "^1.0.0")).toBe(true);
+    });
+
+    it('checks a gentoo version when scheme is "gentoo"', () => {
+      expect(satisfiesRange("1.2.3", ">=1.2.0", "gentoo")).toBe(true);
+      expect(satisfiesRange("1.2.3", ">=1.3.0", "gentoo")).toBe(false);
+    });
+
+    it("throws for ^/~ under the gentoo scheme (no Portage equivalent)", () => {
+      expect(() => satisfiesRange("1.2.3", "^1.0.0", "gentoo")).toThrow(/no Gentoo\/Portage equivalent/);
+    });
+
+    it("throws for an unrecognized scheme (bypassing the type system)", () => {
+      expect(() => satisfiesRange("1.2.3", ">=1.0.0", "bogus" as any)).toThrow(/Unhandled version scheme/);
+    });
+  });
 });

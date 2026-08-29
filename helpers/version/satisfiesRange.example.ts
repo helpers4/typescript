@@ -38,6 +38,15 @@ const examples: HelperExamples = {
         if (satisfiesRange('0.9.0', '>=1.0.0')) throw new Error('Expected false');
       },
     },
+    {
+      title: 'Check a Gentoo/Portage range',
+      description: 'Supports >=, >, <=, <, and exact match — ^ and ~ throw, since Portage gives those characters different, unrelated meanings.',
+      code: `satisfiesRange('1.2.3', '>=1.2.0', 'gentoo')
+// => true`,
+      assert: () => {
+        if (!satisfiesRange('1.2.3', '>=1.2.0', 'gentoo')) throw new Error('Expected true');
+      },
+    },
   ],
 };
 

@@ -42,6 +42,17 @@ const examples: HelperExamples = {
         }
       },
     },
+    {
+      title: 'Increment a Gentoo/Portage prerelease',
+      description: "prereleaseId must be one of Gentoo's fixed suffix types (alpha/beta/pre/rc/p), not a free-form string.",
+      code: `incrementPrerelease('1.2.3', 'alpha', 'gentoo')
+// => '1.2.4_alpha'`,
+      assert: () => {
+        if (incrementPrerelease('1.2.3', 'alpha', 'gentoo') !== '1.2.4_alpha') {
+          throw new Error('Expected 1.2.4_alpha');
+        }
+      },
+    },
   ],
 };
 
