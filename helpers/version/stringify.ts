@@ -7,10 +7,10 @@
 import { assertNeverScheme } from './_assertNeverScheme';
 import { stringifyGentoo } from './_gentoo';
 import { stringifySemVer } from './_semver';
-import type { ParsedVersion } from './types';
+import type { AnyParsedVersion } from './types';
 
 /**
- * Reconstructs a version string from a {@link ParsedVersion} object — the scheme is read from
+ * Reconstructs a version string from a {@link AnyParsedVersion} object — the scheme is read from
  * the object's own `scheme` field, not passed separately (a `ParsedGentooVersion` can only ever
  * stringify as Gentoo, so there's nothing to disambiguate).
  *
@@ -30,10 +30,10 @@ import type { ParsedVersion } from './types';
  * // => '1.2.3b_rc1-r2'
  * @since 2.0.0
  */
-export function stringify(parsed: ParsedVersion): string;
+export function stringify(parsed: AnyParsedVersion): string;
 export function stringify(parsed: undefined): undefined;
 export function stringify(parsed: null): null;
-export function stringify(parsed: ParsedVersion | undefined | null): string | undefined | null {
+export function stringify(parsed: AnyParsedVersion | undefined | null): string | undefined | null {
   if (parsed === undefined || parsed === null) return parsed;
   switch (parsed.scheme) {
     case 'semver':

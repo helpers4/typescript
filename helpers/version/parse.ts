@@ -7,7 +7,7 @@
 import { assertNeverScheme } from './_assertNeverScheme';
 import { parseGentoo } from './_gentoo';
 import { parseSemVer } from './_semver';
-import type { ParsedGentooVersion, ParsedSemVerVersion, ParsedVersion, VersionScheme } from './types';
+import type { AnyParsedVersion, ParsedGentooVersion, ParsedSemVerVersion, VersionScheme } from './types';
 
 /**
  * Parses a version string into its components, according to the given `scheme`.
@@ -36,10 +36,10 @@ import type { ParsedGentooVersion, ParsedSemVerVersion, ParsedVersion, VersionSc
  */
 export function parse(version: string, scheme?: 'semver'): ParsedSemVerVersion;
 export function parse(version: string, scheme: 'gentoo'): ParsedGentooVersion;
-export function parse(version: string, scheme: VersionScheme): ParsedVersion;
+export function parse(version: string, scheme: VersionScheme): AnyParsedVersion;
 export function parse(version: undefined, scheme?: VersionScheme): undefined;
 export function parse(version: null, scheme?: VersionScheme): null;
-export function parse(version: string | undefined | null, scheme: VersionScheme = 'semver'): ParsedVersion | undefined | null {
+export function parse(version: string | undefined | null, scheme: VersionScheme = 'semver'): AnyParsedVersion | undefined | null {
   if (version === undefined || version === null) return version;
   switch (scheme) {
     case 'semver':
