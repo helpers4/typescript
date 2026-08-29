@@ -8,6 +8,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.0.8] - 2026-08-29
+
+### 🚀 Features
+- **CI-CD**: add unpublish-version script for cleaning up failed releases
+- **array**: add uniqueBy to dedupe by a derived key
+- **array**: add maxBy/minBy to pick an item by a derived key
+- **guard**: add isWeakMapKey
+- **number**: add unitSeparator and integerBelowFirstUnit options to formatSize
+- **structure**: add createUnionFind, new "structure" category
+- **version**: make increment/satisfiesRange/incrementPrerelease gentoo-compatible
+- **version**: add Gentoo/Portage scheme support to parse/compare/stringify
+
+### 🐛 Bug Fixes
+- **CI-CD**: reject a conflicting --version instead of silently overwriting it
+- **CI-CD**: close a command-injection path in packageVersionExists
+- **function**: widen createCachedResolver's WeakMap overload to K extends WeakKey
+- **function**: accept function/symbol keys in createCachedResolver's WeakMap guard
+- **string**: escape zero-width chars in isBlank's JSDoc regex example
+- **version**: resolve ParsedVersion breaking change, unify isPrerelease's dispatch
+- **version**: render the actual bad value in assertNeverScheme's error message
+- **version**: make isPrerelease scheme-aware, fixing a Gentoo misclassification
+
+### 🔧 Miscellaneous
+- **deps-dev**: bump the dev-dependencies group across 1 directory with 8 updates
+- **deps-dev**: bump the dev-dependencies group with 2 updates
+- **deps-dev**: bump the dev-dependencies group with 4 updates
+
+### ♻️ Refactoring
+- **CI-CD**: dedupe UnpublishResult as an alias of PublishResult
+- **CI-CD**: dedupe typeParams-to-generics serialization in website metadata
+- **structure**: collapse redundant branch in createUnionFind's union-by-rank
+- **version**: dispatch on scheme via switch instead of a ternary
+
+### 📝 Documentation
+- **version**: add missing @since tags to GentooSuffixType/GentooSuffix
+- note the isPrerelease omission in the version-scheme checklist
+- document the 5 remaining version schemes to build later
+
+### 📌 Dependencies
+- **deps**: bump the actions group across 1 directory with 2 updates
+- **deps**: bump github/codeql-action/upload-sarif in the actions group
+
 ## [3.0.7] - 2026-08-08
 
 ### 🚀 Features
@@ -1017,6 +1059,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.0.8]: https://github.com/helpers4/typescript/compare/v3.0.7...v3.0.8
 [3.0.7]: https://github.com/helpers4/typescript/compare/v3.0.6...v3.0.7
 [3.0.6]: https://github.com/helpers4/typescript/compare/v3.0.5...v3.0.6
 [3.0.5]: https://github.com/helpers4/typescript/compare/v3.0.4...v3.0.5

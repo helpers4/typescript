@@ -16,7 +16,7 @@
  * minBy([{ n: 'a', v: 3 }, { n: 'b', v: 9 }, { n: 'c', v: 1 }], (item) => item.v)
  * // => { n: 'c', v: 1 }
  * minBy([], (item: { v: number }) => item.v) // => undefined
- * @since next
+ * @since 3.0.8
  */
 export function minBy<T>(array: readonly T[] | null | undefined, keyFn: (item: T) => number): T | undefined {
   if (array == null || array.length === 0) return undefined;

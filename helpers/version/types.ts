@@ -7,7 +7,7 @@
 /**
  * Identifies which version scheme {@link parse}/{@link compare} should use to interpret a
  * version string. Defaults to `'semver'` everywhere it's accepted.
- * @since next
+ * @since 3.0.8
  */
 export type VersionScheme = 'semver' | 'gentoo';
 
@@ -21,7 +21,7 @@ export type IncrementType = 'major' | 'minor' | 'patch';
  * for exactly this shape (see {@link ParsedVersion}'s own doc for why), so existing code
  * accessing `.major`/`.minor`/`.patch` on a `ParsedVersion` keeps compiling unchanged. Use
  * {@link AnyParsedVersion} for a value that could be parsed in any supported scheme.
- * @since next
+ * @since 3.0.8
  */
 export interface ParsedSemVerVersion {
   scheme: 'semver';
@@ -41,13 +41,13 @@ export interface ParsedSemVerVersion {
  * One Gentoo/Portage suffix type, in ascending order of precedence: `alpha` and `beta` sort
  * below the plain release, `pre` and `rc` do too (closer to release), and `p` (patch level)
  * sorts *above* it — see {@link ParsedGentooVersion}.
- * @since next
+ * @since 3.0.8
  */
 export type GentooSuffixType = 'alpha' | 'beta' | 'pre' | 'rc' | 'p';
 
 /**
  * One suffix segment of a Gentoo/Portage version, e.g. `_alpha1` → `{ type: 'alpha', number: 1 }`.
- * @since next
+ * @since 3.0.8
  */
 export interface GentooSuffix {
   type: GentooSuffixType;
@@ -64,7 +64,7 @@ export interface GentooSuffix {
  * `_p2`, or none) — real-world ebuild versions essentially never chain multiple different
  * suffix types (`_alpha1_rc2`), so {@link compare}'s Gentoo-scheme ordering only considers the
  * *last* suffix segment present when more than one appears.
- * @since next
+ * @since 3.0.8
  */
 export interface ParsedGentooVersion {
   scheme: 'gentoo';
@@ -88,7 +88,7 @@ export interface ParsedGentooVersion {
  * turning it into a union would silently break any existing code typed as `ParsedVersion` that
  * reads those fields without narrowing first — a real compatibility break with no
  * `MIGRATION.md` entry, since this repo ties breaking changes to major-version bumps.
- * @since next
+ * @since 3.0.8
  */
 export type AnyParsedVersion = ParsedSemVerVersion | ParsedGentooVersion;
 
