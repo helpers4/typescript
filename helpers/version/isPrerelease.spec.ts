@@ -69,6 +69,42 @@ describe('isPrerelease — property-based (ParsedVersion)', () => {
   });
 });
 
+const gentooSuffixType = fc.constantFrom('alpha', 'beta', 'pre', 'rc');
+
+const gentooPrereleaseVersion = fc
+  .tuple(fc.nat(99), fc.nat(99), fc.nat(99), gentooSuffixType, fc.nat(20))
+  .map(([major, minor, patch, type, n]) => `${major}.${minor}.${patch}_${type}${n}`);
+
+const gentooStableVersion = fc
+  .tuple(fc.nat(99), fc.nat(99), fc.nat(99), fc.option(fc.nat(9), { nil: undefined }))
+  .map(([major, minor, patch, revision]) => `${major}.${minor}.${patch}${revision === undefined ? '' : `-r${revision}`}`);
+
+describe('isPrerelease — property-based (gentoo)', () => {
+  it('alpha/beta/pre/rc-suffixed gentoo versions always return true', () => {
+    fc.assert(
+      fc.property(gentooPrereleaseVersion, (v) => {
+        expect(isPrerelease(v, 'gentoo')).toBe(true);
+      }),
+    );
+  });
+
+  it('plain and revisioned gentoo versions always return false', () => {
+    fc.assert(
+      fc.property(gentooStableVersion, (v) => {
+        expect(isPrerelease(v, 'gentoo')).toBe(false);
+      }),
+    );
+  });
+
+  it('string and parsed forms always agree, under the gentoo scheme', () => {
+    fc.assert(
+      fc.property(fc.oneof(gentooStableVersion, gentooPrereleaseVersion), (v) => {
+        expect(isPrerelease(parse(v, 'gentoo'))).toBe(isPrerelease(v, 'gentoo'));
+      }),
+    );
+  });
+});
+
 describe('isPrerelease — contract', () => {
   it('return type is always boolean', () => {
     expect(typeof isPrerelease('1.0.0')).toBe('boolean');
