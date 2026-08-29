@@ -156,19 +156,22 @@ describe('createCachedResolver', () => {
   });
 
   it('accepts a symbol as a key on a WeakMap-backed resolver (symbols are valid WeakMap keys since ES2023)', () => {
-    const compute = vi.fn((_key: object) => 'computed');
+    // Typed as `symbol` directly (no `as any`) — regression test for the WeakMap-accepting
+    // overload's constraint: it used to require `K extends object`, which rejected this call
+    // at compile time even though a symbol is a perfectly valid runtime WeakMap key.
+    const compute = vi.fn((_key: symbol) => 'computed');
     const { resolve } = createCachedResolver(compute, () => new WeakMap());
     const symbolKey = Symbol('test');
 
-    expect(() => resolve(symbolKey as any)).not.toThrow();
+    expect(() => resolve(symbolKey)).not.toThrow();
     expect(compute).toHaveBeenCalledExactlyOnceWith(symbolKey);
   });
 
   it('throws for a registered symbol (Symbol.for) on a WeakMap-backed resolver, unlike a plain symbol', () => {
-    const compute = vi.fn((_key: object) => 'computed');
+    const compute = vi.fn((_key: symbol) => 'computed');
     const { resolve } = createCachedResolver(compute, () => new WeakMap());
 
-    expect(() => resolve(Symbol.for('createCachedResolver-test') as any)).toThrow(TypeError);
+    expect(() => resolve(Symbol.for('createCachedResolver-test'))).toThrow(TypeError);
     expect(compute).not.toHaveBeenCalled();
   });
 });
