@@ -36,10 +36,14 @@ export interface ParsedSemVerVersion {
  * One Gentoo/Portage suffix type, in ascending order of precedence: `alpha` and `beta` sort
  * below the plain release, `pre` and `rc` do too (closer to release), and `p` (patch level)
  * sorts *above* it — see {@link ParsedGentooVersion}.
+ * @since next
  */
 export type GentooSuffixType = 'alpha' | 'beta' | 'pre' | 'rc' | 'p';
 
-/** One suffix segment of a Gentoo/Portage version, e.g. `_alpha1` → `{ type: 'alpha', number: 1 }`. */
+/**
+ * One suffix segment of a Gentoo/Portage version, e.g. `_alpha1` → `{ type: 'alpha', number: 1 }`.
+ * @since next
+ */
 export interface GentooSuffix {
   type: GentooSuffixType;
   /** Trailing digits after the suffix type, or `0` if none were given (e.g. bare `_beta`). */
