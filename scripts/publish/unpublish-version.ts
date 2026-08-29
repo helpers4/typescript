@@ -31,8 +31,24 @@ function parseArgs(): UnpublishConfig {
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
 
+    // Allow the version as a bare positional argument too: `unpublish-version.ts 3.0.8`.
+    // Handled ahead of the switch so a conflicting --version further along (or a second
+    // positional argument) is a clear error instead of one silently overwriting the other.
+    if (!arg.startsWith('--')) {
+      if (config.version) {
+        console.error(`Unexpected extra argument "${arg}" — version is already set to "${config.version}".`);
+        process.exit(1);
+      }
+      config.version = arg;
+      continue;
+    }
+
     switch (arg) {
       case '--version': {
+        if (config.version) {
+          console.error(`--version conflicts with the version already given ("${config.version}").`);
+          process.exit(1);
+        }
         config.version = args[++i];
         break;
       }
@@ -53,13 +69,8 @@ function parseArgs(): UnpublishConfig {
         process.exit(0);
       }
       default: {
-        // Allow the version as a bare positional argument too: `unpublish-version.ts 3.0.8`.
-        if (!arg.startsWith('--') && !config.version) {
-          config.version = arg;
-        } else {
-          console.error(`Unknown argument: ${arg}`);
-          process.exit(1);
-        }
+        console.error(`Unknown argument: ${arg}`);
+        process.exit(1);
       }
     }
   }
