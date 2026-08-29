@@ -56,6 +56,7 @@
     "release:validate": "tsx scripts/version/pre-release-validator.ts",
     "publish:packages": "tsx scripts/publish/index.ts",
     "publish:dry-run": "tsx scripts/publish/index.ts --dry-run",
+    "unpublish:version": "tsx scripts/publish/unpublish-version.ts",
     "examples": "tsx scripts/examples/index.ts",
     "smoke": "tsx scripts/examples/smoke.ts",
     "changelog": "tsx scripts/version/generate-changelog.ts",
