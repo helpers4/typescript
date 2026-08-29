@@ -6,7 +6,7 @@
 
 /**
  * Options for {@link uniqueBy}.
- * @since 3.0.8
+ * @since next
  */
 export interface UniqueByOptions {
   /**
@@ -32,7 +32,7 @@ export interface UniqueByOptions {
  * // => [{ id: 1, v: 'a' }, { id: 2, v: 'b' }]
  * uniqueBy([{ id: 1, v: 'a' }, { id: 2, v: 'b' }, { id: 1, v: 'c' }], (item) => item.id, { keep: 'last' })
  * // => [{ id: 1, v: 'c' }, { id: 2, v: 'b' }]
- * @since 3.0.8
+ * @since next
  */
 export function uniqueBy<T, K>(array: readonly T[] | null | undefined, keyFn: (item: T) => K, options: UniqueByOptions = {}): T[] {
   if (array == null) return [];
