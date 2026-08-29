@@ -66,9 +66,10 @@ function claimCache<C extends object>(cache: C): C {
  * whole cache.
  *
  * Backed by a `Map` by default (works with any key type). Pass a factory
- * that returns a `WeakMap` instead when keys are objects that should be
- * allowed to be garbage-collected once nothing else references them anymore
- * — the whole point of `WeakMap` over `Map`.
+ * that returns a `WeakMap` instead when keys (objects, functions, or
+ * symbols — see {@link isWeakMapKey}) should be allowed to be
+ * garbage-collected once nothing else references them anymore — the whole
+ * point of `WeakMap` over `Map`.
  *
  * A *factory function* is accepted (not a cache instance) so `clear()` can
  * reliably produce a fresh, empty cache regardless of its kind: `WeakMap`
@@ -96,7 +97,7 @@ function claimCache<C extends object>(cache: C): C {
  * );
  * @since 3.0.7
  */
-export function createCachedResolver<K extends object, V>(
+export function createCachedResolver<K extends WeakKey, V>(
   compute: (key: K) => V,
   createCache: () => Map<K, V> | WeakMap<K, V>,
 ): CachedResolver<K, V>;
