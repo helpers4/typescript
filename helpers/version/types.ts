@@ -11,11 +11,16 @@
  */
 export type VersionScheme = 'semver' | 'gentoo';
 
+/** The unit to bump — see {@link increment}. */
+export type IncrementType = 'major' | 'minor' | 'patch';
+
 /**
  * A version parsed according to SemVer 2.0.0 (`MAJOR.MINOR.PATCH[-PRERELEASE][+BUILD]`).
  *
- * Renamed from `ParsedVersion` (the name now identifies the union of all supported schemes,
- * see {@link ParsedVersion}) when Gentoo/Portage support was added.
+ * This is what {@link ParsedVersion} has always meant since 2.0.0 — that name stays an alias
+ * for exactly this shape (see {@link ParsedVersion}'s own doc for why), so existing code
+ * accessing `.major`/`.minor`/`.patch` on a `ParsedVersion` keeps compiling unchanged. Use
+ * {@link AnyParsedVersion} for a value that could be parsed in any supported scheme.
  * @since next
  */
 export interface ParsedSemVerVersion {
@@ -77,6 +82,21 @@ export interface ParsedGentooVersion {
  * A version parsed by {@link parse}, in whichever scheme it was parsed as — narrow on the
  * `scheme` field to access scheme-specific properties (`major`/`minor`/`patch` for `'semver'`,
  * `components`/`letter`/`suffixes`/`revision` for `'gentoo'`).
+ *
+ * Deliberately **not** named `ParsedVersion`: that name has been public API since 2.0.0 for
+ * the flat SemVer-only shape (`.major`/`.minor`/`.patch` directly, no narrowing needed), and
+ * turning it into a union would silently break any existing code typed as `ParsedVersion` that
+ * reads those fields without narrowing first — a real compatibility break with no
+ * `MIGRATION.md` entry, since this repo ties breaking changes to major-version bumps.
  * @since next
  */
-export type ParsedVersion = ParsedSemVerVersion | ParsedGentooVersion;
+export type AnyParsedVersion = ParsedSemVerVersion | ParsedGentooVersion;
+
+/**
+ * A version parsed according to SemVer 2.0.0 — alias of {@link ParsedSemVerVersion}, kept under
+ * this name for backward compatibility (public API since 2.0.0, well before Gentoo/Portage
+ * support existed). Use {@link AnyParsedVersion} to accept a parsed version in any supported
+ * scheme, e.g. when writing scheme-agnostic code like {@link stringify} or {@link isPrerelease}.
+ * @since 2.0.0
+ */
+export type ParsedVersion = ParsedSemVerVersion;

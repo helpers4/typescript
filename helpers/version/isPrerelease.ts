@@ -5,8 +5,9 @@
  */
 
 import { assertNeverScheme } from './_assertNeverScheme';
-import { isPrereleaseGentoo, parseGentoo } from './_gentoo';
-import type { ParsedVersion, VersionScheme } from './types';
+import { isPrereleaseGentoo } from './_gentoo';
+import { parse } from './parse';
+import type { AnyParsedVersion, VersionScheme } from './types';
 
 /**
  * Returns `true` when the version string has a prerelease suffix, according to the given
@@ -37,36 +38,30 @@ export function isPrerelease(version: string, scheme?: VersionScheme): boolean;
  * Returns `true` when the parsed version has a prerelease suffix — the scheme is read from the
  * object's own `scheme` field, not passed separately.
  *
- * @param version - A {@link ParsedVersion} object, as returned by {@link parse}.
+ * @param version - A {@link AnyParsedVersion} object, as returned by {@link parse}.
  * @returns `true` if `version` is a prerelease, `false` otherwise.
  * @example
  * isPrerelease(parse('2.0.0-alpha.1')) // true
  * isPrerelease(parse('1.0.0'))         // false
  * @since 2.0.0
  */
-export function isPrerelease(version: ParsedVersion): boolean;
+export function isPrerelease(version: AnyParsedVersion): boolean;
 export function isPrerelease(version: undefined): undefined;
 export function isPrerelease(version: null): null;
-export function isPrerelease(version: string | ParsedVersion | undefined | null, scheme: VersionScheme = 'semver'): boolean | undefined | null {
+export function isPrerelease(version: string | AnyParsedVersion | undefined | null, scheme: VersionScheme = 'semver'): boolean | undefined | null {
   if (version === undefined || version === null) return version;
 
-  if (typeof version === 'string') {
-    switch (scheme) {
-      case 'semver':
-        return version.split('+')[0].includes('-');
-      case 'gentoo':
-        return isPrereleaseGentoo(parseGentoo(version));
-      default:
-        return assertNeverScheme(scheme);
-    }
-  }
+  // Normalize to a parsed object first so there's exactly one switch on `.scheme` below,
+  // instead of two independent ones (string-input and object-input) that would each need
+  // their own case added for every future scheme.
+  const parsed = typeof version === 'string' ? parse(version, scheme) : version;
 
-  switch (version.scheme) {
+  switch (parsed.scheme) {
     case 'semver':
-      return version.prerelease.length > 0;
+      return parsed.prerelease.length > 0;
     case 'gentoo':
-      return isPrereleaseGentoo(version);
+      return isPrereleaseGentoo(parsed);
     default:
-      return assertNeverScheme(version);
+      return assertNeverScheme(parsed);
   }
 }
