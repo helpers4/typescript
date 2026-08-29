@@ -95,14 +95,17 @@ Only open items live here. Anything finished is in git history / `CHANGELOG.md` 
 
 ## Version schemes beyond SemVer/Gentoo
 
-> `parse`/`compare`/`stringify` gained a `scheme: VersionScheme` param (`'semver' | 'gentoo'`,
-> default `'semver'`) — see `helpers/version/types.ts`, `_semver.ts`, `_gentoo.ts`. Adding a new
-> scheme means: one interface in `types.ts` (discriminated by `scheme: '<name>'`), one literal
-> added to `VersionScheme`, one `_<name>.ts` with `parse<Name>`/`compare<Name>`/`stringify<Name>`,
-> one overload per function, and a `switch`/ternary dispatch update in each of `parse.ts`/
-> `compare.ts`/`stringify.ts` — no other public API changes needed. `ParsedVersion` is a
-> discriminated union (narrow on `.scheme`); `stringify` doesn't take a `scheme` param at all,
-> it reads the parsed object's own `.scheme` field.
+> `parse`/`compare`/`stringify`/`isPrerelease` gained a `scheme: VersionScheme` param
+> (`'semver' | 'gentoo'`, default `'semver'`) — see `helpers/version/types.ts`, `_semver.ts`,
+> `_gentoo.ts`. Adding a new scheme means: one interface in `types.ts` (discriminated by
+> `scheme: '<name>'`), one literal added to `VersionScheme`, one `_<name>.ts` with
+> `parse<Name>`/`compare<Name>`/`stringify<Name>`/`isPrerelease<Name>`, one overload per
+> function, and a `switch` dispatch update in each of `parse.ts`/`compare.ts`/`stringify.ts`/
+> `isPrerelease.ts` — **`isPrerelease` was missed the first time round** (shipped Gentoo-unaware
+> in 3.0.8, fixed after a code review caught `isPrerelease('1.2.3-r1', 'gentoo')` wrongly
+> reporting a revision as a prerelease — don't repeat that omission for scheme #3). `ParsedVersion`
+> is a discriminated union (narrow on `.scheme`); `stringify`/`isPrerelease`'s object overload
+> don't take a `scheme` param, they read the parsed object's own `.scheme` field.
 
 - [ ] 🟢 **Debian** (`[epoch:]upstream_version[-debian_revision]`, `dpkg --compare-versions`
   rules). Not started — no consuming project need yet. The one rule that's easy to get subtly
