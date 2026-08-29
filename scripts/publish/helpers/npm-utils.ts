@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { exec, spawn } from 'node:child_process';
+import { exec, execFile, spawn } from 'node:child_process';
 import { promisify } from 'node:util';
 import fs from 'fs-extra';
 import path from 'node:path';
 
 const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export interface PublishOptions {
   access?: 'public' | 'restricted';
@@ -43,11 +44,17 @@ export async function checkNpmAuth(): Promise<boolean> {
 }
 
 /**
- * Check if a package version already exists
+ * Check if a package version already exists.
+ *
+ * Uses `execFile` (argument array, no shell) rather than `exec` (a command string run through a
+ * shell) — `packageName`/`version` used to be interpolated into a shell command string here,
+ * which was harmless while every caller sourced `version` from a trusted `package.json`, but
+ * became a real command-injection risk once `unpublish-version.ts` started passing an
+ * unvalidated CLI argument straight through this same path.
  */
 export async function packageVersionExists(packageName: string, version: string): Promise<boolean> {
   try {
-    const { stdout } = await execAsync(`npm view ${packageName}@${version} version --silent`);
+    const { stdout } = await execFileAsync('npm', ['view', `${packageName}@${version}`, 'version', '--silent']);
     return stdout.trim() === version;
   } catch {
     // Package or version doesn't exist
