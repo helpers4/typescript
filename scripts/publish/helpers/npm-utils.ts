@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { exec } from 'node:child_process';
+import { exec, spawn } from 'node:child_process';
 import { promisify } from 'node:util';
 import fs from 'fs-extra';
 import path from 'node:path';
@@ -194,6 +194,85 @@ export async function publishPackage(
       version: 'unknown'
     };
   }
+}
+
+export interface UnpublishOptions {
+  registry?: string;
+  otp?: string;
+  dryRun?: boolean;
+}
+
+export interface UnpublishResult {
+  packageName: string;
+  version: string;
+  success: boolean;
+  error?: Error;
+  skipped?: boolean;
+  skipReason?: string;
+}
+
+/**
+ * Unpublish a single package version.
+ *
+ * Runs `npm unpublish` with `stdio: 'inherit'` (not the `exec`-based approach `publishPackage`
+ * uses) so that if the npm account has 2FA enabled, npm's own "Enter OTP:" prompt reaches the
+ * real terminal and the typed response reaches npm — an `exec`'d child process has no TTY, so
+ * that prompt would otherwise hang forever with no visible way to answer it. Pass `otp` to
+ * skip the prompt entirely when a valid one-time code is already on hand.
+ */
+export async function unpublishPackage(
+  packageName: string,
+  version: string,
+  options: UnpublishOptions = {}
+): Promise<UnpublishResult> {
+  const { registry, otp, dryRun = false } = options;
+
+  const exists = await packageVersionExists(packageName, version);
+  if (!exists) {
+    return {
+      packageName,
+      version,
+      success: true,
+      skipped: true,
+      skipReason: 'Version not published, nothing to unpublish'
+    };
+  }
+
+  const args = ['unpublish', `${packageName}@${version}`];
+  if (registry) {
+    args.push('--registry', registry);
+  }
+  if (otp) {
+    args.push('--otp', otp);
+  }
+
+  if (dryRun) {
+    console.log(`[DRY RUN] Would run: npm ${args.join(' ')}`);
+    return { packageName, version, success: true, skipped: true, skipReason: 'dry-run' };
+  }
+
+  console.log(`🗑️  Unpublishing ${packageName}@${version}...`);
+
+  return new Promise((resolve) => {
+    const child = spawn('npm', args, { stdio: 'inherit' });
+
+    child.on('error', (error) => {
+      resolve({ packageName, version, success: false, error });
+    });
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve({ packageName, version, success: true });
+      } else {
+        resolve({
+          packageName,
+          version,
+          success: false,
+          error: new Error(`npm unpublish exited with code ${code}`)
+        });
+      }
+    });
+  });
 }
 
 /**

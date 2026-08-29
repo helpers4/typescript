@@ -54,6 +54,40 @@ pnpm exec tsx scripts/publish/index.ts --dry-run --access public --tag beta --ca
 - Published packages are deprecated with clear messages
 - No partial states left in registry
 
+### `unpublish-version.ts`
+
+Best-effort cleanup script for a release that failed partway through — unpublishes one
+specific version across every category package and the `@helpers4/all` bundle, skipping any
+package that was never published at that version and logging (never stopping on) any package
+that fails to unpublish.
+
+#### Usage
+
+```bash
+# Unpublish 3.0.8 everywhere it was published
+pnpm run unpublish:version 3.0.8
+
+# See what would happen without doing it
+pnpm exec tsx scripts/publish/unpublish-version.ts 3.0.8 --dry-run
+
+# Pass a one-time password up front instead of answering the npm prompt interactively
+pnpm exec tsx scripts/publish/unpublish-version.ts 3.0.8 --otp 123456
+```
+
+#### Options
+
+- `--version <version>` : version to unpublish (also accepted as a bare positional argument)
+- `--registry <url>` : custom NPM registry
+- `--otp <code>` : one-time password, passed to every `npm unpublish` call
+- `--dry-run` : print what would be unpublished without doing it
+
+#### 2FA
+
+`npm unpublish` runs with inherited stdio (not silently captured like `index.ts`'s publish
+calls), so if the npm account has 2FA enabled, npm's own "Enter OTP:" prompt appears directly
+in the terminal for each package that needs it — answer it exactly as you would for a manual
+`npm unpublish`. Pass `--otp` to skip the prompt when a valid code is already on hand.
+
 ## Helpers
 
 ### `helpers/npm-utils.ts`
