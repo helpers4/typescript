@@ -96,8 +96,19 @@ pnpm exec tsx scripts/version/release.ts major --dry-run
 
 ### Transaction Safety
 - If any category package fails to publish, the process stops
-- Failed packages are automatically deprecated to maintain registry consistency
+- Packages already published before the failure stay published as-is — npm has no safe way
+  to undo a publish (`npm unpublish` permanently bans republishing that exact version,
+  forever, and `npm deprecate` needs a classic auth token this pipeline's OIDC/provenance
+  publish flow doesn't have, so it 404s every time). The run reports which packages already
+  went live instead of trying to touch them.
 - Bundle package only publishes if all category packages succeed
+- **Recovering from a partial failure**: fix whatever broke, then re-run the release at the
+  *same* version — publishing skips any package already on the registry
+  (`packageVersionExists`) and resumes with the rest. Do **not** revert the version-bump
+  commit and re-release at that same number: npm permanently refuses to republish a version
+  it has ever seen (published or since unpublished), so recomputing the identical version
+  will fail identically. Only fall back to `pnpm run unpublish:version` as a last resort,
+  and only once you accept that version can never be reused for the packages it removes.
 
 ## Coherency Tests
 
@@ -156,21 +167,30 @@ git stash
 
 ### Recovery Commands
 
-**Revert Version Changes**
+**A publish failed partway through — do NOT revert the version-bump commit.** Once the
+version commit has been pushed and at least one package published, reverting
+`package.json` back down just means the *next* release recomputes and retries the exact
+same version number — which npm will refuse again for any package it already touched
+(published or since unpublished). Instead:
+
 ```bash
-git checkout HEAD -- package.json
-git reset --hard HEAD~1  # if commit was made
+# Fix whatever broke the failing package, then re-run the release at the SAME version.
+# Already-published packages are detected and skipped automatically.
+pnpm exec tsx scripts/publish/index.ts
 ```
 
-**Remove Created Tag**
+**Remove Created Tag** (only if the release must be abandoned entirely, before any package published)
 ```bash
 git tag -d v1.2.3
 git push origin :refs/tags/v1.2.3  # if pushed
 ```
 
-**Deprecate Failed Package**
+**Unpublish a burned release (last resort)**
+
+Only when packages were published in a release that must be abandoned. This permanently
+bans that version number from ever being republished — prefer the resume path above.
 ```bash
-npm deprecate @helpers4/package@1.2.3 "Release failed"
+pnpm run unpublish:version 1.2.3
 ```
 
 ## File Structure

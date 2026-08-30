@@ -22,8 +22,15 @@ vi.mock('node:child_process', () => {
 });
 
 // Import after mocking so `promisify(exec)`/`promisify(execFile)` inside the module wrap our mocks.
-const { checkNpmAuth, deprecatePackage, getPackageInfo, packageVersionExists, publishPackage, unpublishPackage } =
-  await import('./npm-utils');
+const {
+  checkNpmAuth,
+  deprecatePackage,
+  getPackageInfo,
+  packageVersionEverPublished,
+  packageVersionExists,
+  publishPackage,
+  unpublishPackage
+} = await import('./npm-utils');
 
 // Clears call history (not implementations) before every test, so a test asserting
 // "the other mock was never called" isn't tripped up by an unrelated earlier test's calls.
@@ -119,6 +126,23 @@ describe('packageVersionExists', () => {
       expect.any(Function),
     );
     expect(execMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('packageVersionEverPublished', () => {
+  it('returns true when the version appears in the time map, even if unpublished', async () => {
+    respondToExecFileWith(() => ({ stdout: JSON.stringify({ created: '2020-01-01', modified: '2026-01-01', '3.0.8': '2026-08-28T19:28:18.000Z' }) }));
+    expect(await packageVersionEverPublished('@helpers4/array', '3.0.8')).toBe(true);
+  });
+
+  it('returns false when the version never appears in the time map', async () => {
+    respondToExecFileWith(() => ({ stdout: JSON.stringify({ created: '2020-01-01', modified: '2026-01-01', '3.0.7': '2026-08-08T17:17:08.000Z' }) }));
+    expect(await packageVersionEverPublished('@helpers4/array', '3.0.8')).toBe(false);
+  });
+
+  it('returns false when npm view fails (package does not exist)', async () => {
+    respondToExecFileWith(() => ({ error: new Error('E404') }));
+    expect(await packageVersionEverPublished('@helpers4/does-not-exist', '1.0.0')).toBe(false);
   });
 });
 

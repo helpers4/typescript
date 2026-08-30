@@ -6,19 +6,18 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PublishResult } from './npm-utils';
-
-const deprecatePackageMock = vi.fn();
-vi.mock('./npm-utils', () => ({ deprecatePackage: (...args: unknown[]) => deprecatePackageMock(...args) }));
-
-const { PublishTransaction, withTransaction } = await import('./transaction-manager');
+import { PublishTransaction, withTransaction } from './transaction-manager';
 
 function result(overrides: Partial<PublishResult> = {}): PublishResult {
   return { packageName: '@helpers4/array', version: '3.0.0', success: true, ...overrides };
 }
 
+let errorSpy: ReturnType<typeof vi.spyOn>;
+let logSpy: ReturnType<typeof vi.spyOn>;
+
 beforeEach(() => {
-  deprecatePackageMock.mockReset();
-  deprecatePackageMock.mockResolvedValue(true);
+  errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 });
 
 describe('PublishTransaction.recordPublish', () => {
@@ -42,45 +41,33 @@ describe('PublishTransaction.recordPublish', () => {
   });
 });
 
-describe('PublishTransaction.rollback', () => {
-  it('is a no-op when nothing was published', async () => {
-    const tx = new PublishTransaction();
-    await tx.rollback();
-    expect(deprecatePackageMock).not.toHaveBeenCalled();
-  });
-
-  it('deprecates every recorded package with the rollback reason', async () => {
+describe('PublishTransaction.reportFailure', () => {
+  it('never touches npm — it only logs', async () => {
     const tx = new PublishTransaction();
     tx.recordPublish(result({ packageName: '@helpers4/array', version: '3.0.0' }));
     tx.recordPublish(result({ packageName: '@helpers4/all', version: '3.0.0' }));
 
-    await tx.rollback('npm publish failed');
+    tx.reportFailure('npm publish failed');
 
-    expect(deprecatePackageMock).toHaveBeenCalledTimes(2);
-    expect(deprecatePackageMock).toHaveBeenCalledWith('@helpers4/array', '3.0.0', 'Rollback: npm publish failed');
-    expect(deprecatePackageMock).toHaveBeenCalledWith('@helpers4/all', '3.0.0', 'Rollback: npm publish failed');
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('@helpers4/array@3.0.0'));
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('@helpers4/all@3.0.0'));
   });
 
-  it('does not roll back twice', async () => {
+  it('says nothing was published when nothing was recorded', () => {
     const tx = new PublishTransaction();
-    tx.recordPublish(result());
-    await tx.rollback('first');
-    await tx.rollback('second');
-    expect(deprecatePackageMock).toHaveBeenCalledTimes(1);
+    tx.reportFailure('failed before publishing anything');
+    expect(logSpy).toHaveBeenCalledWith(expect.stringContaining('No packages were published'));
   });
 
-  it('does not throw when a deprecate call fails outright', async () => {
-    deprecatePackageMock.mockRejectedValueOnce(new Error('registry down'));
+  it('only reports once', () => {
     const tx = new PublishTransaction();
     tx.recordPublish(result());
-    await expect(tx.rollback('failure')).resolves.toBeUndefined();
-  });
-
-  it('does not throw when deprecate returns false (partial rollback failure)', async () => {
-    deprecatePackageMock.mockResolvedValueOnce(false);
-    const tx = new PublishTransaction();
-    tx.recordPublish(result());
-    await expect(tx.rollback('failure')).resolves.toBeUndefined();
+    tx.reportFailure('first');
+    errorSpy.mockClear();
+    logSpy.mockClear();
+    tx.reportFailure('second');
+    expect(errorSpy).not.toHaveBeenCalled();
+    expect(logSpy).not.toHaveBeenCalled();
   });
 });
 
@@ -92,7 +79,6 @@ describe('PublishTransaction.getSummary', () => {
     const summary = tx.getSummary();
     expect(summary.packagesPublished).toBe(1);
     expect(summary.completed).toBe(true);
-    expect(summary.rolledBack).toBe(false);
   });
 });
 
@@ -102,10 +88,10 @@ describe('withTransaction', () => {
     const outcome = await withTransaction(tx, async () => 'ok');
     expect(outcome).toBe('ok');
     expect(tx.getSummary().completed).toBe(true);
-    expect(deprecatePackageMock).not.toHaveBeenCalled();
+    expect(errorSpy).not.toHaveBeenCalled();
   });
 
-  it('rolls back published packages and re-throws the original error on failure', async () => {
+  it('reports published packages and re-throws the original error on failure', async () => {
     const tx = new PublishTransaction();
     const failure = new Error('publish exploded');
 
@@ -116,7 +102,8 @@ describe('withTransaction', () => {
       }),
     ).rejects.toThrow('publish exploded');
 
-    expect(deprecatePackageMock).toHaveBeenCalledWith('@helpers4/array', '3.0.0', 'Rollback: publish exploded');
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('publish exploded'));
+    expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining('@helpers4/array@3.0.0'));
     expect(tx.getSummary().completed).toBe(false);
   });
 });

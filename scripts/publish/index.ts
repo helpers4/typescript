@@ -13,6 +13,8 @@ import type {
 } from './helpers/npm-utils';
 import {
   checkNpmAuth,
+  packageVersionEverPublished,
+  packageVersionExists,
   publishPackage
 } from './helpers/npm-utils';
 import {
@@ -168,6 +170,21 @@ async function validatePackages(packages: any[], config: PublishConfig): Promise
 
   for (const pkg of packages) {
     const issues = await validatePackageStructure(pkg.path, pkg.isBundle);
+
+    // A version npm has ever seen published (even if later unpublished) can never be
+    // published again — npm rejects it with E400 regardless of whether it currently shows
+    // up as installable. Catch that here, before any package in this run has been touched,
+    // instead of discovering it mid-batch after other packages already went live for good.
+    const [everPublished, currentlyPublished] = await Promise.all([
+      packageVersionEverPublished(pkg.name, pkg.version),
+      packageVersionExists(pkg.name, pkg.version)
+    ]);
+    if (everPublished && !currentlyPublished) {
+      issues.push(
+        `${pkg.name}@${pkg.version} was previously published and unpublished — npm will refuse ` +
+        'to publish this exact version again. Bump to a version that has never touched the registry.'
+      );
+    }
 
     if (issues.length > 0) {
       console.error(`❌ Validation failed for ${pkg.name}:`);
