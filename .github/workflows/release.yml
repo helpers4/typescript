@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       release_type:
-        description: "Release type (alpha/beta/rc are prerelease variants)"
+        description: "Release type (alpha/beta/rc are prerelease variants; resume retries the current version with no bump, for finishing a partially-published release)"
         required: true
         default: "patch"
         type: choice
@@ -16,6 +16,7 @@ on:
           - beta
           - rc
           - auto
+          - resume
       dry-run:
         description: "Perform a dry-run (no git push, no npm publish)"
         required: false
@@ -47,7 +48,7 @@ jobs:
               ;;
             *)
               if [ "${{ github.ref }}" != "refs/heads/main" ]; then
-                echo "::error::Stable release types (patch/minor/major/auto) can only be executed on main. Prerelease types (alpha/beta/rc) may run from any branch."
+                echo "::error::Stable release types (patch/minor/major/auto/resume) can only be executed on main. Prerelease types (alpha/beta/rc) may run from any branch."
                 exit 1
               fi
               ;;
@@ -133,6 +134,17 @@ jobs:
               ;;
             auto)
               pnpm version:auto
+              ;;
+            resume)
+              # No bump: package.json is left exactly as it is. Use this to finish a release
+              # that already published some packages and failed on others (e.g. an npm-side
+              # permission gap on one package) — re-running with patch/minor/etc. here would
+              # recompute a *new* version and publish the remaining packages under a different
+              # number than the ones already live, leaving the release split across two
+              # versions. `publish:packages` already skips anything already on the registry
+              # (see packageVersionExists in scripts/publish/helpers/npm-utils.ts), so this
+              # just retries whatever didn't make it the first time, at the same version.
+              echo "⏭️  Resuming release at the current version (no bump)"
               ;;
           esac
 
