@@ -11,6 +11,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 ## [3.0.9] - 2026-08-30
 
 ### 🚀 Features
+- **CI-CD**: add a resume release_type to finish a partially-published release
 - **CI-CD**: add unpublish-version script for cleaning up failed releases
 - **array**: add uniqueBy to dedupe by a derived key
 - **array**: add maxBy/minBy to pick an item by a derived key
