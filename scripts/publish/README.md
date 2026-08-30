@@ -50,9 +50,14 @@ pnpm exec tsx scripts/publish/index.ts --dry-run --access public --tag beta --ca
 
 #### Transaction Safety
 
-- Failed publishes trigger automatic rollback
-- Published packages are deprecated with clear messages
-- No partial states left in registry
+- Failed publishes never trigger automatic rollback — npm has no safe undo for a publish
+  (`npm unpublish` permanently bans republishing that exact version; `npm deprecate` needs a
+  classic auth token this pipeline's OIDC/provenance publish flow doesn't have, so it 404s)
+- Packages that published successfully before the failure stay live; the run reports them
+  clearly so you know what's already out
+- To recover, fix the underlying failure and re-run at the same version — already-published
+  packages are skipped automatically. Never bump/revert the version to retry: npm refuses to
+  ever republish a version it has seen before, even if it was later unpublished
 
 ### `unpublish-version.ts`
 
@@ -107,10 +112,10 @@ Package discovery and categorization:
 
 ### `helpers/transaction-manager.ts`
 
-Transaction management for safe publishing:
-- Rollback mechanisms
+Tracks a publishing run and reports (never rolls back) what happened on failure:
+- Records each successful publish
 - State tracking
-- Error recovery
+- Honest failure reporting — lists packages already live, no npm calls
 
 ## Integration
 

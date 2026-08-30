@@ -63,6 +63,28 @@ export async function packageVersionExists(packageName: string, version: string)
 }
 
 /**
+ * Check if a version was ever published for a package, even if it was later unpublished.
+ *
+ * npm's `time` field keeps a tombstone entry for every version that has ever existed,
+ * including ones removed via `npm unpublish` — unlike `versions`, which only lists what's
+ * currently installable. This matters because npm permanently refuses to publish over a
+ * version number that was once published and then unpublished (`E400 Cannot publish over
+ * previously published version`), even long after the unpublish. `packageVersionExists`
+ * alone can't see this: it returns `false` for an unpublished version, which looks
+ * identical to "never published" right up until the real `npm publish` call fails.
+ */
+export async function packageVersionEverPublished(packageName: string, version: string): Promise<boolean> {
+  try {
+    const { stdout } = await execFileAsync('npm', ['view', packageName, 'time', '--json', '--silent']);
+    const time = JSON.parse(stdout) as Record<string, string>;
+    return version in time;
+  } catch {
+    // Package doesn't exist yet, or has no time data
+    return false;
+  }
+}
+
+/**
  * Get package info from package.json
  */
 export async function getPackageInfo(packagePath: string): Promise<{ name: string; version: string }> {

@@ -4,18 +4,28 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import type { PublishResult} from './npm-utils';
-import { deprecatePackage } from './npm-utils';
+import type { PublishResult } from './npm-utils';
 
 export interface TransactionState {
   publishedPackages: PublishResult[];
   startTime: Date;
   completed: boolean;
-  rolledBack: boolean;
+  failureReported: boolean;
 }
 
 /**
- * Manages transactional publishing with rollback capability
+ * Tracks a publishing run and reports what happened if it fails partway through.
+ *
+ * This does **not** attempt to roll anything back. npm has no safe undo for a publish:
+ * `npm unpublish` permanently burns the version number (npm refuses to ever republish it,
+ * even years later, even for a different maintainer), and `npm deprecate` needs a classic
+ * authenticated token that this pipeline's OIDC/provenance publish flow doesn't provide —
+ * every attempt 404s with "could not be found or you do not have permission to access it"
+ * (confirmed on the 2026-08-28 release, where all 17 deprecate calls failed). So on failure
+ * this just reports which packages already went live, and leaves them alone: the correct
+ * recovery is to fix whatever broke and re-run the release at the *same* version, which
+ * skips anything already published (see `packageVersionExists` in `npm-utils.ts`) and picks
+ * up where it left off — never to bump/revert the version or unpublish the successes.
  */
 export class PublishTransaction {
   private state: TransactionState;
@@ -23,8 +33,8 @@ export class PublishTransaction {
   constructor() {
     this.state = {
       completed: false,
+      failureReported: false,
       publishedPackages: [],
-      rolledBack: false,
       startTime: new Date()
     };
   }
@@ -60,61 +70,27 @@ export class PublishTransaction {
   }
 
   /**
-   * Rollback all published packages
+   * Report a failed publishing run without touching npm. See the class doc for why this
+   * doesn't attempt a rollback.
    */
-  async rollback(reason: string = 'Transaction failed'): Promise<void> {
-    if (this.state.rolledBack) {
-      console.log('⚠️  Transaction already rolled back');
+  reportFailure(reason: string = 'Transaction failed'): void {
+    if (this.state.failureReported) {
       return;
     }
+    this.state.failureReported = true;
+
+    console.error(`❌ Publishing failed: ${reason}`);
 
     if (!this.hasPublishedPackages()) {
-      console.log('ℹ️  No packages to rollback');
+      console.log('ℹ️  No packages were published before the failure — nothing is live.');
       return;
     }
 
-    console.log(`🔄 Rolling back transaction: ${reason}`);
-    console.log(`📦 Packages to rollback: ${this.state.publishedPackages.length}`);
-
-    const rollbackResults: { package: string; success: boolean }[] = [];
-
-    for (const publishResult of this.state.publishedPackages) {
-      try {
-        const success = await deprecatePackage(
-          publishResult.packageName,
-          publishResult.version,
-          `Rollback: ${reason}`
-        );
-
-        rollbackResults.push({
-          package: `${publishResult.packageName}@${publishResult.version}`,
-          success
-        });
-      } catch (error) {
-        console.error(`❌ Failed to rollback ${publishResult.packageName}:`, error);
-        rollbackResults.push({
-          package: `${publishResult.packageName}@${publishResult.version}`,
-          success: false
-        });
-      }
+    console.error(`📦 ${this.state.publishedPackages.length} package(s) already published successfully — they are LIVE on npm, do not unpublish them:`);
+    for (const pkg of this.state.publishedPackages) {
+      console.error(`   - ${pkg.packageName}@${pkg.version}`);
     }
-
-    this.state.rolledBack = true;
-
-    // Report rollback results
-    const successful = rollbackResults.filter(r => r.success).length;
-    const failed = rollbackResults.filter(r => !r.success).length;
-
-    if (failed === 0) {
-      console.log(`✅ Rollback completed successfully (${successful} packages deprecated)`);
-    } else {
-      console.error(`❌ Rollback partially failed: ${successful} succeeded, ${failed} failed`);
-
-      console.error('❌ Manual cleanup required for:');
-      rollbackResults.filter(r => !r.success).forEach(r => {
-        console.error(`   - ${r.package}`);
-      });
-    }
+    console.error('👉 Fix the underlying failure and re-run the release at the SAME version — already-published packages are skipped automatically.');
   }
 
   /**
@@ -124,21 +100,19 @@ export class PublishTransaction {
     duration: number;
     packagesPublished: number;
     completed: boolean;
-    rolledBack: boolean;
     startTime: Date;
   } {
     return {
       completed: this.state.completed,
       duration: Date.now() - this.state.startTime.getTime(),
       packagesPublished: this.state.publishedPackages.length,
-      rolledBack: this.state.rolledBack,
       startTime: this.state.startTime
     };
   }
 }
 
 /**
- * Execute a function with automatic transaction rollback on error
+ * Execute a function, reporting (never rolling back) published packages on failure
  */
 export async function withTransaction<T>(
   transaction: PublishTransaction,
@@ -149,8 +123,7 @@ export async function withTransaction<T>(
     transaction.markCompleted();
     return result;
   } catch (error) {
-    console.error('❌ Operation failed, initiating rollback...');
-    await transaction.rollback(error instanceof Error ? error.message : 'Unknown error');
+    transaction.reportFailure(error instanceof Error ? error.message : 'Unknown error');
     throw error;
   }
 }
