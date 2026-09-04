@@ -37,7 +37,8 @@ Install only what you need, or grab everything at once:
 
 | Package | Description | Install |
 |---------|-------------|---------|
-| [`@helpers4/all`](https://www.npmjs.com/package/@helpers4/all) | Complete collection — all categories in one package | `npm i @helpers4/all` |
+| [`helpers4`](https://www.npmjs.com/package/helpers4) | Complete collection — every category as a real dependency, reachable via `helpers4/<category>` | `npm i helpers4` |
+| [`@helpers4/all`](https://www.npmjs.com/package/@helpers4/all) | Complete collection — documentation-only meta-package (peerDependencies, no code); prefer `helpers4` above | `npm i @helpers4/all` |
 | [`@helpers4/array`](https://www.npmjs.com/package/@helpers4/array) | Array operations, chunking, comparison, manipulation, and async iteration | `npm i @helpers4/array` |
 | [`@helpers4/ci`](https://www.npmjs.com/package/@helpers4/ci) | CI/CD workflow status formatting for PR comments and pipeline reports | `npm i @helpers4/ci` |
 | [`@helpers4/color`](https://www.npmjs.com/package/@helpers4/color) | Color conversion and validation utilities | `npm i @helpers4/color` |
@@ -61,6 +62,8 @@ Install only what you need, or grab everything at once:
 
 ## Quick Start
 
+Install only the categories you need:
+
 ```bash
 npm install @helpers4/string @helpers4/array
 ```
@@ -72,6 +75,21 @@ import { chunk } from '@helpers4/array';
 capitalize('hello world');  // "Hello world"
 chunk([1, 2, 3, 4, 5], 2); // [[1, 2], [3, 4], [5]]
 ```
+
+Not sure which categories you'll end up needing (or just want everything available at once,
+with no risk of a missing peer dependency)? Install `helpers4` instead and import from
+`helpers4/<category>`:
+
+```bash
+npm install helpers4
+```
+
+```typescript
+import { capitalize } from 'helpers4/string';
+import { chunk } from 'helpers4/array';
+```
+
+Both forms resolve to the exact same code — pick whichever fits your project.
 
 ## Key Features
 

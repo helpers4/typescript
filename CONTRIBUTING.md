@@ -384,6 +384,10 @@ If your helper doesn't fit any existing category:
 3. The build will auto-generate `index.ts` for the new category
 4. Add the scope to the commit convention
 
+No manual step is needed for the `@helpers4/all` bundle or the `helpers4` unified package
+(`helpers4/<new-category>`) — both are generated from the same list of built categories, so
+a new category is picked up automatically the next time `pnpm build` runs.
+
 ## For AI contributors
 
 If you are an AI coding agent contributing to this repo:
