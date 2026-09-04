@@ -1,7 +1,10 @@
 # @helpers4/typescript
 
 > Zero-dependency, tree-shakable TypeScript utility functions. Each of the 18 categories below
-> ships as its own npm package (`@helpers4/<category>`); `@helpers4/all` bundles everything.
+> ships as its own npm package (`@helpers4/<category>`); `@helpers4/all` bundles everything as
+> peerDependencies (documentation only, no code of its own); `helpers4` bundles everything as
+> real dependencies with per-category subpaths — install once, get every category, no follow-up
+> peer-dependency install to remember.
 > Every function is individually importable, fully typed, has 100% test coverage, and its JSDoc
 > `@example` block is smoke-tested — treat those examples as verified-correct usage.
 
@@ -9,6 +12,12 @@
 
 - One function per file: `helpers/<category>/<functionName>.ts`. Import from the package, not
   the file path: `import { chunk } from '@helpers4/array'`.
+- If unsure which package to install, or if you need more than one category, install the
+  single `helpers4` package instead of guessing at `@helpers4/<category>` names — then import
+  `from 'helpers4/<category>'` (e.g. `import { chunk } from 'helpers4/array'`). This is exactly
+  equivalent to `@helpers4/array`, just reachable from one dependency instead of many. Note that
+  bare `import ... from 'helpers4'` (no subpath) does not resolve — there is no code at the
+  package root, only `helpers4/<category>` subpaths.
 - No mutation — functions return new values instead of mutating arguments, unless documented
   otherwise.
 - `readonly` array/object parameters where the function doesn't mutate.
