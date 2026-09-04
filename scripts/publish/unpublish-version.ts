@@ -92,7 +92,7 @@ function printHelp(): void {
 Usage: pnpm exec tsx scripts/publish/unpublish-version.ts <version> [options]
 
 Best-effort unpublish of every @helpers4/* package (every category plus the
-@helpers4/all bundle) at a specific version — meant to clean up after a
+@helpers4/all bundle and the helpers4 unified package) at a specific version — meant to clean up after a
 release that failed partway through, publishing some packages but not
 others. A package that was never published at that version is skipped, not
 treated as a failure. A package that fails to unpublish is logged and
@@ -122,7 +122,7 @@ Examples:
  */
 async function unpublishVersion(config: UnpublishConfig): Promise<UnpublishResult[]> {
   const categories = await listHelperCategories(DIR.HELPERS);
-  const packageNames = [...categories.map((category) => `@helpers4/${category}`), '@helpers4/all'];
+  const packageNames = [...categories.map((category) => `@helpers4/${category}`), '@helpers4/all', 'helpers4'];
 
   console.log(`🗑️  Unpublishing version ${config.version} for ${packageNames.length} package(s)...\n`);
   if (config.dryRun) {

@@ -50,8 +50,8 @@ export async function discoverPackages(buildDir: string): Promise<PackageMetadat
           ...packageJson.dependencies,
           ...packageJson.peerDependencies
         }),
-        isBundle: entry === 'all',
-        isCategory: entry !== 'all',
+        isBundle: entry === 'all' || entry === 'helpers4',
+        isCategory: entry !== 'all' && entry !== 'helpers4',
         name: packageInfo.name,
         path: entryPath,
         version: packageInfo.version

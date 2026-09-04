@@ -36,6 +36,7 @@
     "typecheck": "tsc --noEmit",
     "coherency": "tsx scripts/coherency/index.ts",
     "coherency:bundle": "tsx scripts/coherency/bundle/index.ts",
+    "coherency:unified": "tsx scripts/coherency/unified/index.ts",
     "coherency:version": "tsx scripts/coherency/version/index.ts",
     "coherency:category": "tsx scripts/coherency/category/index.ts",
     "coherency:dependencies": "tsx scripts/coherency/dependencies/index.ts",
