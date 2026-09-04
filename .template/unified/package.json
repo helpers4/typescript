@@ -1,0 +1,24 @@
+{
+  "name": "helpers4",
+  "version": "{{version}}",
+  "description": "Complete collection of helpers4 utilities, organized by category, in a single npm package.",
+  "author": "baxyz <craft@baxyz.dev>",
+  "license": "LGPL-3.0",
+  "homepage": "https://helpers4.dev/typescript/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helpers4/typescript.git"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "keywords": [
+    "helpers",
+    "utilities",
+    "typescript",
+    "javascript",
+    "collection",
+    "bundle",
+    "all",
+    "tree-shaking"
+  ]
+}

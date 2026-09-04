@@ -8,6 +8,7 @@ import { emptyDir } from "fs-extra";
 import { DIR } from "../constants";
 import { buildCategories } from "./build-categories";
 import { buildBundle } from "./build-bundle";
+import { buildUnified } from "./build-unified";
 import { buildWebsiteMetadata } from "./build-website-metadata";
 import { buildLlmsTxt } from "./build-llms-txt";
 
@@ -26,7 +27,10 @@ async function main() {
   // Build the bundle package with all valid categories
   await buildBundle(validCategories);
 
-  // Generate llms.txt files for AI coding assistants (after bundle dir is created)
+  // Build the unified helpers4 package (all categories as real dependencies, no peerDeps)
+  await buildUnified(validCategories);
+
+  // Generate llms.txt files for AI coding assistants (after bundle & unified dirs are created)
   await buildLlmsTxt(validCategories);
 }
 

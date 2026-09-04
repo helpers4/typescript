@@ -7,13 +7,13 @@
 import { createCollectionMetadata } from "./create-collection-metadata";
 
 /**
- * Create metadata files for the bundle.
- * @param buildBundleDir - The build bundle directory.
+ * Create metadata files for the unified package.
+ * @param buildUnifiedDir - The build unified package directory.
  * @param categories - The list of available categories.
  */
-export async function createBundleMetadata(
-  buildBundleDir: string,
+export async function createUnifiedMetadata(
+  buildUnifiedDir: string,
   categories: string[]
 ) {
-  return createCollectionMetadata(buildBundleDir, categories, "@helpers4/all");
+  return createCollectionMetadata(buildUnifiedDir, categories, "helpers4");
 }

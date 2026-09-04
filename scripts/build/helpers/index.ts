@@ -17,3 +17,11 @@ export * from './prepare-bundle-package-json';
 export * from './prepare-bundle-readme';
 export * from './create-bundle-metadata';
 export * from './copy-static-bundle-files';
+export * from './create-collection-metadata';
+
+// Unified package helpers
+export * from './prepare-unified-package-json';
+export * from './prepare-unified-readme';
+export * from './create-unified-metadata';
+export * from './copy-static-unified-files';
+export * from './create-unified-category-shims';

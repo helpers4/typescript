@@ -15,5 +15,6 @@ export const DIR = {
   ROOT: "./",
   TEMPLATE: join("./", ".template"),
   TEMPLATE_BUNDLE: join("./", ".template", "bundle"),
-  TEMPLATE_CATEGORY: join("./", ".template", "category")
+  TEMPLATE_CATEGORY: join("./", ".template", "category"),
+  TEMPLATE_UNIFIED: join("./", ".template", "unified")
 };
