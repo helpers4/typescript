@@ -9,5 +9,7 @@
  */
 export const BUILD = {
   /** Internal name for the bundle package */
-  BUNDLE_NAME: "all"
+  BUNDLE_NAME: "all",
+  /** Internal name for the unified package (all categories under one npm package) */
+  UNIFIED_NAME: "helpers4"
 };

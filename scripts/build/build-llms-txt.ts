@@ -277,17 +277,21 @@ export async function buildLlmsTxt(validCategories: string[]): Promise<void> {
     const content = renderCategoryLlmsTxt(category, apiJson.functions, version, packageName);
 
     writeFile(join(DIR.BUILD, category, 'llms.txt'), content);
+    // Same content under the unified package — `helpers4/<category>` re-exports
+    // `@helpers4/<category>` verbatim, so its documented API is identical.
+    writeFile(join(DIR.BUILD, 'helpers4', category, 'llms.txt'), content);
 
     for (const fn of apiJson.functions) {
       allFunctions.push({ category, fn });
     }
   }
 
-  // Generate the combined llms.txt for @helpers4/all
+  // Generate the combined llms.txt for @helpers4/all and the helpers4 unified package
   if (allFunctions.length > 0) {
     const allContent = renderAllLlmsTxt(allFunctions, version, validCategories);
     writeFile(join(DIR.BUILD, 'all', 'llms.txt'), allContent);
+    writeFile(join(DIR.BUILD, 'helpers4', 'llms.txt'), allContent);
   }
 
-  console.info(` ✔️🤖 Built llms.txt for ${validCategories.length} categories + @helpers4/all`);
+  console.info(` ✔️🤖 Built llms.txt for ${validCategories.length} categories + @helpers4/all + helpers4`);
 }
