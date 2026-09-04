@@ -21,7 +21,7 @@ async function writePackage(
   name: string,
   extra: Record<string, unknown> = {},
 ): Promise<string> {
-  const pkgDir = path.join(dir, name === '@helpers4/all' ? 'all' : name.replace('@helpers4/', ''));
+  const pkgDir = path.join(dir, name === '@helpers4/all' ? 'all' : name === 'helpers4' ? 'helpers4' : name.replace('@helpers4/', ''));
   await mkdir(pkgDir, { recursive: true });
   await writeFile(path.join(pkgDir, 'package.json'), JSON.stringify({ name, version: '3.0.0', ...extra }));
   return pkgDir;
@@ -52,6 +52,15 @@ describe('discoverPackages', () => {
 
     expect(array).toMatchObject({ isBundle: false, isCategory: true, version: '3.0.0', dependencies: ['@helpers4/guard'] });
     expect(all).toMatchObject({ isBundle: true, isCategory: false, dependencies: ['rxjs'] });
+  });
+
+  it('tags the unified helpers4 package as a bundle too, with real (not peer) dependencies', async () => {
+    await writePackage(buildDir, 'helpers4', { dependencies: { '@helpers4/array': '3.0.0' } });
+
+    const packages = await discoverPackages(buildDir);
+    const unified = packages.find(p => p.name === 'helpers4')!;
+
+    expect(unified).toMatchObject({ isBundle: true, isCategory: false, dependencies: ['@helpers4/array'] });
   });
 
   it('skips directories without a package.json instead of failing', async () => {
