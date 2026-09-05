@@ -6,14 +6,23 @@
 
 import { basename } from "node:path";
 import { readFile, writeFile } from "node:fs/promises";
+import { builtinModules } from "node:module";
 import { build, type InlineConfig } from 'vite';
 import { rollup } from 'rollup';
 import dts from 'rollup-plugin-dts';
 
 /**
- * External dependencies that should not be bundled
+ * External dependencies that should not be bundled.
+ *
+ * Node builtins (both `node:fs`-prefixed and bare `fs`-style specifiers) must be external too —
+ * without this, Vite's library build (which defaults to browser-oriented module resolution) or
+ * Rollup silently substitutes an unresolvable builtin with a stub that throws at runtime, since
+ * neither is configured with a Node-aware platform target here. This isn't hypothetical: it's
+ * exactly what broke `@helpers4/node`'s `safeReadJsonFile` (silently, since it swallows the
+ * resulting error into its own try/catch and returns the fallback) and `withTempDir` (loudly,
+ * since it doesn't) in the published package before this fix.
  */
-const EXTERNAL_DEPS = ['rxjs'];
+const EXTERNAL_DEPS = ['rxjs', ...builtinModules, ...builtinModules.map(mod => `node:${mod}`)];
 
 /**
  * Compile a TypeScript file using Vite/Rollup build with rollup-plugin-dts for .d.ts generation.
