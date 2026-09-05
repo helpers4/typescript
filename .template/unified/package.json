@@ -20,5 +20,8 @@
     "bundle",
     "all",
     "tree-shaking"
-  ]
+  ],
+  "engines": {
+    "node": ">=26.0.0"
+  }
 }

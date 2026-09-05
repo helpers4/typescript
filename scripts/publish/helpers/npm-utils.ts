@@ -63,25 +63,39 @@ export async function packageVersionExists(packageName: string, version: string)
 }
 
 /**
- * Check if a version was ever published for a package, even if it was later unpublished.
+ * Fetch npm's per-version publish-time map for a package (the `time` field of `npm view
+ * --json`), or `null` if the package has never been published under this name at all.
  *
- * npm's `time` field keeps a tombstone entry for every version that has ever existed,
- * including ones removed via `npm unpublish` — unlike `versions`, which only lists what's
- * currently installable. This matters because npm permanently refuses to publish over a
- * version number that was once published and then unpublished (`E400 Cannot publish over
- * previously published version`), even long after the unpublish. `packageVersionExists`
- * alone can't see this: it returns `false` for an unpublished version, which looks
- * identical to "never published" right up until the real `npm publish` call fails.
+ * Every version that has ever existed — including ones later removed via `npm unpublish` —
+ * has a tombstone entry here, unlike `versions`, which only lists what's currently
+ * installable. Shared by {@link packageVersionEverPublished} (does this exact version have an
+ * entry?) and {@link packageExistsOnRegistry} (did the lookup itself succeed at all?). A caller
+ * needing both facts about the same package — as `validatePackages` in `scripts/publish/index.ts`
+ * does — should call this directly once instead of calling both of those and hitting the
+ * registry twice for the same package.
  */
-export async function packageVersionEverPublished(packageName: string, version: string): Promise<boolean> {
+export async function getPackagePublishTimes(packageName: string): Promise<Record<string, string> | null> {
   try {
     const { stdout } = await execFileAsync('npm', ['view', packageName, 'time', '--json', '--silent']);
-    const time = JSON.parse(stdout) as Record<string, string>;
-    return version in time;
+    return JSON.parse(stdout) as Record<string, string>;
   } catch {
     // Package doesn't exist yet, or has no time data
-    return false;
+    return null;
   }
+}
+
+/**
+ * Check if a version was ever published for a package, even if it was later unpublished.
+ *
+ * This matters because npm permanently refuses to publish over a version number that was
+ * once published and then unpublished (`E400 Cannot publish over previously published
+ * version`), even long after the unpublish. `packageVersionExists` alone can't see this: it
+ * returns `false` for an unpublished version, which looks identical to "never published"
+ * right up until the real `npm publish` call fails.
+ */
+export async function packageVersionEverPublished(packageName: string, version: string): Promise<boolean> {
+  const times = await getPackagePublishTimes(packageName);
+  return times !== null && version in times;
 }
 
 /**
@@ -98,15 +112,13 @@ export async function packageVersionEverPublished(packageName: string, version: 
  * publish (e.g. `npx --yes setup-npm-trusted-publish <name>`) followed by adding this repo's
  * workflow as a trusted publisher on npmjs.com — has to happen before the first automated
  * release of a new package, not be discovered by that release failing.
+ *
+ * Needing this and {@link packageVersionEverPublished} for the same package? Call
+ * {@link getPackagePublishTimes} once directly instead — that's what both of these are built
+ * on, and calling them separately would hit the registry twice for the same package.
  */
 export async function packageExistsOnRegistry(packageName: string): Promise<boolean> {
-  try {
-    await execFileAsync('npm', ['view', packageName, 'name', '--silent']);
-    return true;
-  } catch {
-    // Package has never been published under this name
-    return false;
-  }
+  return (await getPackagePublishTimes(packageName)) !== null;
 }
 
 /**
