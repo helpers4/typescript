@@ -8,6 +8,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.1.0] - 2026-09-05
+
+### 🚀 Features
+- **CI-CD**: publish and validate the helpers4 unified package
+- **CI-CD**: build a helpers4 unified package alongside @helpers4/all
+
+### 🐛 Bug Fixes
+- **CI-CD**: catch a never-published package before a release starts
+- **helpers4**: stop llms.txt telling helpers4 users to install @helpers4/
+- **security**: raise the qs override to patch 2 moderate advisories
+- **version**: avoid the TSNonNullExpression+UpdateExpression pattern that crashes stryker 10
+- address code review findings on the helpers4 unified package
+
+### 🔧 Miscellaneous
+- **deps-dev**: bump the dev-dependencies group across 1 directory with 5 updates
+- **deps-dev**: bump the dev-dependencies-major group with 2 updates
+- register the helpers4 commit scope
+
+### 📝 Documentation
+- **helpers4**: document the unified package as an install option
+
+### 📌 Dependencies
+- **deps**: bump github/codeql-action/upload-sarif in the actions group
+
 ## [3.0.9] - 2026-08-30
 
 ### 🚀 Features
@@ -1061,6 +1085,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.1.0]: https://github.com/helpers4/typescript/compare/v3.0.9...v3.1.0
 [3.0.9]: https://github.com/helpers4/typescript/compare/v3.0.7...v3.0.9
 [3.0.7]: https://github.com/helpers4/typescript/compare/v3.0.6...v3.0.7
 [3.0.6]: https://github.com/helpers4/typescript/compare/v3.0.5...v3.0.6
