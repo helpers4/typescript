@@ -81,7 +81,7 @@
     "fs-extra": "^11.4.0",
     "git-cliff": "^2.13.1",
     "glob": "^13.0.6",
-    "happy-dom": "^20.13.0",
+    "happy-dom": "^20.13.1",
     "oxlint": "^1.81.0",
     "rollup": "^4.63.1",
     "rollup-plugin-dts": "^6.5.1",
