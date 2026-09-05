@@ -74,8 +74,16 @@ export async function testBundleSizes(): Promise<void> {
     const packagePath = path.join(buildDir, dir.name);
     const { size, bytes } = getDirectorySize(packagePath);
 
+    // Read the real package name instead of assuming the scoped `@helpers4/<dir>` shape —
+    // the unified `helpers4` package's directory is named "helpers4" too, which isn't
+    // "@helpers4/helpers4".
+    const packageJsonPath = path.join(packagePath, 'package.json');
+    const name = fs.existsSync(packageJsonPath)
+      ? (JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).name ?? dir.name)
+      : dir.name;
+
     packages.push({
-      name: `@helpers4/${dir.name}`,
+      name,
       path: packagePath,
       size,
       sizeBytes: bytes

@@ -26,6 +26,7 @@ const {
   checkNpmAuth,
   deprecatePackage,
   getPackageInfo,
+  getPackagePublishTimes,
   packageExistsOnRegistry,
   packageVersionEverPublished,
   packageVersionExists,
@@ -147,13 +148,25 @@ describe('packageVersionEverPublished', () => {
   });
 });
 
+describe('getPackagePublishTimes', () => {
+  it('returns the parsed time map when npm view succeeds', async () => {
+    respondToExecFileWith(() => ({ stdout: JSON.stringify({ created: '2020-01-01', '3.0.8': '2026-08-28T19:28:18.000Z' }) }));
+    expect(await getPackagePublishTimes('@helpers4/array')).toEqual({ created: '2020-01-01', '3.0.8': '2026-08-28T19:28:18.000Z' });
+  });
+
+  it('returns null when npm view fails (package never published)', async () => {
+    respondToExecFileWith(() => ({ error: new Error('E404') }));
+    expect(await getPackagePublishTimes('@helpers4/brand-new-category')).toBeNull();
+  });
+});
+
 describe('packageExistsOnRegistry', () => {
-  it('returns true when npm view resolves, regardless of version', async () => {
-    respondToExecFileWith(() => ({ stdout: 'helpers4\n' }));
+  it('returns true when the package has a publish-time map, regardless of version', async () => {
+    respondToExecFileWith(() => ({ stdout: JSON.stringify({ created: '2020-01-01' }) }));
     expect(await packageExistsOnRegistry('helpers4')).toBe(true);
     expect(execFileMock).toHaveBeenCalledWith(
       'npm',
-      ['view', 'helpers4', 'name', '--silent'],
+      ['view', 'helpers4', 'time', '--json', '--silent'],
       expect.any(Function),
     );
   });

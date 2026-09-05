@@ -13,8 +13,7 @@ import type {
 } from './helpers/npm-utils';
 import {
   checkNpmAuth,
-  packageExistsOnRegistry,
-  packageVersionEverPublished,
+  getPackagePublishTimes,
   packageVersionExists,
   publishPackage
 } from './helpers/npm-utils';
@@ -176,10 +175,13 @@ async function validatePackages(packages: any[], config: PublishConfig): Promise
     // published again — npm rejects it with E400 regardless of whether it currently shows
     // up as installable. Catch that here, before any package in this run has been touched,
     // instead of discovering it mid-batch after other packages already went live for good.
-    const [everPublished, currentlyPublished] = await Promise.all([
-      packageVersionEverPublished(pkg.name, pkg.version),
+    // publishTimes also answers "does this package exist at all" for free (null = never
+    // published under this name) — fetched once here rather than via a second registry call.
+    const [publishTimes, currentlyPublished] = await Promise.all([
+      getPackagePublishTimes(pkg.name),
       packageVersionExists(pkg.name, pkg.version)
     ]);
+    const everPublished = publishTimes !== null && pkg.version in publishTimes;
     if (everPublished && !currentlyPublished) {
       issues.push(
         `${pkg.name}@${pkg.version} was previously published and unpublished — npm will refuse ` +
@@ -192,7 +194,7 @@ async function validatePackages(packages: any[], config: PublishConfig): Promise
     // trusted publisher set up yet and fails with a permission error, but only once the real
     // `npm publish` for it runs. Catch it here too, before anything in this run is touched,
     // instead of mid-batch after other packages already published successfully.
-    if (config.provenance && !currentlyPublished && !(await packageExistsOnRegistry(pkg.name))) {
+    if (config.provenance && !currentlyPublished && publishTimes === null) {
       issues.push(
         `${pkg.name} has never been published — npm Trusted Publishing (OIDC, used here via ` +
         '--provenance) cannot be configured for a package that does not exist on the registry ' +
