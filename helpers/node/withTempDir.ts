@@ -12,8 +12,9 @@ import { join } from 'node:path';
  * Creates a fresh temporary directory under the OS temp root, runs `fn` with its path, and
  * always removes it (recursively) afterward — including when `fn` throws.
  * @param prefix - Prepended to the generated directory name, to make it identifiable
- * @param fn - Receives the temp directory's absolute path; its resolved value is returned
- * @returns Whatever `fn` resolves to
+ * @param fn - Receives the temp directory's absolute path; its (possibly synchronous) return
+ * value is returned
+ * @returns Whatever `fn` returns or resolves to
  * @example
  * await withTempDir('my-tool', async (dir) => {
  *   await writeFile(`${dir}/output.txt`, 'data');
@@ -22,7 +23,7 @@ import { join } from 'node:path';
  * // => 'data' (the directory no longer exists once this resolves)
  * @since next
  */
-export async function withTempDir<T>(prefix: string, fn: (dir: string) => Promise<T>): Promise<T> {
+export async function withTempDir<T>(prefix: string, fn: (dir: string) => T | Promise<T>): Promise<T> {
   const dir = await mkdtemp(join(tmpdir(), `${prefix}-`));
   try {
     return await fn(dir);

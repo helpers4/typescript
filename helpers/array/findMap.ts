@@ -8,6 +8,8 @@
  * Returns the first non-`undefined` result of mapping `fn` over `array`, short-circuiting as
  * soon as one is found. Similar to `array.map(fn).find(v => v !== undefined)`, but doesn't map
  * (or call `fn` on) the remaining items once a match is found.
+ *
+ * `null` and `undefined` are treated as empty arrays and return `undefined`.
  * @param array - The array to search
  * @param fn - Maps each item (and its index) to a result, or `undefined` to keep looking
  * @returns The first non-`undefined` result of `fn`, or `undefined` if none was found

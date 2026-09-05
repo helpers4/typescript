@@ -8,11 +8,14 @@ import { escapeRegExp } from './escapeRegExp';
 
 /**
  * Compiles a simple glob pattern into a `RegExp` that matches the whole string: `*` matches any
- * sequence of characters (including none), `?` matches exactly one character. Everything else is
- * matched literally.
+ * sequence of UTF-16 code units (including none), `?` matches exactly one UTF-16 code unit.
+ * Everything else is matched literally.
  *
  * This is not a full shell/minimatch glob — no brace expansion, character classes, or
- * path-separator-aware `**`, just the two textbook wildcards.
+ * path-separator-aware `**`, just the two textbook wildcards. Like the rest of this library,
+ * lengths are counted in UTF-16 code units: `?` matches one code unit, not one Unicode code
+ * point, so it matches only half of a surrogate pair (e.g. an emoji outside the Basic
+ * Multilingual Plane).
  * @param pattern - The glob pattern to compile
  * @param caseSensitive - Whether the resulting `RegExp` is case-sensitive. Defaults to `true`.
  * @returns A `RegExp` matching strings that satisfy `pattern` in full
