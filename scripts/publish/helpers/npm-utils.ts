@@ -85,6 +85,31 @@ export async function packageVersionEverPublished(packageName: string, version: 
 }
 
 /**
+ * Check whether a package has ever been published at all, under any version.
+ *
+ * Distinct from {@link packageVersionExists} (checks one specific version) — this exists to
+ * catch a brand-new package *before* a release attempts to publish it: this repo's release
+ * workflow authenticates to npm via Trusted Publishing (OIDC, `--provenance`, no static
+ * NPM_TOKEN — see `.github/workflows/release.yml`), and npm Trusted Publishing can only be
+ * configured for a package that already exists on the registry. A never-published package
+ * (e.g. a newly-added category) has no trusted publisher configured yet, so `npm publish`
+ * fails with a permission error for that package alone, mid-batch, while every
+ * already-existing package in the same release succeeds. Bootstrapping it — one manual
+ * publish (e.g. `npx --yes setup-npm-trusted-publish <name>`) followed by adding this repo's
+ * workflow as a trusted publisher on npmjs.com — has to happen before the first automated
+ * release of a new package, not be discovered by that release failing.
+ */
+export async function packageExistsOnRegistry(packageName: string): Promise<boolean> {
+  try {
+    await execFileAsync('npm', ['view', packageName, 'name', '--silent']);
+    return true;
+  } catch {
+    // Package has never been published under this name
+    return false;
+  }
+}
+
+/**
  * Get package info from package.json
  */
 export async function getPackageInfo(packagePath: string): Promise<{ name: string; version: string }> {

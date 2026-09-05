@@ -26,6 +26,7 @@ const {
   checkNpmAuth,
   deprecatePackage,
   getPackageInfo,
+  packageExistsOnRegistry,
   packageVersionEverPublished,
   packageVersionExists,
   publishPackage,
@@ -143,6 +144,23 @@ describe('packageVersionEverPublished', () => {
   it('returns false when npm view fails (package does not exist)', async () => {
     respondToExecFileWith(() => ({ error: new Error('E404') }));
     expect(await packageVersionEverPublished('@helpers4/does-not-exist', '1.0.0')).toBe(false);
+  });
+});
+
+describe('packageExistsOnRegistry', () => {
+  it('returns true when npm view resolves, regardless of version', async () => {
+    respondToExecFileWith(() => ({ stdout: 'helpers4\n' }));
+    expect(await packageExistsOnRegistry('helpers4')).toBe(true);
+    expect(execFileMock).toHaveBeenCalledWith(
+      'npm',
+      ['view', 'helpers4', 'name', '--silent'],
+      expect.any(Function),
+    );
+  });
+
+  it('returns false when npm view fails (package never published)', async () => {
+    respondToExecFileWith(() => ({ error: new Error('E404') }));
+    expect(await packageExistsOnRegistry('@helpers4/brand-new-category')).toBe(false);
   });
 });
 

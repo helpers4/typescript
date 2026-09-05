@@ -13,6 +13,7 @@ import type {
 } from './helpers/npm-utils';
 import {
   checkNpmAuth,
+  packageExistsOnRegistry,
   packageVersionEverPublished,
   packageVersionExists,
   publishPackage
@@ -183,6 +184,21 @@ async function validatePackages(packages: any[], config: PublishConfig): Promise
       issues.push(
         `${pkg.name}@${pkg.version} was previously published and unpublished — npm will refuse ` +
         'to publish this exact version again. Bump to a version that has never touched the registry.'
+      );
+    }
+
+    // Trusted Publishing (OIDC, what --provenance uses) can only be configured for a package
+    // that already exists on npm — a brand-new package (e.g. a newly-added category) has no
+    // trusted publisher set up yet and fails with a permission error, but only once the real
+    // `npm publish` for it runs. Catch it here too, before anything in this run is touched,
+    // instead of mid-batch after other packages already published successfully.
+    if (config.provenance && !currentlyPublished && !(await packageExistsOnRegistry(pkg.name))) {
+      issues.push(
+        `${pkg.name} has never been published — npm Trusted Publishing (OIDC, used here via ` +
+        '--provenance) cannot be configured for a package that does not exist on the registry ' +
+        'yet. Bootstrap it first (e.g. `npx --yes setup-npm-trusted-publish ' + pkg.name + '` or ' +
+        'a manual `npm publish` with a classic token), add this repository/workflow as a ' +
+        'trusted publisher for it on npmjs.com, then re-run the release.'
       );
     }
 
