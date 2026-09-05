@@ -21,7 +21,7 @@ import { join } from 'node:path';
  *   return readFile(`${dir}/output.txt`, 'utf-8');
  * });
  * // => 'data' (the directory no longer exists once this resolves)
- * @since next
+ * @since 3.1.1
  */
 export async function withTempDir<T>(prefix: string, fn: (dir: string) => T | Promise<T>): Promise<T> {
   const dir = await mkdtemp(join(tmpdir(), `${prefix}-`));

@@ -19,7 +19,7 @@
  * @example
  * findMap([], (n: number) => n)
  * // => undefined
- * @since next
+ * @since 3.1.1
  */
 export function findMap<T, R>(
   array: readonly T[] | null | undefined,

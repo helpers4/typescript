@@ -20,7 +20,7 @@ import { levenshteinDistance } from './levenshteinDistance';
  * @example
  * levenshteinSimilarity('same', 'same')
  * // => 1
- * @since next
+ * @since 3.1.1
  */
 export function levenshteinSimilarity(a: string, b: string, caseSensitive = true): number {
   // Fold case first, then measure — case-folding a Turkish dotted capital I ('İ', U+0130) via

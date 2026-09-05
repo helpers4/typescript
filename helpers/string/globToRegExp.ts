@@ -25,7 +25,7 @@ import { escapeRegExp } from './escapeRegExp';
  * @example
  * globToRegExp('report-????.csv').test('report-2026.csv')
  * // => true
- * @since next
+ * @since 3.1.1
  */
 export function globToRegExp(pattern: string, caseSensitive = true): RegExp {
   const body = pattern

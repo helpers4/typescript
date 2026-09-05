@@ -19,7 +19,7 @@
  * @example
  * unorderedPairKey('alice', 'bob') === unorderedPairKey('bob', 'alice')
  * // => true
- * @since next
+ * @since 3.1.1
  */
 export function unorderedPairKey(a: string, b: string, separator = '|'): string {
   return a < b ? `${a}${separator}${b}` : `${b}${separator}${a}`;

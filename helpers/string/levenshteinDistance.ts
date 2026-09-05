@@ -18,7 +18,7 @@
  * @example
  * levenshteinDistance('Kitten', 'kitten', false)
  * // => 0
- * @since next
+ * @since 3.1.1
  */
 export function levenshteinDistance(a: string, b: string, caseSensitive = true): number {
   const s = caseSensitive ? a : a.toLowerCase();

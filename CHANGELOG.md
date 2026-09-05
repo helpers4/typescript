@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.1.1] - 2026-09-05
+
+### 🚀 Features
+- **array**: add findMap
+- **node**: add withTempDir
+- **string**: add levenshteinDistance/levenshteinSimilarity, globToRegExp, unorderedPairKey
+
+### 🐛 Bug Fixes
+- address code review findings on the tuxery-extracted helpers
+
+### 🔧 Miscellaneous
+- **deps-dev**: bump happy-dom
+
 ## [3.1.0] - 2026-09-05
 
 ### 🚀 Features
@@ -1085,6 +1098,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.1.1]: https://github.com/helpers4/typescript/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/helpers4/typescript/compare/v3.0.9...v3.1.0
 [3.0.9]: https://github.com/helpers4/typescript/compare/v3.0.7...v3.0.9
 [3.0.7]: https://github.com/helpers4/typescript/compare/v3.0.6...v3.0.7
