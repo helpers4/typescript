@@ -149,7 +149,10 @@ export function incrementGentoo(version: string, type: IncrementType): string {
   // Always at least major.minor.patch, like SemVer — a bare "1" incrementing "minor" should
   // produce "1.1.0", not "1.1" (extra pre-existing components beyond 3 are left in place).
   while (components.length < 3) components.push(0);
-  components[index]!++;
+  // Not `components[index]!++` — @stryker-mutator/instrumenter@10.0.0 crashes instrumenting an
+  // UpdateExpression whose argument is a TSNonNullExpression (TypeError: "expected node to be
+  // of a type [Identifier, MemberExpression] but instead got TSNonNullExpression").
+  components[index] = components[index]! + 1;
   for (let i = index + 1; i < components.length; i++) components[i] = 0;
 
   return stringifyGentoo({ scheme: 'gentoo', components, letter: '', suffixes: [], revision: 0 });
@@ -176,7 +179,9 @@ export function incrementPrereleaseGentoo(version: string, prereleaseId: string)
   if (!isPrereleaseGentoo(parsed)) {
     // parseGentoo's grammar requires at least one numeric component, so this index is always valid.
     const components = [...parsed.components];
-    components[components.length - 1]!++;
+    const lastIndex = components.length - 1;
+    // Not `components[lastIndex]!++` — see incrementGentoo's comment on the same pattern.
+    components[lastIndex] = components[lastIndex]! + 1;
     return stringifyGentoo({ ...parsed, components, suffixes: [{ type: suffixType, number: 0 }], revision: 0 });
   }
 
