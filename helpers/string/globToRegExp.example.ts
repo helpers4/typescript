@@ -31,7 +31,7 @@ const examples: HelperExamples = {
     },
     {
       title: 'Reuse the same pattern for many strings efficiently',
-      description: 'Compile once with memoize() from @helpers4/function when checking many candidates against a fixed pattern list.',
+      description: 'Compile the RegExp once and reuse it for every check instead of recompiling per candidate. If you also need to cache across many different call sites, wrap globToRegExp itself with memoize() from @helpers4/function.',
       code: `const isTestFile = globToRegExp('*.test.ts');
 ['a.test.ts', 'a.spec.ts'].filter(name => isTestFile.test(name))
 // => ['a.test.ts']`,

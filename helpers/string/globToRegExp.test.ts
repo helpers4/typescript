@@ -49,6 +49,13 @@ describe('globToRegExp', () => {
     expect(globToRegExp('').test('x')).toBe(false);
   });
 
+  it('"?" matches one UTF-16 code unit, not one Unicode code point', () => {
+    // '😀' (U+1F600) is outside the Basic Multilingual Plane, so it's a surrogate pair — two
+    // code units. "?" matches only one, so it does not match the whole emoji.
+    expect(globToRegExp('?').test('😀')).toBe(false);
+    expect(globToRegExp('??').test('😀')).toBe(true);
+  });
+
   it('supports multiple wildcards in one pattern', () => {
     expect(globToRegExp('*-?-*').test('left-x-right')).toBe(true);
     expect(globToRegExp('*-?-*').test('left-xy-right')).toBe(false);

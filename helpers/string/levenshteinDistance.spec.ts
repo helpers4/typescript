@@ -35,10 +35,17 @@ describe('levenshteinDistance — property-based', () => {
     );
   });
 
-  it('never exceeds the longer string\'s length', () => {
+  it('never exceeds the longer of the two strings actually compared (post-case-folding)', () => {
+    // Bound against the post-fold lengths, not a.length/b.length directly — case-folding a
+    // Turkish dotted capital I ('İ', U+0130) expands it to two code units ('i' + combining dot
+    // above) under the default (non-Turkish) locale mapping .toLowerCase() uses, so the string
+    // levenshteinDistance actually measures can be longer than the raw input when
+    // caseSensitive is false.
     fc.assert(
-      fc.property(fc.string(), fc.string(), (a, b) => {
-        expect(levenshteinDistance(a, b)).toBeLessThanOrEqual(Math.max(a.length, b.length));
+      fc.property(fc.string({ unit: 'binary' }), fc.string({ unit: 'binary' }), fc.boolean(), (a, b, caseSensitive) => {
+        const s = caseSensitive ? a : a.toLowerCase();
+        const t = caseSensitive ? b : b.toLowerCase();
+        expect(levenshteinDistance(a, b, caseSensitive)).toBeLessThanOrEqual(Math.max(s.length, t.length));
       }),
     );
   });
@@ -57,5 +64,14 @@ describe('levenshteinDistance — property-based', () => {
 describe('levenshteinDistance — contract', () => {
   it('handles unicode strings without throwing', () => {
     expect(() => levenshteinDistance('café', 'café')).not.toThrow();
+  });
+
+  it('case-folding a Turkish dotted capital I can make the distance exceed the raw input lengths', () => {
+    // U+0130 lowercases to 'i' + U+0307 (combining dot above) -- two code units -- under the
+    // default (non-Turkish) locale mapping .toLowerCase() uses. Expected behavior for this
+    // function itself (it measures the post-fold strings); levenshteinSimilarity has to account
+    // for this explicitly to keep its own [0, 1] contract.
+    expect('\u0130'.toLowerCase().length).toBe(2);
+    expect(levenshteinDistance('\u0130', 'x', false)).toBe(2);
   });
 });

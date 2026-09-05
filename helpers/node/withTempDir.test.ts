@@ -27,6 +27,11 @@ describe('withTempDir', () => {
     expect(result).toBe('data');
   });
 
+  it('accepts a synchronous fn (not just one returning a Promise)', async () => {
+    const result = await withTempDir('helpers4-test', (dir) => dir.length);
+    expect(result).toBeGreaterThan(0);
+  });
+
   it('removes the directory after fn resolves', async () => {
     let dirPath = '';
     await withTempDir('helpers4-test', async (dir) => {

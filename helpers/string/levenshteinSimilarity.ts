@@ -23,7 +23,13 @@ import { levenshteinDistance } from './levenshteinDistance';
  * @since next
  */
 export function levenshteinSimilarity(a: string, b: string, caseSensitive = true): number {
-  const maxLength = Math.max(a.length, b.length);
+  // Fold case first, then measure — case-folding a Turkish dotted capital I ('İ', U+0130) via
+  // the default (non-Turkish) locale mapping expands it to two code units ('i' + combining dot
+  // above), so computing maxLength from the raw a/b would be measuring a different string than
+  // the one levenshteinDistance actually compares, letting distance/maxLength exceed 1.
+  const s = caseSensitive ? a : a.toLowerCase();
+  const t = caseSensitive ? b : b.toLowerCase();
+  const maxLength = Math.max(s.length, t.length);
   if (maxLength === 0) return 1;
-  return 1 - levenshteinDistance(a, b, caseSensitive) / maxLength;
+  return 1 - levenshteinDistance(s, t) / maxLength;
 }
