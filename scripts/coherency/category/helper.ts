@@ -88,6 +88,19 @@ export async function testCategoryPackages(): Promise<void> {
       if (!hasIndexJs || !hasIndexDts) {
         throw new Error(`Missing index files (index.js or index.d.ts) in ${categoryDir}/lib`);
       }
+
+      // Regression guard: when a Node builtin isn't in Rollup's `external` list, Vite's library
+      // build silently substitutes it with a stub module that throws at runtime instead of
+      // failing the build — this is exactly how safeReadJsonFile and withTempDir shipped broken
+      // in @helpers4/node before the `external` list was fixed to include every Node builtin.
+      const indexJs = await fs.readFile(path.join(libDir, 'index.js'), 'utf8');
+      if (indexJs.includes('browser_external')) {
+        throw new Error(
+          `${categoryDir}/lib/index.js contains a Vite "browser external" stub — a Node builtin ` +
+          "import wasn't resolved and got replaced with code that throws at runtime instead of " +
+          'failing the build. Check EXTERNAL_DEPS in scripts/build/helpers/compile-type-script.helper.ts.',
+        );
+      }
     } else {
       throw new Error(`Missing lib directory in category ${categoryDir}`);
     }
