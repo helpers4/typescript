@@ -1,0 +1,5 @@
+{
+  "label": "License",
+  "smallDescription": "License string classification and comparison",
+  "description": "Groups real-world, SPDX-ish license strings into coarse families (MIT, GPL, LGPL, BSD, Apache, ...) so notation drift across sources (\"GPL3\" vs \"GPL-3.0-or-later\") doesn't read as a conflict. Not an SPDX validator or a full SPDX-expression parser, and never used to pick or display a license — only to compare two reported strings for \"same family\"."
+}
