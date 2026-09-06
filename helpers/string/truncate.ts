@@ -79,6 +79,10 @@ function snapToGraphemeBoundary(text: string, cutLength: number): number {
  * appended, no trimming). `null` and `undefined` inputs are returned as-is to
  * align with other string helpers.
  *
+ * This is a mechanical cut at exactly `maxLength` — it doesn't know or care about sentence
+ * structure. For a card/header-sized summary that prefers to end on a whole sentence when one
+ * fits, see {@link excerpt} instead.
+ *
  * @param input - The string to truncate.
  * @param maxLength - Maximum number of characters in the output (including ellipsis).
  * @param ellipsis - Appended when the string is cut. Defaults to `'…'`.
