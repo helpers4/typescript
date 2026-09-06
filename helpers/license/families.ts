@@ -93,7 +93,7 @@ function splitTokens(raw: string): string[] {
  * @example
  * families('custom:Acme End User License')
  * // => Set(1) { 'unknown' }
- * @since next
+ * @since 3.1.2
  */
 export function families(raw: string): Set<string> {
   const result = new Set<string>();

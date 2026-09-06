@@ -24,7 +24,7 @@ import { families } from './families';
  * @example
  * agree('custom', 'MIT')
  * // => true (a vague claim is never itself a conflict)
- * @since next
+ * @since 3.1.2
  */
 export function agree(a: string, b: string): boolean {
   const knownA = new Set([...families(a)].filter((f) => f !== UNKNOWN_FAMILY));

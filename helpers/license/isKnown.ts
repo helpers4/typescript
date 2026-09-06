@@ -19,7 +19,7 @@ import { families } from './families';
  * @example
  * isKnown('custom:Acme End User License')
  * // => false
- * @since next
+ * @since 3.1.2
  */
 export function isKnown(raw: string): boolean {
   for (const family of families(raw)) {

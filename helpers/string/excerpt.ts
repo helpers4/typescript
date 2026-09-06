@@ -34,7 +34,7 @@ import { truncate } from './truncate';
  * @example
  * excerpt('This description has no punctuation at all so it must cut on a word', 30)
  * // => 'This description has no…'
- * @since next
+ * @since 3.1.2
  */
 export function excerpt(text: string, maxLength: number, ellipsis = '…'): string {
   const collapsed = text.trim().replace(/\s+/g, ' ');

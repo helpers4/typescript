@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.1.2] - 2026-09-06
+
+### 🚀 Features
+- **license**: add families, agree, isKnown — new category
+- **string**: add excerpt, cross-reference from truncate
+
+### 🐛 Bug Fixes
+- **CI-CD**: make post-build smoke tests actually execute the compiled code
+- **CI-CD**: externalize Node builtins so @helpers4/node doesn't ship broken
+
+### 🔧 Miscellaneous
+- register the license commit scope
+
 ## [3.1.1] - 2026-09-05
 
 ### 🚀 Features
@@ -1098,6 +1111,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.1.2]: https://github.com/helpers4/typescript/compare/v3.1.1...v3.1.2
 [3.1.1]: https://github.com/helpers4/typescript/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/helpers4/typescript/compare/v3.0.9...v3.1.0
 [3.0.9]: https://github.com/helpers4/typescript/compare/v3.0.7...v3.0.9
