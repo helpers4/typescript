@@ -101,6 +101,26 @@ jobs:
           checkout: "true"
           pr-comment: "error"
 
+  # The one check to set as required in the branch ruleset, instead of every individual job
+  # above: this job's name never changes even if one of them starts fanning out into a matrix.
+  required:
+    name: Required checks passed
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [version-calculation, build, test, lint, type-check, security, conventional-commits, verification]
+    steps:
+      - name: Fail if any required job failed or was cancelled
+        run: |
+          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]]; then
+            echo "::error::At least one required job failed."
+            exit 1
+          fi
+          if [[ "${{ contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            echo "::error::At least one required job was cancelled."
+            exit 1
+          fi
+          echo "All required jobs passed."
+
   # Runtime compatibility (Node, Deno, Bun)
   runtime-compat:
     needs: version-calculation
