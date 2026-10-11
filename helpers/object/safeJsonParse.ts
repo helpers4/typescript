@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { safeParseStrict } from '../json/safeParseStrict';
+
 /**
  * Parses a JSON string, returning `null` (or a fallback) on any parse failure.
  *
@@ -17,16 +19,14 @@
  * safeJsonParse<{ a: number }>('{"a":1}')  // => { a: 1 }
  * safeJsonParse('invalid')                 // => null
  * safeJsonParse('invalid', [])             // => []
+ * @deprecated Use `safeParseStrict` from `@helpers4/json` instead — same parsing, same
+ * `fallback` behavior. `safeJsonParse` will be removed in v4.
  * @since 2.0.0
  */
 export function safeJsonParse<T>(input: string): T | null;
 export function safeJsonParse<T>(input: string, fallback: T): T;
 export function safeJsonParse<T>(input: string, fallback?: T): T | null {
-  try {
-    return JSON.parse(input) as T;
-  } catch {
-    // Distinguish "no fallback provided" (→ null) from "fallback is undefined"
-    // (→ undefined as T) to keep runtime behaviour aligned with the overloads.
-    return arguments.length < 2 ? null : (fallback as T);
-  }
+  // Forward the fallback only when one was passed, so "no fallback" (→ null) stays distinct from
+  // an explicit `undefined` fallback (→ undefined).
+  return arguments.length < 2 ? safeParseStrict<T>(input) : safeParseStrict<T>(input, fallback as T);
 }
