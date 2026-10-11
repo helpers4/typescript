@@ -186,11 +186,13 @@ jobs:
             exit 0
           fi
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add reports/mutation/incremental.json
-          git commit -m "chore(CI-CD): 🔧 refresh mutation testing incremental baseline"
 
-          if ! git push origin HEAD:main; then
-            echo "::warning::Push failed (likely raced another push to main) — the baseline stays stale until the next push-to-main run retries this."
-          fi
+      # Committed through the GitHub API so the commit is signed by the App (see release.yml).
+      - name: Commit the refreshed incremental baseline (signed)
+        continue-on-error: true
+        uses: grafana/github-api-commit-action@b1d81091e8480dd11fcea8bc1f0ab977a0376ca5 # v1.0.0
+        with:
+          token: ${{ steps.app_token.outputs.token }}
+          commit-message: "chore(CI-CD): 🔧 refresh mutation testing incremental baseline"
+          success-if-no-changes: "true"

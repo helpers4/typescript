@@ -268,19 +268,23 @@ jobs:
       - name: Generate changelog
         run: pnpm run changelog -- --tag "v${{ steps.version.outputs.new-version }}"
 
-      - name: Commit version update
+      - name: Stage version update
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add package.json CHANGELOG.md
           if [ "${{ needs.build-and-verify.outputs.is-prerelease }}" = "false" ]; then
             git add helpers/
           fi
-          git commit -m "chore(release): 🔧 bump version to ${{ steps.version.outputs.new-version }}" || echo "No changes to commit"
 
-      - name: Push version commit
+      # Committed through the GitHub API rather than `git commit` + `git push`: GitHub signs
+      # API-made commits with the App's identity, which the "verified signatures" rule on main
+      # requires (a runner-side git commit is unsigned, and only got through on the bypass).
+      - name: Commit and push version update (signed)
         if: ${{ !inputs.dry-run }}
-        run: git push origin ${{ github.ref }}
+        uses: grafana/github-api-commit-action@b1d81091e8480dd11fcea8bc1f0ab977a0376ca5 # v1.0.0
+        with:
+          token: ${{ steps.app_token.outputs.token }}
+          commit-message: "chore(release): 🔧 bump version to ${{ steps.version.outputs.new-version }}"
+          success-if-no-changes: "true"
 
       - name: Publish to npm
         if: ${{ !inputs.dry-run }}
