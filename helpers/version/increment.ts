@@ -5,6 +5,7 @@
  */
 
 import { assertNeverScheme } from './_assertNeverScheme';
+import { incrementDebian } from './_debian';
 import { incrementGentoo } from './_gentoo';
 import { incrementSemVer } from './_semver';
 import type { IncrementType, VersionScheme } from './types';
@@ -20,6 +21,9 @@ import type { IncrementType, VersionScheme } from './types';
  * `patch` → 3rd — Gentoo's `components` array can be any length, but the first three follow
  * the same positional convention as SemVer), zeroing everything after it and dropping the
  * letter/suffixes/revision.
+ *
+ * **`'debian'`** — throws: a Debian upstream version is free-form, with no major/minor/patch
+ * structure to bump.
  *
  * @param version - The version to increment
  * @param type - The increment type ('major', 'minor', 'patch')
@@ -48,6 +52,8 @@ export function increment(
       return incrementSemVer(version, type);
     case 'gentoo':
       return incrementGentoo(version, type);
+    case 'debian':
+      return incrementDebian();
     default:
       return assertNeverScheme(scheme);
   }

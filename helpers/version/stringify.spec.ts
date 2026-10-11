@@ -58,3 +58,17 @@ describe('stringify — contract', () => {
     expect(stringify({ scheme: 'semver', major: 1, minor: 2, patch: 3, prerelease: [], build: [] })).toMatch(/^\d+\.\d+\.\d+$/);
   });
 });
+
+describe('stringify (debian) — property-based', () => {
+  it('round-trips: stringify(parse(v, "debian")) === v for a canonical debian version', () => {
+    const canonical = fc
+      .tuple(fc.nat({ max: 5 }), fc.stringMatching(/^[0-9][A-Za-z0-9.+~-]{0,8}$/), fc.option(fc.stringMatching(/^[A-Za-z0-9.+~]{1,6}$/), { nil: undefined }))
+      // A trailing "-" in the upstream part would read as an (invalid) empty revision when no revision follows.
+      .filter(([, upstream, revision]) => revision !== undefined || !upstream.includes('-'))
+      .map(([epoch, upstream, revision]) => `${epoch > 0 ? `${epoch}:` : ''}${upstream}${revision === undefined ? '' : `-${revision}`}`);
+    fc.assert(fc.property(canonical, (v) => {
+      expect(stringify(parse(v, 'debian'))).toBe(v);
+    }));
+  });
+});
+

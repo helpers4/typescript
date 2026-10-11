@@ -5,6 +5,7 @@
  */
 
 import { assertNeverScheme } from './_assertNeverScheme';
+import { stringifyDebian } from './_debian';
 import { stringifyGentoo } from './_gentoo';
 import { stringifySemVer } from './_semver';
 import type { AnyParsedVersion } from './types';
@@ -15,7 +16,8 @@ import type { AnyParsedVersion } from './types';
  * stringify as Gentoo, so there's nothing to disambiguate).
  *
  * This is the inverse of {@link parse}:
- * `stringify(parse(v)) === stripV(v)` for any valid version string `v`, in either scheme.
+ * `stringify(parse(v)) === stripV(v)` for any valid version string `v`, in any scheme — up to
+ * canonicalization (a Debian `0:` epoch is dropped, a Gentoo `_beta0` becomes `_beta`).
  *
  * @param parsed - A parsed version object, as returned by {@link parse}.
  * @returns The reconstructed version string (without leading `v`).
@@ -28,6 +30,9 @@ import type { AnyParsedVersion } from './types';
  * @example
  * stringify({ scheme: 'gentoo', components: [1, 2, 3], letter: 'b', suffixes: [{ type: 'rc', number: 1 }], revision: 2 })
  * // => '1.2.3b_rc1-r2'
+ * @example
+ * stringify({ scheme: 'debian', epoch: 1, upstream: '2.30~rc1', revision: '3' })
+ * // => '1:2.30~rc1-3'
  * @since 2.0.0
  */
 export function stringify(parsed: AnyParsedVersion): string;
@@ -40,6 +45,8 @@ export function stringify(parsed: AnyParsedVersion | undefined | null): string |
       return stringifySemVer(parsed);
     case 'gentoo':
       return stringifyGentoo(parsed);
+    case 'debian':
+      return stringifyDebian(parsed);
     default:
       return assertNeverScheme(parsed);
   }

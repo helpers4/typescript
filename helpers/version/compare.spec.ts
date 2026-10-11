@@ -87,3 +87,44 @@ describe('compare — contract', () => {
     expect(compare('v1.0.0', '1.0.0')).toBe(0);
   });
 });
+
+const debianFragmentArb = fc.stringMatching(/^[0-9][A-Za-z0-9.+~]{0,6}$/);
+const debianVersionArb = fc
+  .tuple(fc.nat({ max: 3 }), debianFragmentArb, fc.option(fc.stringMatching(/^[A-Za-z0-9.+~]{1,5}$/), { nil: undefined }))
+  .map(([epoch, upstream, revision]) => `${epoch > 0 ? `${epoch}:` : ''}${upstream}${revision === undefined ? '' : `-${revision}`}`);
+
+describe('compare (debian) — property-based', () => {
+  it('reflexive: compare(v, v, "debian") === 0', () => {
+    fc.assert(fc.property(debianVersionArb, (v) => {
+      expect(compare(v, v, 'debian')).toBe(0);
+    }));
+  });
+
+  it('antisymmetric: compare(a, b) === -compare(b, a)', () => {
+    fc.assert(fc.property(debianVersionArb, debianVersionArb, (a, b) => {
+      expect(compare(a, b, 'debian') + compare(b, a, 'debian')).toBe(0);
+    }));
+  });
+
+  it('transitive: a <= b and b <= c implies a <= c', () => {
+    fc.assert(fc.property(debianVersionArb, debianVersionArb, debianVersionArb, (a, b, c) => {
+      const [x, y, z] = [a, b, c].sort((p, q) => compare(p, q, 'debian'));
+      expect(compare(x!, z!, 'debian')).toBeLessThanOrEqual(0);
+      expect(compare(x!, y!, 'debian')).toBeLessThanOrEqual(0);
+      expect(compare(y!, z!, 'debian')).toBeLessThanOrEqual(0);
+    }));
+  });
+
+  it('a ~ suffix always sorts before the same version without it', () => {
+    fc.assert(fc.property(debianFragmentArb, fc.stringMatching(/^[A-Za-z0-9]{0,4}$/), (upstream, tail) => {
+      expect(compare(`${upstream}~${tail}`, upstream, 'debian')).toBe(-1);
+    }));
+  });
+
+  it('a higher epoch always wins, whatever the rest', () => {
+    fc.assert(fc.property(debianFragmentArb, debianFragmentArb, (a, b) => {
+      expect(compare(`1:${a}`, b, 'debian')).toBe(1);
+    }));
+  });
+});
+

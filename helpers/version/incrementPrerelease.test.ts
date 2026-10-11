@@ -66,4 +66,10 @@ describe('incrementPrerelease', () => {
       expect(() => incrementPrerelease('1.2.3', 'alpha', 'bogus' as any)).toThrow(/Unhandled version scheme/);
     });
   });
+
+  describe('debian scheme', () => {
+    it('throws: debian versions have no prerelease counter', () => {
+      expect(() => incrementPrerelease('1.0~rc1-1', 'rc', 'debian')).toThrow(/does not support incrementPrerelease/);
+    });
+  });
 });

@@ -302,4 +302,14 @@ describe('parse', () => {
       major: 1, minor: 0, patch: 0, prerelease: [], build: []
     });
   });
+
+  describe('debian scheme', () => {
+    it('parses a debian version when scheme is "debian"', () => {
+      expect(parse('1:2.30~rc1-3ubuntu2', 'debian')).toEqual({ scheme: 'debian', epoch: 1, upstream: '2.30~rc1', revision: '3ubuntu2' });
+    });
+
+    it('throws a SyntaxError on an invalid debian version', () => {
+      expect(() => parse('1.0_1', 'debian')).toThrow(SyntaxError);
+    });
+  });
 });

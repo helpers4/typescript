@@ -185,4 +185,16 @@ describe("satisfiesRange", () => {
       expect(() => satisfiesRange("1.2.3", ">=1.0.0", "bogus" as any)).toThrow(/Unhandled version scheme/);
     });
   });
+
+  describe("debian scheme", () => {
+    it('checks a debian version when scheme is "debian"', () => {
+      expect(satisfiesRange("1.0~rc1-1", "<< 1.0", "debian")).toBe(true);
+      expect(satisfiesRange("1.0-1", ">> 1.0", "debian")).toBe(true);
+      expect(satisfiesRange("1.0", ">= 1.1", "debian")).toBe(false);
+    });
+
+    it("throws for the obsolete < and > operators", () => {
+      expect(() => satisfiesRange("1.0", "< 2.0", "debian")).toThrow(/obsolete/);
+    });
+  });
 });
