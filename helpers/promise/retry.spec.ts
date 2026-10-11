@@ -84,3 +84,66 @@ describe('retry — contract', () => {
     expect(attempts).toBe(1);
   });
 });
+
+describe('retry — options, property-based', () => {
+  it('never calls fn more than `attempts` times, and stops at the first non-retryable error', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        fc.integer({ min: 1, max: 6 }),
+        fc.integer({ min: 1, max: 8 }),
+        async (attempts: number, fatalAt: number) => {
+          let count = 0;
+          await expect(
+            retry(
+              async () => { count++; throw new Error(count >= fatalAt ? 'fatal' : 'transient'); },
+              { attempts, delayMs: 0, shouldRetry: (error) => (error as Error).message === 'transient' },
+            ),
+          ).rejects.toThrow();
+          expect(count).toBe(Math.min(attempts, fatalAt));
+        },
+      ),
+    );
+  });
+
+  it('calls the delay function once per retry, with increasing attempt numbers', async () => {
+    await fc.assert(
+      fc.asyncProperty(fc.integer({ min: 1, max: 6 }), async (attempts: number) => {
+        const seen: number[] = [];
+        await expect(
+          retry(async () => { throw new Error('fail'); }, {
+            attempts,
+            delayMs: (attempt) => { seen.push(attempt); return 0; },
+          }),
+        ).rejects.toThrow('fail');
+        expect(seen).toEqual(Array.from({ length: attempts - 1 }, (_, i) => i + 1));
+      }),
+    );
+  });
+});
+
+describe('retry — options, contract', () => {
+  it('rethrows non-Error rejections as-is', async () => {
+    const reason = { code: 42 };
+    await expect(retry(() => Promise.reject(reason), { attempts: 2, delayMs: 0 })).rejects.toBe(reason);
+  });
+
+  it('catches a synchronous throw from fn', async () => {
+    let attempts = 0;
+    const result = await retry(() => {
+      attempts++;
+      if (attempts < 2) throw new Error('sync');
+      return Promise.resolve('ok');
+    }, { delayMs: 0 });
+    expect(result).toBe('ok');
+  });
+
+  it('propagates an error thrown by shouldRetry', async () => {
+    await expect(
+      retry(() => Promise.reject(new Error('fail')), {
+        delayMs: 0,
+        shouldRetry: () => { throw new Error('predicate'); },
+      }),
+    ).rejects.toThrow('predicate');
+  });
+});
+

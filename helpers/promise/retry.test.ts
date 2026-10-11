@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { retry } from "./retry";
 
 describe("retry", () => {
@@ -76,5 +76,170 @@ describe("retry", () => {
       expect((error as Error).message).toBe('attempt 1');
     }
     expect(attempts).toBe(1); // Exactly 1 attempt with maxAttempts=1
+  });
+
+  describe("with options", () => {
+    it("should use the defaults when options is empty", async () => {
+      let attempts = 0;
+      const result = await retry(() => {
+        attempts++;
+        return Promise.resolve("ok");
+      }, {});
+      expect(result).toBe("ok");
+      expect(attempts).toBe(1);
+    });
+
+    it("should honor attempts", async () => {
+      let attempts = 0;
+      const fn = () => {
+        attempts++;
+        return Promise.reject(new Error(`fail ${attempts}`));
+      };
+
+      await expect(retry(fn, { attempts: 4, delayMs: 0 })).rejects.toThrow("fail 4");
+      expect(attempts).toBe(4);
+    });
+
+    it("should rethrow at once when shouldRetry returns false", async () => {
+      let attempts = 0;
+      const fn = () => {
+        attempts++;
+        return Promise.reject(new Error("fatal"));
+      };
+
+      await expect(retry(fn, { attempts: 5, delayMs: 0, shouldRetry: () => false })).rejects.toThrow("fatal");
+      expect(attempts).toBe(1);
+    });
+
+    it("should pass the error and the attempt number to shouldRetry", async () => {
+      const calls: [string, number][] = [];
+      let attempts = 0;
+      const fn = () => {
+        attempts++;
+        return Promise.reject(new Error(attempts < 3 ? "transient" : "fatal"));
+      };
+
+      await expect(
+        retry(fn, {
+          attempts: 5,
+          delayMs: 0,
+          shouldRetry: (error, attempt) => {
+            calls.push([(error as Error).message, attempt]);
+            return (error as Error).message === "transient";
+          },
+        }),
+      ).rejects.toThrow("fatal");
+      expect(calls).toEqual([["transient", 1], ["transient", 2], ["fatal", 3]]);
+      expect(attempts).toBe(3);
+    });
+
+    it("should not call shouldRetry after the last attempt", async () => {
+      let calls = 0;
+      await expect(
+        retry(() => Promise.reject(new Error("fail")), {
+          attempts: 2,
+          delayMs: 0,
+          shouldRetry: () => {
+            calls++;
+            return true;
+          },
+        }),
+      ).rejects.toThrow("fail");
+      expect(calls).toBe(1);
+    });
+
+    it("should compute the delay from the attempt number and the error", async () => {
+      const delays: [number, string][] = [];
+      let attempts = 0;
+      const result = await retry(
+        () => {
+          attempts++;
+          return attempts < 4 ? Promise.reject(new Error(`fail ${attempts}`)) : Promise.resolve("done");
+        },
+        {
+          attempts: 5,
+          delayMs: (attempt, error) => {
+            delays.push([attempt, (error as Error).message]);
+            return 0;
+          },
+        },
+      );
+      expect(result).toBe("done");
+      expect(delays).toEqual([[1, "fail 1"], [2, "fail 2"], [3, "fail 3"]]);
+    });
+
+    it("should wait the computed delay between attempts", async () => {
+      vi.useFakeTimers();
+      try {
+        let attempts = 0;
+        const p = retry(
+          () => {
+            attempts++;
+            return Promise.reject(new Error("fail"));
+          },
+          { attempts: 3, delayMs: (attempt) => 100 * 2 ** (attempt - 1) },
+        ).catch((e: unknown) => e);
+
+        await vi.advanceTimersByTimeAsync(0);
+        expect(attempts).toBe(1);
+        await vi.advanceTimersByTimeAsync(99);
+        expect(attempts).toBe(1);
+        await vi.advanceTimersByTimeAsync(1);
+        expect(attempts).toBe(2);
+        await vi.advanceTimersByTimeAsync(199);
+        expect(attempts).toBe(2);
+        await vi.advanceTimersByTimeAsync(1);
+        expect(attempts).toBe(3);
+        expect(await p).toBeInstanceOf(Error);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("should run fn once when attempts is below 1", async () => {
+      let attempts = 0;
+      await expect(
+        retry(() => {
+          attempts++;
+          return Promise.reject(new Error("fail"));
+        }, { attempts: 0 }),
+      ).rejects.toThrow("fail");
+      expect(attempts).toBe(1);
+    });
+  });
+
+  it("should wait the fixed delay between attempts", async () => {
+    vi.useFakeTimers();
+    try {
+      let attempts = 0;
+      const p = retry(() => {
+        attempts++;
+        return Promise.reject(new Error("fail"));
+      }, 2, 50).catch((e: unknown) => e);
+
+      await vi.advanceTimersByTimeAsync(49);
+      expect(attempts).toBe(1);
+      await vi.advanceTimersByTimeAsync(1);
+      expect(attempts).toBe(2);
+      expect(await p).toBeInstanceOf(Error);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("should default to 3 attempts", async () => {
+    vi.useFakeTimers();
+    try {
+      let attempts = 0;
+      const p = retry(() => {
+        attempts++;
+        return Promise.reject(new Error("fail"));
+      }).catch((e: unknown) => e);
+      await vi.runAllTimersAsync();
+      expect(await p).toBeInstanceOf(Error);
+      expect(attempts).toBe(3);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
