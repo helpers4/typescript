@@ -53,7 +53,7 @@ import { stripJsonComments } from '../_shared/_stripJsonComments';
  * }`) // => { outDir: 'dist' }
  * @example
  * parse("{ name: 'app', retries: 0x3, ratio: .5, }") // => { name: 'app', retries: 3, ratio: 0.5 }
- * @since next
+ * @since 3.1.3
  */
 export function parse<T = unknown>(text: string): T {
   const input = text.startsWith('\ufeff') ? text.slice(1) : text;

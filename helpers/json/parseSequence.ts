@@ -6,7 +6,7 @@
 
 /**
  * Options for {@link parseSequence} and {@link safeParseSequence}.
- * @since next
+ * @since 3.1.3
  */
 export interface ParseSequenceOptions {
   /**
@@ -60,7 +60,7 @@ const TRAILING_JSON_WHITESPACE = /[ \t\n\r]$/;
  * @example
  * // A crash cut the last record: skip it, as RFC 7464 recommends
  * parseSequence('\u001E{"id":1}\n\u001E{"id', { invalidRecords: 'skip' }) // => [{ id: 1 }]
- * @since next
+ * @since 3.1.3
  */
 export function parseSequence<T = unknown>(text: string, options: ParseSequenceOptions = {}): T[] {
   const { invalidRecords = 'fail' } = options;

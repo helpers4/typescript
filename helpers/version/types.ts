@@ -85,7 +85,7 @@ export interface ParsedGentooVersion {
  * The upstream part is kept as a string: Debian puts no structure on it beyond its sort order
  * (digit runs compare numerically, `~` sorts before everything), so there's no
  * major/minor/patch to extract.
- * @since next
+ * @since 3.1.3
  */
 export interface ParsedDebianVersion {
   scheme: 'debian';

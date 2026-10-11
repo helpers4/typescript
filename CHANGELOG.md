@@ -8,6 +8,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.1.3] - 2026-10-11
+
+### 🚀 Features
+- **CI-CD**: shard mutation-dashboard.yml so its runtime stops scaling with the helper count
+- **CI-CD**: add main-branch validation workflow and harden trigger hygiene
+- **guard**: add the JSON5 and I-JSON guards
+- **guard**: add the JSONC, NDJSON, sequence and canonical JSON guards
+- **json**: read JSON5 in parse
+- **json**: add the json category
+- **promise**: add fetchOrThrow
+- **promise**: let retry filter errors and grow its delay
+- **version**: add the debian version scheme
+
+### 🐛 Bug Fixes
+- **CI-CD**: don't treat a shard's zero-mutant files as a failure
+- **CI-CD**: use the GitHub App token to push the mutation baseline commit
+- **CI-CD**: raise mutation-dashboard timeout to unblock incremental baseline
+- **CI-CD**: remove --ignore-registry-errors from pnpm audit
+- **CI-CD**: keep the mutation testing incremental baseline fresh
+- **CI-CD**: scope PR mutation testing to changed files, stop the 30-min timeout
+- **security**: raise the overrides for the new transitive advisories
+
+### 🔧 Miscellaneous
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **deps-dev**: bump the dev-dependencies group across 1 directory with 10 updates
+- **deps-dev**: bump the dev-dependencies group with 7 updates
+- **deps-dev**: bump the dev-dependencies group with 4 updates
+- **deps-dev**: bump the dev-dependencies-major group across 1 directory with 2 updates
+- **deps-dev**: bump happy-dom in the dev-dependencies group
+
+### ⚡ Performance
+- **guard**: read plain JSON natively in the text guards
+
+### ♻️ Refactoring
+- **object**: deprecate safeJsonParse in favor of json safeParseStrict
+- **shared**: share stripJsonComments and keep its positions
+- remove TODO.md, migrated to GitHub Project backlog
+
+### 📝 Documentation
+- **CI-CD**: fix stale release workflow documentation
+- **CI-CD**: fix diff-narrating comments in the mutation testing workflows
+- **security**: list the supported releases as 3.x
+
+### 👷 CI/CD
+- **CI-CD**: add one aggregating status check for the branch ruleset
+
+### 📌 Dependencies
+- **deps**: bump github/codeql-action/upload-sarif in the actions group
+- **deps**: bump the actions group with 2 updates
+- **deps**: bump github/codeql-action/upload-sarif in the actions group
+
 ## [3.1.2] - 2026-09-06
 
 ### 🚀 Features
@@ -1111,6 +1165,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.1.3]: https://github.com/helpers4/typescript/compare/v3.1.2...v3.1.3
 [3.1.2]: https://github.com/helpers4/typescript/compare/v3.1.1...v3.1.2
 [3.1.1]: https://github.com/helpers4/typescript/compare/v3.1.0...v3.1.1
 [3.1.0]: https://github.com/helpers4/typescript/compare/v3.0.9...v3.1.0

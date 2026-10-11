@@ -38,7 +38,7 @@ import { serializeRecords } from './_serializeRecords';
  * stringifyLines([{ id: 1 }, { id: 2 }]) // => '{"id":1}\n{"id":2}\n'
  * @example
  * stringifyLines([{ b: 1, a: 2 }], 'canonical') // => '{"a":2,"b":1}\n'
- * @since next
+ * @since 3.1.3
  */
 export function stringifyLines(values: readonly unknown[], formatting?: 'canonical'): string {
   return serializeRecords('stringifyLines', values, formatting).map((line) => `${line}\n`).join('');

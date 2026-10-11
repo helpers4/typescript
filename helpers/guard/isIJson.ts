@@ -30,7 +30,7 @@ import { readJson } from '../_shared/_jsonReader';
  * isIJson('{"id":1,"id":2}')        // => false (duplicate key)
  * isIJson('9007199254740993')       // => false (integer beyond 2^53 - 1)
  * isIJson('{"a":1} // c')           // => false (not strict JSON)
- * @since next
+ * @since 3.1.3
  */
 export function isIJson(value: unknown): value is string {
   if (typeof value !== 'string') return false;

@@ -26,7 +26,7 @@ const PARSE_FAILED = Symbol('isJsonSequence.parseFailed');
  * isJsonSequence('\u001E{"id":1}\n\u001E2\n') // => true
  * isJsonSequence('\u001E2')                   // => false (may be truncated: no whitespace after 2)
  * isJsonSequence('{"id":1}\n')                // => false (no record separator)
- * @since next
+ * @since 3.1.3
  */
 export function isJsonSequence(value: unknown): value is string {
   if (typeof value !== 'string') return false;

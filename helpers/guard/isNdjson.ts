@@ -26,7 +26,7 @@ const PARSE_FAILED = Symbol('isNdjson.parseFailed');
  * isNdjson('{"id":1}\n{"id":2}\n') // => true
  * isNdjson('{"id":1}\n{"id":')     // => false (the last line is invalid)
  * isNdjson('{\n"id": 1\n}')        // => false (a value can't span lines)
- * @since next
+ * @since 3.1.3
  */
 export function isNdjson(value: unknown): value is string {
   if (typeof value !== 'string') return false;

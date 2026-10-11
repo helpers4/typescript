@@ -6,7 +6,7 @@
 
 /**
  * Options for {@link retry}.
- * @since next
+ * @since 3.1.3
  */
 export interface RetryOptions {
   /**

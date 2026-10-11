@@ -27,7 +27,7 @@ import { type ParseSequenceOptions, parseSequence } from './parseSequence';
  * safeParseSequence('\u001E{"id":1}\n')   // => [{ id: 1 }]
  * safeParseSequence('\u001E{"id"\n')      // => null
  * safeParseSequence('\u001E{"id"\n', [])  // => []
- * @since next
+ * @since 3.1.3
  */
 export function safeParseSequence<T = unknown>(text: string): T[] | null;
 export function safeParseSequence<T = unknown, F = T[]>(text: string, fallback: F, options?: ParseSequenceOptions): T[] | F;

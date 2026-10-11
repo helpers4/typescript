@@ -24,7 +24,7 @@ import { stringify } from '../json/stringify';
  * isCanonicalJson('{"b":1,"a":2}')      // => false (keys not sorted)
  * isCanonicalJson('{"a": 1}')           // => false (whitespace)
  * isCanonicalJson('1.0')                // => false (canonical form is "1")
- * @since next
+ * @since 3.1.3
  */
 export function isCanonicalJson(value: unknown): value is string {
   if (typeof value !== 'string') return false;

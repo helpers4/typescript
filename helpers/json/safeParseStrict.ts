@@ -25,7 +25,7 @@ import { parseStrict } from './parseStrict';
  * safeParseStrict<{ a: number }>('{"a":1}') // => { a: 1 }
  * safeParseStrict('{"a":1,}')               // => null
  * safeParseStrict('oops', {})               // => {}
- * @since next
+ * @since 3.1.3
  */
 export function safeParseStrict<T = unknown>(text: string): T | null;
 export function safeParseStrict<T = unknown, F = T>(text: string, fallback: F): T | F;

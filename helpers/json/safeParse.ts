@@ -26,7 +26,7 @@ import { parse } from './parse';
  * safeParse("{ a: 'x' }")           // => { a: 'x' } (JSON5)
  * safeParse('not json')              // => null
  * safeParse('not json', {})          // => {}
- * @since next
+ * @since 3.1.3
  */
 export function safeParse<T = unknown>(text: string): T | null;
 export function safeParse<T = unknown, F = T>(text: string, fallback: F): T | F;

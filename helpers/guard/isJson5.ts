@@ -24,7 +24,7 @@ import { readJson } from '../_shared/_jsonReader';
  * isJson5('{"a": 1}')                       // => true (JSON is valid JSON5)
  * isJson5('{ my-key: 1 }')                  // => false (not an identifier: needs quotes)
  * isJson5(42)                               // => false (not a string)
- * @since next
+ * @since 3.1.3
  */
 export function isJson5(value: unknown): value is string {
   if (typeof value !== 'string') return false;

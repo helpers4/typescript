@@ -32,7 +32,7 @@ const HAS_TRAILING_COMMA = /,\s*[}\]]/;
  * isJsonc('{"a": 1}')            // => true (strict JSON is valid JSONC)
  * isJsonc("{'a': 1}")            // => false (single quotes are JSON5, not JSONC)
  * isJsonc(42)                    // => false (not a string)
- * @since next
+ * @since 3.1.3
  */
 export function isJsonc(value: unknown): value is string {
   if (typeof value !== 'string') return false;

@@ -34,7 +34,7 @@ import { serializeRecords } from './_serializeRecords';
  * @see {@link stringifyLines} — newline-delimited JSON (NDJSON, JSON Lines)
  * @example
  * stringifySequence([{ id: 1 }, 2]) // => '\u001E{"id":1}\n\u001E2\n'
- * @since next
+ * @since 3.1.3
  */
 export function stringifySequence(values: readonly unknown[], formatting?: 'canonical'): string {
   return serializeRecords('stringifySequence', values, formatting).map((text) => `\u001E${text}\n`).join('');

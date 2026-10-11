@@ -10,7 +10,7 @@ import { stringifyCanonical } from './_canonical';
  * How {@link stringify} lays out its output:
  * - `{ indent }` — pretty-printed with `indent` spaces per level (`0` for a compact single line)
  * - `'canonical'` — canonical JSON (RFC 8785), byte-for-byte reproducible
- * @since next
+ * @since 3.1.3
  */
 export type StringifyFormatting = 'canonical' | { indent?: number };
 
@@ -59,7 +59,7 @@ const MAX_INDENT = 10;
  * @example
  * stringify({ b: 1, a: [true] }, { indent: 0 }) // => '{"b":1,"a":[true]}'
  * stringify({ b: 1, a: [true] }, 'canonical')   // => '{"a":[true],"b":1}'
- * @since next
+ * @since 3.1.3
  */
 export function stringify(value: unknown, formatting: StringifyFormatting = {}): string {
   let text: string | undefined;

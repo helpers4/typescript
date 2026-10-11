@@ -6,7 +6,7 @@
 
 /**
  * Options for {@link parseLines} and {@link safeParseLines}.
- * @since next
+ * @since 3.1.3
  */
 export interface ParseLinesOptions {
   /**
@@ -59,7 +59,7 @@ const LINE_FEED = '\n';
  * parseLines('{"id":1}\n{"id":2}\n') // => [{ id: 1 }, { id: 2 }]
  * @example
  * parseLines('{"id":1}\n{"id":', { invalidLines: 'skip' }) // => [{ id: 1 }]
- * @since next
+ * @since 3.1.3
  */
 export function parseLines<T = unknown>(text: string, options: ParseLinesOptions = {}): T[] {
   const { blankLines = 'skip', invalidLines = 'fail' } = options;

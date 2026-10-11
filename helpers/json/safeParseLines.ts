@@ -27,7 +27,7 @@ import { type ParseLinesOptions, parseLines } from './parseLines';
  * safeParseLines('{"id":1}\n{"id":2}') // => [{ id: 1 }, { id: 2 }]
  * safeParseLines('{"id":1}\n{"id":')   // => null
  * safeParseLines('{"id":1}\n\n', null, { blankLines: 'fail' }) // => null
- * @since next
+ * @since 3.1.3
  */
 export function safeParseLines<T = unknown>(text: string): T[] | null;
 export function safeParseLines<T = unknown, F = T[]>(text: string, fallback: F, options?: ParseLinesOptions): T[] | F;

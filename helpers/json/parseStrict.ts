@@ -28,7 +28,7 @@
  * @example
  * parseStrict<{ a: number }>('{"a":1}') // => { a: 1 }
  * parseStrict('{"a":1,}')               // throws SyntaxError (trailing comma)
- * @since next
+ * @since 3.1.3
  */
 export function parseStrict<T = unknown>(text: string): T {
   return JSON.parse(text) as T;

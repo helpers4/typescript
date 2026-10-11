@@ -7,7 +7,7 @@
 /**
  * Error thrown by {@link fetchOrThrow} when the server answers with a non-2xx status.
  * Carries the status and the response itself, so a caller can still read its body.
- * @since next
+ * @since 3.1.3
  */
 export class HttpError extends Error {
   /** HTTP status code, e.g. `404`. */
@@ -47,7 +47,7 @@ export class HttpError extends Error {
  * } catch (error) {
  *   if (error instanceof HttpError && error.status === 404) { /* not found *\/ }
  * }
- * @since next
+ * @since 3.1.3
  */
 export async function fetchOrThrow(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
   const response = await fetch(input, init);
