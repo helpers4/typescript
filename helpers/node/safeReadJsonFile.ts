@@ -5,7 +5,7 @@
  */
 
 import { readFileSync } from 'node:fs';
-import { stripJsonComments } from './_stripJsonComments';
+import { stripJsonComments } from '../_shared/_stripJsonComments';
 
 /**
  * Reads a file and parses its contents as JSON, returning `null` (or a

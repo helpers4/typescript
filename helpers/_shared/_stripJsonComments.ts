@@ -3,19 +3,22 @@
  * Copyright (C) 2025 baxyz
  * SPDX-License-Identifier: LGPL-3.0-or-later
  *
- * Internal helper used by safeReadJsonFile.ts to support JSONC (JSON with
- * line and block comments, plus trailing commas) — the dialect used by
- * tsconfig.json, VS Code's settings.json, etc. Not exported from the package
- * barrel — tests live in _stripJsonComments.test.ts.
+ * Internal helper used by `node/safeReadJsonFile` and `json/parse` to support JSONC (JSON with
+ * line and block comments, plus trailing commas) — the dialect used by tsconfig.json, VS Code's
+ * settings.json, etc. Not exported from any package barrel — tests live in
+ * _stripJsonComments.test.ts.
  */
 
 /**
- * Strips line comments (starting with two slashes), block comments (slash-star
- * ... star-slash), and trailing commas (before `}` or `]`) from a JSONC
- * string, so the result can be safely passed to `JSON.parse`. String literals
- * are tracked so a comment-like or comma character occurring *inside* a JSON
- * string (e.g. a URL) is left untouched — this is a string-boundary-aware
- * pass, not a naive regex strip.
+ * Blanks out line comments (starting with two slashes), block comments (slash-star ... star-slash),
+ * and trailing commas (before `}` or `]`) in a JSONC string, so the result can be passed to
+ * `JSON.parse`. String literals are tracked so a comment-like or comma character occurring
+ * *inside* a JSON string (e.g. a URL) is left untouched — this is a string-boundary-aware pass,
+ * not a naive regex strip.
+ *
+ * Everything removed is replaced by spaces (line breaks inside a block comment are kept), so the
+ * output has exactly the same length and line layout as the input: a position `JSON.parse`
+ * reports in an error on the output points at the same place in the original JSONC text.
  * @ignore
  */
 export function stripJsonComments(input: string): string {
@@ -23,13 +26,20 @@ export function stripJsonComments(input: string): string {
   let inString = false;
   // A comma seen outside a string is held back instead of emitted immediately:
   // if the next significant token turns out to be `}`/`]`, it was a trailing
-  // comma and gets dropped; otherwise it (and any whitespace/comments held
+  // comma and gets blanked; otherwise it (and any whitespace/comments held
   // alongside it) is flushed once a real token confirms it wasn't trailing.
   let pendingComma = '';
   const flushPendingComma = () => {
+    output += pendingComma;
+    pendingComma = '';
+  };
+  // Whitespace and blanked-out comments don't resolve a pending comma either way, so they're
+  // buffered alongside it to keep the output in the original order.
+  const emitFiller = (text: string) => {
     if (pendingComma) {
-      output += pendingComma;
-      pendingComma = '';
+      pendingComma += text;
+    } else {
+      output += text;
     }
   };
 
@@ -60,18 +70,23 @@ export function stripJsonComments(input: string): string {
     }
 
     if (char === '/' && input[i + 1] === '/') {
+      const start = i;
       i += 2;
       // Stop at any line-ending character, not just \n — a bare \r (classic
       // Mac line endings, or a lone \r before a later \n) also ends the line,
       // otherwise everything up to the next \n (or EOF) gets silently eaten.
       while (i < input.length && input[i] !== '\n' && input[i] !== '\r') i++;
+      emitFiller(' '.repeat(i - start));
       continue;
     }
 
     if (char === '/' && input[i + 1] === '*') {
+      const start = i;
       i += 2;
       while (i < input.length && !(input[i] === '*' && input[i + 1] === '/')) i++;
-      i += 2;
+      // An unterminated block comment runs to the end of the input.
+      i = Math.min(i + 2, input.length);
+      emitFiller(input.slice(start, i).replace(/[^\r\n]/g, ' '));
       continue;
     }
 
@@ -83,20 +98,16 @@ export function stripJsonComments(input: string): string {
     }
 
     if (char === '}' || char === ']') {
-      pendingComma = ''; // drop — it was trailing
+      // Blank the comma — it was trailing — but keep what was buffered after it.
+      output += pendingComma.replace(',', ' ');
+      pendingComma = '';
       output += char;
       i++;
       continue;
     }
 
     if (char === ' ' || char === '\t' || char === '\n' || char === '\r') {
-      // Whitespace doesn't resolve a pending comma either way — buffer it
-      // alongside so it's dropped too if the comma turns out to be trailing.
-      if (pendingComma) {
-        pendingComma += char;
-      } else {
-        output += char;
-      }
+      emitFiller(char);
       i++;
       continue;
     }
