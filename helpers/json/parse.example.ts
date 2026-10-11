@@ -27,13 +27,24 @@ const examples: HelperExamples = {
     },
     {
       title: 'Invalid input throws',
-      description: 'JSON5 syntax such as single quotes is not JSONC, and throws a SyntaxError.',
-      code: `parse("{'a': 1}")
-// throws SyntaxError`,
+      description: 'The SyntaxError names the line and column of the problem.',
+      code: `parse('{ my-key: 1 }')
+// throws SyntaxError: a key with a dash needs quotes`,
       assert: () => {
         let thrown: unknown;
-        try { parse("{'a': 1}"); } catch (error) { thrown = error; }
+        try { parse('{ my-key: 1 }'); } catch (error) { thrown = error; }
         if (!(thrown instanceof SyntaxError)) throw new Error('Expected a SyntaxError');
+      },
+    },
+    {
+      title: 'Parse JSON5',
+      description: 'Unquoted keys, single quotes, hexadecimal and leading-dot numbers, trailing commas.',
+      code: `parse("{ name: 'app', retries: 0x3, ratio: .5, }")
+// => { name: 'app', retries: 3, ratio: 0.5 }`,
+      assert: () => {
+        const actual = parse("{ name: 'app', retries: 0x3, ratio: .5, }");
+        const expected = { name: 'app', retries: 3, ratio: 0.5 };
+        if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error(`Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
       },
     },
   ],

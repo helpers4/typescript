@@ -7,16 +7,15 @@
 import { parse } from './parse';
 
 /**
- * Parses JSON permissively like {@link parse} — strict JSON and JSONC (HuJSON, JWCC) — but
- * returns `null` (or `fallback`) instead of throwing on invalid input.
+ * Parses JSON permissively like {@link parse} — strict JSON, JSONC (HuJSON, JWCC) and JSON5 —
+ * but returns `null` (or `fallback`) instead of throwing on invalid input.
  *
- * **Accepts / rejects:** exactly what {@link parse} does — JSON, comments, trailing commas and a
- * leading byte order mark; no JSON5 syntax.
+ * **Accepts / rejects:** exactly what {@link parse} does — see there for the full list.
  *
  * **On invalid input:** returns `fallback` when one is given — even `undefined`, which is told
  * apart from an omitted argument — and `null` otherwise. Never throws.
  *
- * @param text - The JSON or JSONC text to parse
+ * @param text - The JSON, JSONC or JSON5 text to parse
  * @param fallback - Value returned on invalid input. Defaults to `null` when omitted.
  * @returns The parsed value typed as `T`, or `fallback` on invalid input
  * @see {@link parse} — same parsing, throws a `SyntaxError` instead
@@ -24,6 +23,7 @@ import { parse } from './parse';
  * @see {@link safeParseLines} — one value per line (NDJSON, JSON Lines)
  * @example
  * safeParse('{"a":1, /* note *\/}') // => { a: 1 }
+ * safeParse("{ a: 'x' }")           // => { a: 'x' } (JSON5)
  * safeParse('not json')              // => null
  * safeParse('not json', {})          // => {}
  * @since next
