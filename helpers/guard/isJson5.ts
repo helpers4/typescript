@@ -28,10 +28,18 @@ import { readJson } from '../_shared/_jsonReader';
  */
 export function isJson5(value: unknown): value is string {
   if (typeof value !== 'string') return false;
+  // Strict JSON is a subset of JSON5, so whatever the native parser accepts is JSON5 and can be
+  // answered without the reader. Text it rejects falls through to the reader, which then has to
+  // redo the work the native parser abandoned — the cost of reading plain JSON natively.
   try {
-    readJson(value, { dialect: 'json5' });
+    JSON.parse(value);
     return true;
   } catch {
-    return false;
+    try {
+      readJson(value, { dialect: 'json5' });
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
