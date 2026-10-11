@@ -32,6 +32,51 @@ await retry(() => {
         if (attempt !== 3) throw new Error(`Expected 3 attempts, got ${attempt}`);
       },
     },
+    {
+      title: 'Exponential backoff',
+      description: 'Pass a function as delayMs to make the wait grow after each failed attempt.',
+      code: `const waits: number[] = [];
+await retry(() => Promise.reject(new Error('down')), {
+  attempts: 4,
+  delayMs: (attempt) => {
+    const ms = 2 ** (attempt - 1); // 1, 2, 4
+    waits.push(ms);
+    return ms;
+  },
+}).catch(() => {});
+// waits => [1, 2, 4]`,
+      assert: async () => {
+        const waits: number[] = [];
+        await retry(() => Promise.reject(new Error('down')), {
+          attempts: 4,
+          delayMs: (attempt) => {
+            const ms = 2 ** (attempt - 1);
+            waits.push(ms);
+            return ms;
+          },
+        }).catch(() => {});
+        if (waits.join(',') !== '1,2,4') throw new Error(`Expected [1, 2, 4], got [${waits.join(', ')}]`);
+      },
+    },
+    {
+      title: 'Only retry some errors',
+      description: 'shouldRetry rethrows anything it rejects at once, without waiting or retrying.',
+      code: `let attempt = 0;
+await retry(() => {
+  attempt++;
+  return Promise.reject(new Error('invalid input'));
+}, { attempts: 5, delayMs: 10, shouldRetry: (error) => /timeout/.test(String(error)) })
+// => rejects with 'invalid input' after a single attempt`,
+      assert: async () => {
+        let attempt = 0;
+        const error = await retry(() => {
+          attempt++;
+          return Promise.reject(new Error('invalid input'));
+        }, { attempts: 5, delayMs: 10, shouldRetry: (e) => /timeout/.test(String(e)) }).catch((e: unknown) => e);
+        if (!(error instanceof Error) || error.message !== 'invalid input') throw new Error('Expected the original error');
+        if (attempt !== 1) throw new Error(`Expected 1 attempt, got ${attempt}`);
+      },
+    },
   ],
 };
 
