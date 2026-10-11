@@ -35,6 +35,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **CI-CD**: refresh mutation testing incremental baseline
 - **CI-CD**: refresh mutation testing incremental baseline
 - **CI-CD**: refresh mutation testing incremental baseline
+- **deps-dev**: bump the dev-dependencies group across 1 directory with 3 updates
 - **deps-dev**: bump the dev-dependencies group across 1 directory with 10 updates
 - **deps-dev**: bump the dev-dependencies group with 7 updates
 - **deps-dev**: bump the dev-dependencies group with 4 updates
