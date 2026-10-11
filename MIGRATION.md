@@ -1,3 +1,12 @@
+# Deprecated in v3 (removed in v4)
+
+These symbols still work in v3 but are marked `@deprecated` and will be removed in v4. Each
+replacement already exists, so you can switch now.
+
+| Deprecated | Use instead | Available since |
+| ---------- | ----------- | --------------- |
+| `object.safeJsonParse` | `json.safeParseStrict` (same parsing, same `fallback` behavior) | v3.2.0 |
+
 # Migrating to v3
 
 v3 removes symbols that were marked `@deprecated` in v2 and splits the old `type` category into
