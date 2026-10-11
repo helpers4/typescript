@@ -10,7 +10,7 @@ import { join } from 'node:path';
 import * as fc from 'fast-check';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { safeReadJsonFile } from './safeReadJsonFile';
-import { stripJsonComments } from './_stripJsonComments';
+import { stripJsonComments } from '../_shared/_stripJsonComments';
 
 describe('safeReadJsonFile — property-based', () => {
   let dir: string;

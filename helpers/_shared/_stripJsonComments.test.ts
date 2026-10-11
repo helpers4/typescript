@@ -130,4 +130,30 @@ describe('stripJsonComments', () => {
     // itself must still terminate rather than looping forever.
     expect(() => stripJsonComments('{"a":1} /* never closed')).not.toThrow();
   });
+
+  describe('position preservation', () => {
+    it.each([
+      '{"a":1} // comment',
+      '{\n  /* multi\n     line */\n  "a": 1,\n}',
+      '[1, 2, // trailing\n]',
+      '{"a":1,}',
+      '/* unterminated',
+      '{"url":"http://x"} /* c */',
+    ])('keeps the length and line breaks of %j', (input) => {
+      const output = stripJsonComments(input);
+      expect(output).toHaveLength(input.length);
+      expect(output.replace(/[^\r\n]/g, '')).toBe(input.replace(/[^\r\n]/g, ''));
+    });
+
+    it('lets JSON.parse report the position of an error in the original text', () => {
+      const input = '{\n  // comment\n  "a": 1,\n  "b": ?\n}';
+      const output = stripJsonComments(input);
+      expect(output.indexOf('?')).toBe(input.indexOf('?'));
+    });
+
+    it('keeps an unterminated block comment from eating past the end of the input', () => {
+      expect(stripJsonComments('1 /* oops')).toBe('1        ');
+    });
+  });
 });
+
