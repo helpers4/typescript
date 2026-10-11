@@ -12,6 +12,10 @@ describe('isJsonc', () => {
     expect(isJsonc(value)).toBe(true);
   });
 
+  it('accepts a leading byte order mark', () => {
+    expect(isJsonc('\uFEFF{"a":1,}')).toBe(true);
+  });
+
   it.each(["{'a':1}", '{a:1}', '', 'not json'])('is false for %j', (value) => {
     expect(isJsonc(value)).toBe(false);
   });

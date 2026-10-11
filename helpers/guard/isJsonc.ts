@@ -4,23 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { safeParse } from '../json/safeParse';
-
-// A value parsing can never itself produce, so it safely distinguishes "parse failed" from
-// "parsed successfully to some JSON value" (including `null`).
-const PARSE_FAILED = Symbol('isJsonc.parseFailed');
+import { stripJsonComments } from '../_shared/_stripJsonComments';
 
 /**
  * Checks whether a value is a string holding valid JSONC — JSON with comments and trailing
  * commas, the dialect of `tsconfig.json` and VS Code's `settings.json`, also known as HuJSON or
  * JWCC (JSON With Commas and Comments).
  *
- * Strict JSON is valid JSONC too, so this is `true` for everything {@link isJSON} accepts. It
- * accepts exactly what `@helpers4/json`'s `parse` accepts — see there for the full list.
+ * Strict JSON is valid JSONC too, so this is `true` for everything {@link isJSON} accepts, plus
+ * line and block comments, trailing commas before `}` and `]`, and a leading byte order mark.
+ * JSON5 syntax isn't JSONC — use {@link isJson5} for that (`parse` from `@helpers4/json` reads
+ * both).
  *
  * @param value - The value to check
- * @returns `true` if `value` is a string that `parse` from `@helpers4/json` reads without error
+ * @returns `true` if `value` is a string holding JSON or JSONC
  * @see {@link isJSON} — strict JSON only
+ * @see {@link isJson5} — JSON5, a superset of JSONC
  * @example
  * isJsonc('{"a": 1, // note\n}') // => true
  * isJsonc('{"a": 1}')            // => true (strict JSON is valid JSONC)
@@ -30,5 +29,10 @@ const PARSE_FAILED = Symbol('isJsonc.parseFailed');
  */
 export function isJsonc(value: unknown): value is string {
   if (typeof value !== 'string') return false;
-  return safeParse(value, PARSE_FAILED) !== PARSE_FAILED;
+  try {
+    JSON.parse(stripJsonComments(value.startsWith('\ufeff') ? value.slice(1) : value));
+    return true;
+  } catch {
+    return false;
+  }
 }
