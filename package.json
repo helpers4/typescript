@@ -20,6 +20,7 @@
     "promise",
     "meaningPromiseOrThrow",
     "observable",
+    "json",
     "combine"
   ],
   "license": "LGPL-3.0-or-later",
