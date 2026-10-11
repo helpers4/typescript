@@ -16,13 +16,13 @@
  * **On invalid input:** throws the native `SyntaxError` from `JSON.parse`.
  *
  * Use it to validate input that must be strict JSON, e.g. an API payload. To also read config
- * files with comments, use {@link parse}. To never throw, use {@link safeParseStrict}.
+ * files with comments or JSON5, use {@link parse}. To never throw, use {@link safeParseStrict}.
  *
  * @param text - The JSON text to parse
  * @returns The parsed value, typed as `T`
  * @throws {SyntaxError} When `text` isn't strict JSON
  * @see {@link safeParseStrict} — same parsing, returns `null` or a fallback instead of throwing
- * @see {@link parse} — also accepts comments and trailing commas (JSONC)
+ * @see {@link parse} — also accepts JSONC and JSON5
  * @see {@link parseLines} — one value per line (NDJSON, JSON Lines)
  * @see {@link parseSequence} — JSON text sequences (RFC 7464)
  * @example

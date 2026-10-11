@@ -8,20 +8,21 @@ import { describe, expect, it } from 'vitest';
 import { safeParse } from './safeParse';
 
 describe('safeParse', () => {
-  it('returns the parsed value for JSON and JSONC', () => {
+  it('returns the parsed value for JSON, JSONC and JSON5', () => {
     expect(safeParse('{"a":1}')).toEqual({ a: 1 });
     expect(safeParse('{"a":1, /* c */}')).toEqual({ a: 1 });
+    expect(safeParse("{a:'x'}")).toEqual({ a: 'x' });
   });
 
   it('returns null on invalid input when no fallback is given', () => {
-    expect(safeParse('{a:1}')).toBeNull();
+    expect(safeParse('{a:}')).toBeNull();
   });
 
   it('returns the fallback on invalid input', () => {
-    expect(safeParse('{a:1}', [])).toEqual([]);
+    expect(safeParse('{a:}', [])).toEqual([]);
   });
 
   it('returns an explicit undefined fallback rather than null', () => {
-    expect(safeParse('{a:1}', undefined)).toBeUndefined();
+    expect(safeParse('{a:}', undefined)).toBeUndefined();
   });
 });

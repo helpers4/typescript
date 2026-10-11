@@ -12,12 +12,12 @@ const examples: HelperExamples = {
   category: 'json',
   examples: [
     {
-      title: 'Read JSONC without throwing',
+      title: 'Read JSONC or JSON5 without throwing',
       description: 'Same parsing as parse, but returns null on invalid input.',
       code: `safeParse('{"a": 1, /* note */}') // => { a: 1 }
-safeParse('{a: 1}')               // => null`,
+safeParse('{a: }')                // => null`,
       assert: () => {
-        if (safeParse('{a: 1}') !== null) throw new Error('Expected null');
+        if (safeParse('{a: }') !== null) throw new Error('Expected null');
         const actual = safeParse('{"a": 1, /* note */}');
         const expected = { a: 1 };
         if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error(`Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);

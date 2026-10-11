@@ -20,7 +20,7 @@ import { parseStrict } from './parseStrict';
  * @param fallback - Value returned on invalid input. Defaults to `null` when omitted.
  * @returns The parsed value typed as `T`, or `fallback` on invalid input
  * @see {@link parseStrict} — same parsing, throws a `SyntaxError` instead
- * @see {@link safeParse} — also accepts comments and trailing commas (JSONC)
+ * @see {@link safeParse} — also accepts JSONC and JSON5
  * @example
  * safeParseStrict<{ a: number }>('{"a":1}') // => { a: 1 }
  * safeParseStrict('{"a":1,}')               // => null
