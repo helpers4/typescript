@@ -41,6 +41,18 @@ compare('2.0.0', '1.0.0') // => 1`,
         if (compare('1.2.3', '1.2.3-r1', 'gentoo') !== -1) throw new Error('Expected -1');
       },
     },
+    {
+      title: 'Debian: ~ sorts before the release',
+      description: "dpkg ordering: a '~' sorts before everything, even the end of the string, and the epoch before ':' wins over the rest.",
+      code: `compare('1.0~rc1-1', '1.0-1', 'debian')
+// => -1
+compare('1:0.9', '2.0', 'debian')
+// => 1`,
+      assert: () => {
+        if (compare('1.0~rc1-1', '1.0-1', 'debian') !== -1) throw new Error('Expected -1');
+        if (compare('1:0.9', '2.0', 'debian') !== 1) throw new Error('Expected 1');
+      },
+    },
   ],
 };
 

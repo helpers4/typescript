@@ -5,6 +5,7 @@
  */
 
 import { assertNeverScheme } from './_assertNeverScheme';
+import { isPrereleaseDebian } from './_debian';
 import { isPrereleaseGentoo } from './_gentoo';
 import { parse } from './parse';
 import type { AnyParsedVersion, VersionScheme } from './types';
@@ -19,6 +20,10 @@ import type { AnyParsedVersion, VersionScheme } from './types';
  * below the plain release). A `p` suffix or a `-r` revision don't count — `p` sorts *above* the
  * release, and a revision isn't a prerelease of anything, it's a rebuild of the same version.
  *
+ * **`'debian'`** — `true` when the upstream part contains `~`, the Debian convention for a
+ * version that must sort before the final release (`1.0~rc1`). A `~` in the revision doesn't
+ * count — `1.0-1~bpo12+1` is a backport of the `1.0` release, not a prerelease of it.
+ *
  * @param version - A version string (e.g. `'2.0.0-alpha.1'`, `'1.0.0'`, `'1.2.3_rc1'`).
  * @param scheme - Which version scheme to interpret `version` as. Defaults to `'semver'`.
  * @returns `true` if the version is a prerelease, `false` otherwise.
@@ -31,6 +36,9 @@ import type { AnyParsedVersion, VersionScheme } from './types';
  * isPrerelease('1.2.3_rc1', 'gentoo') // true
  * isPrerelease('1.2.3_p1', 'gentoo')  // false — p sorts above release, not a prerelease
  * isPrerelease('1.2.3-r1', 'gentoo')  // false — a revision, not a prerelease
+ * @example
+ * isPrerelease('1.0~rc1-1', 'debian')     // true
+ * isPrerelease('1.0-1~bpo12+1', 'debian') // false — a backport, not a prerelease
  * @since 2.0.0
  */
 export function isPrerelease(version: string, scheme?: VersionScheme): boolean;
@@ -61,6 +69,8 @@ export function isPrerelease(version: string | AnyParsedVersion | undefined | nu
       return parsed.prerelease.length > 0;
     case 'gentoo':
       return isPrereleaseGentoo(parsed);
+    case 'debian':
+      return isPrereleaseDebian(parsed);
     default:
       return assertNeverScheme(parsed);
   }

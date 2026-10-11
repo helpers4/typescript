@@ -9,7 +9,7 @@
  * version string. Defaults to `'semver'` everywhere it's accepted.
  * @since 3.0.8
  */
-export type VersionScheme = 'semver' | 'gentoo';
+export type VersionScheme = 'semver' | 'gentoo' | 'debian';
 
 /** The unit to bump — see {@link increment}. */
 export type IncrementType = 'major' | 'minor' | 'patch';
@@ -79,9 +79,29 @@ export interface ParsedGentooVersion {
 }
 
 /**
+ * A version parsed according to Debian Policy §5.6.12 (the `Version` field dpkg and apt
+ * order): `[epoch:]upstream[-revision]`, e.g. `1:2.30~rc1-3ubuntu2`.
+ *
+ * The upstream part is kept as a string: Debian puts no structure on it beyond its sort order
+ * (digit runs compare numerically, `~` sorts before everything), so there's no
+ * major/minor/patch to extract.
+ * @since next
+ */
+export interface ParsedDebianVersion {
+  scheme: 'debian';
+  /** Epoch before the first `:` (e.g. `1` for `1:2.30-3`), or `0` if none is given. */
+  epoch: number;
+  /** Upstream version, between the epoch and the last `-` (e.g. `'2.30~rc1'`). Never empty. */
+  upstream: string;
+  /** Debian revision after the last `-` (e.g. `'3ubuntu2'`), or `''` for a native package without one. */
+  revision: string;
+}
+
+/**
  * A version parsed by {@link parse}, in whichever scheme it was parsed as — narrow on the
  * `scheme` field to access scheme-specific properties (`major`/`minor`/`patch` for `'semver'`,
- * `components`/`letter`/`suffixes`/`revision` for `'gentoo'`).
+ * `components`/`letter`/`suffixes`/`revision` for `'gentoo'`, `epoch`/`upstream`/`revision` for
+ * `'debian'`).
  *
  * Deliberately **not** named `ParsedVersion`: that name has been public API since 2.0.0 for
  * the flat SemVer-only shape (`.major`/`.minor`/`.patch` directly, no narrowing needed), and
@@ -90,7 +110,7 @@ export interface ParsedGentooVersion {
  * `MIGRATION.md` entry, since this repo ties breaking changes to major-version bumps.
  * @since 3.0.8
  */
-export type AnyParsedVersion = ParsedSemVerVersion | ParsedGentooVersion;
+export type AnyParsedVersion = ParsedSemVerVersion | ParsedGentooVersion | ParsedDebianVersion;
 
 /**
  * A version parsed according to SemVer 2.0.0 — alias of {@link ParsedSemVerVersion}, kept under

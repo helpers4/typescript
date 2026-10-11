@@ -44,6 +44,18 @@ const examples: HelperExamples = {
         if (result.suffixes[0]?.type !== 'rc' || result.suffixes[0]?.number !== 1) throw new Error('Unexpected suffix');
       },
     },
+    {
+      title: 'Parse a Debian version',
+      description: 'Splits epoch, upstream version and Debian revision the way dpkg does.',
+      code: `parse('1:2.30~rc1-3ubuntu2', 'debian')
+// => { scheme: 'debian', epoch: 1, upstream: '2.30~rc1', revision: '3ubuntu2' }`,
+      assert: () => {
+        const parsed = parse('1:2.30~rc1-3ubuntu2', 'debian');
+        if (parsed.epoch !== 1 || parsed.upstream !== '2.30~rc1' || parsed.revision !== '3ubuntu2') {
+          throw new Error(`Unexpected result: ${JSON.stringify(parsed)}`);
+        }
+      },
+    },
   ],
 };
 

@@ -79,4 +79,14 @@ describe("increment", () => {
       expect(() => increment('1.2.3', 'patch', 'bogus' as any)).toThrow(/Unhandled version scheme/);
     });
   });
+
+  describe('debian scheme', () => {
+    it('throws: debian versions have no major/minor/patch structure', () => {
+      expect(() => increment('1.2.3-1', 'patch', 'debian')).toThrow(/does not support increment/);
+    });
+
+    it('still passes undefined/null through', () => {
+      expect(increment(undefined, 'patch', 'debian')).toBeUndefined();
+    });
+  });
 });

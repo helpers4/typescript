@@ -5,6 +5,7 @@
  */
 
 import { assertNeverScheme } from './_assertNeverScheme';
+import { incrementPrereleaseDebian } from './_debian';
 import { incrementPrereleaseGentoo } from './_gentoo';
 import { incrementPrereleaseSemVer } from './_semver';
 import type { VersionScheme } from './types';
@@ -32,6 +33,9 @@ import type { VersionScheme } from './types';
  * vocabulary is fixed by spec, unlike SemVer's arbitrary prerelease identifiers. No current
  * prerelease suffix bumps the last numeric component instead of specifically `patch`, since
  * Gentoo's `components` array can be any length.
+ *
+ * **`'debian'`** — throws: a Debian upstream version is free-form, with no prerelease counter
+ * to bump.
  *
  * @param version - The version to increment
  * @param prereleaseId - The prerelease type/identifier (e.g. `'alpha'`, `'beta'`, `'rc'`)
@@ -66,6 +70,8 @@ export function incrementPrerelease(
       return incrementPrereleaseSemVer(version, prereleaseId);
     case 'gentoo':
       return incrementPrereleaseGentoo(version, prereleaseId);
+    case 'debian':
+      return incrementPrereleaseDebian();
     default:
       return assertNeverScheme(scheme);
   }

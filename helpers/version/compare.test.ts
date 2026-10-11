@@ -275,4 +275,12 @@ describe("compare", () => {
       expect(() => compare("1.2.3", "1.2.4", "bogus" as any)).toThrow(/Unhandled version scheme/);
     });
   });
+
+  describe("debian scheme", () => {
+    it("compares debian versions when scheme is 'debian'", () => {
+      expect(compare("1.0~rc1", "1.0", "debian")).toBe(-1);
+      expect(compare("1:0.9", "2.0", "debian")).toBe(1);
+      expect(compare("0:1.0-0", "1.0", "debian")).toBe(0);
+    });
+  });
 });

@@ -63,4 +63,8 @@ describe('stringify — gentoo scheme', () => {
     // bare String(parsed) would produce — regression test for assertNeverScheme's object case.
     expect(() => stringify({ scheme: 'bogus' } as any)).toThrow('Unhandled version scheme: {"scheme":"bogus"}');
   });
+
+  it('stringifies a debian version', () => {
+    expect(stringify({ scheme: 'debian', epoch: 1, upstream: '2.30~rc1', revision: '3' })).toBe('1:2.30~rc1-3');
+  });
 });

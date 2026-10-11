@@ -75,4 +75,15 @@ describe('isPrerelease — gentoo scheme', () => {
     // bare String(version) would produce.
     expect(() => isPrerelease({ scheme: 'bogus' } as any)).toThrow('Unhandled version scheme: {"scheme":"bogus"}');
   });
+
+  describe('debian scheme', () => {
+    it('reads a ~ in the upstream part as a prerelease', () => {
+      expect(isPrerelease('1.0~rc1-1', 'debian')).toBe(true);
+      expect(isPrerelease('1.0-1~bpo12+1', 'debian')).toBe(false);
+    });
+
+    it('accepts a parsed debian version', () => {
+      expect(isPrerelease({ scheme: 'debian', epoch: 0, upstream: '2.0~beta', revision: '' })).toBe(true);
+    });
+  });
 });

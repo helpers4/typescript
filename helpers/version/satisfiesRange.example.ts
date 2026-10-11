@@ -47,6 +47,15 @@ const examples: HelperExamples = {
         if (!satisfiesRange('1.2.3', '>=1.2.0', 'gentoo')) throw new Error('Expected true');
       },
     },
+    {
+      title: 'Debian relation operators',
+      description: "Uses dpkg's '<<', '<=', '=', '>=' and '>>', as written in a Depends: field.",
+      code: `satisfiesRange('1.0~rc1-1', '<< 1.0', 'debian')
+// => true`,
+      assert: () => {
+        if (!satisfiesRange('1.0~rc1-1', '<< 1.0', 'debian')) throw new Error('Expected true');
+      },
+    },
   ],
 };
 
