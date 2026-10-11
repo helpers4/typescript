@@ -47,6 +47,7 @@ Install only what you need, or grab everything at once:
 | [`@helpers4/function`](https://www.npmjs.com/package/@helpers4/function) | Function composition and utility wrappers | `npm i @helpers4/function` |
 | [`@helpers4/guard`](https://www.npmjs.com/package/@helpers4/guard) | Runtime type guard utilities | `npm i @helpers4/guard` |
 | [`@helpers4/id`](https://www.npmjs.com/package/@helpers4/id) | Unique identifier generation (UUID v7, etc.) | `npm i @helpers4/id` |
+| [`@helpers4/json`](https://www.npmjs.com/package/@helpers4/json) | JSON parsing and serialization — JSONC, NDJSON / JSON Lines, JSON text sequences, canonical JSON | `npm i @helpers4/json` |
 | [`@helpers4/map`](https://www.npmjs.com/package/@helpers4/map) | Native `Map` manipulation utilities | `npm i @helpers4/map` |
 | [`@helpers4/markdown`](https://www.npmjs.com/package/@helpers4/markdown) | Markdown formatting and escaping utilities | `npm i @helpers4/markdown` |
 | [`@helpers4/node`](https://www.npmjs.com/package/@helpers4/node) | Node.js runtime utilities (Buffer, etc.) | `npm i @helpers4/node` |
