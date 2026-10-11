@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { isPlainObject } from './isPlainObject';
-
 function transform(value: unknown, seen: Set<unknown>): boolean {
   if (value === null) return true;
-  if (typeof value === 'string' || typeof value === 'boolean') return true;
-  if (typeof value === 'number') return Number.isFinite(value);
-  if (Array.isArray(value) || isPlainObject(value)) {
+  const type = typeof value;
+  if (type === 'string' || type === 'boolean') return true;
+  if (type === 'number') return Number.isFinite(value);
+  if (type !== 'object') return false;
+  if (Array.isArray(value)) {
     // A real JSON.stringify/parse round-trip never terminates on a cycle, so treat one as
     // invalid rather than recursing forever. Popped after this node's subtree is fully
     // checked, so a value referenced twice without a cycle (a shared, non-circular node) is
@@ -18,13 +18,34 @@ function transform(value: unknown, seen: Set<unknown>): boolean {
     if (seen.has(value)) return false;
     seen.add(value);
     try {
-      const items = Array.isArray(value) ? value : Object.values(value);
-      return items.every((item) => transform(item, seen));
+      // Walked by index rather than via Object.values, which would allocate an intermediate
+      // array of every item. A hole is skipped, matching what Object.values yields: it holds no
+      // value to check, and JSON.stringify turns it into null rather than leaving it out.
+      for (let i = 0; i < value.length; i++) {
+        if (i in value && !transform(value[i], seen)) return false;
+      }
+      return true;
     } finally {
       seen.delete(value);
     }
   }
-  return false;
+  // Same test as `isPlainObject` — `{}`, `new Object()` or `Object.create(null)` — inlined so a
+  // non-plain object is rejected without a call, since this runs for every value in the tree.
+  const proto = Object.getPrototypeOf(value);
+  if (proto !== Object.prototype && proto !== null) return false;
+  if (seen.has(value)) return false;
+  seen.add(value);
+  try {
+    // Walked by key rather than via Object.values, which would allocate an intermediate array
+    // of every member's value at every level of the structure.
+    const object = value as Record<string, unknown>;
+    for (const key of Object.keys(object)) {
+      if (!transform(object[key], seen)) return false;
+    }
+    return true;
+  } finally {
+    seen.delete(value);
+  }
 }
 
 /**

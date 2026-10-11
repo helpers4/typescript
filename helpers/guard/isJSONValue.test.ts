@@ -63,4 +63,26 @@ describe('isJSONValue', () => {
     const shared = { x: 1 };
     expect(isJSONValue({ a: shared, b: shared })).toBe(true);
   });
+
+  it('accepts an object with a null prototype, like JSON.parse produces for __proto__', () => {
+    expect(isJSONValue(Object.create(null))).toBe(true);
+    expect(isJSONValue({ a: Object.create(null) })).toBe(true);
+  });
+
+  it('still rejects a non-plain object nested below an array', () => {
+    expect(isJSONValue([1, [2, new Map()]])).toBe(false);
+    expect(isJSONValue({ a: { b: [1, new Date()] } })).toBe(false);
+  });
+
+  it('skips array holes, which hold no value to check', () => {
+    // eslint-disable-next-line no-sparse-arrays -- a hole is the case under test
+    expect(isJSONValue([1, , 3])).toBe(true);
+  });
+
+  it('still detects a cycle nested below an array', () => {
+    const arr: unknown[] = [1];
+    const inner: unknown[] = [arr];
+    arr.push(inner);
+    expect(isJSONValue(arr)).toBe(false);
+  });
 });

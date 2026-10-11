@@ -6,6 +6,13 @@
 
 import { stripJsonComments } from '../_shared/_stripJsonComments';
 
+// JSONC only adds two things to JSON — comments and a trailing comma before a closing bracket —
+// so text holding neither is plain JSON that needs no rewriting. Both patterns are deliberately
+// loose: one can also match inside a string literal, which only costs a redundant (and, since
+// `stripJsonComments` is string-aware, harmless) strip.
+const HAS_COMMENT = /\/\/|\/\*/;
+const HAS_TRAILING_COMMA = /,\s*[}\]]/;
+
 /**
  * Checks whether a value is a string holding valid JSONC — JSON with comments and trailing
  * commas, the dialect of `tsconfig.json` and VS Code's `settings.json`, also known as HuJSON or
@@ -29,8 +36,19 @@ import { stripJsonComments } from '../_shared/_stripJsonComments';
  */
 export function isJsonc(value: unknown): value is string {
   if (typeof value !== 'string') return false;
+  const text = value.startsWith('\ufeff') ? value.slice(1) : value;
+  // Without a comment or a trailing comma there is nothing for stripJsonComments to remove, and
+  // on strict JSON it is an identity, so the native parser can read the text directly.
+  if (!HAS_COMMENT.test(text) && !HAS_TRAILING_COMMA.test(text)) {
+    try {
+      JSON.parse(text);
+      return true;
+    } catch {
+      return false;
+    }
+  }
   try {
-    JSON.parse(stripJsonComments(value.startsWith('\ufeff') ? value.slice(1) : value));
+    JSON.parse(stripJsonComments(text));
     return true;
   } catch {
     return false;
