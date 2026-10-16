@@ -54,4 +54,11 @@ describe('stripHtml', () => {
     expect(stripHtml('')).toBe('');
     expect(stripHtml('<div></div>')).toBe('');
   });
+
+  it('strips markup rebuilt by removing a nested tag', () => {
+    expect(stripHtml('<scr<script></script>ipt>alert(1)')).toBe('alert(1)');
+    expect(stripHtml('<<b>b>x')).toBe('x');
+    expect(stripHtml('<!<!-- -->-- a -->b')).toBe('b');
+    expect(stripHtml('<scr<b></b>ipt>x')).not.toContain('<script');
+  });
 });

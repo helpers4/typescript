@@ -43,11 +43,19 @@ function decodeEntity(entity: string, dec?: string, hex?: string, name?: string)
  * @since next
  */
 export function stripHtml(html: string): string {
-  return html
-    .replace(COMMENTS, '')
-    .replace(SCRIPT_AND_STYLE, '')
-    .replace(BLOCK_TAGS, ' ')
-    .replace(TAGS, '')
+  // Removing a tag can splice its neighbours into a new one ("<scr<script></script>ipt>"),
+  // so strip until nothing changes: the pass only ever shortens the string, so it ends.
+  let text = html;
+  let previous: string;
+  do {
+    previous = text;
+    text = text
+      .replace(COMMENTS, '')
+      .replace(SCRIPT_AND_STYLE, '')
+      .replace(BLOCK_TAGS, ' ')
+      .replace(TAGS, '');
+  } while (text !== previous);
+  return text
     .replace(ENTITIES, decodeEntity)
     .replace(/\s+/g, ' ')
     .trim();
