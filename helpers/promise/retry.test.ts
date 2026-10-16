@@ -242,4 +242,14 @@ describe("retry", () => {
       vi.useRealTimers();
     }
   });
+
+  it("should pass the 1-based attempt number to fn", async () => {
+    const seen: number[] = [];
+    const result = await retry((attempt) => {
+      seen.push(attempt);
+      return attempt < 3 ? Promise.reject(new Error("fail")) : Promise.resolve("ok");
+    }, { attempts: 3, delayMs: 0 });
+    expect(result).toBe("ok");
+    expect(seen).toEqual([1, 2, 3]);
+  });
 });

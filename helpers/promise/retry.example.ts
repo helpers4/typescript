@@ -77,6 +77,24 @@ await retry(() => {
         if (attempt !== 1) throw new Error(`Expected 1 attempt, got ${attempt}`);
       },
     },
+    {
+      title: 'Rotate through mirrors',
+      description: 'fn receives the 1-based attempt number, so each retry can target the next server.',
+      code: `const mirrors = ['a', 'b', 'c'];
+await retry((attempt) => {
+  const mirror = mirrors[(attempt - 1) % mirrors.length];
+  return mirror === 'c' ? Promise.resolve(mirror) : Promise.reject(new Error('down'));
+}, { attempts: 3, delayMs: 0 })
+// => 'c' (after 'a' and 'b' failed)`,
+      assert: async () => {
+        const mirrors = ['a', 'b', 'c'];
+        const result = await retry((attempt) => {
+          const mirror = mirrors[(attempt - 1) % mirrors.length];
+          return mirror === 'c' ? Promise.resolve(mirror) : Promise.reject(new Error('down'));
+        }, { attempts: 3, delayMs: 0 });
+        if (result !== 'c') throw new Error(`Expected 'c', got ${result}`);
+      },
+    },
   ],
 };
 
