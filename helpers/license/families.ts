@@ -66,7 +66,10 @@ function matchAlias(normalized: string): string | undefined {
 // license family, so it would otherwise either land in UNKNOWN_FAMILY for no reason or dilute the
 // comparison with a token that isn't really a separate license claim.
 function splitTokens(raw: string): string[] {
+  // Trimmed first: otherwise a padded bare operator (" or ") would split into empty tokens
+  // while the unpadded one ("or") stays a single token.
   return raw
+    .trim()
     .split(/\s+(?:and|or)\s+/i)
     .map((token) => token.split(/\s+with\s+/i)[0].trim())
     .filter((token) => token.length > 0);
