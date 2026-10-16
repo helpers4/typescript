@@ -36,7 +36,7 @@ export interface RetryOptions {
  * `(fn, options)` to only retry some errors or to make the delay grow between attempts — see
  * {@link RetryOptions}.
  *
- * @param fn - The function to retry
+ * @param fn - The function to retry, called with the 1-based number of the attempt
  * @param maxAttemptsOrOptions - Maximum number of attempts (default `3`), or a {@link RetryOptions} object
  * @param delayMs - Delay between attempts in milliseconds (default `1000`), when `maxAttemptsOrOptions` is a number
  * @returns Promise that resolves with the result or rejects with the last error
@@ -48,12 +48,15 @@ export interface RetryOptions {
  * @example
  * // Only retry transient errors, rethrow anything else at once
  * await retry(() => createIndex(), { shouldRetry: (error) => /already exists/i.test(String(error)) })
+ * @example
+ * // Rotate through a pool of mirrors: the attempt number picks the next one
+ * await retry((attempt) => fetch(mirrors[(attempt - 1) % mirrors.length]), { attempts: 3 })
  * @since 1.9.0
  */
-export async function retry<T>(fn: () => Promise<T>, maxAttempts?: number, delayMs?: number): Promise<T>;
-export async function retry<T>(fn: () => Promise<T>, options: RetryOptions): Promise<T>;
+export async function retry<T>(fn: (attempt: number) => Promise<T>, maxAttempts?: number, delayMs?: number): Promise<T>;
+export async function retry<T>(fn: (attempt: number) => Promise<T>, options: RetryOptions): Promise<T>;
 export async function retry<T>(
-  fn: () => Promise<T>,
+  fn: (attempt: number) => Promise<T>,
   maxAttemptsOrOptions: number | RetryOptions = 3,
   delayMs: number = 1000
 ): Promise<T> {
@@ -69,7 +72,7 @@ export async function retry<T>(
     try {
       // Sequential on purpose: each attempt only runs once the previous one has failed.
       // eslint-disable-next-line no-await-in-loop
-      return await fn();
+      return await fn(attempt);
     } catch (error) {
       if (attempt >= attempts || !shouldRetry(error, attempt)) {
         throw error;
