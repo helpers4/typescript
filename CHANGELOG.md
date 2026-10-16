@@ -8,6 +8,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.1.4] - 2026-10-16
+
+### 🚀 Features
+- **array**: add reverseSortFn
+- **date**: add isoWeek
+- **promise**: pass the attempt number to the function given to retry
+- **string**: add stripHtml
+- **url**: add isExternalUrl
+
+### 🐛 Bug Fixes
+- **CI-CD**: skip the mutation aggregate when the shards were skipped
+- **array**: accept interfaces in the sort factories, pick and omit
+- **license**: trim before splitting in families
+- **string**: repeat each removal in stripHtml until stable
+- **string**: strip markup rebuilt by removing a nested tag in stripHtml
+
+### 🔧 Miscellaneous
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **deps-dev**: bump happy-dom
+
+### 📝 Documentation
+- **promise**: document each retry overload
+
+### 👷 CI/CD
+- **CI-CD**: sign the CI commits through the GitHub API
+
+### 📌 Dependencies
+- **deps**: bump the actions group across 1 directory with 2 updates
+- **deps**: bump the actions group across 1 directory with 4 updates
+
 ## [3.1.3] - 2026-10-11
 
 ### 🚀 Features
@@ -1166,6 +1200,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.1.4]: https://github.com/helpers4/typescript/compare/v3.1.3...v3.1.4
 [3.1.3]: https://github.com/helpers4/typescript/compare/v3.1.2...v3.1.3
 [3.1.2]: https://github.com/helpers4/typescript/compare/v3.1.1...v3.1.2
 [3.1.1]: https://github.com/helpers4/typescript/compare/v3.1.0...v3.1.1

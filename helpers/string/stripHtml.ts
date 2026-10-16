@@ -50,7 +50,7 @@ function removeAll(text: string, pattern: RegExp, replacement: string = ''): str
  * @example
  * stripHtml('<ul><li>one</li><li>two</li></ul>')
  * // => 'one two'
- * @since next
+ * @since 3.1.4
  */
 export function stripHtml(html: string): string {
   // Removing a tag can splice its neighbours into a new one ("<scr<script></script>ipt>"),

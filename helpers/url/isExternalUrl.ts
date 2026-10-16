@@ -23,7 +23,7 @@ const ABSOLUTE_HTTP_OR_PROTOCOL_RELATIVE = /^(?:https?:)?\/\//i;
  * isExternalUrl('//cdn.example.com/a.js', 'https://example.com')  // => true
  * isExternalUrl('/about')                                         // => false
  * isExternalUrl('mailto:me@example.com')                          // => false
- * @since next
+ * @since 3.1.4
  */
 export function isExternalUrl(url: string, base?: string | URL): boolean {
   const trimmed = url.trim();

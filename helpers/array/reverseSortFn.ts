@@ -22,7 +22,7 @@ import type { SortFn } from './sort';
  * @example
  * // Newest first, then by name ascending
  * releases.sort(combineSortFns(reverseSortFn(createSortByStringFn('date')), createSortByStringFn('repo')))
- * @since next
+ * @since 3.1.4
  */
 export function reverseSortFn<T>(fn: SortFn<T>): SortFn<T> {
   return (a: T, b: T) => fn(b, a);

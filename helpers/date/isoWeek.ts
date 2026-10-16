@@ -23,7 +23,7 @@ const DAY_MS = 86_400_000;
  * isoWeek('2026-01-01') // => { year: 2026, week: 1 }
  * isoWeek('2027-01-01') // => { year: 2026, week: 53 }
  * isoWeek('invalid')    // => null
- * @since next
+ * @since 3.1.4
  */
 export function isoWeek(date: DateLike): { year: number; week: number } | null {
   const d = ensureDate(date);
