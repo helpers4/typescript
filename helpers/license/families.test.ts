@@ -55,4 +55,9 @@ describe('families', () => {
   it('returns an empty set for an empty string', () => {
     expect(families('')).toEqual(new Set());
   });
+
+  it('gives a padded bare operator the same result as the unpadded one', () => {
+    expect(families(' or ')).toEqual(families('or'));
+    expect(families('\tAND ')).toEqual(families('AND'));
+  });
 });
