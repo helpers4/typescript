@@ -49,7 +49,7 @@ function toDateMs(v: unknown): number {
  * rows.sort(createSortByStringFn(['dept', 'name'] as const))
  * @since 1.9.0
  */
-export function createSortByStringFn<T extends Record<string, unknown>>(
+export function createSortByStringFn<T extends object>(
   property?: keyof T | readonly (keyof T)[],
   caseInsensitive: boolean = false,
 ): SortFn<T> {
@@ -72,10 +72,10 @@ export function createSortByStringFn<T extends Record<string, unknown>>(
  * // => [{ count: 1 }, { count: 2 }, { count: 3 }]
  * @since 1.9.0
  */
-export function createSortByNumberFn<T extends Record<string, unknown>>(
+export function createSortByNumberFn<T extends object>(
   property?: keyof T,
 ): SortFn<T> {
-  const prop = property ?? 'value';
+  const prop = (property ?? 'value') as keyof T;
   return (a: T, b: T) => {
     const aRaw = a[prop] == null ? NaN : Number(a[prop]);
     const bRaw = b[prop] == null ? NaN : Number(b[prop]);
@@ -103,10 +103,10 @@ export function createSortByNumberFn<T extends Record<string, unknown>>(
  * // => sorted oldest first
  * @since 1.9.0
  */
-export function createSortByDateFn<T extends Record<string, unknown>>(
+export function createSortByDateFn<T extends object>(
   property?: keyof T,
 ): SortFn<T> {
-  const prop = property ?? 'date';
+  const prop = (property ?? 'date') as keyof T;
   return (a: T, b: T) => {
     const aRaw = toDateMs(a[prop]);
     const bRaw = toDateMs(b[prop]);

@@ -54,7 +54,7 @@ export function normalizePropertyToKeys<T>(
  * @returns Comparator function for arrays of `T`.
  * @ignore
  */
-export function buildCollatorCompareFn<T extends Record<string, unknown>>(
+export function buildCollatorCompareFn<T extends object>(
   collator: Intl.Collator,
   keys: readonly (keyof T)[] | undefined,
 ): SortFn<T> {

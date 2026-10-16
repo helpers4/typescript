@@ -51,3 +51,11 @@ describe('omit', () => {
     expect(omit(undefined, ['a'])).toBeUndefined();
   });
 });
+
+describe('omit with an interface', () => {
+  interface Milestone { title: string; due: string }
+  it('accepts an interface as T', () => {
+    const m: Milestone = { title: 'v1', due: '2026-01-01' };
+    expect(omit(m, ['due'])).toEqual({ title: 'v1' });
+  });
+});

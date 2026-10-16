@@ -146,3 +146,11 @@ describe('natural sort', () => {
     });
   });
 });
+
+describe('createSortByNaturalFn with an interface', () => {
+  interface Task { label: string }
+  it('accepts an interface as T', () => {
+    const tasks: Task[] = [{ label: 'W11' }, { label: 'W2' }];
+    expect(tasks.sort(createSortByNaturalFn<Task>('label')).map(t => t.label)).toEqual(['W2', 'W11']);
+  });
+});

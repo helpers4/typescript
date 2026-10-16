@@ -90,7 +90,7 @@ export const sortStringNaturalDescInsensitiveFn: SortFn<string> = (a: string, b:
  * // => [{ label: 'W2' }, { label: 'W11' }, { label: 'W20' }]
  * @since 2.0.2
  */
-export function createSortByNaturalFn<T extends Record<string, unknown>>(
+export function createSortByNaturalFn<T extends object>(
   property?: keyof T | readonly (keyof T)[],
   caseInsensitive: boolean = false,
 ): SortFn<T> {

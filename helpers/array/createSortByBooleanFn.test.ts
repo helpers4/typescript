@@ -47,3 +47,11 @@ describe('createSortByBooleanFn', () => {
     expect(items[0]!.label).toBe('b');
   });
 });
+
+describe('createSortByBooleanFn with an interface', () => {
+  interface Note { pinned: boolean }
+  it('accepts an interface as T', () => {
+    const notes: Note[] = [{ pinned: false }, { pinned: true }];
+    expect(notes.sort(createSortByBooleanFn<Note>('pinned'))).toEqual([{ pinned: true }, { pinned: false }]);
+  });
+});
