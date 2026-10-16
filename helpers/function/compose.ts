@@ -9,7 +9,7 @@
  *
  * The inverse of {@link pipe}, which applies functions left-to-right.
  *
- * @param fns - Functions to compose (right-to-left)
+ * @param fn1 - The first function. The overloads accept up to eight functions in all, passed as `fn1, fn2, …`.
  * @returns A function that applies `fns` in reverse order
  * @see {@link pipe} for left-to-right composition
  * @example

@@ -20,8 +20,7 @@ import { stripJsonComments } from '../_shared/_stripJsonComments';
  * Unlike `readFileSync` + `JSON.parse`, this never throws.
  *
  * @param filePath - Path to the JSON (or JSONC) file to read.
- * @param fallback - Value returned on failure. Defaults to `null` when omitted.
- * @returns The parsed value typed as `T`, or `fallback` on failure.
+ * @returns The parsed value typed as `T`, or `null` on failure (pass a `fallback` to get it instead)
  * @example
  * safeReadJsonFile<{ name: string }>('./package.json') // => { name: 'helpers4', ... }
  * safeReadJsonFile('./missing.json')                   // => null
@@ -32,6 +31,14 @@ import { stripJsonComments } from '../_shared/_stripJsonComments';
  * @since 3.0.6
  */
 export function safeReadJsonFile<T>(filePath: string): T | null;
+/**
+ * Overload taking a `fallback`: returns it instead of `null` on invalid input.
+ *
+ * @param filePath - Path to the JSON (or JSONC) file to read
+ * @param fallback - Value returned on failure
+ * @returns The parsed value typed as `T`, or `fallback` on failure
+ * @since 3.0.6
+ */
 export function safeReadJsonFile<T>(filePath: string, fallback: T): T;
 export function safeReadJsonFile<T>(filePath: string, fallback?: T): T | null {
   try {

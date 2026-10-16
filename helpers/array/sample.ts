@@ -12,8 +12,7 @@ import { shuffle } from './shuffle';
  * When called without a count, returns a single element or `undefined` if the array is empty.
  * When called with a count, returns an array of up to `count` random elements sampled without replacement.
  * @param array - The source array to pick from
- * @param count - Optional number of elements to pick (without replacement)
- * @returns A single random element (or `undefined`) when no count is given, or an array of random elements when count is given
+ * @returns A single random element, or `undefined` if the array is empty
  * @example
  * sample([1, 2, 3, 4, 5])
  * // => 3 (random element)
@@ -23,6 +22,14 @@ import { shuffle } from './shuffle';
  * @since 2.0.0
  */
 export function sample<T>(array: readonly T[] | null | undefined): T | undefined;
+/**
+ * Picks up to `count` random elements from an array, sampled without replacement.
+ *
+ * @param array - The source array to pick from
+ * @param count - Number of elements to pick
+ * @returns An array of up to `count` random elements
+ * @since 2.0.0
+ */
 export function sample<T>(array: readonly T[] | null | undefined, count: number): T[];
 export function sample<T>(array: readonly T[] | null | undefined, count?: number): T | undefined | T[] {
   if (array == null || array.length === 0) {

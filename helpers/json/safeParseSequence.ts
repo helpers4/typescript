@@ -18,9 +18,7 @@ import { type ParseSequenceOptions, parseSequence } from './parseSequence';
  * a fallback, pass `null` as the fallback.
  *
  * @param text - The JSON text sequence
- * @param fallback - Value returned on invalid input. Defaults to `null` when omitted.
- * @param options - How to handle invalid records — see {@link ParseSequenceOptions}
- * @returns The parsed values typed as `T[]`, or `fallback` on invalid input
+ * @returns The parsed values typed as `T[]`, or `null` on invalid input (pass a `fallback` to get it instead)
  * @see {@link parseSequence} — same parsing, throws a `SyntaxError` instead
  * @see {@link safeParseLines} — newline-delimited JSON (NDJSON, JSON Lines)
  * @example
@@ -30,6 +28,15 @@ import { type ParseSequenceOptions, parseSequence } from './parseSequence';
  * @since 3.1.3
  */
 export function safeParseSequence<T = unknown>(text: string): T[] | null;
+/**
+ * Overload taking a `fallback`: returns it instead of `null` on invalid input.
+ *
+ * @param text - The JSON text sequence
+ * @param fallback - Value returned on invalid input
+ * @param options - How to handle invalid records — see {@link ParseSequenceOptions}
+ * @returns The parsed values typed as `T[]`, or `fallback` on invalid input
+ * @since 3.1.3
+ */
 export function safeParseSequence<T = unknown, F = T[]>(text: string, fallback: F, options?: ParseSequenceOptions): T[] | F;
 export function safeParseSequence<T, F>(text: string, fallback?: F, options?: ParseSequenceOptions): T[] | F | null {
   try {
