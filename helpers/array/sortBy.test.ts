@@ -289,3 +289,18 @@ describe('createSortByStringFn — reuse', () => {
     expect(second.map(i => i.label)).toEqual(['a', 'm', 'z']);
   });
 });
+
+describe('interfaces as T', () => {
+  // An interface has no implicit index signature: this must compile, not only run.
+  interface Release { date: string; tag: string; downloads: number }
+  const releases: Release[] = [
+    { date: '2026-02-01', tag: 'b', downloads: 2 },
+    { date: '2026-01-01', tag: 'a', downloads: 1 },
+  ];
+
+  it('accepts an interface in the sort factories', () => {
+    expect([...releases].sort(createSortByStringFn<Release>('date')).map(r => r.tag)).toEqual(['a', 'b']);
+    expect([...releases].sort(createSortByNumberFn<Release>('downloads')).map(r => r.tag)).toEqual(['a', 'b']);
+    expect([...releases].sort(createSortByDateFn<Release>('date')).map(r => r.tag)).toEqual(['a', 'b']);
+  });
+});

@@ -18,10 +18,10 @@ import { UNSAFE_KEYS } from '../_shared/_unsafeKeys.js';
  * // => { a: 1, c: 3 }
  * @since 2.0.0
  */
-export function pick<T extends Record<string, unknown>, K extends keyof T>(obj: T, keys: readonly K[]): Pick<T, K>;
+export function pick<T extends object, K extends keyof T>(obj: T, keys: readonly K[]): Pick<T, K>;
 export function pick(obj: undefined, keys: readonly string[]): undefined;
 export function pick(obj: null, keys: readonly string[]): null;
-export function pick<T extends Record<string, unknown>, K extends keyof T>(
+export function pick<T extends object, K extends keyof T>(
   obj: T | undefined | null,
   keys: readonly K[]
 ): Pick<T, K> | undefined | null {

@@ -24,7 +24,7 @@ import type { SortFn } from './sort';
  * items.sort(combineSortFns(createSortByBooleanFn('isDefault'), createSortByStringFn('label')))
  * @since 3.0.0
  */
-export function createSortByBooleanFn<T extends Record<string, unknown>>(
+export function createSortByBooleanFn<T extends object>(
   property: keyof T,
   trueFirst: boolean = true,
 ): SortFn<T> {

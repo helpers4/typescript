@@ -14,10 +14,10 @@
  * // => { a: 1, c: 3 }
  * @since 2.0.0
  */
-export function omit<T extends Record<string, unknown>, K extends keyof T>(obj: T, keys: readonly K[]): Omit<T, K>;
+export function omit<T extends object, K extends keyof T>(obj: T, keys: readonly K[]): Omit<T, K>;
 export function omit(obj: undefined, keys: readonly string[]): undefined;
 export function omit(obj: null, keys: readonly string[]): null;
-export function omit<T extends Record<string, unknown>, K extends keyof T>(
+export function omit<T extends object, K extends keyof T>(
   obj: T | undefined | null,
   keys: readonly K[]
 ): Omit<T, K> | undefined | null {

@@ -57,3 +57,11 @@ describe('pick', () => {
     expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
   });
 });
+
+describe('pick with an interface', () => {
+  interface Milestone { title: string; due: string }
+  it('accepts an interface as T', () => {
+    const m: Milestone = { title: 'v1', due: '2026-01-01' };
+    expect(pick(m, ['title'])).toEqual({ title: 'v1' });
+  });
+});
