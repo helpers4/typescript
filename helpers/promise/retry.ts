@@ -30,30 +30,38 @@ export interface RetryOptions {
 
 /**
  * Retries a promise-returning function until it succeeds or runs out of attempts, then rejects
- * with the last error.
+ * with the last error, waiting a fixed delay between attempts.
  *
- * Takes either `(fn, maxAttempts, delayMs)` for a fixed delay between attempts, or
- * `(fn, options)` to only retry some errors or to make the delay grow between attempts — see
- * {@link RetryOptions}.
+ * For a delay that grows or for retrying only some errors, pass a {@link RetryOptions} object instead.
  *
  * @param fn - The function to retry, called with the 1-based number of the attempt
- * @param maxAttemptsOrOptions - Maximum number of attempts (default `3`), or a {@link RetryOptions} object
- * @param delayMs - Delay between attempts in milliseconds (default `1000`), when `maxAttemptsOrOptions` is a number
+ * @param maxAttempts - Maximum number of attempts, the first one included (default `3`)
+ * @param delayMs - Delay between attempts in milliseconds (default `1000`)
  * @returns Promise that resolves with the result or rejects with the last error
  * @example
  * await retry(() => fetchData(), 3, 500)
+ * @example
+ * // Rotate through a pool of mirrors: the attempt number picks the next one
+ * await retry((attempt) => fetch(mirrors[(attempt - 1) % mirrors.length]), 3, 500)
+ * @since 1.9.0
+ */
+export async function retry<T>(fn: (attempt: number) => Promise<T>, maxAttempts?: number, delayMs?: number): Promise<T>;
+/**
+ * Retries a promise-returning function until it succeeds or runs out of attempts, then rejects
+ * with the last error. The options make it possible to only retry some errors or to make the
+ * delay grow between attempts — see {@link RetryOptions}.
+ *
+ * @param fn - The function to retry, called with the 1-based number of the attempt
+ * @param options - Attempts, delay and retry predicate
+ * @returns Promise that resolves with the result or rejects with the last error
  * @example
  * // Exponential backoff: 500 ms, 1 s, 2 s
  * await retry(() => fetchData(), { attempts: 4, delayMs: (attempt) => 500 * 2 ** (attempt - 1) })
  * @example
  * // Only retry transient errors, rethrow anything else at once
  * await retry(() => createIndex(), { shouldRetry: (error) => /already exists/i.test(String(error)) })
- * @example
- * // Rotate through a pool of mirrors: the attempt number picks the next one
- * await retry((attempt) => fetch(mirrors[(attempt - 1) % mirrors.length]), { attempts: 3 })
  * @since 1.9.0
  */
-export async function retry<T>(fn: (attempt: number) => Promise<T>, maxAttempts?: number, delayMs?: number): Promise<T>;
 export async function retry<T>(fn: (attempt: number) => Promise<T>, options: RetryOptions): Promise<T>;
 export async function retry<T>(
   fn: (attempt: number) => Promise<T>,
