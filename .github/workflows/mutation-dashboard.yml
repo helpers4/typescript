@@ -111,7 +111,10 @@ jobs:
 
   aggregate:
     needs: mutation-shard
-    if: always() && !cancelled()
+    # `always()` so a below-threshold shard still gets its baseline committed, but not when the
+    # shards were skipped on purpose (release commits and this workflow's own baseline commit):
+    # no shard uploaded anything then, so there is nothing to download or merge.
+    if: always() && !cancelled() && needs.mutation-shard.result != 'skipped'
     runs-on: ubuntu-latest
     permissions:
       contents: write # commits the refreshed incremental baseline
