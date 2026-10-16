@@ -23,6 +23,16 @@ function decodeEntity(entity: string, dec?: string, hex?: string, name?: string)
   return code > 0x10ffff || (code >= 0xd800 && code <= 0xdfff) ? entity : String.fromCodePoint(code);
 }
 
+/** Replaces `pattern` repeatedly until the text stops changing. */
+function removeAll(text: string, pattern: RegExp, replacement: string = ''): string {
+  let previous: string;
+  do {
+    previous = text;
+    text = text.replace(pattern, replacement);
+  } while (text !== previous);
+  return text;
+}
+
 /**
  * Plain text of an HTML fragment: tags removed, `<script>`, `<style>` and comments dropped
  * with their content, entities decoded (a common named subset, plus decimal and hex
@@ -44,16 +54,16 @@ function decodeEntity(entity: string, dec?: string, hex?: string, name?: string)
  */
 export function stripHtml(html: string): string {
   // Removing a tag can splice its neighbours into a new one ("<scr<script></script>ipt>"),
-  // so strip until nothing changes: the pass only ever shortens the string, so it ends.
+  // so each removal is repeated until it changes nothing, and the whole sequence too:
+  // every pass only shortens the string, so it ends.
   let text = html;
   let previous: string;
   do {
     previous = text;
-    text = text
-      .replace(COMMENTS, '')
-      .replace(SCRIPT_AND_STYLE, '')
-      .replace(BLOCK_TAGS, ' ')
-      .replace(TAGS, '');
+    text = removeAll(text, COMMENTS);
+    text = removeAll(text, SCRIPT_AND_STYLE);
+    text = removeAll(text, BLOCK_TAGS, ' ');
+    text = removeAll(text, TAGS);
   } while (text !== previous);
   return text
     .replace(ENTITIES, decodeEntity)
