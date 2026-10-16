@@ -9,7 +9,7 @@
  * accepts the remaining arguments.
  *
  * @param fn - The function to partially apply
- * @param partialArgs - The arguments to pre-fill
+ * @param a - The first argument to pre-fill. The overloads accept up to three pre-filled arguments (`a`, `b`, `c`).
  * @returns A function waiting for the remaining arguments
  * @see {@link curry} for one-argument-at-a-time currying
  * @example

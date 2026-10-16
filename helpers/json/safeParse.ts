@@ -16,8 +16,7 @@ import { parse } from './parse';
  * apart from an omitted argument — and `null` otherwise. Never throws.
  *
  * @param text - The JSON, JSONC or JSON5 text to parse
- * @param fallback - Value returned on invalid input. Defaults to `null` when omitted.
- * @returns The parsed value typed as `T`, or `fallback` on invalid input
+ * @returns The parsed value typed as `T`, or `null` on invalid input (pass a `fallback` to get it instead)
  * @see {@link parse} — same parsing, throws a `SyntaxError` instead
  * @see {@link safeParseStrict} — strict JSON only
  * @see {@link safeParseLines} — one value per line (NDJSON, JSON Lines)
@@ -29,6 +28,14 @@ import { parse } from './parse';
  * @since 3.1.3
  */
 export function safeParse<T = unknown>(text: string): T | null;
+/**
+ * Overload taking a `fallback`: returns it instead of `null` on invalid input.
+ *
+ * @param text - The JSON, JSONC or JSON5 text to parse
+ * @param fallback - Value returned on invalid input
+ * @returns The parsed value typed as `T`, or `fallback` on invalid input
+ * @since 3.1.3
+ */
 export function safeParse<T = unknown, F = T>(text: string, fallback: F): T | F;
 export function safeParse<T, F>(text: string, fallback?: F): T | F | null {
   try {

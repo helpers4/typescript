@@ -17,8 +17,7 @@ import { parseStrict } from './parseStrict';
  * apart from an omitted argument — and `null` otherwise. Never throws.
  *
  * @param text - The JSON text to parse
- * @param fallback - Value returned on invalid input. Defaults to `null` when omitted.
- * @returns The parsed value typed as `T`, or `fallback` on invalid input
+ * @returns The parsed value typed as `T`, or `null` on invalid input (pass a `fallback` to get it instead)
  * @see {@link parseStrict} — same parsing, throws a `SyntaxError` instead
  * @see {@link safeParse} — also accepts JSONC and JSON5
  * @example
@@ -28,6 +27,14 @@ import { parseStrict } from './parseStrict';
  * @since 3.1.3
  */
 export function safeParseStrict<T = unknown>(text: string): T | null;
+/**
+ * Overload taking a `fallback`: returns it instead of `null` on invalid input.
+ *
+ * @param text - The JSON text to parse
+ * @param fallback - Value returned on invalid input
+ * @returns The parsed value typed as `T`, or `fallback` on invalid input
+ * @since 3.1.3
+ */
 export function safeParseStrict<T = unknown, F = T>(text: string, fallback: F): T | F;
 export function safeParseStrict<T, F>(text: string, fallback?: F): T | F | null {
   try {

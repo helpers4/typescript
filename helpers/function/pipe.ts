@@ -10,7 +10,7 @@
  *
  * The inverse of {@link compose}, which applies functions right-to-left.
  *
- * @param fns - Functions to compose (left-to-right)
+ * @param fn1 - The first function. The overloads accept up to eight functions in all, passed as `fn1, fn2, …`.
  * @returns A function that applies `fns` in order
  * @see {@link compose} for right-to-left composition
  * @example

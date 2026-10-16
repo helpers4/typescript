@@ -18,9 +18,7 @@ import { type ParseLinesOptions, parseLines } from './parseLines';
  * a fallback, pass `null` as the fallback.
  *
  * @param text - The newline-delimited JSON text
- * @param fallback - Value returned on invalid input. Defaults to `null` when omitted.
- * @param options - How to handle blank and invalid lines — see {@link ParseLinesOptions}
- * @returns The parsed values typed as `T[]`, or `fallback` on invalid input
+ * @returns The parsed values typed as `T[]`, or `null` on invalid input (pass a `fallback` to get it instead)
  * @see {@link parseLines} — same parsing, throws a `SyntaxError` instead
  * @see {@link safeParseSequence} — JSON text sequences (RFC 7464)
  * @example
@@ -30,6 +28,15 @@ import { type ParseLinesOptions, parseLines } from './parseLines';
  * @since 3.1.3
  */
 export function safeParseLines<T = unknown>(text: string): T[] | null;
+/**
+ * Overload taking a `fallback`: returns it instead of `null` on invalid input.
+ *
+ * @param text - The newline-delimited JSON text
+ * @param fallback - Value returned on invalid input
+ * @param options - How to handle blank and invalid lines — see {@link ParseLinesOptions}
+ * @returns The parsed values typed as `T[]`, or `fallback` on invalid input
+ * @since 3.1.3
+ */
 export function safeParseLines<T = unknown, F = T[]>(text: string, fallback: F, options?: ParseLinesOptions): T[] | F;
 export function safeParseLines<T, F>(text: string, fallback?: F, options?: ParseLinesOptions): T[] | F | null {
   try {
