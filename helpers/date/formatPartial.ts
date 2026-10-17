@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { parsePartialDate } from './parsePartialDate';
-import type { PartialDatePrecision } from './parsePartialDate';
+import { parsePartial } from './parsePartial';
+import type { PartialDatePrecision } from './parsePartial';
 
 const FORMATS: Record<PartialDatePrecision, Intl.DateTimeFormatOptions> = {
   year: { year: 'numeric' },
@@ -17,19 +17,19 @@ const FORMATS: Record<PartialDatePrecision, Intl.DateTimeFormatOptions> = {
  * Formats a partial ISO date at the precision it was given, in English and UTC: an approximate
  * year reads `c. 2008`, a month `Mar 2008` and a full day `Mar 9, 2008`.
  *
- * Returns `null` when {@link parsePartialDate} would.
+ * Returns `null` when {@link parsePartial} would.
  *
  * @param input - A `YYYY`, `YYYY-MM` or `YYYY-MM-DD` string
  * @returns The label, or `null`
  * @example
- * formatPartialDate('2008')       // => 'c. 2008'
- * formatPartialDate('2008-03')    // => 'Mar 2008'
- * formatPartialDate('2008-03-09') // => 'Mar 9, 2008'
- * formatPartialDate('nope')       // => null
+ * formatPartial('2008')       // => 'c. 2008'
+ * formatPartial('2008-03')    // => 'Mar 2008'
+ * formatPartial('2008-03-09') // => 'Mar 9, 2008'
+ * formatPartial('nope')       // => null
  * @since next
  */
-export function formatPartialDate(input: string): string | null {
-  const parsed = parsePartialDate(input);
+export function formatPartial(input: string): string | null {
+  const parsed = parsePartial(input);
   if (!parsed) return null;
   const label = new Intl.DateTimeFormat('en', { ...FORMATS[parsed.precision], timeZone: 'UTC' }).format(parsed.date);
   return parsed.precision === 'year' ? `c. ${label}` : label;

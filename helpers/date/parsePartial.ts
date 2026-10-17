@@ -15,7 +15,7 @@ export type PartialDatePrecision = 'year' | 'month' | 'day';
  * @since next
  */
 export interface PartialDate {
-  /** The date at 00:00:00.000 UTC, anchored as described in {@link parsePartialDate}. */
+  /** The date at 00:00:00.000 UTC, anchored as described in {@link parsePartial}. */
   date: Date;
   /** `'year'` for `YYYY`, `'month'` for `YYYY-MM`, `'day'` for `YYYY-MM-DD`. */
   precision: PartialDatePrecision;
@@ -38,14 +38,14 @@ const PARTIAL_DATE = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/;
  * @param input - A `YYYY`, `YYYY-MM` or `YYYY-MM-DD` string
  * @returns The anchored date with its precision, or `null`
  * @example
- * parsePartialDate('2008')       // => { date: 2008-07-01T00:00:00.000Z, precision: 'year' }
- * parsePartialDate('2008-03')    // => { date: 2008-03-15T00:00:00.000Z, precision: 'month' }
- * parsePartialDate('2008-03-09') // => { date: 2008-03-09T00:00:00.000Z, precision: 'day' }
- * parsePartialDate('2008-13')    // => null
- * @see {@link formatPartialDate} to display it
+ * parsePartial('2008')       // => { date: 2008-07-01T00:00:00.000Z, precision: 'year' }
+ * parsePartial('2008-03')    // => { date: 2008-03-15T00:00:00.000Z, precision: 'month' }
+ * parsePartial('2008-03-09') // => { date: 2008-03-09T00:00:00.000Z, precision: 'day' }
+ * parsePartial('2008-13')    // => null
+ * @see {@link formatPartial} to display it
  * @since next
  */
-export function parsePartialDate(input: string): PartialDate | null {
+export function parsePartial(input: string): PartialDate | null {
   const match = PARTIAL_DATE.exec(input);
   if (!match) return null;
   const year = Number(match[1]);

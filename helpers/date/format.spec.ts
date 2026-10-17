@@ -6,7 +6,7 @@
 
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { toISO8601, toRFC2822, toRFC3339 } from './format';
+import { format, toISO8601, toRFC2822, toRFC3339 } from './format';
 
 // Constrain dates to 4-digit year range to avoid ISO string edge cases (negative years, <1000 years)
 const YEAR_1000 = new Date('1000-01-01T00:00:00.000Z').getTime();
@@ -134,5 +134,29 @@ describe('toRFC2822 — contract', () => {
 
   it('null → null', () => {
     expect(toRFC2822(null as unknown as Date)).toBeNull();
+  });
+});
+
+describe('format — property-based', () => {
+  it('always contains the UTC year of the date', () => {
+    fc.assert(fc.property(
+      fc.date({ min: new Date('1971-01-01'), max: new Date('2099-12-31'), noInvalidDate: true }),
+      (d) => {
+        expect(format(d)).toContain(String(d.getUTCFullYear()));
+      },
+    ));
+  });
+
+  it('never throws', () => {
+    fc.assert(fc.property(fc.string(), (s) => {
+      const r = format(s);
+      expect(r === null || typeof r === 'string').toBe(true);
+    }));
+  });
+});
+
+describe('format — contract', () => {
+  it('returns null for an empty string', () => {
+    expect(format('')).toBeNull();
   });
 });
