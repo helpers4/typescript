@@ -5,7 +5,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { toISO8601, toRFC2822, toRFC3339 } from './format';
+import { format, toISO8601, toRFC2822, toRFC3339 } from './format';
 
 describe('toISO8601', () => {
   it('should convert a Date object to ISO 8601 format', () => {
@@ -160,5 +160,35 @@ describe('toRFC2822', () => {
     const withoutMs = toRFC3339(date, false);
     expect(withMs).toBe('2025-06-15T08:45:30.789Z');
     expect(withoutMs).toBe('2025-06-15T08:45:30Z');
+  });
+});
+
+describe('format', () => {
+  it('formats as "Mon D, YYYY" in English by default', () => {
+    expect(format('2026-07-27')).toBe('Jul 27, 2026');
+  });
+
+  it('replaces the default format with the given options', () => {
+    expect(format('2026-07-27', { month: 'short', day: 'numeric' })).toBe('Jul 27');
+    expect(format('2026-07-27', { year: 'numeric' })).toBe('2026');
+  });
+
+  it('uses the given locale', () => {
+    expect(format('2026-07-27', undefined, 'fr')).toBe('27 juil. 2026');
+  });
+
+  it('reads the date in UTC, whatever the machine timezone', () => {
+    expect(format('2026-01-01T00:00:00Z')).toBe('Jan 1, 2026');
+    expect(format('2026-12-31T23:59:59Z')).toBe('Dec 31, 2026');
+  });
+
+  it('accepts a Date and a timestamp', () => {
+    expect(format(new Date('2026-07-27T12:00:00Z'))).toBe('Jul 27, 2026');
+    expect(format(Date.UTC(2026, 6, 27, 12))).toBe('Jul 27, 2026');
+  });
+
+  it('returns null for an invalid date or locale', () => {
+    expect(format('nope')).toBeNull();
+    expect(format('2026-07-27', undefined, 'not a locale!')).toBeNull();
   });
 });

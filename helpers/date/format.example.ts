@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { toISO8601, toRFC2822, toRFC3339 } from './format';
+import { format, toISO8601, toRFC2822, toRFC3339 } from './format';
 import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
@@ -39,6 +39,27 @@ const examples: HelperExamples = {
       assert: () => {
         const result = toRFC2822(new Date('2025-01-19T12:30:00Z'));
         if (result !== 'Sun, 19 Jan 2025 12:30:00 +0000') throw new Error(`Unexpected: ${result}`);
+      },
+    },
+    {
+      title: 'Stable short label',
+      description: 'UTC and English by default, so the label is the same on every machine.',
+      code: `format('2026-07-27')
+// => 'Jul 27, 2026'`,
+      assert: () => {
+        if (format('2026-07-27') !== 'Jul 27, 2026') throw new Error('Unexpected result');
+      },
+    },
+    {
+      title: 'Custom fields and locale',
+      description: 'The options replace the default format; the locale is the third argument.',
+      code: `format('2026-07-27', { month: 'short', day: 'numeric' })
+// => 'Jul 27'
+format('2026-07-27', undefined, 'fr')
+// => '27 juil. 2026'`,
+      assert: () => {
+        if (format('2026-07-27', { month: 'short', day: 'numeric' }) !== 'Jul 27') throw new Error('fields');
+        if (format('2026-07-27', undefined, 'fr') !== '27 juil. 2026') throw new Error('locale');
       },
     },
   ],
