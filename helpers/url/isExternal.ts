@@ -18,14 +18,14 @@ const ABSOLUTE_HTTP_OR_PROTOCOL_RELATIVE = /^(?:https?:)?\/\//i;
  * @param base - The current origin or page URL to compare with (optional)
  * @returns `true` if the link leaves the origin, `false` otherwise
  * @example
- * isExternalUrl('https://example.com/a')                          // => true
- * isExternalUrl('https://example.com/a', 'https://example.com')   // => false
- * isExternalUrl('//cdn.example.com/a.js', 'https://example.com')  // => true
- * isExternalUrl('/about')                                         // => false
- * isExternalUrl('mailto:me@example.com')                          // => false
+ * isExternal('https://example.com/a')                          // => true
+ * isExternal('https://example.com/a', 'https://example.com')   // => false
+ * isExternal('//cdn.example.com/a.js', 'https://example.com')  // => true
+ * isExternal('/about')                                         // => false
+ * isExternal('mailto:me@example.com')                          // => false
  * @since 3.1.4
  */
-export function isExternalUrl(url: string, base?: string | URL): boolean {
+export function isExternal(url: string, base?: string | URL): boolean {
   const trimmed = url.trim();
   if (!ABSOLUTE_HTTP_OR_PROTOCOL_RELATIVE.test(trimmed)) return false;
   if (base === undefined) return true;

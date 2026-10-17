@@ -6,31 +6,31 @@
 
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import { isExternalUrl } from './isExternalUrl';
+import { isExternal } from './isExternal';
 
-describe('isExternalUrl — property-based', () => {
+describe('isExternal — property-based', () => {
   it('never throws', () => {
     fc.assert(fc.property(fc.string(), fc.option(fc.string(), { nil: undefined }), (url, base) => {
-      expect(typeof isExternalUrl(url, base)).toBe('boolean');
+      expect(typeof isExternal(url, base)).toBe('boolean');
     }));
   });
 
   it('a URL on the base origin is never external', () => {
     fc.assert(fc.property(fc.webUrl(), fc.webPath(), (origin, path) => {
       const base = new URL(origin).origin;
-      expect(isExternalUrl(`${base}${path}`, base)).toBe(false);
+      expect(isExternal(`${base}${path}`, base)).toBe(false);
     }));
   });
 
   it('a root-relative path is never external', () => {
     fc.assert(fc.property(fc.webPath(), (path) => {
-      expect(isExternalUrl(path.replace(/^\/+/, '/x'), 'https://example.com')).toBe(false);
+      expect(isExternal(path.replace(/^\/+/, '/x'), 'https://example.com')).toBe(false);
     }));
   });
 });
 
-describe('isExternalUrl — contract', () => {
+describe('isExternal — contract', () => {
   it('empty string is internal', () => {
-    expect(isExternalUrl('')).toBe(false);
+    expect(isExternal('')).toBe(false);
   });
 });
