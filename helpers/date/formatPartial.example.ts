@@ -24,6 +24,16 @@ formatPartial('2008-03-09') // => 'Mar 9, 2008'`,
       },
     },
     {
+      title: 'Another language',
+      description: 'The locale sets the month names; the marker for a year alone is a word, so you give it.',
+      code: `formatPartial('2008', { locale: 'fr', approximate: 'vers' }) // => 'vers 2008'
+formatPartial('2008-03-09', { locale: 'fr' })                // => '9 mars 2008'`,
+      assert: () => {
+        if (formatPartial('2008', { locale: 'fr', approximate: 'vers' }) !== 'vers 2008') throw new Error('year');
+        if (formatPartial('2008-03-09', { locale: 'fr' }) !== '9 mars 2008') throw new Error('day');
+      },
+    },
+    {
       title: 'Invalid input',
       description: 'Returns null instead of a wrong label.',
       code: `formatPartial('2008-13') // => null`,

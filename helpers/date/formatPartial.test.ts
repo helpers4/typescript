@@ -29,4 +29,26 @@ describe('formatPartial', () => {
     expect(formatPartial('2008-13')).toBeNull();
     expect(formatPartial('nope')).toBeNull();
   });
+
+  it('uses the locale for month names and order', () => {
+    expect(formatPartial('2008-03', { locale: 'fr' })).toBe('mars 2008');
+    expect(formatPartial('2008-03-09', { locale: 'fr' })).toBe('9 mars 2008');
+  });
+
+  it('lets the approximate marker follow the language', () => {
+    expect(formatPartial('2008', { locale: 'fr', approximate: 'vers' })).toBe('vers 2008');
+  });
+
+  it('gives the bare year with an empty marker', () => {
+    expect(formatPartial('2008', { approximate: '' })).toBe('2008');
+  });
+
+  it('only marks a year alone as approximate', () => {
+    expect(formatPartial('2008-03', { approximate: 'vers' })).toBe('Mar 2008');
+    expect(formatPartial('2008-03-09', { approximate: 'vers' })).toBe('Mar 9, 2008');
+  });
+
+  it('returns null for an invalid locale', () => {
+    expect(formatPartial('2008-03', { locale: 'not a locale!' })).toBeNull();
+  });
 });
