@@ -33,6 +33,7 @@
 - commit — Conventional Commits parsing, validation, analysis
 - date — date/time utilities, comparison, validation
 - function — function composition and wrappers (memoize, retry, debounce, …)
+- geometry — 2D points, rectangles, affine matrices, `fit` (CSS object-fit), `matrixToCss`, polyline simplification
 - guard — runtime type guards (`isString`, `isArray`, `isDefined`, …)
 - id — unique identifier generation (UUID v7, …)
 - markdown — Markdown formatting/escaping
