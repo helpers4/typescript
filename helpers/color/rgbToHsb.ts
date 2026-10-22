@@ -9,7 +9,7 @@ import type { RgbColor } from './hexToRgb';
 
 /**
  * An HSB(A) color (also called HSV), the model of design tool color pickers.
- * @since next
+ * @since 3.1.5
  */
 export interface HsbColor {
   /** Hue, 0-360 degrees */
@@ -34,7 +34,7 @@ export interface HsbColor {
  * @example
  * rgbToHsb({ r: 255, g: 0, b: 0 })
  * // => { h: 0, s: 100, b: 100, a: 1 }
- * @since next
+ * @since 3.1.5
  */
 export function rgbToHsb({ r, g, b, a = 1 }: RgbColor): HsbColor {
   const rN = r / 255;

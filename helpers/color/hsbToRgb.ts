@@ -17,7 +17,7 @@ import type { HsbColor } from './rgbToHsb';
  * @example
  * hsbToRgb({ h: 0, s: 100, b: 100 })
  * // => { r: 255, g: 0, b: 0, a: 1 }
- * @since next
+ * @since 3.1.5
  */
 export function hsbToRgb({ h, s, b, a = 1 }: HsbColor): RgbColor {
   const v = b / 100;

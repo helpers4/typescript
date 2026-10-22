@@ -6,7 +6,7 @@
 
 /**
  * A point in 2D space.
- * @since next
+ * @since 3.1.5
  */
 export interface Point {
   x: number;
@@ -15,7 +15,7 @@ export interface Point {
 
 /**
  * A width and a height.
- * @since next
+ * @since 3.1.5
  */
 export interface Size {
   width: number;
@@ -25,7 +25,7 @@ export interface Size {
 /**
  * An axis-aligned rectangle: its top-left corner and its size. Width and height are expected to
  * be non-negative.
- * @since next
+ * @since 3.1.5
  */
 export interface Rect extends Point, Size {}
 
@@ -36,7 +36,7 @@ export interface Rect extends Point, Size {}
  * x' = a·x + c·y + e
  * y' = b·x + d·y + f
  * ```
- * @since next
+ * @since 3.1.5
  */
 export interface Matrix {
   a: number;

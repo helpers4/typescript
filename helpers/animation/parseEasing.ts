@@ -42,7 +42,7 @@ const POSITIONS = new Set(['jump-start', 'jump-end', 'jump-none', 'jump-both', '
  * parseEasing('steps(4, jump-start)')!(0.3)        // => 0.5
  * parseEasing('linear(0, 0.9 50%, 1)')!(0.25)      // => 0.45
  * parseEasing('bounce')                            // => null
- * @since next
+ * @since 3.1.5
  */
 export function parseEasing(css: string): ((t: number) => number) | null {
   const value = css.trim().toLowerCase();

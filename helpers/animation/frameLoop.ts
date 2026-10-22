@@ -6,7 +6,7 @@
 
 /**
  * Options for {@link frameLoop}.
- * @since next
+ * @since 3.1.5
  */
 export interface FrameLoopOptions {
   /** Current time in milliseconds. Defaults to `performance.now`; inject one to test or to drive a recording. */
@@ -15,7 +15,7 @@ export interface FrameLoopOptions {
 
 /**
  * A running {@link frameLoop}.
- * @since next
+ * @since 3.1.5
  */
 export interface FrameLoop {
   /** Stops the loop; `onFrame` is not called again. No effect once it ended. */
@@ -43,7 +43,7 @@ export interface FrameLoop {
  *   ball.style.translate = `0 ${bounce.at(elapsed) * 200}px`;
  *   return elapsed < bounce.durationMs;
  * });
- * @since next
+ * @since 3.1.5
  */
 export function frameLoop(onFrame: (elapsedMs: number) => boolean | void, options: FrameLoopOptions = {}): FrameLoop {
   const { now = () => performance.now() } = options;

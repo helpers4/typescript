@@ -16,7 +16,7 @@
  * @example
  * const stop = watchMedia('(prefers-color-scheme: dark)', (dark) => setTheme(dark ? 'dark' : 'light'));
  * stop();
- * @since next
+ * @since 3.1.5
  */
 export function watchMedia(query: string, listener: (matches: boolean) => void): () => void {
   if (typeof globalThis.matchMedia !== 'function') return () => {};

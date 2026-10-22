@@ -20,7 +20,7 @@ import type { RgbColor } from './hexToRgb';
  * @example
  * rgbToCss({ r: 255, g: 128, b: 0 })         // => 'rgb(255 128 0)'
  * rgbToCss({ r: 255, g: 128, b: 0, a: 0.5 }) // => 'rgb(255 128 0 / 0.5)'
- * @since next
+ * @since 3.1.5
  */
 export function rgbToCss({ r, g, b, a = 1 }: RgbColor): string {
   const channels = [r, g, b].map((n) => Math.round(clamp(n, 0, 255))).join(' ');

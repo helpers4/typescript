@@ -15,7 +15,7 @@ const FORMATS: Record<PartialDatePrecision, Intl.DateTimeFormatOptions> = {
 
 /**
  * Options for {@link formatPartial}.
- * @since next
+ * @since 3.1.5
  */
 export interface FormatPartialOptions {
   /** BCP 47 locale tag (default: `'en'`). Sets the month names and the order of the parts. */
@@ -47,7 +47,7 @@ export interface FormatPartialOptions {
  * formatPartial('2008', { locale: 'fr', approximate: 'vers' }) // => 'vers 2008'
  * formatPartial('2008-03-09', { locale: 'fr' })                // => '9 mars 2008'
  * formatPartial('nope')       // => null
- * @since next
+ * @since 3.1.5
  */
 export function formatPartial(input: string, options: FormatPartialOptions = {}): string | null {
   const { locale = 'en', approximate = 'c.' } = options;

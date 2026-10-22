@@ -17,7 +17,7 @@ import type { MatcherOptions, MatcherPattern } from './createMatcher';
  * @throws {SyntaxError} If a string is an invalid regular expression (`createSafeMatcher(pattern, { syntax: 'regex' })` returns `null` instead)
  * @example
  * createRegexMatcher('^icon-\\d+$', { caseSensitive: false })('Icon-42') // => true
- * @since next
+ * @since 3.1.5
  */
 export function createRegexMatcher(
   pattern: MatcherPattern | readonly MatcherPattern[],

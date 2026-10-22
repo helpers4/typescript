@@ -17,7 +17,7 @@ import type { Rect } from './types';
  * @example
  * intersection({ x: 0, y: 0, width: 10, height: 10 }, { x: 5, y: 5, width: 10, height: 10 })
  * // => { x: 5, y: 5, width: 5, height: 5 }
- * @since next
+ * @since 3.1.5
  */
 export function intersection(a: Rect, b: Rect): Rect | undefined {
   const x = Math.max(a.x, b.x);

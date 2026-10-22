@@ -9,7 +9,7 @@ import { decodeImage } from './decodeImage';
 
 /**
  * Options for {@link preloadImages}.
- * @since next
+ * @since 3.1.5
  */
 export interface PreloadImagesOptions {
   /** Maximum number of images loaded at the same time. Defaults to `6`. */
@@ -28,7 +28,7 @@ export interface PreloadImagesOptions {
  * @example
  * const results = await preloadImages(['/a.png', '/b.png']);
  * const failed = results.filter((result) => result.status === 'rejected');
- * @since next
+ * @since 3.1.5
  */
 export async function preloadImages(
   urls: readonly string[],

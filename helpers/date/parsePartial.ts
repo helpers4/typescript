@@ -6,13 +6,13 @@
 
 /**
  * Precision of a partial ISO date: which parts the input actually gave.
- * @since next
+ * @since 3.1.5
  */
 export type PartialDatePrecision = 'year' | 'month' | 'day';
 
 /**
  * A partial ISO date resolved to a concrete `Date`, with the precision it had.
- * @since next
+ * @since 3.1.5
  */
 export interface PartialDate {
   /** The date at 00:00:00.000 UTC, anchored as described in {@link parsePartial}. */
@@ -43,7 +43,7 @@ const PARTIAL_DATE = /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/;
  * parsePartial('2008-03-09') // => { date: 2008-03-09T00:00:00.000Z, precision: 'day' }
  * parsePartial('2008-13')    // => null
  * @see {@link formatPartial} to display it
- * @since next
+ * @since 3.1.5
  */
 export function parsePartial(input: string): PartialDate | null {
   const match = PARTIAL_DATE.exec(input);

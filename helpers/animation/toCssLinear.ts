@@ -18,7 +18,7 @@
  * @throws {RangeError} If `samples` is not an integer `>= 2`
  * @example
  * toCssLinear((t) => t * t, 5) // => 'linear(0, 0.0625, 0.25, 0.5625, 1)'
- * @since next
+ * @since 3.1.5
  */
 export function toCssLinear(easing: (t: number) => number, samples: number = 32): string {
   if (!(Number.isInteger(samples) && samples >= 2)) {

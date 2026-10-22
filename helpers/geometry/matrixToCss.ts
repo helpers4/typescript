@@ -17,7 +17,7 @@ import type { Matrix } from './types';
  * @example
  * element.style.transform = matrixToCss(fitContain(frame, viewport));
  * matrixToCss({ a: 2, b: 0, c: 0, d: 2, e: 10, f: -5 }) // => 'matrix(2, 0, 0, 2, 10, -5)'
- * @since next
+ * @since 3.1.5
  */
 export function matrixToCss(m: Matrix): string {
   // `+ 0` writes 0 instead of -0.

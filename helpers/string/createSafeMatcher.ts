@@ -17,7 +17,7 @@ import type { MatcherOptions, MatcherPattern } from './createMatcher';
  * @example
  * createSafeMatcher('/(/') // => null
  * createSafeMatcher('*.fig')?.('a.fig') // => true
- * @since next
+ * @since 3.1.5
  */
 export function createSafeMatcher(
   pattern: MatcherPattern | readonly MatcherPattern[],

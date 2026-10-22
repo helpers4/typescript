@@ -20,7 +20,7 @@
  * await loadFont('Inter', '/fonts/Inter-Bold.woff2', { weight: '700' });
  * @example
  * await loadFont('Embedded', await file.arrayBuffer());
- * @since next
+ * @since 3.1.5
  */
 export async function loadFont(
   family: string,

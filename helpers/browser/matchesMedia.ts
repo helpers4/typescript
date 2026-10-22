@@ -13,7 +13,7 @@
  * @returns `true` if the query matches now
  * @example
  * matchesMedia('(prefers-color-scheme: dark)') // => true in dark mode
- * @since next
+ * @since 3.1.5
  */
 export function matchesMedia(query: string): boolean {
   return typeof globalThis.matchMedia === 'function' && globalThis.matchMedia(query).matches;

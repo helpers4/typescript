@@ -6,7 +6,7 @@
 
 /**
  * Options for {@link whenIdle}.
- * @since next
+ * @since 3.1.5
  */
 export interface WhenIdleOptions {
   /** Runs the callback after this many milliseconds even if the browser never becomes idle. */
@@ -25,7 +25,7 @@ export interface WhenIdleOptions {
  * @returns A function that cancels the callback if it has not run yet
  * @example
  * const cancel = whenIdle(() => preloadImages(nextScreens), { timeout: 2000 });
- * @since next
+ * @since 3.1.5
  */
 export function whenIdle(callback: () => void, options: WhenIdleOptions = {}): () => void {
   if (typeof globalThis.requestIdleCallback === 'function') {

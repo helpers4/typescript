@@ -14,7 +14,7 @@ import type { Matrix } from './types';
  * @returns The translation matrix
  * @example
  * applyToPoint(translate(10, 5), { x: 1, y: 1 }) // => { x: 11, y: 6 }
- * @since next
+ * @since 3.1.5
  */
 export function translate(tx: number, ty: number): Matrix {
   return { a: 1, b: 0, c: 0, d: 1, e: tx, f: ty };

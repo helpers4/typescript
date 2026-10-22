@@ -17,7 +17,7 @@ import type { Matrix, Size } from './types';
  * @returns The content-to-box matrix (`a`/`d` scales, `e`/`f` position)
  * @example
  * fitNone({ width: 200, height: 100 }, { width: 100, height: 100 }) // => scale 1, at (-50, 0)
- * @since next
+ * @since 3.1.5
  */
 export function fitNone(content: Size, box: Size, align?: FitAlign): Matrix {
   return fit(content, box, { mode: 'none', align });

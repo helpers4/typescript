@@ -15,7 +15,7 @@ import { matchesMedia } from './matchesMedia';
  * @returns `true` if animations should be reduced or removed
  * @example
  * const duration = prefersReducedMotion() ? 0 : 300;
- * @since next
+ * @since 3.1.5
  */
 export function prefersReducedMotion(): boolean {
   return matchesMedia('(prefers-reduced-motion: reduce)');

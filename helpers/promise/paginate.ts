@@ -6,7 +6,7 @@
 
 /**
  * Options for {@link paginate}.
- * @since next
+ * @since 3.1.5
  */
 export interface PaginateOptions {
   /**
@@ -41,7 +41,7 @@ export interface PaginateOptions {
  * @example
  * // Offset-based API: derive the offset from the page number
  * const posts = await paginate((page) => fetchPosts({ limit: 50, offset: (page - 1) * 50 }), { pageSize: 50 })
- * @since next
+ * @since 3.1.5
  */
 export async function paginate<T>(
   fetchPage: (page: number) => Promise<readonly T[] | null>,

@@ -21,7 +21,7 @@
  * @example
  * const ease = cubicBezier(0.25, 0.1, 0.25, 1); // CSS `ease`
  * ease(0.5) // => 0.8024...
- * @since next
+ * @since 3.1.5
  */
 export function cubicBezier(x1: number, y1: number, x2: number, y2: number): (t: number) => number {
   if (!(x1 >= 0 && x1 <= 1 && x2 >= 0 && x2 <= 1)) {

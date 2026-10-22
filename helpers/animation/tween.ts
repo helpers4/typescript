@@ -11,7 +11,7 @@ import type { Interpolatable, Interpolated } from './interpolate';
 
 /**
  * Options for {@link tween}.
- * @since next
+ * @since 3.1.5
  */
 export interface TweenOptions<T, V> {
   /** The value at the start. */
@@ -36,7 +36,7 @@ export interface TweenOptions<T, V> {
 
 /**
  * A running {@link tween}: the {@link FrameLoop} that drives it.
- * @since next
+ * @since 3.1.5
  */
 export type Tween = FrameLoop;
 
@@ -62,7 +62,7 @@ export type Tween = FrameLoop;
  * @example
  * // Any value, with your own blending
  * tween({ from: 'red', to: 'blue', durationMs: 300, interpolate: mixColors, onUpdate: paint });
- * @since next
+ * @since 3.1.5
  */
 export function tween<T, V>(options: TweenOptions<T, V> & { interpolate: (from: T, to: T, t: number) => V }): Tween;
 export function tween<T extends Interpolatable>(options: TweenOptions<T, Interpolated<T>>): Tween;

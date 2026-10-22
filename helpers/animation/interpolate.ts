@@ -9,14 +9,14 @@ import { lerp } from '../number/lerp';
 /**
  * A value {@link interpolate} can blend: a number, or arrays and plain objects of them, nested
  * at will (a point, a color, a whole set of style properties).
- * @since next
+ * @since 3.1.5
  */
 export type Interpolatable = number | readonly Interpolatable[] | { readonly [key: string]: Interpolatable };
 
 /**
  * The type of an interpolated value: the shape of the input, with literal numbers widened to
  * `number` (`interpolate(0, 10, t)` is a `number`, not `0 | 10`).
- * @since next
+ * @since 3.1.5
  */
 export type Interpolated<T> = T extends number
   ? number
@@ -40,7 +40,7 @@ export type Interpolated<T> = T extends number
  * interpolate(0, 10, 0.5)                                  // => 5
  * interpolate({ x: 0, y: 100 }, { x: 50, y: 0 }, 0.5)      // => { x: 25, y: 50 }
  * interpolate([0, 0, 0], [255, 128, 0], 0.5)               // => [127.5, 64, 0]
- * @since next
+ * @since 3.1.5
  */
 export function interpolate<T extends Interpolatable>(from: T, to: T, t: number): Interpolated<T> {
   return blend(from, to, t, '') as Interpolated<T>;

@@ -16,7 +16,7 @@ import type { Matrix, Rect } from './types';
  * @returns The bounding box of the transformed rectangle
  * @example
  * applyToRect(scale(2), { x: 1, y: 1, width: 2, height: 3 }) // => { x: 2, y: 2, width: 4, height: 6 }
- * @since next
+ * @since 3.1.5
  */
 export function applyToRect(m: Matrix, r: Rect): Rect {
   const corners = [

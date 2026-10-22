@@ -20,7 +20,7 @@ import type { Point, Rect } from './types';
  * contains({ x: 0, y: 0, width: 10, height: 10 }, { x: 0, y: 5 })                       // => true
  * contains({ x: 0, y: 0, width: 10, height: 10 }, { x: 10, y: 5 })                      // => false
  * contains({ x: 0, y: 0, width: 10, height: 10 }, { x: 5, y: 5, width: 5, height: 5 })  // => true
- * @since next
+ * @since 3.1.5
  */
 export function contains(r: Rect, target: Point | Rect): boolean {
   if ('width' in target) {

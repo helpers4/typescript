@@ -6,7 +6,7 @@
 
 /**
  * Physical parameters of a {@link spring}, as design tools (Figma, Framer, ...) expose them.
- * @since next
+ * @since 3.1.5
  */
 export interface SpringOptions {
   /** Mass of the moving object. Defaults to `1`; must be positive. */
@@ -21,7 +21,7 @@ export interface SpringOptions {
 
 /**
  * A spring animation from `0` to `1`, created by {@link spring}.
- * @since next
+ * @since 3.1.5
  */
 export interface Spring {
   /** Time until the spring settles: from then on it stays within `0.001` of `1`. */
@@ -50,7 +50,7 @@ const REST = 0.001;
  *   duration: bouncy.durationMs,
  *   easing: toCssLinear(bouncy.easing),
  * });
- * @since next
+ * @since 3.1.5
  */
 export function spring(options: SpringOptions = {}): Spring {
   const { mass = 1, stiffness = 100, damping = 10, initialVelocity = 0 } = options;

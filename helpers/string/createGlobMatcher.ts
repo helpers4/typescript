@@ -18,7 +18,7 @@ import type { MatcherOptions, MatcherPattern } from './createMatcher';
  * const isSource = createGlobMatcher(['/src/*.ts', '!*.test.ts']);
  * isSource('/src/index.ts')      // => true
  * isSource('/src/index.test.ts') // => false
- * @since next
+ * @since 3.1.5
  */
 export function createGlobMatcher(
   pattern: MatcherPattern | readonly MatcherPattern[],

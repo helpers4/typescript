@@ -25,7 +25,7 @@
  *   image.src = image.dataset.src!;
  *   stop();
  * }, { rootMargin: '200px' });
- * @since next
+ * @since 3.1.5
  */
 export function observeIntersection(
   element: Element,

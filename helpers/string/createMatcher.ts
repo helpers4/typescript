@@ -9,13 +9,13 @@ import { globToRegExp } from './globToRegExp';
 /**
  * One pattern accepted by {@link createMatcher}: a string (read according to
  * {@link MatcherOptions.syntax}), a `RegExp`, or a predicate of your own.
- * @since next
+ * @since 3.1.5
  */
 export type MatcherPattern = string | RegExp | ((text: string) => boolean);
 
 /**
  * Options for {@link createMatcher} and {@link createSafeMatcher}.
- * @since next
+ * @since 3.1.5
  */
 export interface MatcherOptions {
   /**
@@ -60,7 +60,7 @@ const REGEXP_LITERAL = /^\/(.+)\/([dgimsuvy]*)$/s;
  * isScreen('Screen 2 (old)') // => false
  * @example
  * createMatcher('button*', { caseSensitive: false })('Button / Primary') // => true
- * @since next
+ * @since 3.1.5
  */
 export function createMatcher(
   pattern: MatcherPattern | readonly MatcherPattern[],

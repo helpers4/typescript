@@ -14,7 +14,7 @@ import type { Matrix } from './types';
  * @returns The rotation matrix
  * @example
  * applyToPoint(rotate(Math.PI / 2), { x: 1, y: 0 }) // => { x: 0, y: 1 } (rounded)
- * @since next
+ * @since 3.1.5
  */
 export function rotate(radians: number): Matrix {
   const cos = Math.cos(radians);

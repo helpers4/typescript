@@ -15,7 +15,7 @@ import type { Matrix } from './types';
  * @example
  * applyToPoint(scale(2), { x: 3, y: 4 })    // => { x: 6, y: 8 }
  * applyToPoint(scale(1, -1), { x: 3, y: 4 }) // => { x: 3, y: -4 } (vertical flip)
- * @since next
+ * @since 3.1.5
  */
 export function scale(sx: number, sy: number = sx): Matrix {
   return { a: sx, b: 0, c: 0, d: sy, e: 0, f: 0 };

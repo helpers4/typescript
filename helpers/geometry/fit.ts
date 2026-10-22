@@ -13,14 +13,14 @@ import type { Matrix, Size } from './types';
  * - `'fill'`: stretched to the box on each axis, proportions not kept;
  * - `'none'`: not scaled;
  * - `'scale-down'`: like `'contain'`, but never enlarged.
- * @since next
+ * @since 3.1.5
  */
 export type FitMode = 'contain' | 'cover' | 'fill' | 'none' | 'scale-down';
 
 /**
  * Where {@link fit} places content in the space left over (or overflowing), as CSS
  * `object-position`: `0` is left / top, `0.5` centered, `1` right / bottom.
- * @since next
+ * @since 3.1.5
  */
 export interface FitAlign {
   /** Horizontal position, `0.5` (centered) by default. */
@@ -31,7 +31,7 @@ export interface FitAlign {
 
 /**
  * Options for {@link fit}.
- * @since next
+ * @since 3.1.5
  */
 export interface FitOptions {
   /** How to size the content. Defaults to `'contain'`. */
@@ -59,7 +59,7 @@ export interface FitOptions {
  * @example
  * fit({ width: 200, height: 100 }, { width: 100, height: 100 }, { mode: 'cover', align: { x: 0 } })
  * // => { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 } (cropped on the right)
- * @since next
+ * @since 3.1.5
  */
 export function fit(content: Size, box: Size, options: FitOptions = {}): Matrix {
   const { mode = 'contain', align = {} } = options;

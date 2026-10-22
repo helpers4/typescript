@@ -10,7 +10,7 @@
  * - `'jump-start'` (or `'start'`): the first jump at the start;
  * - `'jump-both'`: a jump at both ends, so neither `0` nor `1` is held;
  * - `'jump-none'`: no jump at either end, `0` and `1` are held for a step each.
- * @since next
+ * @since 3.1.5
  */
 export type StepPosition = 'jump-start' | 'jump-end' | 'jump-none' | 'jump-both' | 'start' | 'end';
 
@@ -30,7 +30,7 @@ export type StepPosition = 'jump-start' | 'jump-end' | 'jump-none' | 'jump-both'
  * fourFrames(0.3)  // => 0.25
  * fourFrames(1)    // => 1
  * steps(4, 'jump-start')(0.3) // => 0.5
- * @since next
+ * @since 3.1.5
  */
 export function steps(count: number, position: StepPosition = 'jump-end'): (t: number) => number {
   const minimum = position === 'jump-none' ? 2 : 1;

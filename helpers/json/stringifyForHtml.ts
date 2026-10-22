@@ -35,7 +35,7 @@ const ESCAPES: Record<string, string> = {
  * // => '{"html":"\\u003c/script\\u003e\\u003cb\\u003e"}'
  * @example
  * `<script type="application/json" id="data">${stringifyForHtml(payload)}</script>`
- * @since next
+ * @since 3.1.5
  */
 export function stringifyForHtml(value: unknown): string {
   return stringify(value, { indent: 0 }).replace(/[<>&\u2028\u2029]/g, (char) => ESCAPES[char] as string);

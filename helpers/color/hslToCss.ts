@@ -20,7 +20,7 @@ import type { HslColor } from './rgbToHsl';
  * @example
  * hslToCss({ h: 210, s: 100, l: 50 })         // => 'hsl(210 100% 50%)'
  * hslToCss({ h: -30, s: 80, l: 40, a: 0.25 }) // => 'hsl(330 80% 40% / 0.25)'
- * @since next
+ * @since 3.1.5
  */
 export function hslToCss({ h, s, l, a = 1 }: HslColor): string {
   const hue = roundTo((((h % 360) + 360) % 360), 1) % 360;

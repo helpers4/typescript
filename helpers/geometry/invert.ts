@@ -19,7 +19,7 @@ import type { Matrix } from './types';
  * @example
  * invert(translate(10, 5)) // => translate(-10, -5)
  * invert(scale(0))         // => undefined
- * @since next
+ * @since 3.1.5
  */
 export function invert(m: Matrix): Matrix | undefined {
   const det = m.a * m.d - m.b * m.c;

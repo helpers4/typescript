@@ -15,7 +15,7 @@ import type { Rect } from './types';
  * @example
  * union([{ x: 0, y: 0, width: 10, height: 10 }, { x: 20, y: 5, width: 10, height: 10 }])
  * // => { x: 0, y: 0, width: 30, height: 15 }
- * @since next
+ * @since 3.1.5
  */
 export function union(rects: readonly Rect[]): Rect | undefined {
   if (rects.length === 0) return undefined;

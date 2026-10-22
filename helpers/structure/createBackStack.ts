@@ -6,7 +6,7 @@
 
 /**
  * Options for {@link createBackStack}.
- * @since next
+ * @since 3.1.5
  */
 export interface BackStackOptions {
   /**
@@ -18,7 +18,7 @@ export interface BackStackOptions {
 
 /**
  * A back stack created by {@link createBackStack}.
- * @since next
+ * @since 3.1.5
  */
 export interface BackStack<T> {
   /** The current entry. */
@@ -59,7 +59,7 @@ export interface BackStack<T> {
  * screens.push('settings');
  * screens.back();  // => 'settings' (the entry left)
  * screens.current; // => 'home'
- * @since next
+ * @since 3.1.5
  */
 export function createBackStack<T>(initial: T, options: BackStackOptions = {}): BackStack<T> {
   const { limit = Infinity } = options;

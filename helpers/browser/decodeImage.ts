@@ -16,7 +16,7 @@
  * @example
  * const image = await decodeImage('/screens/home.png');
  * container.replaceChildren(image);
- * @since next
+ * @since 3.1.5
  */
 export async function decodeImage(src: string): Promise<HTMLImageElement> {
   if (typeof globalThis.Image !== 'function') throw new TypeError('decodeImage needs a browser (no Image constructor)');

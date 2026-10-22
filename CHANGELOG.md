@@ -8,6 +8,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.1.5] - 2026-10-22
+
+### 🚀 Features
+- **animation**: add the animation category
+- **array**: add mapSettled
+- **browser**: add the browser category
+- **color**: add rgbToHsb, hsbToRgb, rgbToCss and hslToCss
+- **date**: add a locale and an approximate marker to formatPartial
+- **date**: add formatDate
+- **date**: add formatPartialDate
+- **date**: add parsePartialDate
+- **geometry**: add the geometry category
+- **json**: add stringifyForHtml
+- **promise**: add fetchJson
+- **promise**: add paginate
+- **string**: add createMatcher, createSafeMatcher, createGlobMatcher and createRegexMatcher
+- **structure**: add createBackStack
+
+### 🐛 Bug Fixes
+- **deps**: bump markdown-it to 14.3.3
+
+### 🔧 Miscellaneous
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **deps-dev**: bump oxlint
+- **deps-dev**: bump happy-dom
+- **deps-dev**: bump the dev-dependencies group across 1 directory with 5 updates
+- add the animation, browser and geometry commit scopes
+
+### ♻️ Refactoring
+- **date**: drop the redundant Date from the new helper names
+- **url**: rename isExternalUrl to isExternal [**BREAKING**]
+
+### 📝 Documentation
+- **helpers4**: document each overload with its own parameters
+
+### 📌 Dependencies
+- **deps**: bump github/codeql-action/upload-sarif
+
 ## [3.1.4] - 2026-10-16
 
 ### 🚀 Features
@@ -1200,6 +1240,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.1.5]: https://github.com/helpers4/typescript/compare/v3.1.4...v3.1.5
 [3.1.4]: https://github.com/helpers4/typescript/compare/v3.1.3...v3.1.4
 [3.1.3]: https://github.com/helpers4/typescript/compare/v3.1.2...v3.1.3
 [3.1.2]: https://github.com/helpers4/typescript/compare/v3.1.1...v3.1.2

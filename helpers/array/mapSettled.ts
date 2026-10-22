@@ -21,7 +21,7 @@ import { runConcurrentMap } from './_concurrentMap.js';
  * @example
  * const results = await mapSettled(urls, (url) => fetch(url), 4);
  * const failed = urls.filter((_, i) => results[i]!.status === 'rejected');
- * @since next
+ * @since 3.1.5
  */
 export async function mapSettled<T, R>(
   array: readonly T[],

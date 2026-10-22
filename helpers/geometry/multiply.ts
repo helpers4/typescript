@@ -19,7 +19,7 @@ import type { Matrix } from './types';
  * @example
  * // Scale around the point (50, 50)
  * multiply(translate(50, 50), scale(2), translate(-50, -50))
- * @since next
+ * @since 3.1.5
  */
 export function multiply(...matrices: readonly Matrix[]): Matrix {
   let m: Matrix = { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };

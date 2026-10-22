@@ -14,7 +14,7 @@ import type { Matrix, Point } from './types';
  * @returns The transformed point
  * @example
  * applyToPoint(translate(10, 5), { x: 1, y: 1 }) // => { x: 11, y: 6 }
- * @since next
+ * @since 3.1.5
  */
 export function applyToPoint(m: Matrix, p: Point): Point {
   return { x: m.a * p.x + m.c * p.y + m.e, y: m.b * p.x + m.d * p.y + m.f };

@@ -18,7 +18,7 @@
  * @example
  * const stop = observeResize(canvas, (entry) => redraw(entry.contentRect));
  * stop();
- * @since next
+ * @since 3.1.5
  */
 export function observeResize(element: Element, callback: (entry: ResizeObserverEntry) => void): () => void {
   if (typeof globalThis.ResizeObserver !== 'function') return () => {};

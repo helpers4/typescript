@@ -22,7 +22,7 @@ import type { Point } from './types';
  * @example
  * simplifyPolyline([{ x: 0, y: 0 }, { x: 1, y: 0.1 }, { x: 2, y: 0 }], 0.5)
  * // => [{ x: 0, y: 0 }, { x: 2, y: 0 }]
- * @since next
+ * @since 3.1.5
  */
 export function simplifyPolyline(points: readonly Point[], tolerance: number): Point[] {
   if (!(tolerance >= 0)) throw new RangeError(`simplifyPolyline: tolerance must be >= 0, got ${tolerance}`);

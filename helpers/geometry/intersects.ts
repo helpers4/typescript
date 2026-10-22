@@ -17,7 +17,7 @@ import type { Rect } from './types';
  * @example
  * intersects({ x: 0, y: 0, width: 10, height: 10 }, { x: 5, y: 5, width: 10, height: 10 })  // => true
  * intersects({ x: 0, y: 0, width: 10, height: 10 }, { x: 10, y: 0, width: 10, height: 10 }) // => false
- * @since next
+ * @since 3.1.5
  */
 export function intersects(a: Rect, b: Rect): boolean {
   return (

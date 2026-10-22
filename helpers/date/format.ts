@@ -114,7 +114,7 @@ const DEFAULT_FORMAT: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'sho
  * format('2026-07-27', undefined, 'fr')                  // => '27 juil. 2026'
  * format('nope')                                         // => null
  * @see {@link formatInTimezone} to format in another timezone
- * @since next
+ * @since 3.1.5
  */
 export function format(
   date: DateLike,
