@@ -26,6 +26,7 @@
 
 ## Packages
 
+- animation — animation timing: `parseEasing` (any CSS easing), `cubicBezier`, `steps`, springs, CSS `linear()`, `interpolate`, `tween`, `frameLoop`
 - array — array manipulation, chunking, comparison
 - browser — browser APIs safe to import anywhere: media queries, ResizeObserver, image decoding, fonts, idle callbacks
 - ci — CI/CD workflow status formatting (PR comments, pipeline reports)
