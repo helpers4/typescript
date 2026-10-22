@@ -1,6 +1,8 @@
 [
   "agents",
+  "animation",
   "array",
+  "browser",
   "CI-CD",
   "coherency",
   "color",
@@ -8,6 +10,7 @@
   "date",
   "deps",
   "function",
+  "geometry",
   "guard",
   "helpers4",
   "id",
