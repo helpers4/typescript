@@ -1,0 +1,173 @@
+/**
+ * This file is part of helpers4.
+ * Copyright (C) 2025 baxyz
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ */
+
+import { describe, expect, expectTypeOf, it } from "vitest";
+import { get } from "./get";
+
+describe("get", () => {
+  const obj = {
+    a: {
+      b: {
+        c: 'value'
+      }
+    },
+    x: [1, 2, { y: 'array-value' }]
+  };
+
+  it("should get nested value using dot notation", () => {
+    expect(get(obj, 'a.b.c')).toBe('value');
+  });
+
+  it("should return default value for non-existent path", () => {
+    expect(get(obj, 'a.b.d', 'default')).toBe('default');
+  });
+
+  it("should work with array indices via dot notation", () => {
+    expect(get(obj, 'x.2.y')).toBe('array-value');
+  });
+
+  it("should work with bracket notation for array indices", () => {
+    expect(get(obj, 'x[2].y')).toBe('array-value');
+  });
+
+  it("should work with mixed dot and bracket notation", () => {
+    const nested = { a: [{ b: [{ c: 'deep' }] }] };
+    expect(get(nested, 'a[0].b[0].c')).toBe('deep');
+  });
+
+  it("should return undefined for non-existent path without default", () => {
+    expect(get(obj, 'non.existent.path')).toBeUndefined();
+  });
+
+  it("should handle null/undefined objects", () => {
+    expect(get(null, 'a.b', 'default')).toBe('default');
+    expect(get(undefined, 'a.b', 'default')).toBe('default');
+    expect(get(null, 'a.b')).toBeUndefined();
+  });
+
+  it("should return defaultValue for null obj with empty key array", () => {
+    expect(get(null, [], 'fallback')).toBe('fallback');
+    expect(get(undefined, [], 'fallback')).toBe('fallback');
+    expect(get(null, [])).toBeUndefined();
+  });
+
+  // --- Mutation-killing tests ---
+
+  // L19: ConditionalExpression -> false (result == null || typeof result !== 'object' -> false)
+  // If false, traversal would continue on null/undefined/primitives
+  it("should return default when path traverses through null", () => {
+    const obj = { a: { b: null } };
+    expect(get(obj, 'a.b.c', 'fallback')).toBe('fallback');
+  });
+
+  it("should return default when path traverses through primitive", () => {
+    const obj = { a: { b: 42 } };
+    expect(get(obj, 'a.b.c', 'fallback')).toBe('fallback');
+  });
+
+  it("should return default when path traverses through string", () => {
+    const obj = { a: 'hello' };
+    expect(get(obj, 'a.b', 'fallback')).toBe('fallback');
+  });
+
+  // --- PropertyKey[] path ---
+
+  it("should accept an array of string keys", () => {
+    expect(get(obj, ['a', 'b', 'c'])).toBe('value');
+  });
+
+  it("should accept number keys", () => {
+    expect(get(obj, ['x', 2, 'y'])).toBe('array-value');
+  });
+
+  it("should accept symbol keys", () => {
+    const sym = Symbol('id');
+    const o = { [sym]: 'secret' };
+    expect(get(o, [sym])).toBe('secret');
+  });
+
+  it("should return default for missing array path", () => {
+    expect(get(obj, ['a', 'z'], 'fallback')).toBe('fallback');
+  });
+
+  it("should return obj itself for empty key array", () => {
+    expect(get(obj, [])).toBe(obj);
+  });
+
+  // --- parsePropertyPath edge-case regressions ---
+
+  it('should traverse the empty-string key for a bare dot path "."', () => {
+    // '.' is treated as a leading dot (stripped) leaving '' → [''] — one empty-string key.
+    // Regression: parsePropertyPath('.') previously returned [], causing a silent no-op.
+    const o: Record<string, unknown> = { '': 'empty-key-value' };
+    expect(get(o, '.')).toBe('empty-key-value');
+  });
+
+  it('should traverse empty middle segment for consecutive dots "a..b"', () => {
+    // 'a..b' → ['a', '', 'b'] — the empty segment addresses obj.a[''].b.
+    const o = { a: { '': { b: 'found' } } };
+    expect(get(o, 'a..b')).toBe('found');
+  });
+});
+
+describe('get — type inference', () => {
+  const obj = {
+    a: { b: { c: 42 } },
+    name: 'hello',
+    layers: [{ title: 'bg' }, { title: 'fg' }],
+    counts: [1, 2, 3],
+  };
+
+  it('dot path infers leaf type', () => {
+    expectTypeOf(get(obj, 'a.b.c')).toEqualTypeOf<number | undefined>();
+  });
+
+  it('dot path infers intermediate object type', () => {
+    expectTypeOf(get(obj, 'a.b')).toEqualTypeOf<{ c: number } | undefined>();
+  });
+
+  it('string field inferred', () => {
+    expectTypeOf(get(obj, 'name')).toEqualTypeOf<string | undefined>();
+  });
+
+  it('bracket notation infers array element type', () => {
+    expectTypeOf(get(obj, 'layers[0]')).toEqualTypeOf<{ title: string } | undefined>();
+  });
+
+  it('mixed dot/bracket infers nested field inside array element', () => {
+    expectTypeOf(get(obj, 'layers[0].title')).toEqualTypeOf<string | undefined>();
+  });
+
+  it('numeric array via bracket infers number', () => {
+    expectTypeOf(get(obj, 'counts[1]')).toEqualTypeOf<number | undefined>();
+  });
+
+  it('missing key returns unknown', () => {
+    expectTypeOf(get(obj, 'a.x')).toEqualTypeOf<unknown>();
+  });
+
+  it('PropertyKey[] path infers type', () => {
+    expectTypeOf(get(obj, ['a', 'b', 'c'] as const)).toEqualTypeOf<number | undefined>();
+  });
+
+  it('symbol key via PropertyKey[] path infers type', () => {
+    const sym = Symbol('id');
+    const o = { [sym]: 42 };
+    expectTypeOf(get(o, [sym] as const)).toEqualTypeOf<number | undefined>();
+  });
+
+  it('dynamic string path returns unknown', () => {
+    const path = 'a.b.c' as string;
+    expectTypeOf(get(obj, path)).toEqualTypeOf<unknown>();
+  });
+
+  it('defaultValue type matches inferred path type', () => {
+    // defaultValue must be compatible with the resolved path type
+    get(obj, 'a.b.c', 0);         // number default ✓
+    // @ts-expect-error string is not assignable to number
+    get(obj, 'a.b.c', 'wrong');
+  });
+});

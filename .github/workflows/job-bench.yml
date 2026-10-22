@@ -1,0 +1,134 @@
+name: Job - Benchmarks
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: false
+        type: string
+        default: "26"
+      base-ref:
+        required: false
+        type: string
+        default: ""
+        description: "Base branch ref for PR diff (e.g. 'main'). When set, only bench files affected by the diff are run. When empty, all bench files are run."
+    outputs:
+      status:
+        description: "Benchmark execution status"
+        value: ${{ jobs.bench.outputs.status }}
+      summary:
+        description: "Benchmark summary (comma-separated list of benchmarked suites)"
+        value: ${{ jobs.bench.outputs.summary }}
+      total-suites:
+        description: "Total benchmark suites"
+        value: ${{ jobs.bench.outputs.total-suites }}
+
+permissions:
+  contents: read
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      status: ${{ steps.status.outputs.status }}
+      summary: ${{ steps.extract.outputs.summary }}
+      total-suites: ${{ steps.extract.outputs.total-suites }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Setup pnpm
+        uses: helpers4/action/setup-pnpm@215739f023134ab5ed2158607074084ec530a830
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Detect changed bench targets
+        id: changed
+        if: inputs.base-ref != ''
+        run: |
+          git fetch origin "${{ inputs.base-ref }}" --depth=1
+
+          CHANGED=$(git diff --name-only "origin/${{ inputs.base-ref }}" HEAD)
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          declare -A seen
+          FILES=()
+
+          while IFS= read -r file; do
+            # Match helpers/<category>/<name>.ts (any suffix)
+            if [[ "$file" =~ ^helpers/([^/]+)/([^/]+)\.ts$ ]]; then
+              cat="${BASH_REMATCH[1]}"
+              name="${BASH_REMATCH[2]}"
+              # Strip known suffixes to get the base helper name
+              base="${name%.bench}"
+              base="${base%.test}"
+              base="${base%.spec}"
+              base="${base%.example}"
+              bench_file="helpers/$cat/$base.bench.ts"
+              if [[ -f "$bench_file" && -z "${seen[$bench_file]+set}" ]]; then
+                FILES+=("$bench_file")
+                seen[$bench_file]=1
+              fi
+            fi
+          done <<< "$CHANGED"
+
+          if [ ${#FILES[@]} -eq 0 ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "files=" >> $GITHUB_OUTPUT
+            echo "No bench files affected by this PR."
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "files=${FILES[*]}" >> $GITHUB_OUTPUT
+            echo "Bench files to run: ${FILES[*]}"
+          fi
+
+      - name: Run benchmarks
+        id: bench
+        continue-on-error: true
+        run: |
+          # skip=true only when base-ref was set and no bench files were affected
+          if [ "${{ steps.changed.outputs.skip }}" == "true" ]; then
+            echo "No bench files affected by this PR — skipping."
+            echo "exit_code=0" >> $GITHUB_OUTPUT
+            echo "skipped=true" >> $GITHUB_OUTPUT
+            touch bench-output.txt
+            exit 0
+          fi
+
+          BENCH_FILES="${{ steps.changed.outputs.files }}"
+          if [ -n "$BENCH_FILES" ]; then
+            echo "Running benchmarks for: $BENCH_FILES"
+            # shellcheck disable=SC2086
+            pnpm bench -- $BENCH_FILES 2>&1 | tee bench-output.txt
+          else
+            echo "Running all benchmarks..."
+            pnpm bench 2>&1 | tee bench-output.txt
+          fi
+          echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
+          echo "skipped=false" >> $GITHUB_OUTPUT
+
+      - name: Extract benchmark summary
+        id: extract
+        if: always()
+        run: |
+          TOTAL_SUITES=$(grep -c '^ ✓' bench-output.txt || true)
+          echo "total-suites=$TOTAL_SUITES" >> $GITHUB_OUTPUT
+
+          # Extract benchmarked suite names
+          SUMMARY=$( (grep '^ ✓' bench-output.txt | sed 's/^ ✓ //' | sed 's/ >.*//' | sort -u | tr '\n' ', ' | sed 's/,[[:space:]]*$//') || true )
+          echo "summary=$SUMMARY" >> $GITHUB_OUTPUT
+
+      - name: Set status
+        id: status
+        if: always()
+        run: |
+          if [ "${{ steps.bench.outputs.skipped }}" == "true" ]; then
+            echo "status=skipped" >> $GITHUB_OUTPUT
+          elif [ "${{ steps.bench.outputs.exit_code }}" == "0" ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+          fi

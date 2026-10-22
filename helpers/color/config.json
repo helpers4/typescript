@@ -1,0 +1,5 @@
+{
+  "label": "Color",
+  "smallDescription": "Color conversion and validation utilities",
+  "description": "Utilities for converting between color representations (ARGB, RGB, hex, ...) and validating color values."
+}

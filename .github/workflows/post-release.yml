@@ -1,0 +1,74 @@
+name: Post Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: "26"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  # Mutation testing — runs on the released code, uploads reports to the GitHub release
+  mutation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run mutation tests
+        env:
+          GITHUB_STEP_SUMMARY: /dev/null
+        run: pnpm mutation:fresh
+
+      - name: Upload mutation reports to release
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            TAG="${{ github.ref_name }}"
+          else
+            TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName // empty')
+          fi
+          echo "🏷️ Target release: $TAG"
+          if [ -z "$TAG" ]; then
+            echo "⚠️ No release found — skipping upload"
+            exit 0
+          fi
+          if [ ! -d "reports/mutation" ]; then
+            echo "⚠️ No mutation reports generated — skipping upload"
+            exit 0
+          fi
+          tar -czf /tmp/mutation-reports.tar.gz -C reports mutation/
+          gh release upload "$TAG" /tmp/mutation-reports.tar.gz --clobber
+          echo "✅ Uploaded mutation reports to release $TAG"
+
+  # Coverage — runs tests with coverage and uploads to Codecov
+  coverage:
+    uses: ./.github/workflows/job-tests.yml
+    with:
+      node-version: "26"
+      coverage: true
+      upload-codecov: true
+    secrets:
+      codecov-token: ${{ secrets.CODECOV_TOKEN }}

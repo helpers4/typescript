@@ -1,0 +1,53 @@
+/**
+ * This file is part of helpers4.
+ * Copyright (C) 2025 baxyz
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ */
+
+import { assertNeverScheme } from './_assertNeverScheme';
+import { stringifyDebian } from './_debian';
+import { stringifyGentoo } from './_gentoo';
+import { stringifySemVer } from './_semver';
+import type { AnyParsedVersion } from './types';
+
+/**
+ * Reconstructs a version string from a {@link AnyParsedVersion} object — the scheme is read from
+ * the object's own `scheme` field, not passed separately (a `ParsedGentooVersion` can only ever
+ * stringify as Gentoo, so there's nothing to disambiguate).
+ *
+ * This is the inverse of {@link parse}:
+ * `stringify(parse(v)) === stripV(v)` for any valid version string `v`, in any scheme — up to
+ * canonicalization (a Debian `0:` epoch is dropped, a Gentoo `_beta0` becomes `_beta`).
+ *
+ * @param parsed - A parsed version object, as returned by {@link parse}.
+ * @returns The reconstructed version string (without leading `v`).
+ * @example
+ * stringify({ scheme: 'semver', major: 1, minor: 2, patch: 3, prerelease: [], build: [] })
+ * // => '1.2.3'
+ * @example
+ * stringify({ scheme: 'semver', major: 2, minor: 0, patch: 0, prerelease: ['alpha', '1'], build: [] })
+ * // => '2.0.0-alpha.1'
+ * @example
+ * stringify({ scheme: 'gentoo', components: [1, 2, 3], letter: 'b', suffixes: [{ type: 'rc', number: 1 }], revision: 2 })
+ * // => '1.2.3b_rc1-r2'
+ * @example
+ * stringify({ scheme: 'debian', epoch: 1, upstream: '2.30~rc1', revision: '3' })
+ * // => '1:2.30~rc1-3'
+ * @since 2.0.0
+ */
+export function stringify(parsed: AnyParsedVersion): string;
+export function stringify(parsed: undefined): undefined;
+export function stringify(parsed: null): null;
+export function stringify(parsed: AnyParsedVersion | undefined | null): string | undefined | null {
+  if (parsed === undefined || parsed === null) return parsed;
+  switch (parsed.scheme) {
+    case 'semver':
+      return stringifySemVer(parsed);
+    case 'gentoo':
+      return stringifyGentoo(parsed);
+    case 'debian':
+      return stringifyDebian(parsed);
+    default:
+      return assertNeverScheme(parsed);
+  }
+}

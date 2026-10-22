@@ -1,0 +1,201 @@
+name: Mutation Dashboard
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - "**.md"
+      - "llms.txt"
+      - "LICENSE"
+      - ".github/ISSUE_TEMPLATE/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_LATEST_LTS: "26"
+  SHARD_COUNT: 4
+
+jobs:
+  mutation-shard:
+    runs-on: ubuntu-latest
+    # Skips release commits (release.yml pushes those with the same App token used below, so
+    # they'd otherwise retrigger this workflow too) and skips this workflow's own aggregated
+    # baseline-refresh commit — that push does trigger `on: push` (unlike the default
+    # GITHUB_TOKEN), so without this guard every successful baseline commit would trigger
+    # another full mutation run, indefinitely.
+    if: >-
+      !startsWith(github.event.head_commit.message, 'chore(release):') &&
+      !contains(github.event.head_commit.message, 'refresh mutation testing incremental baseline')
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
+    # Runtime scales with each shard's own subset, not the whole project — a much shorter
+    # budget than a single unsharded run needs, with real margin. If shards start timing out
+    # as the helper count grows, raise SHARD_COUNT above before touching this.
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: ${{ env.NODE_LATEST_LTS }}
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # A deterministic, self-rebalancing split: sorted file list, round-robin by index. No
+      # per-category grouping to keep in sync as helpers are added or removed — each shard's
+      # share of the total stays roughly even on its own.
+      - name: Select this shard's files
+        id: files
+        run: |
+          FILES=$(find helpers -name '*.ts' \
+            ! -name '*.test.ts' ! -name '*.spec.ts' ! -name '*.bench.ts' ! -name '*.example.ts' ! -name 'index.ts' \
+            | sort | awk -v n="$SHARD_COUNT" -v i="${{ matrix.shard }}" '(NR - 1) % n == i')
+
+          if [ -z "$FILES" ]; then
+            echo "::error::Shard ${{ matrix.shard }} was assigned no files — SHARD_COUNT may exceed the mutable file count."
+            exit 1
+          fi
+
+          # printf, not echo: echo's trailing newline would otherwise stick to the last
+          # filename once /tmp/shard-files.txt is read back with fs.readFileSync + split(',')
+          # in a later step (command substitution below strips it, but a raw file read won't).
+          COMMA_FILES=$(echo "$FILES" | tr '\n' ',' | sed 's/,$//')
+          printf '%s' "$COMMA_FILES" > /tmp/shard-files.txt
+          echo "files=$COMMA_FILES" >> $GITHUB_OUTPUT
+          echo "Shard ${{ matrix.shard }} owns $(echo "$FILES" | wc -l) file(s):"
+          echo "$FILES"
+
+      # Incremental mode (stryker.config.mjs) still applies per shard against the committed
+      # baseline, so a routine run only re-tests what actually changed in this shard's subset —
+      # sharding only changes how the (rare) full/stale-baseline case gets split up.
+      # A below-threshold score for this shard's subset alone isn't meaningful (the 60% break
+      # threshold is calibrated against the whole project), so a bad score here shouldn't fail
+      # the job — only a report that never got produced should.
+      - name: Run this shard's mutation tests
+        continue-on-error: true
+        id: mutation
+        env:
+          CI: "true"
+        run: pnpm exec stryker run --mutate "${{ steps.files.outputs.files }}" --reporters json,progress
+
+      - name: Package shard output
+        run: |
+          mkdir -p shard-out
+          cp reports/mutation/mutation.json shard-out/mutation.json
+          node -e "
+            const fs = require('node:fs');
+            const files = fs.readFileSync('/tmp/shard-files.txt', 'utf8').split(',');
+            fs.writeFileSync('shard-out/manifest.json', JSON.stringify({ shard: ${{ matrix.shard }}, files }));
+          "
+
+      - name: Upload shard report
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: mutation-shard-${{ matrix.shard }}
+          path: shard-out/
+          retention-days: 1
+
+  aggregate:
+    needs: mutation-shard
+    # `always()` so a below-threshold shard still gets its baseline committed, but not when the
+    # shards were skipped on purpose (release commits and this workflow's own baseline commit):
+    # no shard uploaded anything then, so there is nothing to download or merge.
+    if: always() && !cancelled() && needs.mutation-shard.result != 'skipped'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # commits the refreshed incremental baseline
+    env:
+      # `if:` conditions can't see `secrets` directly — this hands the presence check to a
+      # job-level env var, which `if:` can read.
+      HAS_DASHBOARD_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY != '' }}
+    steps:
+      # main is a protected branch that rejects direct pushes from the default GITHUB_TOKEN
+      # (requires verified signatures / a PR) — a GitHub App installation token is one of the
+      # bypass actors, same as release.yml's version-bump commits use.
+      - name: Get GitHub App Token
+        id: app_token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510
+        with:
+          client-id: ${{ vars.PUSHINATOR_ID }}
+          private-key: ${{ secrets.PUSHINATOR_KEY }}
+
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          token: ${{ steps.app_token.outputs.token }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: ${{ env.NODE_LATEST_LTS }}
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download shard reports
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          pattern: mutation-shard-*
+          path: shards
+
+      # Every shard's own report already carries forward the whole project (incremental mode
+      # reuses the baseline for files outside that shard's --mutate scope) — this picks, for
+      # each file, the one shard that actually owns it, rather than a stale duplicate.
+      - name: Merge shard reports
+        run: pnpm exec tsx scripts/mutation/merge-shards.ts shards reports/mutation/merged.json "$SHARD_COUNT"
+
+      - name: Upload merged report to Stryker Dashboard
+        if: env.HAS_DASHBOARD_KEY == 'true'
+        env:
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+        run: |
+          curl --fail --show-error \
+            --request PUT \
+            --header "X-Api-Key: $STRYKER_DASHBOARD_API_KEY" \
+            --header "Content-Type: application/json" \
+            --data @reports/mutation/merged.json \
+            "https://dashboard.stryker-mutator.io/api/reports/github.com/helpers4/typescript/main"
+
+      # This is the only place reports/mutation/incremental.json ever gets refreshed — without
+      # it, Stryker's incremental mode has no fresh baseline to diff against and every run
+      # (here and on every PR) degrades toward a full, timeout-minutes-length project-wide
+      # mutation test.
+      # `always()` on the job (see the `aggregate` job's `if:`) so a shard's below-threshold
+      # score still gets its baseline committed — a fresh baseline is valuable regardless of
+      # whether any one shard's score passed.
+      - name: Commit the refreshed incremental baseline
+        run: |
+          cp reports/mutation/merged.json reports/mutation/incremental.json
+
+          if git diff --quiet -- reports/mutation/incremental.json; then
+            echo "Incremental baseline unchanged — nothing to commit."
+            exit 0
+          fi
+
+          git add reports/mutation/incremental.json
+
+      # Committed through the GitHub API so the commit is signed by the App (see release.yml).
+      - name: Commit the refreshed incremental baseline (signed)
+        continue-on-error: true
+        uses: grafana/github-api-commit-action@b1d81091e8480dd11fcea8bc1f0ab977a0376ca5 # v1.0.0
+        with:
+          token: ${{ steps.app_token.outputs.token }}
+          commit-message: "chore(CI-CD): 🔧 refresh mutation testing incremental baseline"
+          success-if-no-changes: "true"

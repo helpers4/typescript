@@ -1,0 +1,45 @@
+{
+  "name": "@helpers4/{{category}}",
+  "version": "{{version}}",
+  "description": "A set of helpers in TS/JS, compatible with tree-shaking, for {{category}}.",
+  "author": "baxyz <craft@baxyz.dev>",
+  "license": "LGPL-3.0",
+  "homepage": "https://helpers4.dev/typescript/categories/{{category}}/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helpers4/typescript.git"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js"
+    },
+    "./meta/api.json": "./meta/api.json",
+    "./meta/examples.json": "./meta/examples.json",
+    "./meta/licenses.json": "./meta/licenses.json",
+    "./llms.txt": "./llms.txt",
+    "./package.json": "./package.json"
+  },
+  "keywords": [
+    "helpers",
+    "{{category}}",
+    "{{methods}}"
+  ],
+  "files": [
+    "lib/index.js",
+    "lib/index.d.ts",
+    "lib/index.js.map",
+    "meta/",
+    "llms.txt",
+    "LICENSE.md",
+    "package.json",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=26.0.0"
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "label": "Observable",
+  "smallDescription": "Observable utilities and combinators",
+  "description": "Utilities for working with observables including combination operators and stream manipulation"
+}

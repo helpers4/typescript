@@ -1,0 +1,57 @@
+name: Main Branch Validation
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "llms.txt"
+      - "LICENSE"
+      - ".github/ISSUE_TEMPLATE/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    uses: ./.github/workflows/job-build.yml
+    with:
+      node-version: "26"
+      upload-artifact: true
+      artifact-name: build-${{ github.run_id }}
+
+  test:
+    uses: ./.github/workflows/job-tests.yml
+    with:
+      node-version: "26"
+      coverage: true
+      upload-codecov: true
+    secrets:
+      codecov-token: ${{ secrets.CODECOV_TOKEN }}
+
+  lint:
+    uses: ./.github/workflows/job-lint.yml
+    with:
+      node-version: "26"
+
+  type-check:
+    uses: ./.github/workflows/job-typecheck.yml
+    with:
+      node-version: "26"
+
+  security:
+    uses: ./.github/workflows/job-security.yml
+    with:
+      node-version: "26"
+      audit-level: "low"
+
+  verification:
+    needs: build
+    uses: ./.github/workflows/job-verification.yml
+    with:
+      node-version: "26"
+      build-artifact: build-${{ github.run_id }}

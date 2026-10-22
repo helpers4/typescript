@@ -1,0 +1,5 @@
+{
+  "label": "URL",
+  "smallDescription": "URL parsing and manipulation utilities",
+  "description": "Utilities for working with URLs including path cleaning, slash management, and URL transformation"
+}

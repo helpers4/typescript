@@ -1,0 +1,5 @@
+{
+  "label": "Structure",
+  "smallDescription": "Generic, domain-agnostic data structures",
+  "description": "Data structures with no native JS/TS equivalent — disjoint-set/union-find, and similar generic structures with zero business-domain coupling."
+}

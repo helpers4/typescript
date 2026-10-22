@@ -1,0 +1,56 @@
+/**
+ * This file is part of helpers4.
+ * Copyright (C) 2025 baxyz
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ */
+
+/*
+ * This program is under the terms of the GNU Lesser General Public License version 3
+ * The full license information can be found in LICENSE in the root directory of this project.
+ */
+import { describe, expect, test } from "vitest";
+import { withoutTrailingSlash } from './withoutTrailingSlash';
+
+describe('withoutTrailingSlash', () => {
+  test('should return undefined if input is undefined', () => {
+    expect(withoutTrailingSlash(undefined)).toBe(undefined)
+  });
+  test('should return null if input is null', () => {
+    expect(withoutTrailingSlash(null)).toBe(null)
+  });
+  test('should remove trailing slash if present', () => {
+    expect(withoutTrailingSlash('foo/')).toBe('foo')
+  });
+  test('should do nothing if input is an empty string', () => {
+    expect(withoutTrailingSlash('')).toBe('')
+  });
+  test('should do nothing if input does not have a trailing slash', () => {
+    expect(withoutTrailingSlash('text-without-slash')).toBe(
+      'text-without-slash',
+    )
+  });
+  test('should remove all trailing slashes if input is a string of slashes', () => {
+    expect(withoutTrailingSlash('/////////')).toBe('')
+  });
+  test('should return an empty string if input is a single slash', () => {
+    expect(withoutTrailingSlash('/')).toBe('')
+  });
+
+  describe('security edge cases', () => {
+    test('should handle javascript: protocol', () => {
+      expect(withoutTrailingSlash('javascript:alert(1)/')).toBe('javascript:alert(1)');
+    });
+
+    test('should handle data: URI with trailing slash', () => {
+      expect(withoutTrailingSlash('data:text/html,payload/')).toBe('data:text/html,payload');
+    });
+
+    test('should handle URL with credentials', () => {
+      expect(withoutTrailingSlash('https://user:pass@host.com/')).toBe('https://user:pass@host.com');
+    });
+
+    test('should handle null bytes in path', () => {
+      expect(withoutTrailingSlash('/path%00evil/')).toBe('/path%00evil');
+    });
+  });
+});

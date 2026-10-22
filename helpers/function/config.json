@@ -1,0 +1,5 @@
+{
+  "label": "Function",
+  "smallDescription": "Function utilities and type guards",
+  "description": "Utilities for working with functions including type guards, error handling, and function validation"
+}

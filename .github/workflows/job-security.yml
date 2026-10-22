@@ -1,0 +1,47 @@
+name: Job - Security Audit
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: false
+        type: string
+        default: "26"
+      audit-level:
+        required: false
+        type: string
+        default: "low"
+    outputs:
+      status:
+        description: "Security audit status"
+        value: ${{ jobs.security.outputs.status }}
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.security.outputs.status }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Setup pnpm
+        uses: helpers4/action/setup-pnpm@215739f023134ab5ed2158607074084ec530a830
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Run security audit
+        id: security
+        run: |
+          echo "Running strict security audit..."
+          echo "Audit level: ${{ inputs.audit-level }}"
+
+          if pnpm audit --audit-level "${{ inputs.audit-level }}"; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi

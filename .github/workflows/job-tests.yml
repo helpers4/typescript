@@ -1,0 +1,105 @@
+name: Job - Tests
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: false
+        type: string
+        default: "26"
+      coverage:
+        required: false
+        type: boolean
+        default: false
+      upload-codecov:
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      codecov-token:
+        required: false
+    outputs:
+      status:
+        description: "Test execution status"
+        value: ${{ jobs.tests.outputs.status }}
+      coverage-lines:
+        description: "Lines coverage percentage"
+        value: ${{ jobs.tests.outputs.coverage-lines }}
+      coverage-branches:
+        description: "Branches coverage percentage"
+        value: ${{ jobs.tests.outputs.coverage-branches }}
+      coverage-functions:
+        description: "Functions coverage percentage"
+        value: ${{ jobs.tests.outputs.coverage-functions }}
+      coverage-statements:
+        description: "Statements coverage percentage"
+        value: ${{ jobs.tests.outputs.coverage-statements }}
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.test.outputs.status }}
+      coverage-lines: ${{ steps.coverage.outputs.lines }}
+      coverage-branches: ${{ steps.coverage.outputs.branches }}
+      coverage-functions: ${{ steps.coverage.outputs.functions }}
+      coverage-statements: ${{ steps.coverage.outputs.statements }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Setup pnpm
+        uses: helpers4/action/setup-pnpm@215739f023134ab5ed2158607074084ec530a830
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Run unit tests
+        id: test
+        run: |
+          echo "Running unit tests with Vitest..."
+          if [ "${{ inputs.coverage }}" = "true" ]; then
+            if pnpm test:coverage; then
+              echo "status=success" >> $GITHUB_OUTPUT
+            else
+              echo "status=failure" >> $GITHUB_OUTPUT
+              exit 1
+            fi
+          else
+            if pnpm test; then
+              echo "status=success" >> $GITHUB_OUTPUT
+            else
+              echo "status=failure" >> $GITHUB_OUTPUT
+              exit 1
+            fi
+          fi
+
+      - name: Extract coverage metrics
+        id: coverage
+        if: inputs.coverage == true
+        run: |
+          COVERAGE_FILE="coverage/coverage-summary.json"
+
+          if [ ! -f "$COVERAGE_FILE" ]; then
+            echo "Coverage summary not found"
+            exit 1
+          fi
+
+          TOTAL=$(jq '.total' "$COVERAGE_FILE")
+          LINES=$(echo "$TOTAL" | jq '.lines.pct // 0')
+          BRANCHES=$(echo "$TOTAL" | jq '.branches.pct // 0')
+          FUNCTIONS=$(echo "$TOTAL" | jq '.functions.pct // 0')
+          STATEMENTS=$(echo "$TOTAL" | jq '.statements.pct // 0')
+
+          echo "lines=$LINES" >> $GITHUB_OUTPUT
+          echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
+          echo "functions=$FUNCTIONS" >> $GITHUB_OUTPUT
+          echo "statements=$STATEMENTS" >> $GITHUB_OUTPUT
+
+      - name: Upload coverage to Codecov
+        if: inputs.coverage == true && inputs.upload-codecov == true
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          token: ${{ secrets.codecov-token }}

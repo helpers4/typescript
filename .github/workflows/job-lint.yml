@@ -1,0 +1,41 @@
+name: Job - Lint
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: false
+        type: string
+        default: "26"
+    outputs:
+      status:
+        description: "Lint execution status"
+        value: ${{ jobs.lint.outputs.status }}
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.lint.outputs.status }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Setup pnpm
+        uses: helpers4/action/setup-pnpm@215739f023134ab5ed2158607074084ec530a830
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Run linting
+        id: lint
+        run: |
+          echo "Running linting with oxlint..."
+          if pnpm run lint; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi

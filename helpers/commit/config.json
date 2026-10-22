@@ -1,0 +1,5 @@
+{
+  "label": "Commit",
+  "smallDescription": "Conventional Commits parsing and analysis",
+  "description": "Pure utilities for parsing, validating, and analysing Conventional Commits messages. No git CLI access — operates on commit message strings only."
+}

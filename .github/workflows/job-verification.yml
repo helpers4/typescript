@@ -1,0 +1,125 @@
+name: Job - Verification
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: false
+        type: string
+        default: "26"
+      build-artifact:
+        required: true
+        type: string
+    outputs:
+      status:
+        description: "Overall verification test execution status"
+        value: ${{ jobs.verification.outputs.status }}
+
+permissions:
+  contents: read
+
+jobs:
+  verification:
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.summary.outputs.status }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Setup pnpm
+        uses: helpers4/action/setup-pnpm@215739f023134ab5ed2158607074084ec530a830
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: ${{ inputs.build-artifact }}
+          path: build/
+
+      - name: Run Bundle Package test
+        id: bundle-test
+        run: |
+          if pnpm run coherency:bundle; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Run Version Consistency test
+        id: version-test
+        run: |
+          if pnpm run coherency:version; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Run Category Packages test
+        id: category-test
+        run: |
+          if pnpm run coherency:category; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Run Dependencies Coherency test
+        id: dependencies-test
+        run: |
+          if pnpm run coherency:dependencies; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Run Bundle Sizes test
+        id: bundle-sizes-test
+        run: |
+          if pnpm run coherency:sizes; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Run JSDoc @since test
+        id: jsdoc-since-test
+        run: |
+          if pnpm run coherency:jsdoc-since; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Run post-build smoke tests
+        id: smoke-test
+        run: |
+          if pnpm run smoke; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Summary
+        id: summary
+        run: |
+          if [[ "${{ steps.bundle-test.outputs.status }}" == "success" && \
+                "${{ steps.version-test.outputs.status }}" == "success" && \
+                "${{ steps.category-test.outputs.status }}" == "success" && \
+                "${{ steps.dependencies-test.outputs.status }}" == "success" && \
+                "${{ steps.bundle-sizes-test.outputs.status }}" == "success" && \
+                "${{ steps.jsdoc-since-test.outputs.status }}" == "success" && \
+                "${{ steps.smoke-test.outputs.status }}" == "success" ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi

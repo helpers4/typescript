@@ -1,0 +1,5 @@
+{
+  "label": "Promise",
+  "smallDescription": "Promise utilities and error handling",
+  "description": "Utilities for working with promises including error handling, conditional execution, and promise validation"
+}

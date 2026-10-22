@@ -1,0 +1,5 @@
+{
+  "label": "Set",
+  "smallDescription": "Native Set manipulation utilities",
+  "description": "Utilities for working with native Set instances: iteration, filtering, transforming, and building Sets from arrays"
+}

@@ -1,0 +1,5 @@
+{
+  "label": "Animation",
+  "smallDescription": "Timing and interpolation for animations",
+  "description": "Animation timing without a framework: CSS cubic-bezier() and keyword easings, physical springs, conversion to CSS linear() for the Web Animations API, value interpolation and a frame-driven tween."
+}

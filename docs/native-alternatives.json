@@ -1,0 +1,694 @@
+{
+  "array": [
+    {
+      "name": "flatten / flat",
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
+      "native": "Array.prototype.flat(depth?)",
+      "since": "ES2019",
+      "example": "arr.flat()  // one level\narr.flat(Infinity)  // full flatten"
+    },
+    {
+      "name": "groupBy / group",
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
+      "native": "Object.groupBy(arr, fn)",
+      "since": "ES2024",
+      "example": "Object.groupBy(users, u => u.role)",
+      "notes": "Also Map.groupBy() for Map output"
+    },
+    {
+      "name": "find / findIndex",
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
+      "native": "Array.prototype.find() / findIndex()",
+      "since": "ES2015",
+      "example": "arr.find(x => x > 5)\narr.findIndex(x => x > 5)"
+    },
+    {
+      "name": "includes",
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
+      "native": "Array.prototype.includes()",
+      "since": "ES2016",
+      "example": "arr.includes(value)"
+    },
+    {
+      "name": "reverse",
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
+      "native": "Array.prototype.toReversed()",
+      "since": "ES2023",
+      "example": "const reversed = arr.toReversed()",
+      "notes": "Immutable version; .reverse() mutates"
+    },
+    {
+      "name": "head / first",
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
+      "native": "Array.prototype.at(0)",
+      "since": "ES2022",
+      "example": "arr.at(0)  // or arr[0]",
+      "notes": ".at() supports negative indices"
+    },
+    {
+      "name": "last",
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
+      "native": "Array.prototype.at(-1)",
+      "since": "ES2022",
+      "example": "arr.at(-1)"
+    },
+    {
+      "name": "tail",
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
+      "native": "Array.prototype.slice(1)",
+      "since": "ES3",
+      "example": "arr.slice(1)"
+    },
+    {
+      "name": "take",
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
+      "native": "Array.prototype.slice(0, n)",
+      "since": "ES3",
+      "example": "arr.slice(0, n)"
+    },
+    {
+      "name": "drop",
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
+      "native": "Array.prototype.slice(n)",
+      "since": "ES3",
+      "example": "arr.slice(n)"
+    },
+    {
+      "name": "sort (immutable)",
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
+      "native": "Array.prototype.toSorted(compareFn?)",
+      "since": "ES2023",
+      "example": "arr.toSorted((a, b) => a - b)\narr.toSorted((a, b) => a.localeCompare(b))",
+      "notes": "Non-mutating; prefer over [...arr].sort(). .sort() mutates in place. helpers4/array provides sortNumberAscFn / sortStringAscFn as reusable comparator shortcuts — they are excluded from the native-alternatives rule"
+    },
+    {
+      "name": "sortBy / orderBy",
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
+      "native": "Array.prototype.toSorted(fn?)",
+      "since": "ES2023",
+      "example": "arr.toSorted((a, b) => a.name.localeCompare(b.name))",
+      "notes": "Immutable version of .sort(); helpers4/array provides createSortByStringFn/NumberFn/DateFn/NaturalFn comparator factories for object arrays, and sortStringNaturalAscFn for human-friendly ordering of strings with embedded numbers"
+    },
+    {
+      "name": "union",
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
+      "native": "unique([...a, ...b])",
+      "since": "ES2015",
+      "example": "unique([...arr1, ...arr2])  // deduped union",
+      "notes": "Compose helpers4/array unique with spread; no dedicated helper needed"
+    },
+    {
+      "name": "select / filterMap",
+      "libraries": [
+        "radashi"
+      ],
+      "native": "Array.prototype.filter().map()",
+      "since": "ES5",
+      "example": "arr.filter(x => x.active).map(x => x.name)",
+      "notes": "Two-pass but readable; no performance issue at typical array sizes"
+    }
+  ],
+  "number": [
+    {
+      "name": "min / max",
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
+      "native": "Math.min(...arr) / Math.max(...arr)",
+      "since": "ES1",
+      "example": "Math.min(...numbers)\nMath.max(...numbers)",
+      "notes": "For large arrays, prefer reduce to avoid stack overflow"
+    },
+    {
+      "name": "ceil / floor",
+      "libraries": [
+        "lodash"
+      ],
+      "native": "Math.ceil() / Math.floor()",
+      "since": "ES1",
+      "example": "Math.ceil(4.2)  // 5\nMath.floor(4.8)  // 4",
+      "notes": "No precision param natively; use roundTo from helpers4 for decimal precision"
+    },
+    {
+      "name": "toInt / toFloat",
+      "libraries": [
+        "radashi"
+      ],
+      "native": "parseInt(str, 10) / parseFloat(str)",
+      "since": "ES1",
+      "example": "parseInt('42px', 10)  // 42\nparseFloat('3.14')  // 3.14",
+      "notes": "Radashi adds default-value fallback on NaN"
+    }
+  ],
+  "object": [
+    {
+      "name": "keys / values",
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
+      "native": "Object.keys() / Object.values()",
+      "since": "ES2017",
+      "example": "Object.keys(obj)\nObject.values(obj)",
+      "notes": "TypeScript types keys as string[]"
+    },
+    {
+      "name": "toPairs / fromPairs",
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
+      "native": "Object.entries() / Object.fromEntries()",
+      "since": "ES2019",
+      "example": "Object.entries(obj)\nObject.fromEntries(entries)"
+    },
+    {
+      "name": "has",
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
+      "native": "Object.hasOwn(obj, key)",
+      "since": "ES2022",
+      "example": "Object.hasOwn(obj, 'key')",
+      "notes": "Replaces obj.hasOwnProperty(key)"
+    },
+    {
+      "name": "merge (shallow)",
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
+      "native": "{ ...a, ...b } or Object.assign({}, a, b)",
+      "since": "ES2015",
+      "example": "const merged = { ...defaults, ...options }",
+      "notes": "For deep merge, use mergeDeep from helpers4"
+    }
+  ],
+  "map": [
+    {
+      "name": "forEach",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "Map.prototype.forEach((value, key, map) => ...)",
+      "since": "ES2015",
+      "example": "map.forEach((value, key) => console.log(key, value))",
+      "notes": "Not implemented — native Map.prototype.forEach already has this exact (value, key, map) signature, nothing to add."
+    },
+    {
+      "name": "reduce / some / every",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "map.entries().reduce(fn, init) / .some(fn) / .every(fn)",
+      "since": "ES2025 (Iterator Helpers)",
+      "example": "map.entries().reduce((acc, [k, v]) => acc + v, 0)\nmap.entries().some(([k, v]) => v > 10)",
+      "notes": "Iterator Helpers make these one-liners on map.entries()/.values() — but the callback receives a [key, value] tuple to destructure every time. helpers4/map's versions take (value, key) directly, matching Map.prototype.forEach's own argument order, so they're still provided."
+    },
+    {
+      "name": "findKey / findValue",
+      "libraries": [],
+      "native": "map.entries().find(([k, v]) => pred(v, k))?.[0 or 1]",
+      "since": "ES2025 (Iterator Helpers)",
+      "example": "map.entries().find(([k, v]) => v > 10)?.[0]  // key\nmap.entries().find(([k, v]) => v > 10)?.[1]  // value",
+      "notes": "Composable via Iterator Helpers' .find(), but needs a tuple destructure plus an optional-chained index every call site — helpers4/map's versions are still provided for that reason."
+    },
+    {
+      "name": "hasValue",
+      "libraries": [],
+      "native": "map.values().some(v => Object.is(v, value))",
+      "since": "ES2025 (Iterator Helpers)",
+      "example": "map.values().some(v => Object.is(v, target))",
+      "notes": "Thin wrapper for readability — Map.prototype.has() checks keys, not values, which is the actual reason this needs its own name."
+    },
+    {
+      "name": "groupBy",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "Map.groupBy(map.entries(), ([k, v]) => groupFn(v, k))",
+      "since": "ES2024",
+      "example": "Map.groupBy(map.entries(), ([k, v]) => v % 2 === 0 ? 'even' : 'odd')",
+      "notes": "Map.groupBy groups into arrays of matching entries (multiple items per key) — not the same as countBy (counts per group) or the classic keyBy idea (single last-write-wins item per key, implemented here as toMapByKey — see that function's own docs for why it's not named keyBy). Deriving either from Map.groupBy's output is a real extra step, so both remain genuinely useful."
+    }
+  ],
+  "set": [
+    {
+      "name": "forEach",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "Set.prototype.forEach((value, value2, set) => ...)",
+      "since": "ES2015",
+      "example": "set.forEach(value => console.log(value))",
+      "notes": "Not implemented — native Set.prototype.forEach already covers this."
+    },
+    {
+      "name": "reduce / some / every / find",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "set.values().reduce(fn, init) / .some(fn) / .every(fn) / .find(fn)",
+      "since": "ES2025 (Iterator Helpers)",
+      "example": "set.values().reduce((acc, v) => acc + v, 0)\nset.values().find(v => v > 10)",
+      "notes": "Not implemented — unlike Map (whose entries are [key, value] tuples needing a destructure), Set already iterates plain values with no shape mismatch against these native methods. There's no real convenience left to add over calling them directly on set.values()."
+    },
+    {
+      "name": "map / filter",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "new Set(set.values().map(fn)) / new Set(set.values().filter(fn))",
+      "since": "ES2025 (Iterator Helpers)",
+      "example": "new Set(set.values().map(v => v * 2))\nnew Set(set.values().filter(v => v > 0))",
+      "notes": "Iterator Helpers give the transform; reconstructing a Set from the result is the part still worth a named helper for."
+    },
+    {
+      "name": "groupBy",
+      "libraries": [
+        "es-toolkit"
+      ],
+      "native": "Map.groupBy(set.values(), fn)",
+      "since": "ES2024",
+      "example": "Map.groupBy(set.values(), v => v % 2 === 0 ? 'even' : 'odd')",
+      "notes": "Same distinction as helpers4/map's countBy/toMapByKey: Map.groupBy groups into arrays, it doesn't count or index-by-last-write."
+    },
+    {
+      "name": "union",
+      "libraries": [
+        "lodash",
+        "es-toolkit"
+      ],
+      "native": "Set.prototype.union()",
+      "since": "ES2025 (Set methods)",
+      "example": "setA.union(setB)",
+      "notes": "Landed natively as of the Set methods proposal — also .isSubsetOf() / .isSupersetOf() / .isDisjointFrom(). Not implemented here; native coverage is already complete for set-algebra operations."
+    },
+    {
+      "name": "intersection",
+      "libraries": [
+        "lodash",
+        "es-toolkit"
+      ],
+      "native": "Set.prototype.intersection()",
+      "since": "ES2025 (Set methods)",
+      "example": "setA.intersection(setB)",
+      "notes": "Landed natively as of the Set methods proposal — also .isSubsetOf() / .isSupersetOf() / .isDisjointFrom(). Not implemented here; native coverage is already complete for set-algebra operations."
+    },
+    {
+      "name": "difference",
+      "libraries": [
+        "lodash",
+        "es-toolkit"
+      ],
+      "native": "Set.prototype.difference()",
+      "since": "ES2025 (Set methods)",
+      "example": "setA.difference(setB)",
+      "notes": "Landed natively as of the Set methods proposal — also .isSubsetOf() / .isSupersetOf() / .isDisjointFrom(). Not implemented here; native coverage is already complete for set-algebra operations."
+    },
+    {
+      "name": "symmetricDifference",
+      "libraries": [
+        "lodash",
+        "es-toolkit"
+      ],
+      "native": "Set.prototype.symmetricDifference()",
+      "since": "ES2025 (Set methods)",
+      "example": "setA.symmetricDifference(setB)",
+      "notes": "Landed natively as of the Set methods proposal — also .isSubsetOf() / .isSupersetOf() / .isDisjointFrom(). Not implemented here; native coverage is already complete for set-algebra operations."
+    }
+  ],
+  "string": [
+    {
+      "name": "trim / trimStart / trimEnd",
+      "libraries": [
+        "lodash",
+        "radashi",
+        "ramda"
+      ],
+      "native": "String.prototype.trim() / trimStart() / trimEnd()",
+      "since": "ES2019",
+      "example": "'  hello  '.trim()  // 'hello'",
+      "notes": "No custom-character trim natively"
+    },
+    {
+      "name": "startsWith / endsWith",
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
+      "native": "String.prototype.startsWith() / endsWith()",
+      "since": "ES2015",
+      "example": "'hello'.startsWith('he')  // true"
+    },
+    {
+      "name": "padStart / padEnd",
+      "libraries": [
+        "lodash"
+      ],
+      "native": "String.prototype.padStart() / padEnd()",
+      "since": "ES2017",
+      "example": "'5'.padStart(3, '0')  // '005'"
+    },
+    {
+      "name": "repeat",
+      "libraries": [
+        "lodash",
+        "ramda"
+      ],
+      "native": "String.prototype.repeat()",
+      "since": "ES2015",
+      "example": "'abc'.repeat(3)  // 'abcabcabc'"
+    }
+  ],
+  "type": [
+    {
+      "name": "isNaN",
+      "libraries": [
+        "lodash",
+        "radashi"
+      ],
+      "native": "Number.isNaN(value)",
+      "since": "ES2015",
+      "example": "Number.isNaN(value)",
+      "notes": "Prefer Number.isNaN() over global isNaN() which coerces"
+    },
+    {
+      "name": "isSafeInteger",
+      "libraries": [
+        "lodash"
+      ],
+      "native": "Number.isSafeInteger(value)",
+      "since": "ES2015",
+      "example": "Number.isSafeInteger(value)"
+    },
+    {
+      "name": "isInteger",
+      "libraries": [
+        "lodash"
+      ],
+      "native": "Number.isInteger(value)",
+      "since": "ES2015",
+      "example": "Number.isInteger(value)"
+    },
+    {
+      "name": "isFinite / isFiniteNumber",
+      "libraries": [
+        "lodash"
+      ],
+      "native": "Number.isFinite(value)",
+      "since": "ES2015",
+      "example": "Number.isFinite(value)",
+      "notes": "Prefer Number.isFinite() over global isFinite() which coerces"
+    },
+    {
+      "name": "isInfinite",
+      "libraries": [
+        "sindresorhus/is"
+      ],
+      "native": "value === Infinity || value === -Infinity  /  !Number.isFinite(value) && !Number.isNaN(value)",
+      "since": "ES2015",
+      "example": "value === Infinity || value === -Infinity\n// or: !Number.isFinite(value) && !Number.isNaN(value)",
+      "notes": "Number.isFinite() is the complement; compose with a NaN guard if needed. No dedicated helper warranted."
+    },
+    {
+      "name": "isSet (Set data structure)",
+      "libraries": [
+        "lodash",
+        "radashi"
+      ],
+      "native": "value instanceof Set",
+      "since": "ES2015",
+      "example": "if (value instanceof Set) { ... }",
+      "notes": "Not implemented to avoid confusion with the former isSet (now isDefined)"
+    },
+    {
+      "name": "isWeakMap / isWeakSet / isWeakRef",
+      "libraries": [
+        "lodash"
+      ],
+      "native": "value instanceof WeakMap / WeakSet / WeakRef",
+      "since": "ES2015 / ES2021",
+      "example": "if (value instanceof WeakMap) { ... }",
+      "notes": "Too niche, use instanceof directly"
+    },
+    {
+      "name": "isDirectInstanceOf",
+      "libraries": [
+        "sindresorhus/is"
+      ],
+      "native": "value.constructor === Foo",
+      "since": "ES1",
+      "example": "value.constructor === MyClass"
+    },
+    {
+      "name": "TypedArrays (isInt8Array, isFloat32Array, ...)",
+      "libraries": [
+        "lodash"
+      ],
+      "native": "value instanceof Int8Array / Float32Array / ...",
+      "since": "ES2015",
+      "example": "if (value instanceof Uint8Array) { ... }",
+      "notes": "Too niche, use instanceof directly"
+    },
+    {
+      "name": "isHtmlElement / isUrlInstance / isUrlSearchParams",
+      "libraries": [
+        "sindresorhus/is"
+      ],
+      "native": "value instanceof HTMLElement / URL / URLSearchParams",
+      "since": "Web API",
+      "example": "if (value instanceof HTMLElement) { ... }",
+      "notes": "Platform-specific, use instanceof directly"
+    }
+  ],
+  "promise": [
+    {
+      "name": "withResolvers",
+      "libraries": [
+        "radashi"
+      ],
+      "native": "Promise.withResolvers()",
+      "since": "ES2024",
+      "example": "const { promise, resolve, reject } = Promise.withResolvers()"
+    }
+  ],
+  "random": [
+    {
+      "name": "uid",
+      "libraries": [
+        "radashi"
+      ],
+      "native": "crypto.randomUUID()",
+      "since": "Web API",
+      "example": "crypto.randomUUID()  // 'f47ac10b-58cc-...'",
+      "notes": "Generates UUID v4; Radashi uid is shorter and customizable. For UUID v7, use uuid7 from helpers4/math"
+    },
+    {
+      "name": "uuid",
+      "libraries": [
+        "uuid",
+        "nanoid"
+      ],
+      "native": "crypto.randomUUID()",
+      "since": "Web API",
+      "example": "crypto.randomUUID()  // 'f47ac10b-58cc-4372-a567-0e02b2c3d479'",
+      "notes": "UUID v4 only; for UUID v7 (sortable, timestamped) use uuid7 from helpers4/math"
+    }
+  ],
+  "date": [
+    {
+      "name": "toTemporalInstant",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon"
+      ],
+      "native": "Date.prototype.toTemporalInstant()",
+      "since": "Temporal (Stage 3)",
+      "example": "const instant = new Date().toTemporalInstant()",
+      "notes": "Converts a Date to Temporal.Instant. Available without a flag since Node 26 (first LTS with Temporal enabled by default)."
+    },
+    {
+      "name": "toZonedDateTime",
+      "libraries": [
+        "date-fns-tz",
+        "dayjs",
+        "luxon",
+        "moment-timezone"
+      ],
+      "native": "Temporal.Instant.prototype.toZonedDateTimeISO(tz)",
+      "since": "Temporal (Stage 3)",
+      "example": "instant.toZonedDateTimeISO('Europe/Paris')",
+      "notes": "Also Temporal.Now.zonedDateTimeISO(tz) for current time"
+    },
+    {
+      "name": "toPlainDate / toPlainDateTime / toPlainTime",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon"
+      ],
+      "native": "Temporal.ZonedDateTime.prototype.toPlainDate() / toPlainDateTime() / toPlainTime()",
+      "since": "Temporal (Stage 3)",
+      "example": "zdt.toPlainDate()  // 2025-01-19\nzdt.toPlainTime()  // 13:00:00",
+      "notes": "Extracts date-only or time-only from a ZonedDateTime"
+    },
+    {
+      "name": "now (date/time/instant)",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon",
+        "moment"
+      ],
+      "native": "Temporal.Now.instant() / .zonedDateTimeISO() / .plainDateISO() / .plainTimeISO()",
+      "since": "Temporal (Stage 3)",
+      "example": "Temporal.Now.instant()\nTemporal.Now.plainDateISO()\nTemporal.Now.zonedDateTimeISO('Europe/Paris')",
+      "notes": "Replaces new Date() for Temporal contexts"
+    },
+    {
+      "name": "from (parse temporal string)",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon",
+        "moment"
+      ],
+      "native": "Temporal.Instant.from(str) / Temporal.PlainDate.from(str) / etc.",
+      "since": "Temporal (Stage 3)",
+      "example": "Temporal.Instant.from('2025-01-19T12:00:00Z')\nTemporal.PlainDate.from('2025-01-19')",
+      "notes": "Each Temporal type has a static .from() method for strict parsing"
+    },
+    {
+      "name": "add / subtract (date arithmetic)",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon",
+        "moment"
+      ],
+      "native": "Temporal.PlainDate.prototype.add(duration) / .subtract(duration)",
+      "since": "Temporal (Stage 3)",
+      "example": "Temporal.PlainDate.from('2025-01-19').add({ months: 1 })  // 2025-02-19",
+      "notes": "Works on PlainDate, PlainDateTime, ZonedDateTime, Instant. Duration can be object or Temporal.Duration"
+    },
+    {
+      "name": "until / since (difference)",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon",
+        "moment"
+      ],
+      "native": "Temporal.PlainDate.prototype.until(other) / .since(other)",
+      "since": "Temporal (Stage 3)",
+      "example": "date1.until(date2, { largestUnit: 'year' })  // P1Y2M3D",
+      "notes": "Returns a Temporal.Duration; available on all Temporal date/time types"
+    },
+    {
+      "name": "compare (ordering)",
+      "libraries": [
+        "date-fns",
+        "dayjs",
+        "luxon",
+        "moment"
+      ],
+      "native": "Temporal.PlainDate.compare(a, b) / Temporal.Instant.compare(a, b)",
+      "since": "Temporal (Stage 3)",
+      "example": "Temporal.PlainDate.compare(date1, date2)  // -1, 0, or 1",
+      "notes": "Static method on each Temporal type; returns -1, 0, 1 — ideal for .sort()"
+    }
+  ],
+  "color": [
+    {
+      "name": "lighten / darken",
+      "libraries": [
+        "chroma-js",
+        "colord",
+        "polished",
+        "tinycolor2"
+      ],
+      "native": "color-mix(in oklch, <color> <percent>, white|black)",
+      "since": "CSS Color 5 (Baseline widely available since 2023 — Chrome 111, Firefox 113, Safari 16.2)",
+      "example": "background: color-mix(in oklch, var(--brand) 80%, white);",
+      "notes": "CSS-only — only usable inside a CSS property value (inline style / stylesheet), not callable as a plain JS function and not available in Node. A JS helper is still useful for non-DOM contexts (SSR theming, CLI tools, backend color logic)."
+    },
+    {
+      "name": "withAlpha (change the alpha channel of an existing color)",
+      "libraries": [
+        "chroma-js",
+        "colord",
+        "polished",
+        "tinycolor2"
+      ],
+      "native": "rgb(from <color> r g b / <alpha>)",
+      "since": "CSS Color 5 relative color syntax (Baseline widely available since September 2024 — Chrome 119+)",
+      "example": "background: rgb(from lime r g b / 50%);",
+      "notes": "CSS-only, same caveat as color-mix() above — not a JS-callable function, unavailable in Node."
+    },
+    {
+      "name": "isLight / isDark (pick a readable text color)",
+      "libraries": [
+        "chroma-js",
+        "colord",
+        "polished",
+        "tinycolor2"
+      ],
+      "native": "contrast-color(<color>)",
+      "since": "CSS Color 6 (Baseline newly available since April 2026 — Chrome 147, Firefox 146, Safari 26.0)",
+      "example": "color: contrast-color(var(--bg));",
+      "notes": "CSS-only and very recently shipped, so real-world support is still limited. Picks black/white for you but does not expose a numeric contrast ratio — a JS contrastRatio()/isLight() helper remains useful for Node/non-DOM contexts and for anything needing the actual WCAG number."
+    }
+  ]
+}

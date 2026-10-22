@@ -1,0 +1,47 @@
+/**
+ * This file is part of helpers4.
+ * Copyright (C) 2025 baxyz
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ */
+
+import { extractErrorMessage } from './extractErrorMessage';
+import type { HelperExamples } from '../../scripts/examples/types';
+
+const examples: HelperExamples = {
+  helper: 'extractErrorMessage',
+  category: 'string',
+  examples: [
+    {
+      title: 'Extract message from Error object',
+      description: 'Returns the stringified Error, including the class prefix.',
+      code: `extractErrorMessage(new Error('Something went wrong'))
+// => 'Error: Something went wrong'`,
+      assert: () => {
+        const result = extractErrorMessage(new Error('Something went wrong'));
+        if (result !== 'Error: Something went wrong') throw new Error(`Unexpected: ${result}`);
+      },
+    },
+    {
+      title: 'Handle string errors',
+      description: 'Returns the string directly when the error is a plain string.',
+      code: `extractErrorMessage('plain error')
+// => 'plain error'`,
+      assert: () => {
+        const result = extractErrorMessage('plain error');
+        if (result !== 'plain error') throw new Error(`Unexpected: ${result}`);
+      },
+    },
+    {
+      title: 'Stringify unknown errors',
+      description: 'When stringify is true, falls back to JSON.stringify for unrecognized errors.',
+      code: `extractErrorMessage(42, true)
+// => '42'`,
+      assert: () => {
+        const result = extractErrorMessage(42, true);
+        if (result !== '42') throw new Error(`Unexpected: ${result}`);
+      },
+    },
+  ],
+};
+
+export default examples;

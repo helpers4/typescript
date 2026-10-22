@@ -1,0 +1,5 @@
+{
+  "label": "Version",
+  "smallDescription": "Version string manipulation utilities",
+  "description": "Utilities for working with version strings including parsing, validation, and version string transformation"
+}

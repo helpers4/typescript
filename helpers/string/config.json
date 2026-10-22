@@ -1,0 +1,5 @@
+{
+  "label": "String",
+  "smallDescription": "String manipulation and formatting utilities",
+  "description": "Utilities for working with strings including error message formatting, text transformation, and string validation"
+}

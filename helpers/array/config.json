@@ -1,0 +1,5 @@
+{
+  "label": "Array",
+  "smallDescription": "Array manipulation utilities",
+  "description": "Utilities for working with arrays including equality checks, intersections, and common element detection"
+}

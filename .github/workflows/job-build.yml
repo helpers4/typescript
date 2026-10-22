@@ -1,0 +1,57 @@
+name: Job - Build
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: false
+        type: string
+        default: "26"
+      artifact-name:
+        required: false
+        type: string
+        default: ""
+      upload-artifact:
+        required: false
+        type: boolean
+        default: false
+    outputs:
+      status:
+        description: "Build execution status"
+        value: ${{ jobs.build.outputs.status }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.build.outputs.status }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+
+      - name: Setup pnpm
+        uses: helpers4/action/setup-pnpm@215739f023134ab5ed2158607074084ec530a830
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Build project
+        id: build
+        run: |
+          echo "Building project..."
+          if pnpm run build; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Upload build artifact
+        if: inputs.upload-artifact == true
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: build/
+          retention-days: 1

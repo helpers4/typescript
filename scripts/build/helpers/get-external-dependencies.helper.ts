@@ -1,0 +1,90 @@
+/**
+ * This file is part of helpers4.
+ * Copyright (C) 2025 baxyz
+ * SPDX-License-Identifier: LGPL-3.0-or-later
+ */
+
+import { readdir } from "node:fs/promises";
+import { builtinModules } from "node:module";
+import { join } from "node:path";
+import { DIR } from "../../constants";
+import { readFileText } from "../../utils";
+
+/**
+ * Strips comments from source text so that import-like text inside JSDoc
+ * `@example` blocks is not mistaken for a real import statement.
+ *
+ * All `//` comments are removed (not just standalone lines): import statements
+ * never contain regex literals, so stripping inline `//` is safe here.
+ */
+function stripComments(content: string): string {
+  return content
+    .replace(/\/\*[\s\S]*?\*\//g, '\n')
+    .replace(/\/\/.*$/gm, '');
+}
+
+/**
+ * Analyzes the external packages used in a specific category by parsing import statements
+ * @param categoryName - The name of the category (e.g., 'string', 'url', 'observable')
+ * @returns Promise<string[]> - Array of external package names used in the category
+ */
+export async function getExternalDependencies(categoryName: string): Promise<string[]> {
+  const categoryPath = join(DIR.HELPERS, categoryName);
+  const files = await readdir(categoryPath);
+
+  // Filter .ts files, ignoring .test.ts, .bench.ts, etc.
+  const tsFiles = files.filter(file => file.endsWith(".ts") && !file.match(/\.\w+\.ts$/));
+
+  const externalPackages = new Set<string>();
+
+  for (const file of tsFiles) {
+    const filePath = join(categoryPath, file);
+    const content = stripComments(readFileText(filePath));
+
+    const importRegex = /^import\s+[^;]+from\s+['"]([^'"]+)['"]/gm;
+    let match;
+
+    while ((match = importRegex.exec(content)) !== null) {
+      const importPath = match[1];
+
+      // Skip relative imports (starting with . or ./)
+      if (importPath.startsWith('.')) {
+        continue;
+      }
+
+      // Skip node built-in modules (with or without the node: protocol prefix).
+      // `builtinModules` comes straight from Node's own `node:module`, so it stays
+      // current as new builtins (e.g. worker_threads, node:sqlite) are added.
+      if (importPath.startsWith('node:') || builtinModules.includes(importPath)) {
+        continue;
+      }
+
+      // Extract package name (handle scoped packages)
+      let packageName = importPath;
+      if (importPath.startsWith('@')) {
+        // Scoped package: @scope/package or @scope/package/subpath
+        const parts = importPath.split('/');
+        if (parts.length >= 2) {
+          packageName = `${parts[0]}/${parts[1]}`;
+        }
+      } else {
+        // Regular package: package or package/subpath
+        packageName = importPath.split('/')[0];
+      }
+
+      // Skip if it's a TypeScript declaration file import
+      if (packageName.startsWith('@types/')) {
+        continue;
+      }
+
+      // Skip internal @helpers4/* cross-references (e.g. in JSDoc @example blocks)
+      if (packageName.startsWith('@helpers4/')) {
+        continue;
+      }
+
+      externalPackages.add(packageName);
+    }
+  }
+
+  return Array.from(externalPackages).sort();
+}

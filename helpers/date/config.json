@@ -1,0 +1,5 @@
+{
+  "label": "Date",
+  "smallDescription": "Date and time utility functions",
+  "description": "Utilities for working with dates and times including comparison, formatting, and difference calculations"
+}

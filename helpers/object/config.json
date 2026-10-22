@@ -1,0 +1,5 @@
+{
+  "label": "Object",
+  "smallDescription": "Object manipulation utilities",
+  "description": "Utilities for working with objects including property removal, filtering, and object transformation"
+}

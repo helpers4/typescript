@@ -1,0 +1,5 @@
+{
+  "label": "Map",
+  "smallDescription": "Native Map manipulation utilities",
+  "description": "Utilities for working with native Map instances: iteration, filtering, transforming keys/values, and building Maps from arrays"
+}

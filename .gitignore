@@ -1,0 +1,23 @@
+# VS Code
+/.history
+
+# JS & Node
+/node_modules
+/build
+
+# Helpers
+/helpers/*/index.ts
+
+# Copilot
+.copilot/*
+
+# Vitest & Coverage
+/coverage
+/helpers/version/coverage
+
+# Stryker
+/reports/**
+!/reports/mutation/
+/reports/mutation/**
+!/reports/mutation/incremental.json
+/.stryker-tmp

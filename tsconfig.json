@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "paths": {
+      "*": [
+        "./*"
+      ]
+    },
+    "incremental": true,
+    "target": "ESNext",
+    "outDir": "build",
+    "rootDir": ".",
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSourceMap": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    // Strict type checking
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    // Note: The 'any' type is strictly forbidden in this codebase.
+    // Use 'unknown' for truly unknown types, or specific union types.
+    "traceResolution": false,
+    "listEmittedFiles": false,
+    "listFiles": false,
+    "pretty": true,
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "node"
+    ],
+    "skipLibCheck": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ]
+  },
+  "include": [
+    "helpers/**/*.ts",
+    "scripts/**/*.ts",
+    "vitest.config.ts"
+  ],
+  "exclude": [
+    "node_modules/**",
+    "build/**",
+    "**/node_modules/**",
+    "**/*.bench.ts"
+  ],
+  "compileOnSave": false
+}

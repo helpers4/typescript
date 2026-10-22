@@ -1,0 +1,5 @@
+{
+  "label": "JSON",
+  "smallDescription": "JSON parsing and serialization, with its common variants",
+  "description": "Parse and stringify JSON and its variants — JSONC (HuJSON, JWCC), JSON5, NDJSON (JSON Lines), JSON text sequences (RFC 7464) and canonical JSON (RFC 8785). Every `parse*` throws on invalid input and has a `safe*` twin that returns `null` or a fallback instead."
+}
