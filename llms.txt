@@ -27,6 +27,7 @@
 ## Packages
 
 - array — array manipulation, chunking, comparison
+- browser — browser APIs safe to import anywhere: media queries, ResizeObserver, image decoding, fonts, idle callbacks
 - ci — CI/CD workflow status formatting (PR comments, pipeline reports)
 - color — color conversion and validation
 - commit — Conventional Commits parsing, validation, analysis
