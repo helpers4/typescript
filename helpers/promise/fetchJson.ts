@@ -16,7 +16,7 @@ export interface FetchJsonOptions {
   /**
    * How to retry a failed request — see {@link RetryOptions}. By default, up to 3 attempts, 1 s
    * apart, and only transient failures are retried (see {@link fetchJson}). Passing your own
-   * `shouldRetry` replaces that rule.
+   * `shouldRetry` replaces that rule. Without a `signal` of its own, it follows `init.signal`.
    */
   retry?: RetryOptions;
 }
@@ -38,6 +38,8 @@ function isTransient(error: unknown): boolean {
  * `url`) for a bad status, or whatever `fetch` rejected with.
  *
  * Pass a URL or a string: a `Request` with a body cannot be sent twice, so it can't be retried.
+ *
+ * `init.signal` cancels the whole call: the running request, and the wait before the next one.
  *
  * @param input - URL or `Request` object passed to `fetch`
  * @param init - Optional `RequestInit` options passed to `fetch`
@@ -66,6 +68,6 @@ export async function fetchJson<T>(
       const response = await fetchOrThrow(input, init);
       return (await response.json()) as T;
     },
-    { ...retryOptions, shouldRetry },
+    { ...retryOptions, shouldRetry, signal: retryOptions.signal ?? init?.signal ?? undefined },
   );
 }
