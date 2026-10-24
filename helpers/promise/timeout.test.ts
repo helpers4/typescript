@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { TimeoutError, timeout } from './timeout';
 
 describe('timeout', () => {
@@ -53,5 +53,41 @@ describe('timeout', () => {
     const err = new TimeoutError(100);
     expect(err).toBeInstanceOf(Error);
     expect(err).toBeInstanceOf(TimeoutError);
+  });
+
+  describe('with a signal', () => {
+    it('rejects at once with the reason of an already aborted signal, without a timer', async () => {
+      vi.useFakeTimers();
+      try {
+        const promise = timeout(new Promise(() => {}), 100, { signal: AbortSignal.abort('gone') });
+        expect(vi.getTimerCount()).toBe(0);
+        await expect(promise).rejects.toBe('gone');
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('clears the timer of a promise that never settles when aborted', async () => {
+      vi.useFakeTimers();
+      try {
+        const controller = new AbortController();
+        const promise = timeout(new Promise(() => {}), 100, { signal: controller.signal });
+        expect(vi.getTimerCount()).toBe(1);
+        controller.abort('stop');
+        expect(vi.getTimerCount()).toBe(0);
+        await expect(promise).rejects.toBe('stop');
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('lets go of the signal once the promise settles or times out', async () => {
+      const controller = new AbortController();
+      const remove = vi.spyOn(controller.signal, 'removeEventListener');
+      await timeout(Promise.resolve('done'), 100, { signal: controller.signal });
+      await timeout(Promise.reject(new Error('fail')), 100, { signal: controller.signal }).catch(() => {});
+      await timeout(new Promise(() => {}), 1, { signal: controller.signal }).catch(() => {});
+      expect(remove).toHaveBeenCalledTimes(3);
+    });
   });
 });
