@@ -69,4 +69,27 @@ describe('paginate', () => {
     await paginate(fetchPage);
     expect(peak).toBe(1);
   });
+
+  describe('with a signal', () => {
+    it('requests nothing with an already aborted signal', async () => {
+      const fetchPage = vi.fn().mockResolvedValue([1]);
+      await expect(paginate(fetchPage, { signal: AbortSignal.abort('gone') })).rejects.toBe('gone');
+      expect(fetchPage).not.toHaveBeenCalled();
+    });
+
+    it('stops requesting pages and rejects with the reason once aborted', async () => {
+      const controller = new AbortController();
+      const fetchPage = vi.fn(async (page: number) => {
+        if (page === 2) controller.abort('stop');
+        return [page];
+      });
+      await expect(paginate(fetchPage, { signal: controller.signal })).rejects.toBe('stop');
+      expect(fetchPage).toHaveBeenCalledTimes(2);
+    });
+
+    it('collects every page while the signal is not aborted', async () => {
+      const fetchPage = vi.fn(async (page: number) => (page < 3 ? [page] : []));
+      await expect(paginate(fetchPage, { signal: new AbortController().signal })).resolves.toEqual([1, 2]);
+    });
+  });
 });
