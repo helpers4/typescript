@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { delay as wait } from './delay';
+
 /**
  * Options for {@link retry}.
  * @since 3.1.3
@@ -26,6 +28,13 @@ export interface RetryOptions {
    * Returning `false` rethrows that error at once. Defaults to retrying every error.
    */
   shouldRetry?: (error: unknown, attempt: number) => boolean;
+  /**
+   * Stops retrying when aborted: the wait between attempts is cleared, no new attempt starts,
+   * and the returned promise rejects with the signal's reason. Pass the same signal to the
+   * work inside `fn` (a `fetch`) to cancel the running attempt too.
+   * @since next
+   */
+  signal?: AbortSignal;
 }
 
 /**
@@ -72,22 +81,26 @@ export async function retry<T>(
     attempts = 3,
     delayMs: delay = 1000,
     shouldRetry = () => true,
+    signal,
   }: RetryOptions = typeof maxAttemptsOrOptions === 'number'
     ? { attempts: maxAttemptsOrOptions, delayMs }
     : maxAttemptsOrOptions;
 
   for (let attempt = 1; ; attempt++) {
+    if (signal?.aborted) throw signal.reason;
     try {
       // Sequential on purpose: each attempt only runs once the previous one has failed.
       // eslint-disable-next-line no-await-in-loop
       return await fn(attempt);
     } catch (error) {
+      // An attempt cut short by the abort: report the abort, not its side effect.
+      if (signal?.aborted) throw signal.reason;
       if (attempt >= attempts || !shouldRetry(error, attempt)) {
         throw error;
       }
       const waitMs = typeof delay === 'function' ? delay(attempt, error) : delay;
       // eslint-disable-next-line no-await-in-loop
-      await new Promise(resolve => setTimeout(resolve, waitMs));
+      await wait(waitMs, undefined, { signal });
     }
   }
 }

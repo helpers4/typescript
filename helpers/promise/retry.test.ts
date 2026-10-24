@@ -252,4 +252,48 @@ describe("retry", () => {
     expect(result).toBe("ok");
     expect(seen).toEqual([1, 2, 3]);
   });
+
+  describe("with a signal", () => {
+    it("rejects with the reason of an already aborted signal without calling fn", async () => {
+      const fn = vi.fn().mockResolvedValue("ok");
+      await expect(retry(fn, { signal: AbortSignal.abort("gone") })).rejects.toBe("gone");
+      expect(fn).not.toHaveBeenCalled();
+    });
+
+    it("clears the wait between attempts and starts no new attempt when aborted", async () => {
+      vi.useFakeTimers();
+      try {
+        const controller = new AbortController();
+        const fn = vi.fn().mockRejectedValue(new Error("fail"));
+        const promise = retry(fn, { attempts: 3, delayMs: 1000, signal: controller.signal });
+        const settled = promise.catch((error: unknown) => error);
+        await vi.advanceTimersByTimeAsync(0);
+        expect(fn).toHaveBeenCalledOnce();
+        expect(vi.getTimerCount()).toBe(1);
+        controller.abort("stop");
+        expect(await settled).toBe("stop");
+        expect(vi.getTimerCount()).toBe(0);
+        expect(fn).toHaveBeenCalledOnce();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("rejects with the reason, not the attempt's error, when aborted during an attempt", async () => {
+      const controller = new AbortController();
+      const fn = vi.fn(() => {
+        controller.abort("stop");
+        return Promise.reject(new Error("aborted fetch"));
+      });
+      await expect(retry(fn, { attempts: 3, delayMs: 0, signal: controller.signal })).rejects.toBe("stop");
+      expect(fn).toHaveBeenCalledOnce();
+    });
+
+    it("retries as usual while the signal is not aborted", async () => {
+      const controller = new AbortController();
+      const fn = vi.fn().mockRejectedValueOnce(new Error("fail")).mockResolvedValue("ok");
+      expect(await retry(fn, { attempts: 2, delayMs: 0, signal: controller.signal })).toBe("ok");
+      expect(fn).toHaveBeenCalledTimes(2);
+    });
+  });
 });
