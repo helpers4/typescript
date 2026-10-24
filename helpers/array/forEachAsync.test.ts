@@ -63,4 +63,12 @@ describe('forEachAsync', () => {
     });
     expect(called).toBe(false);
   });
+
+  it('takes the options, with a concurrency and a signal', async () => {
+    await expect(forEachAsync([1, 2], async () => {}, { concurrency: 1, signal: new AbortController().signal })).resolves.toBeUndefined();
+  });
+
+  it('rejects with the reason of an aborted signal', async () => {
+    await expect(forEachAsync([1, 2], async () => {}, { concurrency: 1, signal: AbortSignal.abort('gone') })).rejects.toBe('gone');
+  });
 });

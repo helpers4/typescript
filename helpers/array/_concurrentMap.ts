@@ -7,8 +7,18 @@
  * Not exported from the package barrel — tests live in _concurrentMap.test.ts.
  */
 
+import { abortable } from '../_shared/_abortable.js';
 import { validatePositiveCount } from '../_shared/_validatePositiveCount.js';
 import { parallel } from '../promise/parallel.js';
+import type { AsyncArrayOptions } from './mapAsync.js';
+
+/**
+ * Reads the last argument of the async array helpers: a bare `concurrency`, or the options.
+ * @ignore
+ */
+export function resolveAsyncArrayOptions(options: number | AsyncArrayOptions | undefined): AsyncArrayOptions {
+  return typeof options === 'object' ? options : { concurrency: options };
+}
 
 /**
  * Resolves an optional `concurrency` argument into a worker count, clamped to `itemCount`.
@@ -34,14 +44,18 @@ export function resolveConcurrency(concurrency: number | undefined, itemCount: n
  * worker-pool implementation — `concurrency` is already validated and clamped by the time
  * `parallel` sees it, so its own (more permissive) clamping never comes into play here and
  * its behavior for direct callers is unaffected.
+ *
+ * An aborted `signal` starts no new call and rejects with its reason at once.
  * @ignore
  */
 export async function runConcurrentMap<T, R>(
   items: readonly T[],
   fn: (item: T, index: number) => R | Promise<R>,
   concurrency: number | undefined,
+  signal?: AbortSignal,
 ): Promise<R[]> {
   const workerCount = resolveConcurrency(concurrency, items.length);
+  if (signal?.aborted) throw signal.reason;
   if (items.length === 0) return [];
   const thunks = Array.from(
     { length: items.length },
@@ -49,7 +63,7 @@ export async function runConcurrentMap<T, R>(
       async () =>
         index in items ? fn(items[index]!, index) : (undefined as R),
   );
-  return parallel(thunks, workerCount);
+  return parallel(thunks, workerCount, { signal });
 }
 
 /**
@@ -60,19 +74,23 @@ export async function runConcurrentMap<T, R>(
  *
  * A hole in a sparse `items` array is skipped (`fn` is not called for it), matching
  * `Array.prototype.forEach`.
+ *
+ * An aborted `signal` starts no new call and rejects with its reason at once.
  * @ignore
  */
 export async function runConcurrentEach<T>(
   items: readonly T[],
   fn: (item: T, index: number) => unknown,
   concurrency: number | undefined,
+  signal?: AbortSignal,
 ): Promise<void> {
   const workerCount = resolveConcurrency(concurrency, items.length);
+  if (signal?.aborted) throw signal.reason;
   if (items.length === 0) return;
   let nextIndex = 0;
 
   async function worker(): Promise<void> {
-    if (nextIndex >= items.length) return;
+    if (nextIndex >= items.length || signal?.aborted) return;
     const currentIndex = nextIndex++;
     if (currentIndex in items) {
       await fn(items[currentIndex]!, currentIndex);
@@ -80,5 +98,5 @@ export async function runConcurrentEach<T>(
     return worker();
   }
 
-  await Promise.all(Array.from({ length: workerCount }, worker));
+  await abortable(Promise.all(Array.from({ length: workerCount }, worker)), signal);
 }

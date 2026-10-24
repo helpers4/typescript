@@ -67,4 +67,12 @@ describe('mapAsync', () => {
   it('throws RangeError for an invalid concurrency', async () => {
     await expect(mapAsync([1, 2], (n) => n, 0)).rejects.toThrow(RangeError);
   });
+
+  it('takes the options, with a concurrency and a signal', async () => {
+    await expect(mapAsync([1, 2], async (x) => x * 2, { concurrency: 1, signal: new AbortController().signal })).resolves.toEqual([2, 4]);
+  });
+
+  it('rejects with the reason of an aborted signal', async () => {
+    await expect(mapAsync([1, 2], async (x) => x * 2, { concurrency: 1, signal: AbortSignal.abort('gone') })).rejects.toBe('gone');
+  });
 });
