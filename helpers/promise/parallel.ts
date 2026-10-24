@@ -4,6 +4,20 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { abortable } from '../_shared/_abortable.js';
+
+/**
+ * Options for {@link parallel} and {@link parallelSettle}.
+ * @since next
+ */
+export interface ParallelOptions {
+  /**
+   * Starts no new function when aborted, and rejects with the signal's reason at once, without
+   * waiting for the running ones: pass the same signal to their work to cancel it too.
+   */
+  signal?: AbortSignal;
+}
+
 /**
  * Runs an array of async functions with a concurrency limit.
  * At most `limit` functions will be running at any time. `Infinity` means no cap (every
@@ -11,7 +25,9 @@
  * negative) is clamped to `1` (fully sequential) rather than rejected.
  * @param functions - Array of functions that return promises
  * @param limit - Maximum number of concurrent executions
- * @returns Promise that resolves with an array of results in the same order as the input
+ * @param options - Cancellation — see {@link ParallelOptions}
+ * @returns Promise that resolves with an array of results in the same order as the input, or
+ *   rejects with the signal's reason if aborted first
  * @see {@link parallelSettle} for the same concurrency limit, but partitioning outcomes
  *   instead of rejecting on the first failure
  * @example
@@ -24,7 +40,9 @@
 export async function parallel<T>(
   functions: readonly (() => Promise<T>)[],
   limit: number,
+  options: ParallelOptions = {},
 ): Promise<T[]> {
+  const { signal } = options;
   const results: T[] = [];
   const clampedLimit =
     limit === Number.POSITIVE_INFINITY
@@ -35,7 +53,7 @@ export async function parallel<T>(
   let nextIndex = 0;
 
   async function runNext(): Promise<void> {
-    if (nextIndex >= functions.length) return;
+    if (nextIndex >= functions.length || signal?.aborted) return;
     const currentIndex = nextIndex++;
     results[currentIndex] = await functions[currentIndex]();
     return runNext();
@@ -46,6 +64,6 @@ export async function parallel<T>(
     () => runNext(),
   );
 
-  await Promise.all(workers);
+  await abortable(Promise.all(workers), signal);
   return results;
 }
