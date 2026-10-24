@@ -95,6 +95,28 @@ await retry((attempt) => {
         if (result !== 'c') throw new Error(`Expected 'c', got ${result}`);
       },
     },
+    {
+      title: 'Stop retrying',
+      description: 'An aborted signal clears the wait between attempts and starts no new one.',
+      code: `const controller = new AbortController();
+const result = retry(() => fetchData(), { delayMs: 5000, signal: controller.signal });
+controller.abort('disabled');
+await result
+// rejects with 'disabled', without waiting the 5 s`,
+      assert: async () => {
+        const controller = new AbortController();
+        let calls = 0;
+        const result = retry(() => {
+          calls++;
+          return Promise.reject(new Error('down'));
+        }, { delayMs: 5000, signal: controller.signal });
+        await Promise.resolve();
+        controller.abort('disabled');
+        const reason = await result.then(() => 'resolved', (error: unknown) => error);
+        if (reason !== 'disabled') throw new Error(`Expected 'disabled', got ${String(reason)}`);
+        if (calls !== 1) throw new Error(`Expected 1 attempt, got ${calls}`);
+      },
+    },
   ],
 };
 
