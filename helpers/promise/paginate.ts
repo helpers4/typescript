@@ -17,6 +17,12 @@ export interface PaginateOptions {
   pageSize?: number;
   /** Maximum number of pages to request. Defaults to no limit; a value below `1` requests nothing. */
   maxPages?: number;
+  /**
+   * Stops requesting pages when aborted, and rejects with the signal's reason. Pass the same
+   * signal to the request inside `fetchPage` to cancel the page in flight too.
+   * @since next
+   */
+  signal?: AbortSignal;
 }
 
 /**
@@ -28,10 +34,10 @@ export interface PaginateOptions {
  * `fetchPage` rejects the whole call, and the items already collected are lost.
  *
  * Without `maxPages`, a source that never returns a short or empty page is requested forever,
- * so set one for an API you do not control.
+ * so set one for an API you do not control, or a `signal` to stop it.
  *
  * @param fetchPage - Returns the items of a page, given its 1-based number, or `null` for no data
- * @param options - Page size and page limit — see {@link PaginateOptions}
+ * @param options - Page size, page limit and cancellation — see {@link PaginateOptions}
  * @returns All the items, in page order
  * @example
  * const repos = await paginate(
@@ -47,12 +53,15 @@ export async function paginate<T>(
   fetchPage: (page: number) => Promise<readonly T[] | null>,
   options: PaginateOptions = {},
 ): Promise<T[]> {
-  const { pageSize, maxPages = Infinity } = options;
+  const { pageSize, maxPages = Infinity, signal } = options;
   const items: T[] = [];
   for (let page = 1; page <= maxPages; page++) {
+    if (signal?.aborted) throw signal.reason;
     // Sequential on purpose: whether to ask for the next page depends on this one.
     // eslint-disable-next-line no-await-in-loop
     const batch = await fetchPage(page);
+    // A page cut short by the abort: report the abort, not a partial result.
+    if (signal?.aborted) throw signal.reason;
     if (batch === null || batch.length === 0) break;
     items.push(...batch);
     if (pageSize !== undefined && batch.length < pageSize) break;
