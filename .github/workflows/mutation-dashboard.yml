@@ -18,7 +18,7 @@ permissions:
 
 env:
   NODE_LATEST_LTS: "26"
-  SHARD_COUNT: 4
+  SHARD_COUNT: 8
 
 jobs:
   mutation-shard:
@@ -34,11 +34,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [0, 1, 2, 3]
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
     # Runtime scales with each shard's own subset, not the whole project — a much shorter
     # budget than a single unsharded run needs, with real margin. If shards start timing out
     # as the helper count grows, raise SHARD_COUNT above before touching this.
-    timeout-minutes: 20
+    # A full run (every mutant tested for real) takes ~9 minutes on 32 cores: eight shards on
+    # 4-core runners land around 10-15 minutes each, 2 of them spent on the initial test run.
+    timeout-minutes: 30
 
     steps:
       - name: Checkout code
