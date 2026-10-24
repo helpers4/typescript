@@ -36,6 +36,22 @@ const examples: HelperExamples = {
         if (result !== 'fast') throw new Error(`Expected 'fast', got ${result}`);
       },
     },
+    {
+      title: 'Cancel the timeout',
+      description: 'An aborted signal clears the timer even if the promise never settles.',
+      code: `const controller = new AbortController()
+const result = timeout(new Promise(() => {}), 5000, { signal: controller.signal })
+controller.abort('disabled')
+await result
+// rejects with 'disabled', at once`,
+      assert: async () => {
+        const controller = new AbortController();
+        const result = timeout(new Promise(() => {}), 5000, { signal: controller.signal });
+        controller.abort('disabled');
+        const reason = await result.then(() => 'resolved', (error: unknown) => error);
+        if (reason !== 'disabled') throw new Error(`Expected 'disabled', got ${String(reason)}`);
+      },
+    },
   ],
 };
 
