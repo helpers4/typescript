@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.1.7] - 2026-10-24
+
+### 🐛 Bug Fixes
+- **CI-CD**: run the mutation dashboard on eight shards with a 30 min budget
+- **deps**: bump Stryker to 10.1.1 so mutants run their tests with vitest 5
+
+### 🔧 Miscellaneous
+- **CI-CD**: rebuild the mutation testing incremental baseline
+
+### ✅ Tests
+- **geometry**: give the very long polyline test room under Stryker
+
 ## [3.1.6] - 2026-10-24
 
 ### 🚀 Features
@@ -1261,6 +1273,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.1.7]: https://github.com/helpers4/typescript/compare/v3.1.6...v3.1.7
 [3.1.6]: https://github.com/helpers4/typescript/compare/v3.1.5...v3.1.6
 [3.1.5]: https://github.com/helpers4/typescript/compare/v3.1.4...v3.1.5
 [3.1.4]: https://github.com/helpers4/typescript/compare/v3.1.3...v3.1.4
