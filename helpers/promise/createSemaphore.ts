@@ -4,10 +4,23 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { onAbort } from '../_shared/_onAbort.js';
 import { validatePositiveCount } from '../_shared/_validatePositiveCount.js';
 
 /** Releases the permit this specific function was issued for. @ignore */
 type Release = () => void;
+
+/**
+ * Options for {@link Semaphore.acquire} and {@link Semaphore.run}, and their {@link Mutex} twins.
+ * @since next
+ */
+export interface AcquireOptions {
+  /**
+   * Gives up waiting when aborted: the caller leaves the queue and the promise rejects with the
+   * signal's reason. No effect once the permit is granted — release it as usual.
+   */
+  signal?: AbortSignal;
+}
 
 /** A semaphore created by {@link createSemaphore}. */
 export interface Semaphore {
@@ -26,14 +39,17 @@ export interface Semaphore {
    * acquired it — passing it to unrelated code means that code can release the permit at a
    * time you don't control. {@link run} avoids this by construction (only ever released once,
    * internally, right after `fn` settles).
+   *
+   * Pass a `signal` to stop waiting — see {@link AcquireOptions}.
    */
-  acquire(): Promise<Release>;
+  acquire(options?: AcquireOptions): Promise<Release>;
   /**
    * Acquires a permit, runs `fn`, and releases the permit afterwards — even if `fn` throws.
    * Prefer this over manual {@link acquire} + release-function pairs, since it can't leak a
-   * permit by forgetting to call the release function on an error path.
+   * permit by forgetting to call the release function on an error path. A `signal` only
+   * stops the wait for the permit; pass it to the work inside `fn` to cancel that too.
    */
-  run<T>(fn: () => T | Promise<T>): Promise<T>;
+  run<T>(fn: () => T | Promise<T>, options?: AcquireOptions): Promise<T>;
   /** Number of permits currently available (not held). */
   availablePermits(): number;
 }
@@ -63,6 +79,9 @@ export interface Semaphore {
  * } finally {
  *   release(); // throws if called again
  * }
+ * @example
+ * // Leave the queue on teardown
+ * await semaphore.run(() => sync(), { signal: controller.signal });
  * @since 3.0.4
  */
 export function createSemaphore(permits: number): Semaphore {
@@ -105,21 +124,30 @@ export function createSemaphore(permits: number): Semaphore {
     };
   }
 
-  function acquire(): Promise<Release> {
+  function acquire(options: AcquireOptions = {}): Promise<Release> {
+    const { signal } = options;
+    if (signal?.aborted) return Promise.reject(signal.reason);
     if (available > 0) {
       available--;
       return Promise.resolve(createRelease());
     }
-    return new Promise<Release>((resolve) => {
-      enqueue(() => {
+    return new Promise<Release>((resolve, reject) => {
+      const waiter = (): void => {
+        removeListener();
         available--;
         resolve(createRelease());
+      };
+      enqueue(waiter);
+      // Still queued when this fires: a granted waiter removes the listener first.
+      const removeListener = onAbort(signal, (reason) => {
+        queue.splice(queue.indexOf(waiter, queueHead), 1);
+        reject(reason);
       });
     });
   }
 
-  async function run<T>(fn: () => T | Promise<T>): Promise<T> {
-    const release = await acquire();
+  async function run<T>(fn: () => T | Promise<T>, options?: AcquireOptions): Promise<T> {
+    const release = await acquire(options);
     try {
       return await fn();
     } finally {

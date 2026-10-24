@@ -117,4 +117,15 @@ describe('createMutex', () => {
     expect(results).toEqual(['token', 'token', 'token']);
     expect(refreshCount).toBe(1);
   });
+
+  it('stops waiting for the lock when the signal aborts', async () => {
+    const mutex = createMutex();
+    const release = await mutex.acquire();
+    const controller = new AbortController();
+    const waiting = mutex.run(() => 'never', { signal: controller.signal });
+    controller.abort('stop');
+    await expect(waiting).rejects.toBe('stop');
+    release();
+    expect(mutex.isLocked()).toBe(false);
+  });
 });
