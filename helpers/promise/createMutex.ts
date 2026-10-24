@@ -5,6 +5,7 @@
  */
 
 import { createSemaphore } from './createSemaphore.js';
+import type { AcquireOptions } from './createSemaphore.js';
 
 /** Releases the lock this specific function was issued for. @ignore */
 type Release = () => void;
@@ -19,14 +20,17 @@ export interface Mutex {
    * one permit, see {@link createSemaphore} for the full rationale). The returned function is a
    * plain, transferable closure — passing it to unrelated code lets that code release the lock
    * at a time you don't control; {@link run} avoids this by construction.
+   *
+   * Pass a `signal` to stop waiting — see {@link AcquireOptions}.
    */
-  acquire(): Promise<Release>;
+  acquire(options?: AcquireOptions): Promise<Release>;
   /**
    * Acquires the lock, runs `fn`, and releases it afterwards — even if `fn` throws. Prefer
    * this over manual {@link acquire} + release-function pairs, since it can't leak the lock by
-   * forgetting to call the release function on an error path.
+   * forgetting to call the release function on an error path. A `signal` only stops the wait
+   * for the lock; pass it to the work inside `fn` to cancel that too.
    */
-  run<T>(fn: () => T | Promise<T>): Promise<T>;
+  run<T>(fn: () => T | Promise<T>, options?: AcquireOptions): Promise<T>;
   /** Whether the lock is currently held. */
   isLocked(): boolean;
 }

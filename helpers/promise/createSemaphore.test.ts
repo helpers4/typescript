@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { createSemaphore } from './createSemaphore';
 
 describe('createSemaphore', () => {
@@ -142,5 +142,54 @@ describe('createSemaphore', () => {
 
     expect(order).toEqual(Array.from({ length: 50 }, (_, i) => i));
     expect(semaphore.availablePermits()).toBe(1);
+  });
+
+  describe('with a signal', () => {
+    it('rejects at once with the reason of an already aborted signal, taking no permit', async () => {
+      const semaphore = createSemaphore(1);
+      await expect(semaphore.acquire({ signal: AbortSignal.abort('gone') })).rejects.toBe('gone');
+      expect(semaphore.availablePermits()).toBe(1);
+    });
+
+    it('leaves the queue when aborted, so the next waiter gets the permit', async () => {
+      const semaphore = createSemaphore(1);
+      const release = await semaphore.acquire();
+      const controller = new AbortController();
+      const aborted = semaphore.acquire({ signal: controller.signal });
+      const next = semaphore.acquire();
+      controller.abort('stop');
+      await expect(aborted).rejects.toBe('stop');
+      release();
+      const releaseNext = await next;
+      expect(semaphore.availablePermits()).toBe(0);
+      releaseNext();
+      expect(semaphore.availablePermits()).toBe(1);
+    });
+
+    it('lets go of the signal once the permit is granted', async () => {
+      const semaphore = createSemaphore(1);
+      const release = await semaphore.acquire();
+      const controller = new AbortController();
+      const remove = vi.spyOn(controller.signal, 'removeEventListener');
+      const waiting = semaphore.acquire({ signal: controller.signal });
+      release();
+      const releaseWaiting = await waiting;
+      expect(remove).toHaveBeenCalledOnce();
+      controller.abort();
+      releaseWaiting();
+      expect(semaphore.availablePermits()).toBe(1);
+    });
+
+    it('run() does not call fn when aborted while waiting', async () => {
+      const semaphore = createSemaphore(1);
+      const release = await semaphore.acquire();
+      const controller = new AbortController();
+      const fn = vi.fn();
+      const running = semaphore.run(fn, { signal: controller.signal });
+      controller.abort('stop');
+      await expect(running).rejects.toBe('stop');
+      release();
+      expect(fn).not.toHaveBeenCalled();
+    });
   });
 });
