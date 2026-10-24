@@ -38,4 +38,28 @@ describe('watchMedia', () => {
     expect(() => stop()).not.toThrow();
     expect(listener).not.toHaveBeenCalled();
   });
+
+  it('stops watching when the signal aborts, and lets go of it when stopped', () => {
+    const { list, fire } = fakeMediaList();
+    vi.stubGlobal('matchMedia', vi.fn(() => list));
+    const controller = new AbortController();
+    const listener = vi.fn();
+    watchMedia('(min-width: 600px)', listener, { signal: controller.signal });
+    controller.abort();
+    fire(true);
+    expect(listener).not.toHaveBeenCalled();
+
+    const other = new AbortController();
+    const remove = vi.spyOn(other.signal, 'removeEventListener');
+    watchMedia('(min-width: 600px)', listener, { signal: other.signal })();
+    expect(remove).toHaveBeenCalledOnce();
+  });
+
+  it('watches nothing with an already aborted signal', () => {
+    const matchMedia = vi.fn();
+    vi.stubGlobal('matchMedia', matchMedia);
+    const stop = watchMedia('(min-width: 600px)', vi.fn(), { signal: AbortSignal.abort() });
+    expect(matchMedia).not.toHaveBeenCalled();
+    expect(() => stop()).not.toThrow();
+  });
 });
