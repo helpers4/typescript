@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.1.6] - 2026-10-24
+
+### 🚀 Features
+- **animation**: let frameLoop and tween stop with an AbortSignal
+- **array**: let the async array helpers stop with an AbortSignal
+- **browser**: let whenIdle, watchMedia and the observers stop with an AbortSignal
+- **function**: add cancel() and an AbortSignal to debounce and throttle
+- **promise**: let parallel and parallelSettle stop with an AbortSignal
+- **promise**: let paginate stop with an AbortSignal
+- **promise**: let semaphore and mutex waiters leave the queue with an AbortSignal
+- **promise**: make timeout cancellable with an AbortSignal
+- **promise**: let init.signal also cancel the retries of fetchJson
+- **promise**: make retry cancellable with an AbortSignal
+- **promise**: make delay cancellable with an AbortSignal
+
+### 🐛 Bug Fixes
+- **security**: patch the new zod, happy-dom and fast-uri advisories
+
+### 📝 Documentation
+- **agents**: add the cancellation rule for helpers that start lasting work
+
 ## [3.1.5] - 2026-10-22
 
 ### 🚀 Features
@@ -1240,6 +1261,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.1.6]: https://github.com/helpers4/typescript/compare/v3.1.5...v3.1.6
 [3.1.5]: https://github.com/helpers4/typescript/compare/v3.1.4...v3.1.5
 [3.1.4]: https://github.com/helpers4/typescript/compare/v3.1.3...v3.1.4
 [3.1.3]: https://github.com/helpers4/typescript/compare/v3.1.2...v3.1.3

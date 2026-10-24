@@ -8,7 +8,7 @@ import { resolveAsyncArrayOptions, runConcurrentMap } from './_concurrentMap.js'
 
 /**
  * Options for {@link mapAsync}, {@link mapSettled}, {@link filterAsync} and {@link forEachAsync}.
- * @since next
+ * @since 3.1.6
  */
 export interface AsyncArrayOptions {
   /** Maximum number of concurrent calls. Defaults to unlimited. */

@@ -34,7 +34,7 @@ export interface TweenOptions<T, V> {
   now?: () => number;
   /**
    * Cancels the tween when aborted, as {@link FrameLoop.cancel} does.
-   * @since next
+   * @since 3.1.6
    */
   signal?: AbortSignal;
 }

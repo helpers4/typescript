@@ -8,7 +8,7 @@ import { onAbort } from '../_shared/_onAbort.js';
 
 /**
  * Options for {@link observeResize}.
- * @since next
+ * @since 3.1.6
  */
 export interface ObserveResizeOptions {
   /** Stops observing when aborted. */

@@ -32,7 +32,7 @@ export interface RetryOptions {
    * Stops retrying when aborted: the wait between attempts is cleared, no new attempt starts,
    * and the returned promise rejects with the signal's reason. Pass the same signal to the
    * work inside `fn` (a `fetch`) to cancel the running attempt too.
-   * @since next
+   * @since 3.1.6
    */
   signal?: AbortSignal;
 }

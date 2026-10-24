@@ -8,7 +8,7 @@ import { onAbort } from '../_shared/_onAbort.js';
 
 /**
  * Options for {@link debounce}.
- * @since next
+ * @since 3.1.6
  */
 export interface DebounceOptions {
   /** Drops the pending call when aborted; later calls are ignored. */
@@ -17,7 +17,7 @@ export interface DebounceOptions {
 
 /**
  * A function returned by {@link debounce}.
- * @since next
+ * @since 3.1.6
  */
 export interface Debounced<A extends unknown[]> {
   (...args: A): void;

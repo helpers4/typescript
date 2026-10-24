@@ -8,7 +8,7 @@ import { onAbort } from '../_shared/_onAbort.js';
 
 /**
  * Options for {@link throttle}.
- * @since next
+ * @since 3.1.6
  */
 export interface ThrottleOptions {
   /** Drops the pending trailing call when aborted; later calls are ignored. */
@@ -17,7 +17,7 @@ export interface ThrottleOptions {
 
 /**
  * A function returned by {@link throttle}.
- * @since next
+ * @since 3.1.6
  */
 export interface Throttled<A extends unknown[]> {
   (...args: A): void;

@@ -12,7 +12,7 @@ type Release = () => void;
 
 /**
  * Options for {@link Semaphore.acquire} and {@link Semaphore.run}, and their {@link Mutex} twins.
- * @since next
+ * @since 3.1.6
  */
 export interface AcquireOptions {
   /**

@@ -8,7 +8,7 @@ import { onAbort } from '../_shared/_onAbort.js';
 
 /**
  * Options for {@link observeIntersection}: those of `IntersectionObserver`, and a signal.
- * @since next
+ * @since 3.1.6
  */
 export interface ObserveIntersectionOptions extends IntersectionObserverInit {
   /** Stops observing when aborted. */

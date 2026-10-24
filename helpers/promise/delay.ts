@@ -8,7 +8,7 @@ import { onAbort } from '../_shared/_onAbort.js';
 
 /**
  * Options for {@link delay}.
- * @since next
+ * @since 3.1.6
  */
 export interface DelayOptions {
   /** Clears the timer and rejects with the signal's reason when aborted. */

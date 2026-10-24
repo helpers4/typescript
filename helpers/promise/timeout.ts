@@ -19,7 +19,7 @@ export class TimeoutError extends Error {
 
 /**
  * Options for {@link timeout}.
- * @since next
+ * @since 3.1.6
  */
 export interface TimeoutOptions {
   /** Clears the timer and rejects with the signal's reason when aborted, without waiting for `promise`. */

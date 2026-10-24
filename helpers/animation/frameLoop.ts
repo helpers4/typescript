@@ -16,7 +16,7 @@ export interface FrameLoopOptions {
   /**
    * Cancels the loop when aborted, as {@link FrameLoop.cancel} does. Already aborted, `onFrame`
    * is never called.
-   * @since next
+   * @since 3.1.6
    */
   signal?: AbortSignal;
 }

@@ -20,7 +20,7 @@ export interface PaginateOptions {
   /**
    * Stops requesting pages when aborted, and rejects with the signal's reason. Pass the same
    * signal to the request inside `fetchPage` to cancel the page in flight too.
-   * @since next
+   * @since 3.1.6
    */
   signal?: AbortSignal;
 }

@@ -8,7 +8,7 @@ import { abortable } from '../_shared/_abortable.js';
 
 /**
  * Options for {@link parallel} and {@link parallelSettle}.
- * @since next
+ * @since 3.1.6
  */
 export interface ParallelOptions {
   /**

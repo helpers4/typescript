@@ -15,7 +15,7 @@ export interface WhenIdleOptions {
   timeout?: number;
   /**
    * Cancels the callback when aborted, if it has not run yet.
-   * @since next
+   * @since 3.1.6
    */
   signal?: AbortSignal;
 }
