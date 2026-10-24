@@ -29,6 +29,28 @@ fn(3);
         if (callCount !== 1) throw new Error(`Expected 1 call, got ${callCount}`);
       },
     },
+    {
+      title: 'Cancel on teardown',
+      description: 'An aborted signal, or cancel(), drops the call still waiting, so it never runs after its owner is gone.',
+      code: `const controller = new AbortController();
+const fn = debounce(() => console.log('late'), 100, { signal: controller.signal });
+fn();
+fn();
+controller.abort();
+// nothing is logged after the abort`,
+      assert: async () => {
+        const controller = new AbortController();
+        let calls = 0;
+        const fn = debounce(() => { calls++; }, 50, { signal: controller.signal });
+        fn();
+        fn();
+        const before = calls;
+        controller.abort();
+        fn();
+        await new Promise(resolve => setTimeout(resolve, 100));
+        if (calls !== before) throw new Error(`Expected ${before} calls, got ${calls}`);
+      },
+    },
   ],
 };
 

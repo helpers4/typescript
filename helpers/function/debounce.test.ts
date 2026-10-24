@@ -61,4 +61,48 @@ describe("debounce", () => {
     vi.advanceTimersByTime(150);
     expect(callCount).toBe(1);
   });
+
+  describe("cancellation", () => {
+    it("cancel() drops the pending call, and the function still works afterwards", () => {
+      const func = vi.fn();
+      const throttled = debounce(func, 100);
+      throttled();
+      throttled();
+      throttled.cancel();
+      vi.advanceTimersByTime(200);
+      const before = func.mock.calls.length;
+      throttled();
+      vi.advanceTimersByTime(200);
+      expect(func.mock.calls.length).toBeGreaterThan(before);
+      expect(vi.getTimerCount()).toBe(0);
+    });
+
+    it("cancel() does nothing without a pending call", () => {
+      const func = vi.fn();
+      debounce(func, 100).cancel();
+      expect(func).not.toHaveBeenCalled();
+    });
+
+    it("an aborted signal drops the pending call and ignores later calls", () => {
+      const controller = new AbortController();
+      const func = vi.fn();
+      const throttled = debounce(func, 100, { signal: controller.signal });
+      throttled();
+      throttled();
+      const before = func.mock.calls.length;
+      controller.abort();
+      expect(vi.getTimerCount()).toBe(0);
+      throttled();
+      vi.advanceTimersByTime(200);
+      expect(func).toHaveBeenCalledTimes(before);
+    });
+
+    it("an already aborted signal makes every call a no-op", () => {
+      const func = vi.fn();
+      const throttled = debounce(func, 100, { signal: AbortSignal.abort() });
+      throttled();
+      vi.advanceTimersByTime(200);
+      expect(func).not.toHaveBeenCalled();
+    });
+  });
 });
