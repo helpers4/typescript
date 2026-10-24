@@ -47,7 +47,9 @@ describe('simplifyPolyline', () => {
     expect(() => simplifyPolyline([], Number.NaN)).toThrow(RangeError);
   });
 
-  it('handles very long polylines', () => {
+  // Instrumented by Stryker (mutation testing), this takes a few seconds on a CI runner: the
+  // default 5 s test timeout fails the whole shard's initial test run.
+  it('handles very long polylines', { timeout: 60_000 }, () => {
     const zigzag = Array.from({ length: 100_000 }, (_, i) => p(i, i % 2));
     expect(simplifyPolyline(zigzag, 2)).toEqual([p(0, 0), p(99_999, 1)]);
     expect(simplifyPolyline(zigzag.slice(0, 2_000), 0.1)).toHaveLength(2_000);
