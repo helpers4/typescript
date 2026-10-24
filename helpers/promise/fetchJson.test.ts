@@ -75,6 +75,32 @@ describe('fetchJson', () => {
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
+  it('stops waiting for the next attempt when init.signal aborts', async () => {
+    vi.useFakeTimers();
+    try {
+      const controller = new AbortController();
+      const fn = vi.fn().mockResolvedValue(status(503));
+      vi.stubGlobal('fetch', fn);
+      const settled = fetchJson('https://example.com/api', { signal: controller.signal }).catch((error: unknown) => error);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(vi.getTimerCount()).toBe(1);
+      controller.abort('stop');
+      expect(await settled).toBe('stop');
+      expect(vi.getTimerCount()).toBe(0);
+      expect(fn).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('prefers the retry signal over init.signal', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(ok(1)));
+    const init = { signal: new AbortController().signal };
+    await expect(
+      fetchJson('https://example.com/api', init, { retry: { signal: AbortSignal.abort('retry') } }),
+    ).rejects.toBe('retry');
+  });
+
   it('retries a rejection that is not an Error', async () => {
     const fn = vi.fn().mockRejectedValueOnce('boom').mockResolvedValue(ok(1));
     vi.stubGlobal('fetch', fn);
