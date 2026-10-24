@@ -1,5 +1,13 @@
 allowBuilds:
   esbuild: true
+# Stryker 10.1.1 (23 Oct 2026, 19:17 UTC) fixes mutants running no test with vitest 5; these
+# exact versions can go once they are older than minimumReleaseAge.
+minimumReleaseAgeExclude:
+  - '@stryker-mutator/api@10.1.1'
+  - '@stryker-mutator/core@10.1.1'
+  - '@stryker-mutator/instrumenter@10.1.1'
+  - '@stryker-mutator/util@10.1.1'
+  - '@stryker-mutator/vitest-runner@10.1.1'
 overrides:
   postcss: '>=8.5.10'
   fast-uri: '>=4.2.3'
