@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { delay } from "./delay";
 
 describe("delay", () => {
@@ -30,5 +30,40 @@ describe("delay", () => {
   it("should work without value", async () => {
     const result = await delay(50);
     expect(result).toBeUndefined();
+  });
+
+  describe("with a signal", () => {
+    it("rejects at once with the reason of an already aborted signal, without a timer", async () => {
+      vi.useFakeTimers();
+      try {
+        const promise = delay(100, "value", { signal: AbortSignal.abort("gone") });
+        expect(vi.getTimerCount()).toBe(0);
+        await expect(promise).rejects.toBe("gone");
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("clears the timer and rejects with the reason when aborted", async () => {
+      vi.useFakeTimers();
+      try {
+        const controller = new AbortController();
+        const promise = delay(100, "value", { signal: controller.signal });
+        expect(vi.getTimerCount()).toBe(1);
+        controller.abort("stop");
+        expect(vi.getTimerCount()).toBe(0);
+        await expect(promise).rejects.toBe("stop");
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("resolves and lets go of the signal when not aborted", async () => {
+      const controller = new AbortController();
+      const remove = vi.spyOn(controller.signal, "removeEventListener");
+      expect(await delay(10, "value", { signal: controller.signal })).toBe("value");
+      expect(remove).toHaveBeenCalledOnce();
+      controller.abort();
+    });
   });
 });

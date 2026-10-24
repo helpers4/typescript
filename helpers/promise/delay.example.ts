@@ -33,6 +33,22 @@ const examples: HelperExamples = {
         if (result !== 'done') throw new Error(`Expected 'done', got ${result}`);
       },
     },
+    {
+      title: 'Cancel the wait',
+      description: 'An aborted signal clears the timer and rejects with its reason, so nothing is left running on teardown.',
+      code: `const controller = new AbortController()
+const wait = delay(5000, undefined, { signal: controller.signal })
+controller.abort('disabled')
+await wait
+// rejects with 'disabled', at once`,
+      assert: async () => {
+        const controller = new AbortController();
+        const wait = delay(5000, undefined, { signal: controller.signal });
+        controller.abort('disabled');
+        const reason = await wait.then(() => 'resolved', (error: unknown) => error);
+        if (reason !== 'disabled') throw new Error(`Expected 'disabled', got ${String(reason)}`);
+      },
+    },
   ],
 };
 
