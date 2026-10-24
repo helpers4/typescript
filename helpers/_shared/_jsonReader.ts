@@ -28,6 +28,9 @@ export interface ReadJsonOptions {
 }
 
 /** JSON5 whitespace: JSON's four, plus VT, FF, NBSP, LS, PS, BOM and every Unicode space separator. @ignore */
+// Stryker's regex mutator rewrites `\v` into `\V`, a syntax error under the `u` flag that fails
+// the whole module at load time, and with it the initial test run.
+// Stryker disable next-line Regex
 const JSON5_SPACE = /[\t\n\v\f\r \u00A0\u2028\u2029\uFEFF\p{Zs}]/u;
 /** @ignore */
 const LINE_TERMINATOR = /[\n\r\u2028\u2029]/;
