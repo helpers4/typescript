@@ -83,4 +83,45 @@ describe('frameLoop', () => {
     loop.cancel();
     expect(cancelAnimationFrame).toHaveBeenCalledOnce();
   });
+
+  describe('with a signal', () => {
+    it('never calls onFrame with an already aborted signal', async () => {
+      vi.useFakeTimers();
+      vi.stubGlobal('requestAnimationFrame', undefined);
+      const onFrame = vi.fn();
+      const loop = frameLoop(onFrame, { signal: AbortSignal.abort() });
+      expect(onFrame).not.toHaveBeenCalled();
+      expect(vi.getTimerCount()).toBe(0);
+      expect(() => loop.cancel()).not.toThrow();
+      await expect(loop.finished).resolves.toBe(false);
+    });
+
+    it('cancels the loop when the signal aborts', async () => {
+      vi.useFakeTimers();
+      vi.stubGlobal('requestAnimationFrame', undefined);
+      const controller = new AbortController();
+      const onFrame = vi.fn();
+      const loop = frameLoop(onFrame, { signal: controller.signal });
+      controller.abort();
+      expect(vi.getTimerCount()).toBe(0);
+      vi.advanceTimersByTime(100);
+      expect(onFrame).toHaveBeenCalledOnce();
+      await expect(loop.finished).resolves.toBe(false);
+    });
+
+    it('lets go of the signal when the loop ends or is cancelled', () => {
+      vi.useFakeTimers();
+      vi.stubGlobal('requestAnimationFrame', undefined);
+      const controller = new AbortController();
+      const remove = vi.spyOn(controller.signal, 'removeEventListener');
+      let frames = 0;
+      frameLoop(() => ++frames < 2, { signal: controller.signal });
+      vi.advanceTimersByTime(16);
+      expect(remove).toHaveBeenCalledOnce();
+      frameLoop(() => {}, { signal: controller.signal }).cancel();
+      expect(remove).toHaveBeenCalledTimes(2);
+      frameLoop(() => false, { signal: controller.signal });
+      expect(remove).toHaveBeenCalledTimes(2);
+    });
+  });
 });

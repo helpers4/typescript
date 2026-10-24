@@ -114,4 +114,16 @@ describe('tween', () => {
   it('rejects a NaN duration', () => {
     expect(() => tween({ from: 0, to: 1, durationMs: Number.NaN, onUpdate: () => {} })).toThrow(RangeError);
   });
+
+  it('is cancelled by the signal', async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('requestAnimationFrame', undefined);
+    const controller = new AbortController();
+    const onUpdate = vi.fn();
+    const { finished } = tween({ from: 0, to: 1, durationMs: 100, onUpdate, signal: controller.signal });
+    controller.abort();
+    vi.advanceTimersByTime(100);
+    expect(onUpdate).toHaveBeenCalledOnce();
+    await expect(finished).resolves.toBe(false);
+  });
 });
