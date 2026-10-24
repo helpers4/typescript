@@ -64,4 +64,12 @@ describe('filterAsync', () => {
   it('resolves to [] when nothing matches', async () => {
     expect(await filterAsync([1, 2, 3], async () => false)).toEqual([]);
   });
+
+  it('takes the options, with a concurrency and a signal', async () => {
+    await expect(filterAsync([1, 2, 3], async (x) => x > 1, { concurrency: 1, signal: new AbortController().signal })).resolves.toEqual([2, 3]);
+  });
+
+  it('rejects with the reason of an aborted signal', async () => {
+    await expect(filterAsync([1, 2, 3], async (x) => x > 1, { concurrency: 1, signal: AbortSignal.abort('gone') })).rejects.toBe('gone');
+  });
 });

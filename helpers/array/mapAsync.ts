@@ -4,7 +4,21 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { runConcurrentMap } from './_concurrentMap.js';
+import { resolveAsyncArrayOptions, runConcurrentMap } from './_concurrentMap.js';
+
+/**
+ * Options for {@link mapAsync}, {@link mapSettled}, {@link filterAsync} and {@link forEachAsync}.
+ * @since next
+ */
+export interface AsyncArrayOptions {
+  /** Maximum number of concurrent calls. Defaults to unlimited. */
+  concurrency?: number;
+  /**
+   * Starts no new call when aborted, and rejects with the signal's reason at once, without
+   * waiting for the running ones: pass the same signal to their work to cancel it too.
+   */
+  signal?: AbortSignal;
+}
 
 /**
  * The async counterpart to `Array.prototype.map`: applies `fn` to every item and resolves to
@@ -21,7 +35,8 @@ import { runConcurrentMap } from './_concurrentMap.js';
  * outcome is ignored.
  * @param array - The array to map over
  * @param fn - Async (or sync) function called with `(item, index)`
- * @param concurrency - Maximum number of concurrent calls. Defaults to unlimited.
+ * @param options - Maximum number of concurrent calls (defaults to unlimited), or the options
+ *   with a `signal` to stop — see {@link AsyncArrayOptions}
  * @returns The mapped results, in input order
  * @see {@link filterAsync} for the async counterpart to `Array.prototype.filter`
  * @see {@link forEachAsync} for the async counterpart to `Array.prototype.forEach`
@@ -31,12 +46,16 @@ import { runConcurrentMap } from './_concurrentMap.js';
  * @example
  * await mapAsync(urls, (url) => fetch(url), 2)
  * // at most 2 concurrent fetch() calls
+ * @example
+ * await mapAsync(urls, (url) => fetch(url, { signal }), { concurrency: 2, signal })
+ * // abort() stops the remaining calls and cancels the running ones
  * @since 3.0.4
  */
 export async function mapAsync<T, R>(
   array: readonly T[],
   fn: (item: T, index: number) => R | Promise<R>,
-  concurrency?: number,
+  options?: number | AsyncArrayOptions,
 ): Promise<R[]> {
-  return runConcurrentMap(array, fn, concurrency);
+  const { concurrency, signal } = resolveAsyncArrayOptions(options);
+  return runConcurrentMap(array, fn, concurrency, signal);
 }

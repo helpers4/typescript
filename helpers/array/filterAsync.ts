@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { runConcurrentMap } from './_concurrentMap.js';
+import { resolveAsyncArrayOptions, runConcurrentMap } from './_concurrentMap.js';
+import type { AsyncArrayOptions } from './mapAsync.js';
 
 /**
  * The async counterpart to `Array.prototype.filter`: runs `predicate` for every item and
@@ -15,7 +16,8 @@ import { runConcurrentMap } from './_concurrentMap.js';
  * call may already be in flight by the time an earlier one resolves.
  * @param array - The array to filter
  * @param predicate - Async (or sync) predicate called with `(item, index)`
- * @param concurrency - Maximum number of concurrent predicate calls. Defaults to unlimited.
+ * @param options - Maximum number of concurrent predicate calls (defaults to unlimited), or the options
+ *   with a `signal` to stop — see {@link AsyncArrayOptions}
  * @returns The items whose predicate resolved truthy, in original order
  * @see {@link mapAsync} for the async counterpart to `Array.prototype.map`
  * @example
@@ -26,8 +28,9 @@ import { runConcurrentMap } from './_concurrentMap.js';
 export async function filterAsync<T>(
   array: readonly T[],
   predicate: (item: T, index: number) => boolean | Promise<boolean>,
-  concurrency?: number,
+  options?: number | AsyncArrayOptions,
 ): Promise<T[]> {
-  const keep = await runConcurrentMap(array, predicate, concurrency);
+  const { concurrency, signal } = resolveAsyncArrayOptions(options);
+  const keep = await runConcurrentMap(array, predicate, concurrency, signal);
   return array.filter((_, index) => keep[index]);
 }

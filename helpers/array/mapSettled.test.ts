@@ -40,4 +40,12 @@ describe('mapSettled', () => {
   it('returns an empty array for an empty input', async () => {
     await expect(mapSettled([], () => 1)).resolves.toEqual([]);
   });
+
+  it('takes the options, with a concurrency and a signal', async () => {
+    await expect(mapSettled([1], async (x) => x, { concurrency: 1, signal: new AbortController().signal })).resolves.toEqual([{ status: 'fulfilled', value: 1 }]);
+  });
+
+  it('rejects with the reason of an aborted signal', async () => {
+    await expect(mapSettled([1], async (x) => x, { concurrency: 1, signal: AbortSignal.abort('gone') })).rejects.toBe('gone');
+  });
 });

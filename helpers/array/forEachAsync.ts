@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { runConcurrentEach } from './_concurrentMap.js';
+import { resolveAsyncArrayOptions, runConcurrentEach } from './_concurrentMap.js';
+import type { AsyncArrayOptions } from './mapAsync.js';
 
 /**
  * The async counterpart to `Array.prototype.forEach`: runs `fn` for every item for its
@@ -13,7 +14,8 @@ import { runConcurrentEach } from './_concurrentMap.js';
  * `forEach`/`map` pair.
  * @param array - The array to iterate
  * @param fn - Async (or sync) function called with `(item, index)`
- * @param concurrency - Maximum number of concurrent calls. Defaults to unlimited.
+ * @param options - Maximum number of concurrent calls (defaults to unlimited), or the options
+ *   with a `signal` to stop — see {@link AsyncArrayOptions}
  * @returns A promise that resolves once every call has settled
  * @see {@link mapAsync} for the same iteration when you need the results
  * @example
@@ -24,7 +26,8 @@ import { runConcurrentEach } from './_concurrentMap.js';
 export async function forEachAsync<T>(
   array: readonly T[],
   fn: (item: T, index: number) => unknown,
-  concurrency?: number,
+  options?: number | AsyncArrayOptions,
 ): Promise<void> {
-  await runConcurrentEach(array, fn, concurrency);
+  const { concurrency, signal } = resolveAsyncArrayOptions(options);
+  await runConcurrentEach(array, fn, concurrency, signal);
 }

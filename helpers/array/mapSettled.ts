@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { runConcurrentMap } from './_concurrentMap.js';
+import { resolveAsyncArrayOptions, runConcurrentMap } from './_concurrentMap.js';
+import type { AsyncArrayOptions } from './mapAsync.js';
 
 /**
  * Like {@link mapAsync}, but never rejects: each item gets its own result, in the shape of
@@ -16,7 +17,9 @@ import { runConcurrentMap } from './_concurrentMap.js';
  *
  * @param array - The array to map over
  * @param fn - Async (or sync) function called with `(item, index)`; a throw counts as a rejection
- * @param concurrency - Maximum number of concurrent calls. Defaults to unlimited.
+ * @param options - Maximum number of concurrent calls (defaults to unlimited), or the options
+ *   with a `signal` to stop — see {@link AsyncArrayOptions}. An abort is not an outcome: it
+ *   rejects the whole call with the signal's reason.
  * @returns One `PromiseSettledResult` per item, in input order
  * @example
  * const results = await mapSettled(urls, (url) => fetch(url), 4);
@@ -26,8 +29,9 @@ import { runConcurrentMap } from './_concurrentMap.js';
 export async function mapSettled<T, R>(
   array: readonly T[],
   fn: (item: T, index: number) => R | Promise<R>,
-  concurrency?: number,
+  options?: number | AsyncArrayOptions,
 ): Promise<PromiseSettledResult<Awaited<R>>[]> {
+  const { concurrency, signal } = resolveAsyncArrayOptions(options);
   return runConcurrentMap(
     array,
     async (item, index): Promise<PromiseSettledResult<Awaited<R>>> => {
@@ -38,5 +42,6 @@ export async function mapSettled<T, R>(
       }
     },
     concurrency,
+    signal,
   );
 }

@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from 'vitest';
-import { resolveConcurrency, runConcurrentEach, runConcurrentMap } from './_concurrentMap';
+import { describe, expect, it, vi } from 'vitest';
+import { resolveAsyncArrayOptions, resolveConcurrency, runConcurrentEach, runConcurrentMap } from './_concurrentMap';
 
 describe('resolveConcurrency', () => {
   it('returns itemCount when undefined (no cap)', () => {
@@ -174,5 +174,47 @@ describe('runConcurrentEach', () => {
   it('validates concurrency even for an empty array', async () => {
     await expect(runConcurrentEach([], () => {}, -5)).rejects.toThrow(RangeError);
     await expect(runConcurrentEach([], () => {}, 0)).rejects.toThrow(RangeError);
+  });
+});
+
+describe('resolveAsyncArrayOptions', () => {
+  it('reads a bare concurrency, or nothing, as the options', () => {
+    expect(resolveAsyncArrayOptions(2)).toEqual({ concurrency: 2 });
+    expect(resolveAsyncArrayOptions(undefined)).toEqual({ concurrency: undefined });
+  });
+
+  it('returns the options as they are', () => {
+    const options = { concurrency: 2, signal: new AbortController().signal };
+    expect(resolveAsyncArrayOptions(options)).toBe(options);
+  });
+});
+
+type Run = (items: readonly number[], fn: (item: number) => unknown, concurrency: number | undefined, signal: AbortSignal) => Promise<unknown>;
+
+describe.each<[string, Run]>([
+  ['runConcurrentMap', runConcurrentMap],
+  ['runConcurrentEach', runConcurrentEach],
+])('%s with a signal', (_, run) => {
+  it('calls nothing with an already aborted signal, even for an empty array', async () => {
+    const fn = vi.fn();
+    await expect(run([1, 2], fn, 1, AbortSignal.abort('gone'))).rejects.toBe('gone');
+    await expect(run([], fn, undefined, AbortSignal.abort('gone'))).rejects.toBe('gone');
+    expect(fn).not.toHaveBeenCalled();
+  });
+
+  it('rejects at once and starts no new call once aborted', async () => {
+    const controller = new AbortController();
+    const fn = vi.fn((item: number) => {
+      if (item === 1) controller.abort('stop');
+      return new Promise(() => {});
+    });
+    await expect(run([1, 2, 3], fn, 1, controller.signal)).rejects.toBe('stop');
+    expect(fn).toHaveBeenCalledOnce();
+  });
+
+  it('runs every call while the signal is not aborted', async () => {
+    const fn = vi.fn(async (item: number) => item);
+    await run([1, 2, 3], fn, 2, new AbortController().signal);
+    expect(fn).toHaveBeenCalledTimes(3);
   });
 });
