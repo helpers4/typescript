@@ -41,4 +41,25 @@ describe('observeResize', () => {
     const stop = observeResize(document.createElement('div'), vi.fn());
     expect(() => stop()).not.toThrow();
   });
+
+  it('stops observing when the signal aborts, and lets go of it when stopped', () => {
+    vi.stubGlobal('ResizeObserver', FakeResizeObserver);
+    const controller = new AbortController();
+    observeResize(document.createElement('div'), vi.fn(), { signal: controller.signal });
+    controller.abort();
+    expect(FakeResizeObserver.last.disconnected).toBe(true);
+
+    const other = new AbortController();
+    const remove = vi.spyOn(other.signal, 'removeEventListener');
+    observeResize(document.createElement('div'), vi.fn(), { signal: other.signal })();
+    expect(remove).toHaveBeenCalledOnce();
+  });
+
+  it('observes nothing with an already aborted signal', () => {
+    const constructor = vi.fn();
+    vi.stubGlobal('ResizeObserver', constructor);
+    const stop = observeResize(document.createElement('div'), vi.fn(), { signal: AbortSignal.abort() });
+    expect(constructor).not.toHaveBeenCalled();
+    expect(() => stop()).not.toThrow();
+  });
 });

@@ -4,6 +4,17 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { onAbort } from '../_shared/_onAbort.js';
+
+/**
+ * Options for {@link observeIntersection}: those of `IntersectionObserver`, and a signal.
+ * @since next
+ */
+export interface ObserveIntersectionOptions extends IntersectionObserverInit {
+  /** Stops observing when aborted. */
+  signal?: AbortSignal;
+}
+
 /**
  * Calls `callback` each time `element` enters or leaves the viewport (or `options.root`), with an
  * `IntersectionObserver` dedicated to it: lazy loading, starting an animation when it becomes
@@ -14,7 +25,8 @@
  *
  * @param element - The element to observe
  * @param callback - Receives the `IntersectionObserverEntry` of `element` (`entry.isIntersecting`, `entry.intersectionRatio`, ...)
- * @param options - `root`, `rootMargin` and `threshold`, as for `IntersectionObserver`
+ * @param options - `root`, `rootMargin` and `threshold`, as for `IntersectionObserver`, and a
+ *   `signal` to stop — see {@link ObserveIntersectionOptions}
  * @returns A function that stops observing
  * @example
  * const stop = observeIntersection(video, (entry) => (entry.isIntersecting ? video.play() : video.pause()));
@@ -30,12 +42,18 @@
 export function observeIntersection(
   element: Element,
   callback: (entry: IntersectionObserverEntry) => void,
-  options?: IntersectionObserverInit,
+  options: ObserveIntersectionOptions = {},
 ): () => void {
-  if (typeof globalThis.IntersectionObserver !== 'function') return () => {};
+  const { signal, ...init } = options;
+  if (typeof globalThis.IntersectionObserver !== 'function' || signal?.aborted) return () => {};
   const observer = new globalThis.IntersectionObserver((entries) => {
     for (const entry of entries) callback(entry);
-  }, options);
+  }, init);
   observer.observe(element);
-  return () => observer.disconnect();
+  const stop = (): void => {
+    removeListener();
+    observer.disconnect();
+  };
+  const removeListener = onAbort(signal, stop);
+  return stop;
 }

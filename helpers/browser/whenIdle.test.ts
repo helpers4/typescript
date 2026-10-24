@@ -43,4 +43,32 @@ describe('whenIdle', () => {
     vi.runAllTimers();
     expect(callback).not.toHaveBeenCalled();
   });
+
+  it('cancels through the signal, and lets go of it once the callback ran', () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('requestIdleCallback', undefined);
+    const controller = new AbortController();
+    const callback = vi.fn();
+    whenIdle(callback, { signal: controller.signal });
+    controller.abort();
+    vi.runAllTimers();
+    expect(callback).not.toHaveBeenCalled();
+
+    const other = new AbortController();
+    const removeOther = vi.spyOn(other.signal, 'removeEventListener');
+    whenIdle(callback, { signal: other.signal });
+    vi.runAllTimers();
+    expect(callback).toHaveBeenCalledOnce();
+    expect(removeOther).toHaveBeenCalledOnce();
+  });
+
+  it('schedules nothing with an already aborted signal', () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('requestIdleCallback', undefined);
+    const callback = vi.fn();
+    const cancel = whenIdle(callback, { signal: AbortSignal.abort() });
+    expect(vi.getTimerCount()).toBe(0);
+    expect(() => cancel()).not.toThrow();
+    expect(callback).not.toHaveBeenCalled();
+  });
 });

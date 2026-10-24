@@ -4,6 +4,17 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { onAbort } from '../_shared/_onAbort.js';
+
+/**
+ * Options for {@link observeResize}.
+ * @since next
+ */
+export interface ObserveResizeOptions {
+  /** Stops observing when aborted. */
+  signal?: AbortSignal;
+}
+
 /**
  * Calls `callback` each time the size of `element` changes, with a `ResizeObserver` dedicated to
  * it. Like `ResizeObserver` itself, it is also called once soon after it starts observing.
@@ -14,17 +25,28 @@
  *
  * @param element - The element to observe
  * @param callback - Receives the `ResizeObserverEntry` of `element`
+ * @param options - Cancellation — see {@link ObserveResizeOptions}
  * @returns A function that stops observing
  * @example
  * const stop = observeResize(canvas, (entry) => redraw(entry.contentRect));
  * stop();
  * @since 3.1.5
  */
-export function observeResize(element: Element, callback: (entry: ResizeObserverEntry) => void): () => void {
-  if (typeof globalThis.ResizeObserver !== 'function') return () => {};
+export function observeResize(
+  element: Element,
+  callback: (entry: ResizeObserverEntry) => void,
+  options: ObserveResizeOptions = {},
+): () => void {
+  const { signal } = options;
+  if (typeof globalThis.ResizeObserver !== 'function' || signal?.aborted) return () => {};
   const observer = new globalThis.ResizeObserver((entries) => {
     for (const entry of entries) callback(entry);
   });
   observer.observe(element);
-  return () => observer.disconnect();
+  const stop = (): void => {
+    removeListener();
+    observer.disconnect();
+  };
+  const removeListener = onAbort(signal, stop);
+  return stop;
 }
