@@ -32,6 +32,11 @@ export interface TweenOptions<T, V> {
   onUpdate: (value: V, progress: number) => void;
   /** Current time in milliseconds. Defaults to `performance.now`; inject one to test or to drive a recording. */
   now?: () => number;
+  /**
+   * Cancels the tween when aborted, as {@link FrameLoop.cancel} does.
+   * @since next
+   */
+  signal?: AbortSignal;
 }
 
 /**
@@ -48,7 +53,7 @@ export type Tween = FrameLoop;
  * It runs on {@link frameLoop}: `onUpdate` is called right away with `from`, then once per
  * frame, and last with the value at progress `1` (exactly `to` with the default blending).
  *
- * @param options - Values, duration, easing, blending and callback — see {@link TweenOptions}
+ * @param options - Values, duration, easing, blending, callback and cancellation — see {@link TweenOptions}
  * @returns A {@link Tween}, to cancel it or await its end
  * @throws {RangeError} If `durationMs` is `NaN`
  * @example
@@ -67,7 +72,7 @@ export type Tween = FrameLoop;
 export function tween<T, V>(options: TweenOptions<T, V> & { interpolate: (from: T, to: T, t: number) => V }): Tween;
 export function tween<T extends Interpolatable>(options: TweenOptions<T, Interpolated<T>>): Tween;
 export function tween<T, V>(options: TweenOptions<T, V>): Tween {
-  const { from, to, durationMs, easing = (t: number) => t, onUpdate, now } = options;
+  const { from, to, durationMs, easing = (t: number) => t, onUpdate, now, signal } = options;
   const blend = options.interpolate ?? (interpolate as unknown as (from: T, to: T, t: number) => V);
   if (Number.isNaN(durationMs)) throw new RangeError('tween: durationMs must be a number, got NaN');
 
@@ -78,6 +83,6 @@ export function tween<T, V>(options: TweenOptions<T, V>): Tween {
       onUpdate(blend(from, to, progress < 1 ? easing(progress) : 1), progress);
       return progress < 1;
     },
-    { now },
+    { now, signal },
   );
 }

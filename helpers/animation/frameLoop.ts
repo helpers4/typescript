@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { onAbort } from '../_shared/_onAbort.js';
+
 /**
  * Options for {@link frameLoop}.
  * @since 3.1.5
@@ -11,6 +13,12 @@
 export interface FrameLoopOptions {
   /** Current time in milliseconds. Defaults to `performance.now`; inject one to test or to drive a recording. */
   now?: () => number;
+  /**
+   * Cancels the loop when aborted, as {@link FrameLoop.cancel} does. Already aborted, `onFrame`
+   * is never called.
+   * @since next
+   */
+  signal?: AbortSignal;
 }
 
 /**
@@ -35,7 +43,7 @@ export interface FrameLoop {
  * (Node.js, some workers).
  *
  * @param onFrame - Receives the elapsed milliseconds; return `false` to stop
- * @param options - Clock — see {@link FrameLoopOptions}
+ * @param options - Clock and cancellation — see {@link FrameLoopOptions}
  * @returns A {@link FrameLoop}, to cancel it or await its end
  * @example
  * const bounce = spring({ damping: 8 });
@@ -46,15 +54,17 @@ export interface FrameLoop {
  * @since 3.1.5
  */
 export function frameLoop(onFrame: (elapsedMs: number) => boolean | void, options: FrameLoopOptions = {}): FrameLoop {
-  const { now = () => performance.now() } = options;
+  const { now = () => performance.now(), signal } = options;
   const start = now();
   let running = true;
   let cancelFrame: (() => void) | undefined;
+  let removeListener = noop;
   const { promise: finished, resolve: settle } = Promise.withResolvers<boolean>();
 
   function frame(elapsed = now() - start): void {
     if (onFrame(elapsed) === false) {
       running = false;
+      removeListener();
       settle(true);
       return;
     }
@@ -62,19 +72,29 @@ export function frameLoop(onFrame: (elapsedMs: number) => boolean | void, option
     if (running) cancelFrame = schedule(() => frame());
   }
 
-  frame(0);
-
-  return {
+  const loop: FrameLoop = {
     cancel() {
       if (!running) return;
       running = false;
+      removeListener();
       // Always set here: the first frame runs before frameLoop returns, so before cancel can be called.
       cancelFrame!();
       settle(false);
     },
     finished,
   };
+
+  if (signal?.aborted) {
+    running = false;
+    settle(false);
+    return loop;
+  }
+  frame(0);
+  if (running) removeListener = onAbort(signal, () => loop.cancel());
+  return loop;
 }
+
+function noop(): void {}
 
 function schedule(callback: () => void): () => void {
   if (typeof globalThis.requestAnimationFrame === 'function') {
