@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { parallel } from './parallel';
 
 describe('parallel', () => {
@@ -123,5 +123,32 @@ describe('parallel', () => {
     const result = await parallel(fns, Infinity);
     expect(result).toEqual([1, 2, 3, 4]);
     expect(maxConcurrent).toBe(4);
+  });
+
+  describe('with a signal', () => {
+    it('starts nothing with an already aborted signal', async () => {
+      const fn = vi.fn().mockResolvedValue(1);
+      await expect(parallel([fn, fn], 1, { signal: AbortSignal.abort('gone') })).rejects.toBe('gone');
+      expect(fn).not.toHaveBeenCalled();
+    });
+
+    it('rejects at once and starts no new function once aborted', async () => {
+      const controller = new AbortController();
+      const first = vi.fn(() => new Promise<number>(() => {}));
+      const second = vi.fn().mockResolvedValue(2);
+      const promise = parallel([first, second], 1, { signal: controller.signal });
+      controller.abort('stop');
+      await expect(promise).rejects.toBe('stop');
+      expect(first).toHaveBeenCalledOnce();
+      expect(second).not.toHaveBeenCalled();
+    });
+
+    it('stops picking functions once aborted, even when the running one ends', async () => {
+      const controller = new AbortController();
+      const second = vi.fn().mockResolvedValue(2);
+      const promise = parallel([async () => { controller.abort('stop'); return 1; }, second], 1, { signal: controller.signal });
+      await expect(promise).rejects.toBe('stop');
+      expect(second).not.toHaveBeenCalled();
+    });
   });
 });

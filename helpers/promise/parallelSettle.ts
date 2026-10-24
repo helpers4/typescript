@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { abortable } from '../_shared/_abortable.js';
+import type { ParallelOptions } from './parallel';
+
 /**
  * Runs an array of async functions with a concurrency limit, partitioning the outcomes
  * instead of rejecting on the first failure — {@link parallel} with {@link settle}'s
@@ -18,6 +21,8 @@
  * @param concurrency - Maximum number of concurrent executions. `Infinity` means no cap; any
  *   other non-finite or non-positive value (`NaN`, `0`, negative) is clamped to `1` (fully
  *   sequential) rather than rejected.
+ * @param options - Cancellation — see {@link ParallelOptions}. An abort is not an outcome: it
+ *   rejects the whole call with the signal's reason.
  * @returns An object with `fulfilled` values and `rejected` reasons, each in input order
  * @see {@link parallel} for concurrency-limited execution that rejects on the first failure
  * @see {@link settle} for unlimited-concurrency partitioning (input is already-running promises)
@@ -35,7 +40,9 @@
 export async function parallelSettle<T>(
   functions: readonly (() => Promise<T>)[],
   concurrency: number,
+  options: ParallelOptions = {},
 ): Promise<{ fulfilled: T[]; rejected: unknown[] }> {
+  const { signal } = options;
   const clampedConcurrency =
     concurrency === Number.POSITIVE_INFINITY
       ? functions.length
@@ -48,7 +55,7 @@ export async function parallelSettle<T>(
   let nextIndex = 0;
 
   async function runNext(): Promise<void> {
-    if (nextIndex >= functions.length) return;
+    if (nextIndex >= functions.length || signal?.aborted) return;
     const currentIndex = nextIndex++;
     try {
       const value = await functions[currentIndex]!();
@@ -60,7 +67,7 @@ export async function parallelSettle<T>(
   }
 
   const workers = Array.from({ length: Math.min(clampedConcurrency, functions.length) }, () => runNext());
-  await Promise.all(workers);
+  await abortable(Promise.all(workers), signal);
 
   const fulfilled: T[] = [];
   const rejected: unknown[] = [];
