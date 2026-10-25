@@ -16,13 +16,29 @@ const SEMVER =
   /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9]\d*|\d*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/;
 
 /**
+ * Options for {@link isValid}.
+ * @since next
+ */
+export interface IsValidOptions {
+  /**
+   * What to do with a leading `v`, the git-tag convention (`v1.2.3`), for the `'semver'` scheme
+   * (the other schemes ignore it):
+   * - `'forbid'` (default): a `v` makes the version invalid;
+   * - `'allow'`: with or without a `v`;
+   * - `'require'`: a `v` is mandatory, to check a tag.
+   */
+  prefix?: 'forbid' | 'allow' | 'require';
+}
+
+/**
  * Whether `version` is a valid version in the given `scheme`. Never throws: any input that is
  * not valid, a non-string included, gives `false`.
  *
  * **`'semver'`** (default) — SemVer 2.0.0, strictly: `MAJOR.MINOR.PATCH` with no leading zeros, an
  * optional `-prerelease` (numeric identifiers without leading zeros) and an optional `+build`.
  * Unlike {@link parse}, which reads anything, and unlike {@link compare}, a leading `v` is refused
- * (`v1.2.3` is a git tag, not a version), and so are `1.2` and `1.2.3.4`.
+ * by default (`v1.2.3` is a git tag, not a version; see {@link IsValidOptions.prefix} to accept or
+ * require it), and so are `1.2` and `1.2.3.4`.
  *
  * **`'gentoo'`**, **`'debian'`**, **`'rpm'`**, **`'pacman'`**, **`'pep440'`** — whether {@link parse}
  * accepts it (these schemes throw on invalid input, so their grammar is the one `parse` documents).
@@ -31,6 +47,7 @@ const SEMVER =
  *
  * @param version - The value to check
  * @param scheme - Which version scheme to validate against. Defaults to `'semver'`.
+ * @param options - The treatment of a leading `v` — see {@link IsValidOptions}
  * @returns `true` if `version` is a valid version
  * @example
  * isValid('1.2.3')         // => true
@@ -39,15 +56,22 @@ const SEMVER =
  * isValid('01.2.3')        // => false (leading zero)
  * isValid('garbage')       // => false
  * @example
+ * isValid('v1.2.3', 'semver', { prefix: 'require' }) // => true (a tag)
+ * isValid('1.2.3', 'semver', { prefix: 'require' })  // => false (no v)
+ * isValid('1.2.3', 'semver', { prefix: 'allow' })    // => true
+ * @example
  * isValid('1:2.30~rc1-3', 'debian') // => true
  * isValid('1.0_1', 'debian')        // => false
  * @since next
  */
-export function isValid(version: unknown, scheme: VersionScheme = 'semver'): boolean {
+export function isValid(version: unknown, scheme: VersionScheme = 'semver', options: IsValidOptions = {}): boolean {
   if (typeof version !== 'string') return false;
   switch (scheme) {
-    case 'semver':
-      return SEMVER.test(version);
+    case 'semver': {
+      const tagged = version.startsWith('v');
+      if (tagged ? options.prefix !== 'allow' && options.prefix !== 'require' : options.prefix === 'require') return false;
+      return SEMVER.test(tagged ? version.slice(1) : version);
+    }
     case 'maven':
       return version !== '';
     case 'gentoo':

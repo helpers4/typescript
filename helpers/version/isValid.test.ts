@@ -48,6 +48,36 @@ describe('isValid — semver', () => {
   });
 });
 
+describe('isValid — prefix option', () => {
+  it("forbids a v by default and with 'forbid'", () => {
+    expect(isValid('v1.2.3')).toBe(false);
+    expect(isValid('v1.2.3', 'semver', { prefix: 'forbid' })).toBe(false);
+    expect(isValid('1.2.3', 'semver', { prefix: 'forbid' })).toBe(true);
+  });
+
+  it("accepts both with 'allow'", () => {
+    expect(isValid('v1.2.3', 'semver', { prefix: 'allow' })).toBe(true);
+    expect(isValid('1.2.3', 'semver', { prefix: 'allow' })).toBe(true);
+    expect(isValid('vv1.2.3', 'semver', { prefix: 'allow' })).toBe(false);
+    expect(isValid('v01.2.3', 'semver', { prefix: 'allow' })).toBe(false);
+    expect(isValid('v', 'semver', { prefix: 'allow' })).toBe(false);
+  });
+
+  it("needs the v with 'require', and still validates the rest", () => {
+    expect(isValid('v1.2.3', 'semver', { prefix: 'require' })).toBe(true);
+    expect(isValid('v1.0.0-rc.1+b5', 'semver', { prefix: 'require' })).toBe(true);
+    expect(isValid('1.2.3', 'semver', { prefix: 'require' })).toBe(false);
+    expect(isValid('V1.2.3', 'semver', { prefix: 'require' })).toBe(false);
+    expect(isValid('v1.2', 'semver', { prefix: 'require' })).toBe(false);
+    expect(isValid('garbage', 'semver', { prefix: 'require' })).toBe(false);
+  });
+
+  it('is ignored by the other schemes', () => {
+    expect(isValid('1.0-1', 'debian', { prefix: 'require' })).toBe(true);
+    expect(isValid('1.0.0', 'maven', { prefix: 'require' })).toBe(true);
+  });
+});
+
 describe('isValid — other schemes', () => {
   const cases: [VersionScheme, string[], string[]][] = [
     ['gentoo', ['1.2.3', '1.2.3b_rc1-r2', '2.0_p1'], ['', '1.2.3-beta', 'abc', '1..2']],
