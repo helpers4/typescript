@@ -20,7 +20,7 @@ Version: 1:1.2.13.dfsg-1`;
 
 const examples: HelperExamples = {
   helper: 'parseDeb822',
-  category: 'debian',
+  category: 'package',
   examples: [
     {
       title: 'Read the stanzas of a Packages index',

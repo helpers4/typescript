@@ -70,7 +70,7 @@ const FIELD_RE = /^([^\s:#-][^\s:]*):(.*)$/;
  * - PGP clearsigning armor (`Release`, `.dsc`, `.changes` can be signed) is not interpreted.
  *
  * To compare the version strings found in `Version` fields, use `compare(a, b, 'debian')` from
- * `@helpers4/version`; to read `Depends`-like fields, use `parseRelationships`.
+ * `@helpers4/version`; to read `Depends`-like fields, use `parseDependencies`.
  *
  * @param text - The document, with `\n` or `\r\n` line endings
  * @param options - `{ strict }`, see {@link Deb822Options}

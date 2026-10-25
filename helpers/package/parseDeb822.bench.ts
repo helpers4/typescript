@@ -6,7 +6,7 @@
 
 import { test } from 'vitest';
 
-import { parseDeb822 } from '@helpers4/debian';
+import { parseDeb822 } from '@helpers4/package';
 import { RUN, consume } from '../../scripts/bench';
 
 const STANZA = `Package: zlib1g

@@ -6,21 +6,21 @@
 
 import { test } from 'vitest';
 
-import { parseRelationships, stringifyRelationships } from '@helpers4/debian';
+import { parseDependencies, stringifyDependencies } from '@helpers4/package';
 import { RUN, consume } from '../../scripts/bench';
 
-const SMALL = parseRelationships('libc6 (>= 2.14)');
-const LARGE = parseRelationships(
+const SMALL = parseDependencies('libc6 (>= 2.14)');
+const LARGE = parseDependencies(
   Array.from({ length: 200 }, (_, index) => `libpackage${index} (>= 1.${index}) [amd64] | other${index}`).join(', '),
 );
 
-test('stringifyRelationships', async ({ bench }) => {
+test('stringifyDependencies', async ({ bench }) => {
   await bench.compare(
     bench('one versioned package', () => {
-      consume(stringifyRelationships(SMALL));
+      consume(stringifyDependencies(SMALL));
     }),
     bench('200 entries with alternatives', () => {
-      consume(stringifyRelationships(LARGE));
+      consume(stringifyDependencies(LARGE));
     }),
     RUN,
   );
