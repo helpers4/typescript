@@ -1,5 +1,0 @@
-{
-  "label": "Geo",
-  "smallDescription": "Geographic coordinates helpers",
-  "description": "Helpers for WGS84 latitude/longitude coordinates: great-circle distance between two points and radius checks."
-}

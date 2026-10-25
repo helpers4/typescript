@@ -1,5 +1,5 @@
 {
   "label": "Browser",
   "smallDescription": "Browser-specific utilities",
-  "description": "Utilities for browser APIs (media queries, ResizeObserver, image decoding, idle callbacks). Safe to import anywhere: nothing touches a browser global until called, and each helper has a defined behavior outside a browser."
+  "description": "Utilities for browser APIs (media queries, ResizeObserver, image decoding, idle callbacks, font loading and matching). Safe to import anywhere: nothing touches a browser global until called, and each helper has a defined behavior outside a browser."
 }
