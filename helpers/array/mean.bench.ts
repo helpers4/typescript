@@ -4,18 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { mean } from './mean'
+import { mean } from '@helpers4/array';
+import { RUN, consume } from '../../scripts/bench';
 
-const small = [1, 2, 3, 4, 5]
-const large = Array.from({ length: 10_000 }, (_, i) => i)
+const small = [1, 2, 3, 4, 5];
+const large = Array.from({ length: 10_000 }, (_, i) => i);
 
-describe('mean', () => {
-  bench('small array', () => {
-    mean(small)
-  })
-  bench('large array', () => {
-    mean(large)
-  })
-})
+test('mean', async ({ bench }) => {
+  await bench.compare(
+    bench('small array', () => {
+      consume(mean(small));
+    }),
+    bench('large array', () => {
+      consume(mean(large));
+    }),
+    RUN,
+  );
+});

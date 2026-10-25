@@ -4,20 +4,24 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { countBy } from './countBy';
+import { test } from 'vitest';
+import { countBy } from '@helpers4/set';
+import { RUN, consume } from '../../scripts/bench';
 
 const small = new Set([1, 2, 3, 4, 5]);
 const large = new Set(Array.from({ length: 10_000 }, (_, i) => i));
 
-describe('countBy', () => {
-  bench('small set, few groups', () => {
-    countBy(small, (value) => (value % 2 === 0 ? 'even' : 'odd'));
-  });
-  bench('large set, few groups', () => {
-    countBy(large, (value) => (value % 2 === 0 ? 'even' : 'odd'));
-  });
-  bench('large set, many groups', () => {
-    countBy(large, (value) => value % 1000);
-  });
+test('countBy', async ({ bench }) => {
+  await bench.compare(
+    bench('small set, few groups', () => {
+      consume(countBy(small, (value) => (value % 2 === 0 ? 'even' : 'odd')));
+    }),
+    bench('large set, few groups', () => {
+      consume(countBy(large, (value) => (value % 2 === 0 ? 'even' : 'odd')));
+    }),
+    bench('large set, many groups', () => {
+      consume(countBy(large, (value) => value % 1000));
+    }),
+    RUN,
+  );
 });

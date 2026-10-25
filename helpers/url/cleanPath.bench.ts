@@ -4,24 +4,28 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { cleanPath } from './cleanPath'
+import { cleanPath } from '@helpers4/url';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('cleanPath', () => {
-  bench('with no input', () => {
-    cleanPath(undefined)
-  })
-  bench('with empty string', () => {
-    cleanPath('')
-  })
-  bench('with correct path', () => {
-    cleanPath('/some/path')
-  })
-  bench('with multiple slashes in path', () => {
-    cleanPath('/some//path')
-  })
-  bench('with protocol, path, query, and fragment', () => {
-    cleanPath('https://server//some//path?query=thing#fragment')
-  })
-})
+test('cleanPath', async ({ bench }) => {
+  await bench.compare(
+    bench('with no input', () => {
+      consume(cleanPath(undefined));
+    }),
+    bench('with empty string', () => {
+      consume(cleanPath(''));
+    }),
+    bench('with correct path', () => {
+      consume(cleanPath('/some/path'));
+    }),
+    bench('with multiple slashes in path', () => {
+      consume(cleanPath('/some//path'));
+    }),
+    bench('with protocol, path, query, and fragment', () => {
+      consume(cleanPath('https://server//some//path?query=thing#fragment'));
+    }),
+    RUN,
+  );
+});

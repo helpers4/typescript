@@ -4,19 +4,23 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { findValue } from './findValue';
+import { test } from 'vitest';
+import { findValue } from '@helpers4/map';
+import { RUN, consume } from '../../scripts/bench';
 
 const large = new Map(Array.from({ length: 10_000 }, (_, i) => [i, i]));
 
-describe('findValue', () => {
-  bench('large map, match near the start', () => {
-    findValue(large, (value) => value === 5);
-  });
-  bench('large map, match near the end', () => {
-    findValue(large, (value) => value === 9_995);
-  });
-  bench('large map, no match (full scan)', () => {
-    findValue(large, (value) => value === -1);
-  });
+test('findValue', async ({ bench }) => {
+  await bench.compare(
+    bench('large map, match near the start', () => {
+      consume(findValue(large, (value) => value === 5));
+    }),
+    bench('large map, match near the end', () => {
+      consume(findValue(large, (value) => value === 9_995));
+    }),
+    bench('large map, no match (full scan)', () => {
+      consume(findValue(large, (value) => value === -1));
+    }),
+    RUN,
+  );
 });

@@ -4,20 +4,24 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { flatten } from './flatten'
+import { flatten } from '@helpers4/object';
+import { RUN, consume } from '../../scripts/bench';
 
-const small = { a: { b: { c: 1 }, d: 2 } }
+const small = { a: { b: { c: 1 }, d: 2 } };
 const wide: Record<string, unknown> = Object.fromEntries(
   Array.from({ length: 500 }, (_, i) => [`key${i}`, { nested: { value: i } }]),
-)
+);
 
-describe('flatten', () => {
-  bench('small nested object', () => {
-    flatten(small)
-  })
-  bench('wide object, 500 two-level entries', () => {
-    flatten(wide)
-  })
-})
+test('flatten', async ({ bench }) => {
+  await bench.compare(
+    bench('small nested object', () => {
+      consume(flatten(small));
+    }),
+    bench('wide object, 500 two-level entries', () => {
+      consume(flatten(wide));
+    }),
+    RUN,
+  );
+});

@@ -4,22 +4,26 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { timeAgo } from './timeAgo'
+import { timeAgo } from '@helpers4/date';
+import { RUN, consume } from '../../scripts/bench';
 
-const now = new Date('2025-06-15T12:00:00Z')
-const secondsAgo = new Date('2025-06-15T11:59:30Z')
-const yearsAgo = new Date('2020-01-01T00:00:00Z')
+const now = new Date('2025-06-15T12:00:00Z');
+const secondsAgo = new Date('2025-06-15T11:59:30Z');
+const yearsAgo = new Date('2020-01-01T00:00:00Z');
 
-describe('timeAgo', () => {
-  bench('seconds ago', () => {
-    timeAgo(secondsAgo, { now })
-  })
-  bench('years ago', () => {
-    timeAgo(yearsAgo, { now })
-  })
-  bench('with explicit locale', () => {
-    timeAgo(yearsAgo, { now, locale: 'fr' })
-  })
-})
+test('timeAgo', async ({ bench }) => {
+  await bench.compare(
+    bench('seconds ago', () => {
+      consume(timeAgo(secondsAgo, { now }));
+    }),
+    bench('years ago', () => {
+      consume(timeAgo(yearsAgo, { now }));
+    }),
+    bench('with explicit locale', () => {
+      consume(timeAgo(yearsAgo, { now, locale: 'fr' }));
+    }),
+    RUN,
+  );
+});

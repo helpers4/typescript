@@ -4,14 +4,18 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { isKnown } from './isKnown';
+import { test } from 'vitest';
+import { isKnown } from '@helpers4/license';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('isKnown', () => {
-  bench('known license', () => {
-    isKnown('MIT');
-  });
-  bench('unknown license', () => {
-    isKnown('custom:Acme End User License');
-  });
+test('isKnown', async ({ bench }) => {
+  await bench.compare(
+    bench('known license', () => {
+      consume(isKnown('MIT'));
+    }),
+    bench('unknown license', () => {
+      consume(isKnown('custom:Acme End User License'));
+    }),
+    RUN,
+  );
 });

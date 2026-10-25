@@ -4,14 +4,18 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { globToRegExp } from './globToRegExp';
+import { test } from 'vitest';
+import { globToRegExp } from '@helpers4/string';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('globToRegExp', () => {
-  bench('compile a simple pattern', () => {
-    globToRegExp('*.test.ts');
-  });
-  bench('compile a pattern with multiple wildcards', () => {
-    globToRegExp('report-????-*.csv');
-  });
+test('globToRegExp', async ({ bench }) => {
+  await bench.compare(
+    bench('compile a simple pattern', () => {
+      consume(globToRegExp('*.test.ts'));
+    }),
+    bench('compile a pattern with multiple wildcards', () => {
+      consume(globToRegExp('report-????-*.csv'));
+    }),
+    RUN,
+  );
 });

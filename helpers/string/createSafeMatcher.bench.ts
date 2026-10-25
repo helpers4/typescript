@@ -4,14 +4,18 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { createSafeMatcher } from './createSafeMatcher';
+import { test } from 'vitest';
+import { createSafeMatcher } from '@helpers4/string';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('createSafeMatcher', () => {
-  bench('valid patterns', () => {
-    createSafeMatcher(['Screen *', '!* (old)']);
-  });
-  bench('invalid regular expression', () => {
-    createSafeMatcher('/(/');
-  });
+test('createSafeMatcher', async ({ bench }) => {
+  await bench.compare(
+    bench('valid patterns', () => {
+      consume(createSafeMatcher(['Screen *', '!* (old)']));
+    }),
+    bench('invalid regular expression', () => {
+      consume(createSafeMatcher('/(/'));
+    }),
+    RUN,
+  );
 });

@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { reduce } from './reduce';
+import { test } from 'vitest';
+import { reduce } from '@helpers4/map';
+import { RUN, consume } from '../../scripts/bench';
 
 const small = new Map([
   ['a', 1],
@@ -14,11 +15,14 @@ const small = new Map([
 ]);
 const large = new Map(Array.from({ length: 10_000 }, (_, i) => [i, i]));
 
-describe('reduce', () => {
-  bench('small map', () => {
-    reduce(small, (acc, value) => acc + value, 0);
-  });
-  bench('large map', () => {
-    reduce(large, (acc, value) => acc + value, 0);
-  });
+test('reduce', async ({ bench }) => {
+  await bench.compare(
+    bench('small map', () => {
+      consume(reduce(small, (acc, value) => acc + value, 0));
+    }),
+    bench('large map', () => {
+      consume(reduce(large, (acc, value) => acc + value, 0));
+    }),
+    RUN,
+  );
 });

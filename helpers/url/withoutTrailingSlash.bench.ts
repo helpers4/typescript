@@ -4,21 +4,25 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { withoutTrailingSlash } from './withoutTrailingSlash'
+import { withoutTrailingSlash } from '@helpers4/url';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('withoutTrailingSlash', () => {
-  bench('with no input', () => {
-    withoutTrailingSlash(undefined)
-  })
-  bench('with empty string', () => {
-    withoutTrailingSlash('')
-  })
-  bench('with trailing slash', () => {
-    withoutTrailingSlash('some/path/')
-  })
-  bench('without trailing slash', () => {
-    withoutTrailingSlash('some/path')
-  })
-})
+test('withoutTrailingSlash', async ({ bench }) => {
+  await bench.compare(
+    bench('with no input', () => {
+      consume(withoutTrailingSlash(undefined));
+    }),
+    bench('with empty string', () => {
+      consume(withoutTrailingSlash(''));
+    }),
+    bench('with trailing slash', () => {
+      consume(withoutTrailingSlash('some/path/'));
+    }),
+    bench('without trailing slash', () => {
+      consume(withoutTrailingSlash('some/path'));
+    }),
+    RUN,
+  );
+});

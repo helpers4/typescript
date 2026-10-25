@@ -4,21 +4,25 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { snakeCase } from './snakeCase'
+import { snakeCase } from '@helpers4/string';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('snakeCase', () => {
-  bench('from camelCase', () => {
-    snakeCase('helloWorld')
-  })
-  bench('multiple segments', () => {
-    snakeCase('myLongVariableName')
-  })
-  bench('already snake_case', () => {
-    snakeCase('hello_world')
-  })
-  bench('single word', () => {
-    snakeCase('hello')
-  })
-})
+test('snakeCase', async ({ bench }) => {
+  await bench.compare(
+    bench('from camelCase', () => {
+      consume(snakeCase('helloWorld'));
+    }),
+    bench('multiple segments', () => {
+      consume(snakeCase('myLongVariableName'));
+    }),
+    bench('already snake_case', () => {
+      consume(snakeCase('hello_world'));
+    }),
+    bench('single word', () => {
+      consume(snakeCase('hello'));
+    }),
+    RUN,
+  );
+});

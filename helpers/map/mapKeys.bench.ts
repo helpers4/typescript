@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { mapKeys } from './mapKeys';
+import { test } from 'vitest';
+import { mapKeys } from '@helpers4/map';
+import { RUN, consume } from '../../scripts/bench';
 
 const small = new Map([
   ['a', 1],
@@ -14,11 +15,14 @@ const small = new Map([
 ]);
 const large = new Map(Array.from({ length: 10_000 }, (_, i) => [i, i]));
 
-describe('mapKeys', () => {
-  bench('small map', () => {
-    mapKeys(small, (key) => key.toUpperCase());
-  });
-  bench('large map', () => {
-    mapKeys(large, (key) => key * 2);
-  });
+test('mapKeys', async ({ bench }) => {
+  await bench.compare(
+    bench('small map', () => {
+      consume(mapKeys(small, (key) => key.toUpperCase()));
+    }),
+    bench('large map', () => {
+      consume(mapKeys(large, (key) => key * 2));
+    }),
+    RUN,
+  );
 });

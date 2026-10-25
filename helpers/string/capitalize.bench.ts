@@ -4,21 +4,25 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { capitalize } from './capitalize'
+import { capitalize } from '@helpers4/string';
+import { RUN, consume } from '../../scripts/bench';
 
-const short = 'hello'
-const long = 'hELLO '.repeat(200)
+const short = 'hello';
+const long = 'hELLO '.repeat(200);
 
-describe('capitalize', () => {
-  bench('short string, default options', () => {
-    capitalize(short)
-  })
-  bench('long string, default options', () => {
-    capitalize(long)
-  })
-  bench('short string, lowercaseRest: false', () => {
-    capitalize(short, { lowercaseRest: false })
-  })
-})
+test('capitalize', async ({ bench }) => {
+  await bench.compare(
+    bench('short string, default options', () => {
+      consume(capitalize(short));
+    }),
+    bench('long string, default options', () => {
+      consume(capitalize(long));
+    }),
+    bench('short string, lowercaseRest: false', () => {
+      consume(capitalize(short, { lowercaseRest: false }));
+    }),
+    RUN,
+  );
+});

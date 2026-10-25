@@ -4,14 +4,18 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { hsbToRgb } from './hsbToRgb';
+import { test } from 'vitest';
+import { hsbToRgb } from '@helpers4/color';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('hsbToRgb', () => {
-  bench('saturated', () => {
-    hsbToRgb({ h: 30, s: 100, b: 100 });
-  });
-  bench('with alpha and a wrapped hue', () => {
-    hsbToRgb({ h: -200, s: 40, b: 60, a: 0.5 });
-  });
+test('hsbToRgb', async ({ bench }) => {
+  await bench.compare(
+    bench('saturated', () => {
+      consume(hsbToRgb({ h: 30, s: 100, b: 100 }));
+    }),
+    bench('with alpha and a wrapped hue', () => {
+      consume(hsbToRgb({ h: -200, s: 40, b: 60, a: 0.5 }));
+    }),
+    RUN,
+  );
 });

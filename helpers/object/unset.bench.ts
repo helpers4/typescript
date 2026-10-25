@@ -4,16 +4,20 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { unset } from './unset'
+import { unset } from '@helpers4/object';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('unset', () => {
-  bench('existing path (fresh object per call)', () => {
-    unset({ a: { b: 1, c: 2 } }, 'a.b')
-  })
-  bench('missing intermediate path (no-op, shared object)', () => {
-    const shared = { a: { b: 1 } }
-    unset(shared, 'x.y.z')
-  })
-})
+test('unset', async ({ bench }) => {
+  await bench.compare(
+    bench('existing path (fresh object per call)', () => {
+      consume(unset({ a: { b: 1, c: 2 } }, 'a.b'));
+    }),
+    bench('missing intermediate path (no-op, shared object)', () => {
+      const shared = { a: { b: 1 } };
+      consume(unset(shared, 'x.y.z'));
+    }),
+    RUN,
+  );
+});

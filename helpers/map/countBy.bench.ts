@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { countBy } from './countBy';
+import { test } from 'vitest';
+import { countBy } from '@helpers4/map';
+import { RUN, consume } from '../../scripts/bench';
 
 const small = new Map([
   ['a', 1],
@@ -14,14 +15,17 @@ const small = new Map([
 ]);
 const large = new Map(Array.from({ length: 10_000 }, (_, i) => [i, i]));
 
-describe('countBy', () => {
-  bench('small map, few groups', () => {
-    countBy(small, (value) => (value % 2 === 0 ? 'even' : 'odd'));
-  });
-  bench('large map, few groups', () => {
-    countBy(large, (value) => (value % 2 === 0 ? 'even' : 'odd'));
-  });
-  bench('large map, many groups', () => {
-    countBy(large, (value) => value % 1000);
-  });
+test('countBy', async ({ bench }) => {
+  await bench.compare(
+    bench('small map, few groups', () => {
+      consume(countBy(small, (value) => (value % 2 === 0 ? 'even' : 'odd')));
+    }),
+    bench('large map, few groups', () => {
+      consume(countBy(large, (value) => (value % 2 === 0 ? 'even' : 'odd')));
+    }),
+    bench('large map, many groups', () => {
+      consume(countBy(large, (value) => value % 1000));
+    }),
+    RUN,
+  );
 });

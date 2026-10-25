@@ -4,15 +4,19 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { randomBetween, randomIntBetween } from './random'
+import { randomBetween, randomIntBetween } from '@helpers4/number';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('random', () => {
-  bench('randomBetween', () => {
-    randomBetween(0, 100)
-  })
-  bench('randomIntBetween', () => {
-    randomIntBetween(0, 100)
-  })
-})
+test('random', async ({ bench }) => {
+  await bench.compare(
+    bench('randomBetween', () => {
+      consume(randomBetween(0, 100));
+    }),
+    bench('randomIntBetween', () => {
+      consume(randomIntBetween(0, 100));
+    }),
+    RUN,
+  );
+});

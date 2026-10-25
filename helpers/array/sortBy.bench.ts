@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { createSortByDateFn, createSortByNumberFn, createSortByStringFn } from './sortBy';
+import { test } from 'vitest';
+import { createSortByDateFn, createSortByNumberFn, createSortByStringFn } from '@helpers4/array';
+import { RUN } from '../../scripts/bench';
 
 const objects = Array.from({ length: 50 }, (_, i) => ({
   dept: i % 5 === 0 ? 'A' : i % 3 === 0 ? 'B' : 'C',
@@ -21,17 +22,20 @@ const sortByDeptThenLabel = createSortByStringFn<Row>(['dept', 'label']);
 const sortByValue = createSortByNumberFn<Row>('value');
 const sortByDate = createSortByDateFn<Row>('date');
 
-describe('sortBy', () => {
-  bench('createSortByStringFn — single key (50 items)', () => {
-    [...objects].sort(sortByLabel);
-  });
-  bench('createSortByStringFn — multi-key [dept, label] (50 items)', () => {
-    [...objects].sort(sortByDeptThenLabel);
-  });
-  bench('createSortByNumberFn (50 items)', () => {
-    [...objects].sort(sortByValue);
-  });
-  bench('createSortByDateFn (50 Date objects)', () => {
-    [...objects].sort(sortByDate);
-  });
+test('sortBy', async ({ bench }) => {
+  await bench.compare(
+    bench('createSortByStringFn — single key (50 items)', () => {
+      [...objects].sort(sortByLabel);
+    }),
+    bench('createSortByStringFn — multi-key [dept, label] (50 items)', () => {
+      [...objects].sort(sortByDeptThenLabel);
+    }),
+    bench('createSortByNumberFn (50 items)', () => {
+      [...objects].sort(sortByValue);
+    }),
+    bench('createSortByDateFn (50 Date objects)', () => {
+      [...objects].sort(sortByDate);
+    }),
+    RUN,
+  );
 });

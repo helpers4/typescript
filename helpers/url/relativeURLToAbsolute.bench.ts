@@ -4,21 +4,25 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { relativeURLToAbsolute } from './relativeURLToAbsolute'
+import { relativeURLToAbsolute } from '@helpers4/url';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('relativeURLToAbsolute', () => {
-  bench('with simple relative path', () => {
-    relativeURLToAbsolute('/some/path')
-  })
-  bench('with nested relative path', () => {
-    relativeURLToAbsolute('/some/deep/nested/path')
-  })
-  bench('with trailing slash', () => {
-    relativeURLToAbsolute('/some/path/')
-  })
-  bench('without leading slash', () => {
-    relativeURLToAbsolute('some/path')
-  })
-})
+test('relativeURLToAbsolute', async ({ bench }) => {
+  await bench.compare(
+    bench('with simple relative path', () => {
+      consume(relativeURLToAbsolute('/some/path'));
+    }),
+    bench('with nested relative path', () => {
+      consume(relativeURLToAbsolute('/some/deep/nested/path'));
+    }),
+    bench('with trailing slash', () => {
+      consume(relativeURLToAbsolute('/some/path/'));
+    }),
+    bench('without leading slash', () => {
+      consume(relativeURLToAbsolute('some/path'));
+    }),
+    RUN,
+  );
+});

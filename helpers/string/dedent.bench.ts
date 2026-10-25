@@ -4,18 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { dedent } from './dedent'
+import { dedent } from '@helpers4/string';
+import { RUN, consume } from '../../scripts/bench';
 
-const small = '\n  Hello\n    World\n'
-const large = `\n${'  line of indented text\n'.repeat(500)}`
+const small = '\n  Hello\n    World\n';
+const large = `\n${'  line of indented text\n'.repeat(500)}`;
 
-describe('dedent', () => {
-  bench('small multi-line string', () => {
-    dedent(small)
-  })
-  bench('large multi-line string (500 lines)', () => {
-    dedent(large)
-  })
-})
+test('dedent', async ({ bench }) => {
+  await bench.compare(
+    bench('small multi-line string', () => {
+      consume(dedent(small));
+    }),
+    bench('large multi-line string (500 lines)', () => {
+      consume(dedent(large));
+    }),
+    RUN,
+  );
+});

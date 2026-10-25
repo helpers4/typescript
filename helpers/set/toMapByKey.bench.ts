@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { toMapByKey } from './toMapByKey';
+import { test } from 'vitest';
+import { toMapByKey } from '@helpers4/set';
+import { RUN, consume } from '../../scripts/bench';
 
 const small = new Set([
   { id: 'a', n: 1 },
@@ -14,14 +15,17 @@ const small = new Set([
 ]);
 const large = new Set(Array.from({ length: 10_000 }, (_, i) => ({ id: i, n: i * 2 })));
 
-describe('toMapByKey', () => {
-  bench('small set', () => {
-    toMapByKey(small, (item) => item.id);
-  });
-  bench('large set', () => {
-    toMapByKey(large, (item) => item.id);
-  });
-  bench('large set, with duplicate keys (collapsing)', () => {
-    toMapByKey(large, (item) => item.id % 100);
-  });
+test('toMapByKey', async ({ bench }) => {
+  await bench.compare(
+    bench('small set', () => {
+      consume(toMapByKey(small, (item) => item.id));
+    }),
+    bench('large set', () => {
+      consume(toMapByKey(large, (item) => item.id));
+    }),
+    bench('large set, with duplicate keys (collapsing)', () => {
+      consume(toMapByKey(large, (item) => item.id % 100));
+    }),
+    RUN,
+  );
 });

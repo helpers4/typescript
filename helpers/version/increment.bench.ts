@@ -4,15 +4,19 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { increment } from './increment'
+import { increment } from '@helpers4/version';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('increment', () => {
-  bench('patch bump', () => {
-    increment('1.2.3', 'patch')
-  })
-  bench('major bump, with leading v', () => {
-    increment('v1.2.3', 'major')
-  })
-})
+test('increment', async ({ bench }) => {
+  await bench.compare(
+    bench('patch bump', () => {
+      consume(increment('1.2.3', 'patch'));
+    }),
+    bench('major bump, with leading v', () => {
+      consume(increment('v1.2.3', 'major'));
+    }),
+    RUN,
+  );
+});

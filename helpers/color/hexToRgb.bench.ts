@@ -4,18 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { hexToRgb } from './hexToRgb'
+import { hexToRgb } from '@helpers4/color';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('hexToRgb', () => {
-  bench('short hex (#rgb)', () => {
-    hexToRgb('#f00')
-  })
-  bench('long hex (#rrggbb)', () => {
-    hexToRgb('#ff0000')
-  })
-  bench('long hex with alpha (#rrggbbaa)', () => {
-    hexToRgb('#ff000080')
-  })
-})
+test('hexToRgb', async ({ bench }) => {
+  await bench.compare(
+    bench('short hex (#rgb)', () => {
+      consume(hexToRgb('#f00'));
+    }),
+    bench('long hex (#rrggbb)', () => {
+      consume(hexToRgb('#ff0000'));
+    }),
+    bench('long hex with alpha (#rrggbbaa)', () => {
+      consume(hexToRgb('#ff000080'));
+    }),
+    RUN,
+  );
+});

@@ -4,11 +4,12 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { unorderedPairKey } from './unorderedPairKey';
+import { test } from 'vitest';
+import { unorderedPairKey } from '@helpers4/string';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('unorderedPairKey', () => {
-  bench('short strings', () => {
-    unorderedPairKey('bob', 'alice');
-  });
+test('unorderedPairKey', async ({ bench }) => {
+  await bench('short strings', () => {
+      consume(unorderedPairKey('bob', 'alice'));
+    }).run(RUN);
 });

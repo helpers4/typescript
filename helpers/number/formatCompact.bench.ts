@@ -4,15 +4,19 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { formatCompact } from './formatCompact'
+import { formatCompact } from '@helpers4/number';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('formatCompact', () => {
-  bench('default locale', () => {
-    formatCompact(1_500_000)
-  })
-  bench('explicit locale', () => {
-    formatCompact(1_500_000, 'fr')
-  })
-})
+test('formatCompact', async ({ bench }) => {
+  await bench.compare(
+    bench('default locale', () => {
+      consume(formatCompact(1_500_000));
+    }),
+    bench('explicit locale', () => {
+      consume(formatCompact(1_500_000, 'fr'));
+    }),
+    RUN,
+  );
+});

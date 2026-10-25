@@ -4,24 +4,26 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { createMutex } from './createMutex';
+import { test } from 'vitest';
+import { createMutex } from '@helpers4/promise';
+import { RUN, consume } from '../../scripts/bench';
 
 const noop = (): number => 42;
 
-describe('createMutex', () => {
-  bench('create a mutex', () => {
-    createMutex();
-  });
-
-  bench('acquire + release, uncontended', async () => {
-    const mutex = createMutex();
-    const release = await mutex.acquire();
-    release();
-  });
-
-  bench('run(), uncontended', async () => {
-    const mutex = createMutex();
-    await mutex.run(noop);
-  });
+test('createMutex', async ({ bench }) => {
+  await bench.compare(
+    bench('create a mutex', () => {
+      consume(createMutex());
+    }),
+    bench('acquire + release, uncontended', async () => {
+      const mutex = createMutex();
+      const release = await mutex.acquire();
+      release();
+    }),
+    bench('run(), uncontended', async () => {
+      const mutex = createMutex();
+      await mutex.run(noop);
+    }),
+    RUN,
+  );
 });

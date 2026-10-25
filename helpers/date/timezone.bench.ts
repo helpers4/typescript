@@ -4,41 +4,48 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { formatInTimezone, getTimezoneOffset, listTimezones } from './timezone'
+import { formatInTimezone, getTimezoneOffset, listTimezones } from '@helpers4/date';
+import { RUN, consume } from '../../scripts/bench';
 
-const date = new Date('2025-01-19T12:00:00Z')
+const date = new Date('2025-01-19T12:00:00Z');
 
-describe('listTimezones', () => {
-  bench('list all', () => {
-    listTimezones()
-  })
-})
+test('listTimezones', async ({ bench }) => {
+  await bench('list all', () => {
+      consume(listTimezones());
+    }).run(RUN);
+});
 
-describe('getTimezoneOffset', () => {
-  bench('UTC', () => {
-    getTimezoneOffset('UTC', date)
-  })
-  bench('America/New_York', () => {
-    getTimezoneOffset('America/New_York', date)
-  })
-  bench('Asia/Kolkata (half-hour)', () => {
-    getTimezoneOffset('Asia/Kolkata', date)
-  })
-})
+test('getTimezoneOffset', async ({ bench }) => {
+  await bench.compare(
+    bench('UTC', () => {
+      consume(getTimezoneOffset('UTC', date));
+    }),
+    bench('America/New_York', () => {
+      consume(getTimezoneOffset('America/New_York', date));
+    }),
+    bench('Asia/Kolkata (half-hour)', () => {
+      consume(getTimezoneOffset('Asia/Kolkata', date));
+    }),
+    RUN,
+  );
+});
 
-describe('formatInTimezone', () => {
-  bench('default options', () => {
-    formatInTimezone(date, 'America/New_York')
-  })
-  bench('with locale fr-FR', () => {
-    formatInTimezone(date, 'Europe/Paris', { locale: 'fr-FR' })
-  })
-  bench('with full format options', () => {
-    formatInTimezone(date, 'Asia/Tokyo', {
-      locale: 'ja-JP',
-      formatOptions: { dateStyle: 'full', timeStyle: 'long' },
-    })
-  })
-})
+test('formatInTimezone', async ({ bench }) => {
+  await bench.compare(
+    bench('default options', () => {
+      consume(formatInTimezone(date, 'America/New_York'));
+    }),
+    bench('with locale fr-FR', () => {
+      consume(formatInTimezone(date, 'Europe/Paris', { locale: 'fr-FR' }));
+    }),
+    bench('with full format options', () => {
+      consume(formatInTimezone(date, 'Asia/Tokyo', {
+        locale: 'ja-JP',
+        formatOptions: { dateStyle: 'full', timeStyle: 'long' },
+      }));
+    }),
+    RUN,
+  );
+});

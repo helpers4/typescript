@@ -4,22 +4,26 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { escape } from './escape'
+import { escape } from '@helpers4/markdown';
+import { RUN, consume } from '../../scripts/bench';
 
-const short = '**bold** and _italic_'
-const plain = 'no special characters here at all'
-const long = '**bold** _italic_ [link](url) # heading\n'.repeat(100)
+const short = '**bold** and _italic_';
+const plain = 'no special characters here at all';
+const long = '**bold** _italic_ [link](url) # heading\n'.repeat(100);
 
-describe('escape', () => {
-  bench('short string with markdown syntax', () => {
-    escape(short)
-  })
-  bench('plain string, nothing to escape', () => {
-    escape(plain)
-  })
-  bench('long string, table cell mode', () => {
-    escape(long, { cell: true })
-  })
-})
+test('escape', async ({ bench }) => {
+  await bench.compare(
+    bench('short string with markdown syntax', () => {
+      consume(escape(short));
+    }),
+    bench('plain string, nothing to escape', () => {
+      consume(escape(plain));
+    }),
+    bench('long string, table cell mode', () => {
+      consume(escape(long, { cell: true }));
+    }),
+    RUN,
+  );
+});

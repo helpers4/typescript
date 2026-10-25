@@ -4,15 +4,19 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { formatSize } from './formatSize'
+import { formatSize } from '@helpers4/number';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('formatSize', () => {
-  bench('bytes (no division)', () => {
-    formatSize(512)
-  })
-  bench('gigabytes (3 divisions)', () => {
-    formatSize(1_073_741_824)
-  })
-})
+test('formatSize', async ({ bench }) => {
+  await bench.compare(
+    bench('bytes (no division)', () => {
+      consume(formatSize(512));
+    }),
+    bench('gigabytes (3 divisions)', () => {
+      consume(formatSize(1_073_741_824));
+    }),
+    RUN,
+  );
+});

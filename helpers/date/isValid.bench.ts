@@ -4,21 +4,25 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { isValid } from './isValid'
+import { isValid } from '@helpers4/date';
+import { RUN, consume } from '../../scripts/bench';
 
-const validDate = new Date()
-const invalidDate = new Date('invalid')
+const validDate = new Date();
+const invalidDate = new Date('invalid');
 
-describe('isValid', () => {
-  bench('valid Date instance', () => {
-    isValid(validDate)
-  })
-  bench('invalid Date instance', () => {
-    isValid(invalidDate)
-  })
-  bench('non-Date value', () => {
-    isValid('2023-01-01')
-  })
-})
+test('isValid', async ({ bench }) => {
+  await bench.compare(
+    bench('valid Date instance', () => {
+      consume(isValid(validDate));
+    }),
+    bench('invalid Date instance', () => {
+      consume(isValid(invalidDate));
+    }),
+    bench('non-Date value', () => {
+      consume(isValid('2023-01-01'));
+    }),
+    RUN,
+  );
+});

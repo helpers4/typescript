@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { createCachedResolver } from './createCachedResolver';
+import { test } from 'vitest';
+import { createCachedResolver } from '@helpers4/function';
+import { RUN, consume } from '../../scripts/bench';
 
 const compute = (n: number) => n * 2;
 
@@ -22,35 +23,30 @@ hitWeakMapResolver.resolve(hitWeakMapKey);
 
 const clearResolver = createCachedResolver(compute);
 
-describe('createCachedResolver', () => {
-  bench('create a resolver', () => {
-    createCachedResolver(compute);
-  });
-
-  bench('resolve(), cache hit (Map-backed)', () => {
-    hitMapResolver.resolve(1);
-  });
-
-  bench('resolve(), cache hit (WeakMap-backed)', () => {
-    hitWeakMapResolver.resolve(hitWeakMapKey);
-  });
-
-  bench('resolve(), 100 distinct keys (all misses)', () => {
-    const { resolve } = createCachedResolver(compute);
-    for (let i = 0; i < 100; i++) resolve(i);
-  });
-
-  bench(
-    'clear(), Map-backed (calls Map.clear())',
-    () => {
-      clearResolver.clear();
-    },
-    {
-      // Untimed: repopulates the cache clear() is about to wipe, so the
-      // timed function below measures only the clear() call itself.
-      beforeEach: () => {
-        for (let i = 0; i < 100; i++) clearResolver.resolve(i);
-      },
-    },
+test('createCachedResolver', async ({ bench }) => {
+  await bench.compare(
+    bench('create a resolver', () => {
+      consume(createCachedResolver(compute));
+    }),
+    bench('resolve(), cache hit (Map-backed)', () => {
+      hitMapResolver.resolve(1);
+    }),
+    bench('resolve(), cache hit (WeakMap-backed)', () => {
+      hitWeakMapResolver.resolve(hitWeakMapKey);
+    }),
+    bench('resolve(), 100 distinct keys (all misses)', () => {
+      const { resolve } = createCachedResolver(compute);
+      for (let i = 0; i < 100; i++) resolve(i);
+    }),
+    bench('clear(), Map-backed (calls Map.clear())', {
+        // Untimed: repopulates the cache clear() is about to wipe, so the
+        // timed function below measures only the clear() call itself.
+        beforeEach: () => {
+          for (let i = 0; i < 100; i++) clearResolver.resolve(i);
+        },
+      }, () => {
+        clearResolver.clear();
+      }),
+    RUN,
   );
 });

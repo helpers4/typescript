@@ -4,18 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { range } from './range'
+import { range } from '@helpers4/array';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('range', () => {
-  bench('small range (0-5)', () => {
-    range(5)
-  })
-  bench('large range (10,000 steps)', () => {
-    range(0, 10_000)
-  })
-  bench('large range with step', () => {
-    range(0, 10_000, 2)
-  })
-})
+test('range', async ({ bench }) => {
+  await bench.compare(
+    bench('small range (0-5)', () => {
+      consume(range(5));
+    }),
+    bench('large range (10,000 steps)', () => {
+      consume(range(0, 10_000));
+    }),
+    bench('large range with step', () => {
+      consume(range(0, 10_000, 2));
+    }),
+    RUN,
+  );
+});

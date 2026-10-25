@@ -4,18 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { parseDuration } from './parseDuration'
+import { parseDuration } from '@helpers4/date';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('parseDuration', () => {
-  bench('single segment', () => {
-    parseDuration('45s')
-  })
-  bench('multiple segments', () => {
-    parseDuration('1h 23m 45s')
-  })
-  bench('unparseable string', () => {
-    parseDuration('garbage')
-  })
-})
+test('parseDuration', async ({ bench }) => {
+  await bench.compare(
+    bench('single segment', () => {
+      consume(parseDuration('45s'));
+    }),
+    bench('multiple segments', () => {
+      consume(parseDuration('1h 23m 45s'));
+    }),
+    bench('unparseable string', () => {
+      consume(parseDuration('garbage'));
+    }),
+    RUN,
+  );
+});

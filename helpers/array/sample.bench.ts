@@ -4,21 +4,25 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { sample } from './sample'
+import { sample } from '@helpers4/array';
+import { RUN, consume } from '../../scripts/bench';
 
-const small = [1, 2, 3, 4, 5]
-const large = Array.from({ length: 10_000 }, (_, i) => i)
+const small = [1, 2, 3, 4, 5];
+const large = Array.from({ length: 10_000 }, (_, i) => i);
 
-describe('sample', () => {
-  bench('single element from small array', () => {
-    sample(small)
-  })
-  bench('single element from large array', () => {
-    sample(large)
-  })
-  bench('10 elements from large array (uses shuffle internally)', () => {
-    sample(large, 10)
-  })
-})
+test('sample', async ({ bench }) => {
+  await bench.compare(
+    bench('single element from small array', () => {
+      consume(sample(small));
+    }),
+    bench('single element from large array', () => {
+      consume(sample(large));
+    }),
+    bench('10 elements from large array (uses shuffle internally)', () => {
+      consume(sample(large, 10));
+    }),
+    RUN,
+  );
+});

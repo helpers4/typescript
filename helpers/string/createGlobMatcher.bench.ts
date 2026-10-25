@@ -4,16 +4,20 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { createGlobMatcher } from './createGlobMatcher';
+import { test } from 'vitest';
+import { createGlobMatcher } from '@helpers4/string';
+import { RUN, consume } from '../../scripts/bench';
 
 const matches = createGlobMatcher(['/src/*.ts', '!*.test.ts']);
 
-describe('createGlobMatcher', () => {
-  bench('create', () => {
-    createGlobMatcher(['/src/*.ts', '!*.test.ts']);
-  });
-  bench('match', () => {
-    matches('/src/index.test.ts');
-  });
+test('createGlobMatcher', async ({ bench }) => {
+  await bench.compare(
+    bench('create', () => {
+      consume(createGlobMatcher(['/src/*.ts', '!*.test.ts']));
+    }),
+    bench('match', () => {
+      matches('/src/index.test.ts');
+    }),
+    RUN,
+  );
 });

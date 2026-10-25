@@ -4,14 +4,18 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { levenshteinSimilarity } from './levenshteinSimilarity';
+import { test } from 'vitest';
+import { levenshteinSimilarity } from '@helpers4/string';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('levenshteinSimilarity', () => {
-  bench('short strings', () => {
-    levenshteinSimilarity('kitten', 'sitting');
-  });
-  bench('identical strings', () => {
-    levenshteinSimilarity('helpers4', 'helpers4');
-  });
+test('levenshteinSimilarity', async ({ bench }) => {
+  await bench.compare(
+    bench('short strings', () => {
+      consume(levenshteinSimilarity('kitten', 'sitting'));
+    }),
+    bench('identical strings', () => {
+      consume(levenshteinSimilarity('helpers4', 'helpers4'));
+    }),
+    RUN,
+  );
 });
