@@ -6,6 +6,7 @@
 
 import { describe, expect, it } from 'vitest';
 import { parse } from './parse';
+import { stringify } from './stringify';
 
 describe('parse', () => {
   describe('core version parsing', () => {
@@ -331,5 +332,21 @@ describe('rpm, pacman and pep440 schemes', () => {
 describe('maven scheme', () => {
   it('parses into normalized items', () => {
     expect(parse('1.0a1', 'maven')).toEqual({ scheme: 'maven', items: [1n, ['alpha', [1n]]] });
+  });
+});
+
+describe('prerelease identifiers with hyphens', () => {
+  it('keeps everything after the first hyphen, as SemVer allows hyphens inside identifiers', () => {
+    expect(parse('1.0.0-alpha-1').prerelease).toEqual(['alpha-1']);
+    expect(parse('1.0.0-x-y-z.--').prerelease).toEqual(['x-y-z', '--']);
+    expect(parse('1.0.0--').prerelease).toEqual(['-']);
+    expect(parse('1.0.0-rc-1+build-2').prerelease).toEqual(['rc-1']);
+    expect(parse('1.0.0-rc-1+build-2').build).toEqual(['build-2']);
+  });
+
+  it('round-trips through stringify', () => {
+    for (const version of ['1.0.0-alpha-1', '1.0.0-x-y-z.--', '1.0.0--', '1.0.0-rc-1+build-2']) {
+      expect(stringify(parse(version))).toBe(version);
+    }
   });
 });
