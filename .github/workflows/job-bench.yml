@@ -102,10 +102,10 @@ jobs:
           if [ -n "$BENCH_FILES" ]; then
             echo "Running benchmarks for: $BENCH_FILES"
             # shellcheck disable=SC2086
-            pnpm bench -- $BENCH_FILES 2>&1 | tee bench-output.txt
+            pnpm bench -- --reporter=default --reporter=json --outputFile.json=bench-results.json $BENCH_FILES 2>&1 | tee bench-output.txt
           else
             echo "Running all benchmarks..."
-            pnpm bench 2>&1 | tee bench-output.txt
+            pnpm bench -- --reporter=default --reporter=json --outputFile.json=bench-results.json 2>&1 | tee bench-output.txt
           fi
           echo "exit_code=${PIPESTATUS[0]}" >> $GITHUB_OUTPUT
           echo "skipped=false" >> $GITHUB_OUTPUT
@@ -114,11 +114,15 @@ jobs:
         id: extract
         if: always()
         run: |
-          TOTAL_SUITES=$(grep -c '^ ✓' bench-output.txt || true)
+          # Vitest's JSON report lists one entry per benchmark file; its tests are named after the helpers.
+          if [ -s bench-results.json ]; then
+            TOTAL_SUITES=$(jq '.testResults | length' bench-results.json)
+            SUMMARY=$(jq -r '[.testResults[].assertionResults[].title] | unique | join(", ")' bench-results.json)
+          else
+            TOTAL_SUITES=0
+            SUMMARY=""
+          fi
           echo "total-suites=$TOTAL_SUITES" >> $GITHUB_OUTPUT
-
-          # Extract benchmarked suite names
-          SUMMARY=$( (grep '^ ✓' bench-output.txt | sed 's/^ ✓ //' | sed 's/ >.*//' | sort -u | tr '\n' ', ' | sed 's/,[[:space:]]*$//') || true )
           echo "summary=$SUMMARY" >> $GITHUB_OUTPUT
 
       - name: Set status
