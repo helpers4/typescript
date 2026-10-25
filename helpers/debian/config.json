@@ -1,0 +1,5 @@
+{
+  "label": "Debian",
+  "smallDescription": "Debian control file parsers",
+  "description": "Pure parsers for the formats of the Debian archive: deb822 control files (Packages, Sources, Release, control, .dsc, .changes, copyright) and the relationship fields (Depends, Build-Depends, ...) found in them."
+}
