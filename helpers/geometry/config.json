@@ -1,5 +1,5 @@
 {
   "label": "Geometry",
-  "smallDescription": "2D points, rectangles, affine matrices and geographic distance",
-  "description": "2D geometry for hit-testing, bounds, fitting content into a viewport and simplifying polylines, with affine matrices in the CSS/SVG matrix(a b c d e f) layout, plus great-circle distance between latitude/longitude points."
+  "smallDescription": "2D points, rectangles and affine matrices",
+  "description": "2D geometry for hit-testing, bounds, fitting content into a viewport and simplifying polylines, with affine matrices in the CSS/SVG matrix(a b c d e f) layout."
 }
