@@ -1,5 +1,5 @@
 {
   "label": "Guard",
   "smallDescription": "Runtime type guard utilities",
-  "description": "Runtime type guards (`isString`, `isArray`, `isDefined`, `isNull`, …) — narrowing functions that return boolean predicates usable in TypeScript type-safe branches."
+  "description": "Runtime type guards (`isString`, `isArray`, `isDefined`, `isNull`, \u2026) \u2014 narrowing functions that return boolean predicates usable in TypeScript type-safe branches. The `isTemporal*` guards recognize Temporal objects, which only exist on Node.js 26+ and recent Chrome/Firefox/Edge; Safari has no stable Temporal yet (WebKit signals late 2026), so load a Temporal polyfill there."
 }
