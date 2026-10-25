@@ -76,3 +76,9 @@ describe('rpm, pacman and pep440 schemes', () => {
     expect(stringify({ scheme: 'pep440', epoch: 0, release: [1, 0], pre: { type: 'rc', number: 1 }, post: null, dev: null, local: [] })).toBe('1.0rc1');
   });
 });
+
+describe('maven scheme', () => {
+  it('writes the canonical form', () => {
+    expect(stringify(parse('1.0.0-RC1', 'maven'))).toBe('1-rc-1');
+  });
+});

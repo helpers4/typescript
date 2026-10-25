@@ -85,3 +85,9 @@ describe('rpm, pacman and pep440 schemes', () => {
     expect(incrementPrerelease('1.2.4a0', 'a', 'pep440')).toBe('1.2.4a1');
   });
 });
+
+describe('maven scheme', () => {
+  it('throws: qualifiers are free-form', () => {
+    expect(() => incrementPrerelease('1.0-rc1', 'rc', 'maven')).toThrow(/does not support incrementPrerelease/);
+  });
+});

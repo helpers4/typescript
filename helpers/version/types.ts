@@ -9,7 +9,7 @@
  * version string. Defaults to `'semver'` everywhere it's accepted.
  * @since 3.0.8
  */
-export type VersionScheme = 'semver' | 'gentoo' | 'debian' | 'rpm' | 'pacman' | 'pep440';
+export type VersionScheme = 'semver' | 'gentoo' | 'debian' | 'rpm' | 'pacman' | 'pep440' | 'maven';
 
 /** The unit to bump — see {@link increment}. */
 export type IncrementType = 'major' | 'minor' | 'patch';
@@ -163,11 +163,33 @@ export interface ParsedPep440Version {
 }
 
 /**
+ * One item of a parsed Maven version: a number, a lowercase qualifier string (`'rc'`, `'sp'`,
+ * `'sec01'`…), or a nested list started by a `-`.
+ * @since next
+ */
+export type MavenVersionItem = bigint | string | MavenVersionItem[];
+
+/**
+ * A version parsed the way Apache Maven's `ComparableVersion` reads it: a list of numbers,
+ * qualifiers and nested lists, split on `.` and `-` and on every switch between digits and
+ * letters, then normalized (trailing zeros and empty qualifiers dropped, `cr` → `rc`,
+ * `ga`/`final`/`release` → `''`, `1.0a1` → `[1, [alpha, [1]]]`).
+ *
+ * `1.0.0` and `1` parse to the same items, so `stringify` gives Maven's canonical form
+ * (`1`), not the original text.
+ * @since next
+ */
+export interface ParsedMavenVersion {
+  scheme: 'maven';
+  items: MavenVersionItem[];
+}
+
+/**
  * A version parsed by {@link parse}, in whichever scheme it was parsed as — narrow on the
  * `scheme` field to access scheme-specific properties (`major`/`minor`/`patch` for `'semver'`,
  * `components`/`letter`/`suffixes`/`revision` for `'gentoo'`, `epoch`/`upstream`/`revision` for
  * `'debian'`, `epoch`/`version`/`release` for `'rpm'` and `'pacman'`, `epoch`/`release`/`pre`/`post`/`dev`/`local`
- * for `'pep440'`).
+ * for `'pep440'`, a normalized `items` list for `'maven'`).
  *
  * Deliberately **not** named `ParsedVersion`: that name has been public API since 2.0.0 for
  * the flat SemVer-only shape (`.major`/`.minor`/`.patch` directly, no narrowing needed), and
@@ -182,7 +204,8 @@ export type AnyParsedVersion =
   | ParsedDebianVersion
   | ParsedRpmVersion
   | ParsedPacmanVersion
-  | ParsedPep440Version;
+  | ParsedPep440Version
+  | ParsedMavenVersion;
 
 /**
  * A version parsed according to SemVer 2.0.0 — alias of {@link ParsedSemVerVersion}, kept under

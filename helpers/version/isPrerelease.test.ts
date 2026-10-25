@@ -102,3 +102,10 @@ describe('rpm, pacman and pep440 schemes', () => {
     expect(isPrerelease({ scheme: 'pep440', epoch: 0, release: [1], pre: null, post: null, dev: 1, local: [] })).toBe(true);
   });
 });
+
+describe('maven scheme', () => {
+  it('detects pre-release qualifiers', () => {
+    expect(isPrerelease('1.0-SNAPSHOT', 'maven')).toBe(true);
+    expect(isPrerelease('1.0-sp1', 'maven')).toBe(false);
+  });
+});

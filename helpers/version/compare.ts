@@ -7,6 +7,7 @@
 import { assertNeverScheme } from './_assertNeverScheme';
 import { compareDebian } from './_debian';
 import { compareGentoo } from './_gentoo';
+import { compareMaven } from './_maven';
 import { comparePacman } from './_pacman';
 import { comparePep440 } from './_pep440';
 import { compareRpm } from './_rpm';
@@ -43,6 +44,11 @@ import type { VersionScheme } from './types';
  * `1`), then `dev` < `a` < `b` < `rc` < final < post-release, and local labels last. Every spelling
  * PEP 440 accepts is understood. Throws a `SyntaxError` on an invalid version.
  *
+ * **`'maven'`** — Apache Maven's `ComparableVersion` ordering (see {@link ParsedMavenVersion}): `.`,
+ * `-` and every digit/letter switch split the version; `alpha` < `beta` < `milestone` < `rc` <
+ * `snapshot` < release < `sp`, then unknown qualifiers in lexical order, all after the release;
+ * `1`, `1.0` and `1-ga` are equal.
+ *
  * @param version1 - First version string
  * @param version2 - Second version string
  * @param scheme - Which version scheme to compare `version1`/`version2` as. Defaults to `'semver'`.
@@ -66,6 +72,8 @@ import type { VersionScheme } from './types';
  * compare('1.0rc1', '1.0', 'pacman') // -1
  * compare('1.0rc1', '1.0', 'pep440') // -1
  * compare('1.0.post1', '1.0', 'pep440') // 1
+ * compare('1.0-rc1', '1.0-SNAPSHOT', 'maven') // -1
+ * compare('1.0-ga', '1', 'maven') // 0
  * @since 1.9.0
  */
 export function compare(version1: string, version2: string, scheme: VersionScheme = 'semver'): number {
@@ -82,6 +90,8 @@ export function compare(version1: string, version2: string, scheme: VersionSchem
       return comparePacman(version1, version2);
     case 'pep440':
       return comparePep440(version1, version2);
+    case 'maven':
+      return compareMaven(version1, version2);
     default:
       return assertNeverScheme(scheme);
   }

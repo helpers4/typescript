@@ -208,3 +208,10 @@ describe('rpm, pacman and pep440 schemes', () => {
     expect(satisfiesRange('1.5', '>=1.0,<2.0', 'pep440')).toBe(true);
   });
 });
+
+describe('maven scheme', () => {
+  it('checks Maven version ranges', () => {
+    expect(satisfiesRange('1.5', '[1.0,2.0)', 'maven')).toBe(true);
+    expect(satisfiesRange('2.0', '[1.0,2.0)', 'maven')).toBe(false);
+  });
+});

@@ -6,6 +6,7 @@
 
 import { assertNeverScheme } from './_assertNeverScheme';
 import { parseDebian } from './_debian';
+import { parseMaven } from './_maven';
 import { parsePacman } from './_pacman';
 import { parsePep440 } from './_pep440';
 import { parseRpm } from './_rpm';
@@ -15,6 +16,7 @@ import type {
   AnyParsedVersion,
   ParsedDebianVersion,
   ParsedGentooVersion,
+  ParsedMavenVersion,
   ParsedPacmanVersion,
   ParsedPep440Version,
   ParsedRpmVersion,
@@ -49,11 +51,14 @@ import type {
  * normalized (`1.0-ALPHA.2` → `pre: { type: 'a', number: 2 }`). Throws a `SyntaxError` if `version`
  * is not a valid PEP 440 version.
  *
+ * **`'maven'`** — Maven versions as `ComparableVersion` reads them (see {@link ParsedMavenVersion}).
+ * Never throws: Maven accepts any text.
+ *
  * @param version - Version string to parse
  * @param scheme - Which version scheme to parse `version` as. Defaults to `'semver'`.
  * @returns The parsed version, shaped per `scheme` — {@link ParsedSemVerVersion} for `'semver'`,
  * {@link ParsedGentooVersion} for `'gentoo'`, {@link ParsedDebianVersion} for `'debian'`, {@link ParsedRpmVersion} for `'rpm'`,
- * {@link ParsedPacmanVersion} for `'pacman'`, {@link ParsedPep440Version} for `'pep440'`.
+ * {@link ParsedPacmanVersion} for `'pacman'`, {@link ParsedPep440Version} for `'pep440'`, {@link ParsedMavenVersion} for `'maven'`.
  * @example
  * parse('1.2.3') // { scheme: 'semver', major: 1, minor: 2, patch: 3, prerelease: [], build: [] }
  * parse('v1.0.0-alpha.1') // { scheme: 'semver', major: 1, minor: 0, patch: 0, prerelease: ['alpha', '1'], build: [] }
@@ -78,6 +83,7 @@ export function parse(version: string, scheme: 'debian'): ParsedDebianVersion;
 export function parse(version: string, scheme: 'rpm'): ParsedRpmVersion;
 export function parse(version: string, scheme: 'pacman'): ParsedPacmanVersion;
 export function parse(version: string, scheme: 'pep440'): ParsedPep440Version;
+export function parse(version: string, scheme: 'maven'): ParsedMavenVersion;
 export function parse(version: string, scheme: VersionScheme): AnyParsedVersion;
 export function parse(version: undefined, scheme?: VersionScheme): undefined;
 export function parse(version: null, scheme?: VersionScheme): null;
@@ -96,6 +102,8 @@ export function parse(version: string | undefined | null, scheme: VersionScheme 
       return parsePacman(version);
     case 'pep440':
       return parsePep440(version);
+    case 'maven':
+      return parseMaven(version);
     default:
       return assertNeverScheme(scheme);
   }

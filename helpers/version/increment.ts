@@ -7,6 +7,7 @@
 import { assertNeverScheme } from './_assertNeverScheme';
 import { incrementDebian } from './_debian';
 import { incrementGentoo } from './_gentoo';
+import { incrementMaven } from './_maven';
 import { incrementPacman } from './_pacman';
 import { incrementPep440 } from './_pep440';
 import { incrementRpm } from './_rpm';
@@ -33,6 +34,9 @@ import type { IncrementType, VersionScheme } from './types';
  *
  * **`'pep440'`** — bumps the release component at `type`'s position (padding it with zeros up to
  * there), zeroing everything after it and dropping the pre/post/dev/local parts; the epoch is kept.
+ *
+ * **`'maven'`** — bumps the leading number at `type`'s position (padding with zeros), zeroing the
+ * numbers after it and dropping every qualifier.
  *
  * @param version - The version to increment
  * @param type - The increment type ('major', 'minor', 'patch')
@@ -71,6 +75,8 @@ export function increment(
       return incrementPacman();
     case 'pep440':
       return incrementPep440(version, type);
+    case 'maven':
+      return incrementMaven(version, type);
     default:
       return assertNeverScheme(scheme);
   }

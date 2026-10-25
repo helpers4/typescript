@@ -296,3 +296,11 @@ describe('rpm, pacman and pep440 schemes', () => {
     expect(compare('1.0', '1.0.0', 'pep440')).toBe(0);
   });
 });
+
+describe('maven scheme', () => {
+  it('compares per Maven ComparableVersion', () => {
+    expect(compare('1.0-rc1', '1.0-SNAPSHOT', 'maven')).toBe(-1);
+    expect(compare('1.0-ga', '1', 'maven')).toBe(0);
+    expect(compare('1.0-sp1', '1.0', 'maven')).toBe(1);
+  });
+});
