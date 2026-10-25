@@ -51,6 +51,11 @@ pnpm release:auto
 
 **Helper placement:**
 
+- Outside the API-specific categories (`browser/`, `node/`), a helper must work on every runtime: no
+  unguarded `document`, `window` or `process`. It either falls back (`frameLoop` uses a timer when
+  `requestAnimationFrame` is missing) or takes what it needs as an argument (`relativeURLToAbsolute`
+  takes a `base`). A helper that cannot work without a runtime API belongs in that runtime's category.
+
 - Type predicates `is<Type>` → `guard/` (return a runtime type guard). Exception: Node.js-specific ones (`isBuffer`, `isNodeStream`) → `node/` (depend on Node globals unavailable in browsers)
 - Compile-time-only utility types (`Brand`, `DeepGet`, `DeepSet`, ...) → `type/` (no runtime footprint)
 - State predicates (`isEmpty`, `isNonEmpty`) → their own category, never `type/`
