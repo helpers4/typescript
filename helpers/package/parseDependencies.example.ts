@@ -67,6 +67,48 @@ const examples: HelperExamples = {
         if (groups[0]![0]!.version?.operator !== '<=') throw new Error('Expected <=');
       },
     },
+    {
+      title: 'Read an RPM Requires, with an alternative',
+      description: 'Boolean dependencies (a or b) become the alternatives of a group.',
+      code: `parseDependencies('glibc >= 2.28, (nginx or httpd)', 'rpm')
+// => [[{ name: 'glibc', version: { operator: '>=', version: '2.28' } }], [{ name: 'nginx' }, { name: 'httpd' }]]`,
+      assert: () => {
+        const groups = parseDependencies('glibc >= 2.28, (nginx or httpd)', 'rpm');
+        if (groups[0]![0]!.version?.version !== '2.28' || groups[1]!.length !== 2) throw new Error('Expected a versioned entry and an alternative');
+      },
+    },
+    {
+      title: 'Read a PKGBUILD depends array',
+      description: 'Quotes and the surrounding parentheses of the array are accepted.',
+      code: `parseDependencies("('glibc>=2.38' bash)", 'arch')
+// => [[{ name: 'glibc', version: { operator: '>=', version: '2.38' } }], [{ name: 'bash' }]]`,
+      assert: () => {
+        const groups = parseDependencies("('glibc>=2.38' bash)", 'arch');
+        if (groups.length !== 2 || groups[0]![0]!.version?.operator !== '>=') throw new Error('Expected two entries');
+      },
+    },
+    {
+      title: 'Read an Alpine depends list, with a conflict',
+      description: 'A leading ! marks a package that must not be installed.',
+      code: `parseDependencies('musl>=1.2 !openrc', 'alpine')
+// => [[{ name: 'musl', version: { operator: '>=', version: '1.2' } }], [{ name: 'openrc', conflict: true }]]`,
+      assert: () => {
+        const groups = parseDependencies('musl>=1.2 !openrc', 'alpine');
+        if (groups[1]![0]!.conflict !== true) throw new Error('Expected a conflict');
+      },
+    },
+    {
+      title: 'Read Python requirements',
+      description: 'Extras, specifiers and the environment marker are separated; the marker is kept as written.',
+      code: `parseDependencies('requests[security]>=2.8,<3 ; python_version < "3.12"', 'pep508')
+// => [[{ name: 'requests', extras: ['security'], specifiers: [{ operator: '>=', version: '2.8' }, { operator: '<', version: '3' }], marker: 'python_version < "3.12"' }]]`,
+      assert: () => {
+        const requirement = parseDependencies('requests[security]>=2.8,<3 ; python_version < "3.12"', 'pep508')[0]![0]!;
+        if (requirement.extras[0] !== 'security' || requirement.specifiers.length !== 2 || requirement.marker !== 'python_version < "3.12"') {
+          throw new Error('Expected extras, two specifiers and a marker');
+        }
+      },
+    },
   ],
 };
 
