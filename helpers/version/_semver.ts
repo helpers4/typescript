@@ -21,8 +21,10 @@ export function parseSemVer(version: string): ParsedSemVerVersion {
   const [versionWithPrerelease, buildString] = normalized.split('+');
   const build = buildString ? buildString.split('.') : [];
 
-  // Split prerelease (everything after -)
-  const [coreVersion, prereleaseString] = versionWithPrerelease.split('-');
+  // Split prerelease (everything after the first -: its identifiers may contain hyphens)
+  const hyphen = versionWithPrerelease.indexOf('-');
+  const coreVersion = hyphen === -1 ? versionWithPrerelease : versionWithPrerelease.slice(0, hyphen);
+  const prereleaseString = hyphen === -1 ? undefined : versionWithPrerelease.slice(hyphen + 1);
   const prerelease = prereleaseString ? prereleaseString.split('.') : [];
 
   // Parse core version
