@@ -4,138 +4,18 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-/**
- * The formats of dependency fields {@link parseDependencies} reads. Only `'debian'` for now (the
- * `Depends` syntax of Debian Policy 7.1); the model below is meant to take others (RPM `Requires`,
- * Arch `depends`) without changing.
- * @since next
- */
-export type DependencyFormat = 'debian';
+import { parseAlpine } from './_alpine';
+import { parseArch } from './_arch';
+import { parseDebian } from './_debian';
+import { parsePep508 } from './_pep508';
+import { parseRpm } from './_rpm';
+import type { DebianDependencyOptions, DependencyFormat, DependencyGroup, DependencyOf, ParseDependenciesOptions } from './types';
 
 /**
- * The comparison operators of a version constraint, as the format writes them. For `'debian'`
- * (the only format for now) these are the five of Debian Policy 7.1: `<<` (strictly earlier), `<=`,
- * `=`, `>=` and `>>` (strictly later). A format with other spellings adds its own to this union.
- * @since next
- */
-export type DependencyOperator = '<<' | '<=' | '=' | '>=' | '>>';
-
-/**
- * How to read a dependency field, besides its format.
- * @since next
- */
-export interface DependencyOptions {
-  /**
-   * `'debian'` only. Also accept the obsolete `<` and `>` operators that old packages still carry,
-   * and read them as dpkg does, `<=` and `>=` (Policy forbids them because they look like the
-   * opposite). Off by default: they throw a `SyntaxError`, like `satisfiesRange(..., 'debian')`
-   * from `@helpers4/version` does.
-   */
-  compat?: boolean;
-}
-
-/**
- * A version constraint, the `(>= 2.34)` of `libc6 (>= 2.34)`.
- * @since next
- */
-export interface DependencyVersion {
-  /** The comparison operator. */
-  operator: DependencyOperator;
-  /** The version, as written; not validated (compare it with `compare(a, b, 'debian')` from `@helpers4/version`). */
-  version: string;
-}
-
-/**
- * One package reference of a dependency field: a name, and what the format lets you say about it.
- * @since next
- */
-export interface Dependency {
-  /** The package name. */
-  name: string;
-  /** The version constraint. */
-  version?: DependencyVersion;
-  /** Debian only. The architecture qualifier after a colon (`any`, `native`, `amd64`), as in `python3:any`. */
-  arch?: string;
-  /** Debian only. The architecture restriction `[amd64 !i386]`, as the list `['amd64', '!i386']` (negations keep their `!`). */
-  architectures?: string[];
-  /**
-   * Debian only. The build profile restriction. Each `<...>` is one inner list (its terms are
-   * AND-ed, a `!` negates a profile), and the lists are OR-ed: `<!nocheck> <cross>` is
-   * `[['!nocheck'], ['cross']]`.
-   */
-  profiles?: string[][];
-}
-
-/**
- * A comma-separated entry of a dependency field: the alternatives (`a | b`) that satisfy it.
- * @since next
- */
-export type DependencyGroup = Dependency[];
-
-/** The obsolete operators and what dpkg reads them as. */
-const OBSOLETE_OPERATORS: Record<string, DependencyOperator> = { '<': '<=', '>': '>=' };
-
-const NAME_RE = /[A-Za-z0-9][A-Za-z0-9+.-]*(?::[A-Za-z0-9-]+)?/y;
-const VERSION_RE = /\s*\(\s*(<<|<=|>=|>>|=|<|>)\s*([^\s()<>=][^\s()]*)\s*\)/y;
-const ARCHITECTURES_RE = /\s*\[([^[\]<>]*)\]/y;
-const PROFILE_RE = /\s*<([^<>]*)>/y;
-const SPACE_RE = /\s*/y;
-
-function terms(text: string): string[] {
-  return text.trim().split(/\s+/);
-}
-
-function parseDebianAlternative(source: string, field: string, compat: boolean): Dependency {
-  const text = source.trim();
-  let position = 0;
-  const fail = (reason: string): never => {
-    throw new SyntaxError(`parseDependencies: ${reason} in "${text}" (field "${field}")`);
-  };
-  const take = (pattern: RegExp): RegExpExecArray | null => {
-    pattern.lastIndex = position;
-    const match = pattern.exec(text);
-    if (match) position = pattern.lastIndex;
-    return match;
-  };
-
-  const nameMatch = take(NAME_RE);
-  if (!nameMatch) return fail('expected a package name');
-  const [name, arch] = nameMatch[0].split(':') as [string, string | undefined];
-  const dependency: Dependency = { name };
-  if (arch !== undefined) dependency.arch = arch;
-
-  const versionMatch = take(VERSION_RE);
-  if (versionMatch) {
-    const written = versionMatch[1]!;
-    if (written in OBSOLETE_OPERATORS && !compat) {
-      fail(`the obsolete operator "${written}" is not allowed (use "${written}${written}" or "${written}=", or pass { compat: true })`);
-    }
-    dependency.version = { operator: OBSOLETE_OPERATORS[written] ?? (written as DependencyOperator), version: versionMatch[2]! };
-  }
-
-  const archMatch = take(ARCHITECTURES_RE);
-  if (archMatch) {
-    if (archMatch[1]!.trim() === '') fail('empty architecture restriction');
-    dependency.architectures = terms(archMatch[1]!);
-  }
-
-  let profileMatch = take(PROFILE_RE);
-  if (profileMatch) dependency.profiles = [];
-  while (profileMatch) {
-    if (profileMatch[1]!.trim() === '') fail('empty build profile restriction');
-    dependency.profiles!.push(terms(profileMatch[1]!));
-    profileMatch = take(PROFILE_RE);
-  }
-
-  take(SPACE_RE);
-  if (position < text.length) fail(`unexpected "${text.slice(position)}"`);
-  return dependency;
-}
-
-/**
- * Parses the value of a package dependency field (`Depends`, `Recommends`, `Conflicts`, ...) into a
- * format-independent structure: `format` says how the text is written (and which operator
- * spellings are valid), the result has the same shape whatever it was. Only `'debian'` is supported for now.
+ * Parses the value of a package dependency field (`Depends`, `Requires`, `depends`, ...) into a
+ * structure: groups of alternatives, each alternative a name with an optional version constraint.
+ * `format` says how the text is written, and decides the exact shape of each dependency and the
+ * operator spellings (see {@link DependencyFormats}); the options are those of that format only.
  *
  * **`'debian'`** — a relationship field of the Debian Policy Manual, chapter 7.1 (`Depends`,
  * `Pre-Depends`, `Recommends`, `Suggests`, `Enhances`, `Breaks`, `Conflicts`, `Provides`,
@@ -144,25 +24,36 @@ function parseDebianAlternative(source: string, field: string, compat: boolean):
  * `name[:arch] [(op version)] [[archs]] [<profiles>]`, in that order, with any whitespace (line
  * breaks included, as in a multi-line `Depends`) between the parts. The operators are Debian's
  * `<<`, `<=`, `=`, `>=` and `>>`, kept as written; the obsolete `<` and `>` throw unless
- * `options.compat` is set, in which case they are read as `<=` and `>=` like dpkg does. Compare
- * versions with `compare(a, b, 'debian')` from `@helpers4/version`.
+ * `options.compat` is set, in which case they are read as `<=` and `>=` like dpkg does.
+ * Whitespace-only entries (a trailing comma, `a,, b`) are skipped, as dpkg does. The
+ * `${substvars}` of source `debian/control` files are not supported.
  *
- * Whitespace-only entries (a trailing comma, `a,, b`) are skipped, as dpkg does, so an empty or
- * blank field gives `[]`. Anything else that is not valid throws a `SyntaxError` quoting the
- * offending alternative: an empty alternative (`a |`), a missing or malformed name, an unbalanced
- * parenthesis or bracket, an unknown operator, a part out of order, and the `${substvars}` of
- * source `debian/control` files. Parsing is linear in the input.
+ * **`'rpm'`** — an RPM `Requires` value: capabilities separated by commas and/or whitespace, each
+ * `name [op version]` with `<`, `<=`, `=`, `>=` or `>`; boolean dependencies `(a or b)` give the
+ * alternatives of a group.
+ *
+ * **`'arch'`** — an Arch Linux `depends` array or `.PKGINFO` list: entries separated by whitespace
+ * (quotes and surrounding parentheses of a PKGBUILD array are accepted), each `name[op version]`.
+ *
+ * **`'alpine'`** — an Alpine `depends` list: entries separated by whitespace, each
+ * `[!]name[op version]` (`!` is a conflict).
+ *
+ * **`'pep508'`** — PEP 508 requirements, one per line (as in `requirements.txt` or the
+ * `dependencies` of a `pyproject.toml`): `name[extras] specifiers ; marker`, or `name @ url`.
+ *
+ * Every entry that is not valid throws a `SyntaxError` quoting the offending text. Parsing is
+ * linear in the input.
  *
  * @param field - The value of a dependency field
- * @param format - How the field is written. Defaults to `'debian'`.
- * @param options - Leniency, see {@link DependencyOptions}
- * @returns One group of alternatives per comma-separated entry
- * @throws {SyntaxError} When an alternative is not valid
+ * @param format - How the field is written
+ * @param options - The options of `format`, if it has any
+ * @returns One group of alternatives per entry
+ * @throws {SyntaxError} When an entry is not valid
  * @throws {RangeError} For a `format` that is not supported
  *
  * @example
  * ```ts
- * parseDependencies('libc6 (>= 2.34), python3:any | python3 (>= 3.8) [amd64], foo <!nocheck>');
+ * parseDependencies('libc6 (>= 2.34), python3:any | python3 (>= 3.8) [amd64], foo <!nocheck>', 'debian');
  * // [
  * //   [{ name: 'libc6', version: { operator: '>=', version: '2.34' } }],
  * //   [
@@ -175,12 +66,28 @@ function parseDebianAlternative(source: string, field: string, compat: boolean):
  *
  * @since next
  */
-export function parseDependencies(field: string, format: DependencyFormat = 'debian', options: DependencyOptions = {}): DependencyGroup[] {
-  if (format !== 'debian') throw new RangeError(`parseDependencies: unsupported format "${String(format)}"`);
-  const groups: DependencyGroup[] = [];
-  for (const entry of field.split(',')) {
-    if (entry.trim() === '') continue;
-    groups.push(entry.split('|').map((alternative) => parseDebianAlternative(alternative, field, options.compat === true)));
+export function parseDependencies<Format extends DependencyFormat>(
+  field: string,
+  format: Format,
+  ...options: ParseDependenciesOptions<Format>
+): DependencyGroup<DependencyOf<Format>>[] {
+  const parsed: unknown = parseFormat(field, format, options[0] as DebianDependencyOptions | undefined);
+  return parsed as DependencyGroup<DependencyOf<Format>>[];
+}
+
+function parseFormat(field: string, format: DependencyFormat, options: DebianDependencyOptions | undefined): unknown {
+  switch (format) {
+    case 'debian':
+      return parseDebian(field, options?.compat === true);
+    case 'rpm':
+      return parseRpm(field);
+    case 'arch':
+      return parseArch(field);
+    case 'alpine':
+      return parseAlpine(field);
+    case 'pep508':
+      return parsePep508(field);
+    default:
+      throw new RangeError(`parseDependencies: unsupported format "${String(format)}"`);
   }
-  return groups;
 }

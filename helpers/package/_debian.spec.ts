@@ -6,13 +6,16 @@
 
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import type { Dependency, DependencyOperator } from './parseDependencies';
-import { parseDependencies } from './parseDependencies';
-import { stringifyDependencies } from './stringifyDependencies';
+import { parseDependencies as parseAny } from './parseDependencies';
+import { stringifyDependencies as stringifyAny } from './stringifyDependencies';
+import type { DebianDependency, DebianOperator, DependencyGroup } from './types';
 
-const operators: DependencyOperator[] = ['<<', '<=', '=', '>=', '>>'];
+const parseDependencies = (field: string) => parseAny(field, 'debian');
+const stringifyDependencies = (groups: readonly DependencyGroup<DebianDependency>[]) => stringifyAny(groups, 'debian');
 
-const relationship: fc.Arbitrary<Dependency> = fc
+const operators: DebianOperator[] = ['<<', '<=', '=', '>=', '>>'];
+
+const relationship: fc.Arbitrary<DebianDependency> = fc
   .record(
     {
       name: fc.stringMatching(/^[a-z0-9][a-z0-9+.-]{0,10}$/),
@@ -32,7 +35,7 @@ const relationship: fc.Arbitrary<Dependency> = fc
 
 const groups = fc.array(fc.array(relationship, { minLength: 1, maxLength: 3 }), { maxLength: 4 });
 
-describe('parseDependencies — property-based', () => {
+describe('debian dependencies — property-based', () => {
   it('round-trips through stringifyDependencies', () => {
     fc.assert(fc.property(groups, (value) => {
       expect(parseDependencies(stringifyDependencies(value))).toEqual(value);

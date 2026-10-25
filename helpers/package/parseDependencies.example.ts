@@ -14,7 +14,7 @@ const examples: HelperExamples = {
     {
       title: 'Read a Depends field',
       description: 'Commas are AND, `|` is OR inside an entry; each alternative carries its qualifier, version and restrictions.',
-      code: `parseDependencies('libc6 (>= 2.34), python3:any | python3 (>= 3.8) [amd64], foo <!nocheck>')
+      code: `parseDependencies('libc6 (>= 2.34), python3:any | python3 (>= 3.8) [amd64], foo <!nocheck>', 'debian')
 // => [
 //   [{ name: 'libc6', version: { operator: '>=', version: '2.34' } }],
 //   [
@@ -24,7 +24,7 @@ const examples: HelperExamples = {
 //   [{ name: 'foo', profiles: [['!nocheck']] }],
 // ]`,
       assert: () => {
-        const groups = parseDependencies('libc6 (>= 2.34), python3:any | python3 (>= 3.8) [amd64], foo <!nocheck>');
+        const groups = parseDependencies('libc6 (>= 2.34), python3:any | python3 (>= 3.8) [amd64], foo <!nocheck>', 'debian');
         if (groups.length !== 3) throw new Error(`Expected 3 groups, got ${groups.length}`);
         if (groups[0]![0]!.version?.operator !== '>=') throw new Error('Expected the >= constraint');
         if (groups[1]!.length !== 2 || groups[1]![0]!.arch !== 'any') throw new Error('Expected python3:any as first alternative');
@@ -35,21 +35,21 @@ const examples: HelperExamples = {
     {
       title: 'Read a multi-line field and list the package names',
       description: 'Line breaks are plain whitespace, and a trailing comma is tolerated.',
-      code: `parseDependencies('debhelper-compat (= 13),\\n dh-python,\\n pkg-config,\\n').map((group) => group[0].name)
+      code: `parseDependencies('debhelper-compat (= 13),\\n dh-python,\\n pkg-config,\\n', 'debian').map((group) => group[0].name)
 // => ['debhelper-compat', 'dh-python', 'pkg-config']`,
       assert: () => {
-        const names = parseDependencies('debhelper-compat (= 13),\n dh-python,\n pkg-config,\n').map((group) => group[0]!.name);
+        const names = parseDependencies('debhelper-compat (= 13),\n dh-python,\n pkg-config,\n', 'debian').map((group) => group[0]!.name);
         if (names.join() !== 'debhelper-compat,dh-python,pkg-config') throw new Error(`Unexpected names: ${names.join()}`);
       },
     },
     {
       title: 'Reject an invalid field',
       description: 'A fragment that is not valid throws a SyntaxError that quotes it.',
-      code: `parseDependencies('libc6 (>= 2.34')
+      code: `parseDependencies('libc6 (>= 2.34', 'debian')
 // => throws SyntaxError: parseDependencies: unexpected "(>= 2.34" in "libc6 (>= 2.34" ...`,
       assert: () => {
         try {
-          parseDependencies('libc6 (>= 2.34');
+          parseDependencies('libc6 (>= 2.34', 'debian');
         } catch (error) {
           if (error instanceof SyntaxError && error.message.includes('"libc6 (>= 2.34"')) return;
           throw new Error(`Expected a SyntaxError quoting the fragment, got ${String(error)}`);
