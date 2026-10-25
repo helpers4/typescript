@@ -90,3 +90,14 @@ describe("increment", () => {
     });
   });
 });
+
+describe('rpm, pacman and pep440 schemes', () => {
+  it('throws for the free-form schemes', () => {
+    expect(() => increment('1.2.3', 'patch', 'rpm')).toThrow(/does not support increment/);
+    expect(() => increment('1.2.3', 'patch', 'pacman')).toThrow(/does not support increment/);
+  });
+
+  it('bumps a PEP 440 release', () => {
+    expect(increment('1.2.3rc1.dev2', 'minor', 'pep440')).toBe('1.3.0');
+  });
+});

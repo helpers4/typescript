@@ -7,6 +7,9 @@
 import { assertNeverScheme } from './_assertNeverScheme';
 import { incrementDebian } from './_debian';
 import { incrementGentoo } from './_gentoo';
+import { incrementPacman } from './_pacman';
+import { incrementPep440 } from './_pep440';
+import { incrementRpm } from './_rpm';
 import { incrementSemVer } from './_semver';
 import type { IncrementType, VersionScheme } from './types';
 
@@ -25,6 +28,12 @@ import type { IncrementType, VersionScheme } from './types';
  * **`'debian'`** — throws: a Debian upstream version is free-form, with no major/minor/patch
  * structure to bump.
  *
+ * **`'rpm'`**, **`'pacman'`** — throw: the version is free-form, with no major/minor/patch
+ * structure to bump.
+ *
+ * **`'pep440'`** — bumps the release component at `type`'s position (padding it with zeros up to
+ * there), zeroing everything after it and dropping the pre/post/dev/local parts; the epoch is kept.
+ *
  * @param version - The version to increment
  * @param type - The increment type ('major', 'minor', 'patch')
  * @param scheme - Which version scheme to interpret `version` as. Defaults to `'semver'`.
@@ -36,6 +45,8 @@ import type { IncrementType, VersionScheme } from './types';
  * @example
  * increment('1.2.3_rc1', 'patch', 'gentoo') // '1.2.4' — drops the prerelease suffix
  * increment('1.2.3.4', 'minor', 'gentoo')   // '1.3.0.0' — an arbitrary 4th component still resets
+ * @example
+ * increment('1.2.3rc1.dev2', 'minor', 'pep440') // '1.3.0'
  * @since 1.9.0
  */
 export function increment(version: string, type: IncrementType, scheme?: VersionScheme): string;
@@ -54,6 +65,12 @@ export function increment(
       return incrementGentoo(version, type);
     case 'debian':
       return incrementDebian();
+    case 'rpm':
+      return incrementRpm();
+    case 'pacman':
+      return incrementPacman();
+    case 'pep440':
+      return incrementPep440(version, type);
     default:
       return assertNeverScheme(scheme);
   }

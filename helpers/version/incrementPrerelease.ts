@@ -7,6 +7,9 @@
 import { assertNeverScheme } from './_assertNeverScheme';
 import { incrementPrereleaseDebian } from './_debian';
 import { incrementPrereleaseGentoo } from './_gentoo';
+import { incrementPrereleasePacman } from './_pacman';
+import { incrementPrereleasePep440 } from './_pep440';
+import { incrementPrereleaseRpm } from './_rpm';
 import { incrementPrereleaseSemVer } from './_semver';
 import type { VersionScheme } from './types';
 
@@ -37,6 +40,12 @@ import type { VersionScheme } from './types';
  * **`'debian'`** — throws: a Debian upstream version is free-form, with no prerelease counter
  * to bump.
  *
+ * **`'rpm'`**, **`'pacman'`** — throw: the version is free-form, with no prerelease counter to bump.
+ *
+ * **`'pep440'`** — `prereleaseId` is `a`, `b` or `rc` (or their spellings `alpha`, `beta`, `c`, `pre`,
+ * `preview`). A version that is not a pre-release gets its patch bumped and starts at `<id>0`
+ * (`1.2.3` → `1.2.4a0`); the same marker increments its number, another one restarts at `0`.
+ *
  * @param version - The version to increment
  * @param prereleaseId - The prerelease type/identifier (e.g. `'alpha'`, `'beta'`, `'rc'`)
  * @param scheme - Which version scheme to interpret `version` as. Defaults to `'semver'`.
@@ -54,6 +63,9 @@ import type { VersionScheme } from './types';
  * @example
  * incrementPrerelease('1.2.3', 'alpha', 'gentoo')       // => '1.2.4_alpha'
  * incrementPrerelease('1.2.3_alpha', 'alpha', 'gentoo')  // => '1.2.3_alpha1'
+ * @example
+ * incrementPrerelease('1.2.3', 'a', 'pep440')    // => '1.2.4a0'
+ * incrementPrerelease('1.2.4a0', 'a', 'pep440')  // => '1.2.4a1'
  * @since 3.0.1
  */
 export function incrementPrerelease(version: string, prereleaseId: string, scheme?: VersionScheme): string;
@@ -72,6 +84,12 @@ export function incrementPrerelease(
       return incrementPrereleaseGentoo(version, prereleaseId);
     case 'debian':
       return incrementPrereleaseDebian();
+    case 'rpm':
+      return incrementPrereleaseRpm();
+    case 'pacman':
+      return incrementPrereleasePacman();
+    case 'pep440':
+      return incrementPrereleasePep440(version, prereleaseId);
     default:
       return assertNeverScheme(scheme);
   }

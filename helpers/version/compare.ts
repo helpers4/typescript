@@ -7,6 +7,9 @@
 import { assertNeverScheme } from './_assertNeverScheme';
 import { compareDebian } from './_debian';
 import { compareGentoo } from './_gentoo';
+import { comparePacman } from './_pacman';
+import { comparePep440 } from './_pep440';
+import { compareRpm } from './_rpm';
 import { compareSemVer } from './_semver';
 import type { VersionScheme } from './types';
 
@@ -29,6 +32,17 @@ import type { VersionScheme } from './types';
  * numerically, everything else character by character with `~` sorting before everything,
  * even the end of the string (`1.0~rc1` < `1.0`). Throws a `SyntaxError` on an invalid version.
  *
+ * **`'rpm'`** — RPM ordering (see {@link ParsedRpmVersion}): epoch, then version, then release (when
+ * both have one), each compared like `rpmvercmp` — numeric and alphabetic segments in turn, a number
+ * newer than letters, `~` sorting before everything and `^` after the end of the string.
+ *
+ * **`'pacman'`** — Arch Linux `vercmp` ordering (see {@link ParsedPacmanVersion}): like RPM's, but
+ * longer separators win and a trailing letter segment sorts below the same version without it.
+ *
+ * **`'pep440'`** — PEP 440 ordering (see {@link ParsedPep440Version}): epoch, release (`1.0` equals
+ * `1`), then `dev` < `a` < `b` < `rc` < final < post-release, and local labels last. Every spelling
+ * PEP 440 accepts is understood. Throws a `SyntaxError` on an invalid version.
+ *
  * @param version1 - First version string
  * @param version2 - Second version string
  * @param scheme - Which version scheme to compare `version1`/`version2` as. Defaults to `'semver'`.
@@ -46,6 +60,12 @@ import type { VersionScheme } from './types';
  * compare('1.0~rc1', '1.0', 'debian') // -1 (~ sorts before the release)
  * compare('1:0.9', '2.0', 'debian') // 1 (a higher epoch wins)
  * compare('2.30-3', '2.30-10', 'debian') // -1 (revisions compare numerically)
+ * @example
+ * compare('1.0~rc1', '1.0', 'rpm') // -1
+ * compare('1.0^git1', '1.0', 'rpm') // 1 (a snapshot after the release)
+ * compare('1.0rc1', '1.0', 'pacman') // -1
+ * compare('1.0rc1', '1.0', 'pep440') // -1
+ * compare('1.0.post1', '1.0', 'pep440') // 1
  * @since 1.9.0
  */
 export function compare(version1: string, version2: string, scheme: VersionScheme = 'semver'): number {
@@ -56,6 +76,12 @@ export function compare(version1: string, version2: string, scheme: VersionSchem
       return compareGentoo(version1, version2);
     case 'debian':
       return compareDebian(version1, version2);
+    case 'rpm':
+      return compareRpm(version1, version2);
+    case 'pacman':
+      return comparePacman(version1, version2);
+    case 'pep440':
+      return comparePep440(version1, version2);
     default:
       return assertNeverScheme(scheme);
   }

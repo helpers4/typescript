@@ -73,3 +73,15 @@ describe('incrementPrerelease', () => {
     });
   });
 });
+
+describe('rpm, pacman and pep440 schemes', () => {
+  it('throws for the free-form schemes', () => {
+    expect(() => incrementPrerelease('1.0~rc1', 'rc', 'rpm')).toThrow(/does not support incrementPrerelease/);
+    expect(() => incrementPrerelease('1.0rc1', 'rc', 'pacman')).toThrow(/does not support incrementPrerelease/);
+  });
+
+  it('increments a PEP 440 pre-release', () => {
+    expect(incrementPrerelease('1.2.3', 'a', 'pep440')).toBe('1.2.4a0');
+    expect(incrementPrerelease('1.2.4a0', 'a', 'pep440')).toBe('1.2.4a1');
+  });
+});

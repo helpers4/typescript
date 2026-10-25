@@ -87,3 +87,18 @@ describe('isPrerelease — gentoo scheme', () => {
     });
   });
 });
+
+describe('rpm, pacman and pep440 schemes', () => {
+  it('detects prereleases per scheme', () => {
+    expect(isPrerelease('1.0~rc1', 'rpm')).toBe(true);
+    expect(isPrerelease('1.0', 'rpm')).toBe(false);
+    expect(isPrerelease('1.0rc1', 'pacman')).toBe(true);
+    expect(isPrerelease('1.0-1', 'pacman')).toBe(false);
+    expect(isPrerelease('1.0a1', 'pep440')).toBe(true);
+    expect(isPrerelease('1.0.post1', 'pep440')).toBe(false);
+  });
+
+  it('accepts a parsed version', () => {
+    expect(isPrerelease({ scheme: 'pep440', epoch: 0, release: [1], pre: null, post: null, dev: 1, local: [] })).toBe(true);
+  });
+});

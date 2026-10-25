@@ -68,3 +68,11 @@ describe('stringify — gentoo scheme', () => {
     expect(stringify({ scheme: 'debian', epoch: 1, upstream: '2.30~rc1', revision: '3' })).toBe('1:2.30~rc1-3');
   });
 });
+
+describe('rpm, pacman and pep440 schemes', () => {
+  it('stringifies per scheme', () => {
+    expect(stringify({ scheme: 'rpm', epoch: 1, version: '2.30~rc1', release: '3.fc40' })).toBe('1:2.30~rc1-3.fc40');
+    expect(stringify({ scheme: 'pacman', epoch: 0, version: '2.30rc1', release: '3' })).toBe('2.30rc1-3');
+    expect(stringify({ scheme: 'pep440', epoch: 0, release: [1, 0], pre: { type: 'rc', number: 1 }, post: null, dev: null, local: [] })).toBe('1.0rc1');
+  });
+});

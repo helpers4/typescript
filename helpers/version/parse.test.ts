@@ -313,3 +313,17 @@ describe('parse', () => {
     });
   });
 });
+
+describe('rpm, pacman and pep440 schemes', () => {
+  it('parses per scheme', () => {
+    expect(parse('1:2.30~rc1-3.fc40', 'rpm')).toEqual({ scheme: 'rpm', epoch: 1, version: '2.30~rc1', release: '3.fc40' });
+    expect(parse('1:2.30rc1-3', 'pacman')).toEqual({ scheme: 'pacman', epoch: 1, version: '2.30rc1', release: '3' });
+    expect(parse('1.0-ALPHA.2', 'pep440')).toEqual({ scheme: 'pep440', epoch: 0, release: [1, 0], pre: { type: 'a', number: 2 }, post: null, dev: null, local: [] });
+  });
+
+  it('throws a SyntaxError on an invalid version', () => {
+    expect(() => parse('1.0 2', 'rpm')).toThrow(SyntaxError);
+    expect(() => parse('1.0/2', 'pacman')).toThrow(SyntaxError);
+    expect(() => parse('abc', 'pep440')).toThrow(SyntaxError);
+  });
+});
