@@ -6,13 +6,13 @@
 
 import * as fc from 'fast-check';
 import { describe, expect, it } from 'vitest';
-import type { Relationship, RelationshipOperator } from './parseRelationships';
-import { parseRelationships } from './parseRelationships';
-import { stringifyRelationships } from './stringifyRelationships';
+import type { Dependency, DependencyOperator } from './parseDependencies';
+import { parseDependencies } from './parseDependencies';
+import { stringifyDependencies } from './stringifyDependencies';
 
-const operators: RelationshipOperator[] = ['<<', '<=', '=', '>=', '>>', '<', '>'];
+const operators: DependencyOperator[] = ['<', '<=', '=', '>=', '>'];
 
-const relationship: fc.Arbitrary<Relationship> = fc
+const relationship: fc.Arbitrary<Dependency> = fc
   .record(
     {
       name: fc.stringMatching(/^[a-z0-9][a-z0-9+.-]{0,10}$/),
@@ -32,31 +32,31 @@ const relationship: fc.Arbitrary<Relationship> = fc
 
 const groups = fc.array(fc.array(relationship, { minLength: 1, maxLength: 3 }), { maxLength: 4 });
 
-describe('parseRelationships — property-based', () => {
-  it('round-trips through stringifyRelationships', () => {
+describe('parseDependencies — property-based', () => {
+  it('round-trips through stringifyDependencies', () => {
     fc.assert(fc.property(groups, (value) => {
-      expect(parseRelationships(stringifyRelationships(value))).toEqual(value);
+      expect(parseDependencies(stringifyDependencies(value))).toEqual(value);
     }));
   });
 
   it('stringify is stable once normalised', () => {
     fc.assert(fc.property(groups, (value) => {
-      const text = stringifyRelationships(value);
-      expect(stringifyRelationships(parseRelationships(text))).toBe(text);
+      const text = stringifyDependencies(value);
+      expect(stringifyDependencies(parseDependencies(text))).toBe(text);
     }));
   });
 
   it('is not affected by extra whitespace between the tokens', () => {
     fc.assert(fc.property(groups, fc.constantFrom(' ', '  ', '\n ', '\t'), (value, space) => {
-      const spaced = stringifyRelationships(value).replaceAll(', ', `${space},${space}`).replaceAll(' | ', `${space}|${space}`);
-      expect(parseRelationships(spaced)).toEqual(value);
+      const spaced = stringifyDependencies(value).replaceAll(', ', `${space},${space}`).replaceAll(' | ', `${space}|${space}`);
+      expect(parseDependencies(spaced)).toEqual(value);
     }));
   });
 
   it('throws only a SyntaxError on arbitrary text', () => {
     fc.assert(fc.property(fc.string(), (text) => {
       try {
-        parseRelationships(text);
+        parseDependencies(text);
       } catch (error) {
         expect(error).toBeInstanceOf(SyntaxError);
       }

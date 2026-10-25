@@ -5,11 +5,11 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { parseRelationships } from './parseRelationships';
+import { parseDependencies } from './parseDependencies';
 
-describe('parseRelationships', () => {
+describe('parseDependencies', () => {
   it('parses the full syntax: versions, alternatives, architecture qualifier, restrictions, profiles', () => {
-    expect(parseRelationships('libc6 (>= 2.34), python3:any | python3 (>= 3.8) [amd64], foo <!nocheck>')).toEqual([
+    expect(parseDependencies('libc6 (>= 2.34), python3:any | python3 (>= 3.8) [amd64], foo <!nocheck>')).toEqual([
       [{ name: 'libc6', version: { operator: '>=', version: '2.34' } }],
       [
         { name: 'python3', arch: 'any' },
@@ -19,42 +19,42 @@ describe('parseRelationships', () => {
     ]);
   });
 
-  it('parses a bare name and the five Policy operators', () => {
-    expect(parseRelationships('a')).toEqual([[{ name: 'a' }]]);
-    const operators = ['<<', '<=', '=', '>=', '>>'];
-    for (const operator of operators) {
-      expect(parseRelationships(`pkg (${operator} 1:2.0-1~rc1)`)).toEqual([
+  it('parses a bare name and the five Policy operators, as the usual operators', () => {
+    expect(parseDependencies('a')).toEqual([[{ name: 'a' }]]);
+    const operators = { '<<': '<', '<=': '<=', '=': '=', '>=': '>=', '>>': '>' };
+    for (const [written, operator] of Object.entries(operators)) {
+      expect(parseDependencies(`pkg (${written} 1:2.0-1~rc1)`)).toEqual([
         [{ name: 'pkg', version: { operator, version: '1:2.0-1~rc1' } }],
       ]);
     }
   });
 
-  it('accepts the obsolete < and > and reports them as written', () => {
-    expect(parseRelationships('a (< 2), b (> 1)')).toEqual([
-      [{ name: 'a', version: { operator: '<', version: '2' } }],
-      [{ name: 'b', version: { operator: '>', version: '1' } }],
+  it('reads the obsolete < and > as dpkg does, <= and >=', () => {
+    expect(parseDependencies('a (< 2), b (> 1)')).toEqual([
+      [{ name: 'a', version: { operator: '<=', version: '2' } }],
+      [{ name: 'b', version: { operator: '>=', version: '1' } }],
     ]);
   });
 
   it('parses architecture restrictions with negations', () => {
-    expect(parseRelationships('libfoo [!i386 !armel], bar [linux-any]')).toEqual([
+    expect(parseDependencies('libfoo [!i386 !armel], bar [linux-any]')).toEqual([
       [{ name: 'libfoo', architectures: ['!i386', '!armel'] }],
       [{ name: 'bar', architectures: ['linux-any'] }],
     ]);
   });
 
   it('parses several build profile groups, each with AND-ed terms', () => {
-    expect(parseRelationships('dh-python <!nocheck cross> <stage1>')).toEqual([
+    expect(parseDependencies('dh-python <!nocheck cross> <stage1>')).toEqual([
       [{ name: 'dh-python', profiles: [['!nocheck', 'cross'], ['stage1']] }],
     ]);
   });
 
   it('parses every part together, in order', () => {
-    expect(parseRelationships('gcc:native (>> 4:12) [amd64 arm64] <!cross> <pkg.x>')).toEqual([
+    expect(parseDependencies('gcc:native (>> 4:12) [amd64 arm64] <!cross> <pkg.x>')).toEqual([
       [{
         name: 'gcc',
         arch: 'native',
-        version: { operator: '>>', version: '4:12' },
+        version: { operator: '>', version: '4:12' },
         architectures: ['amd64', 'arm64'],
         profiles: [['!cross'], ['pkg.x']],
       }],
@@ -62,28 +62,28 @@ describe('parseRelationships', () => {
   });
 
   it('accepts package names with digits, plus, dot and hyphen', () => {
-    expect(parseRelationships('libstdc++6, g++-12, python3.11, 0ad')).toEqual([
+    expect(parseDependencies('libstdc++6, g++-12, python3.11, 0ad')).toEqual([
       [{ name: 'libstdc++6' }], [{ name: 'g++-12' }], [{ name: 'python3.11' }], [{ name: '0ad' }],
     ]);
   });
 
   it('tolerates extra whitespace and line breaks, as in a multi-line Depends', () => {
     const field = '\n libc6   (  >=   2.34  ) ,\n\tpython3:any\n  | python3  [ amd64 ]\n   <  !nocheck  > ,\n';
-    expect(parseRelationships(field)).toEqual([
+    expect(parseDependencies(field)).toEqual([
       [{ name: 'libc6', version: { operator: '>=', version: '2.34' } }],
       [{ name: 'python3', arch: 'any' }, { name: 'python3', architectures: ['amd64'], profiles: [['!nocheck']] }],
     ]);
   });
 
   it('gives [] for an empty or blank field and skips empty entries', () => {
-    expect(parseRelationships('')).toEqual([]);
-    expect(parseRelationships(' \n ')).toEqual([]);
-    expect(parseRelationships('a,, b,')).toEqual([[{ name: 'a' }], [{ name: 'b' }]]);
+    expect(parseDependencies('')).toEqual([]);
+    expect(parseDependencies(' \n ')).toEqual([]);
+    expect(parseDependencies('a,, b,')).toEqual([[{ name: 'a' }], [{ name: 'b' }]]);
   });
 
   it('throws a SyntaxError quoting the offending text', () => {
-    expect(() => parseRelationships('a, b (>= 1')).toThrow(SyntaxError);
-    expect(() => parseRelationships('a, b (>= 1')).toThrow('"b (>= 1"');
+    expect(() => parseDependencies('a, b (>= 1')).toThrow(SyntaxError);
+    expect(() => parseDependencies('a, b (>= 1')).toThrow('"b (>= 1"');
   });
 
   it.each([
@@ -104,14 +104,22 @@ describe('parseRelationships', () => {
     ['trailing garbage', 'a b', 'unexpected "b"'],
     ['a space inside a name', 'a b (= 1)', 'unexpected'],
   ])('throws for %s', (_label, field, message) => {
-    expect(() => parseRelationships(field)).toThrow(SyntaxError);
-    expect(() => parseRelationships(field)).toThrow(message);
+    expect(() => parseDependencies(field)).toThrow(SyntaxError);
+    expect(() => parseDependencies(field)).toThrow(message);
   });
 
   it('stays fast on pathological whitespace', () => {
     const start = Date.now();
-    expect(() => parseRelationships(`a${' '.repeat(50_000)}!`)).toThrow(SyntaxError);
-    expect(() => parseRelationships(`a (>=${' '.repeat(50_000)}`)).toThrow(SyntaxError);
+    expect(() => parseDependencies(`a${' '.repeat(50_000)}!`)).toThrow(SyntaxError);
+    expect(() => parseDependencies(`a (>=${' '.repeat(50_000)}`)).toThrow(SyntaxError);
     expect(Date.now() - start).toBeLessThan(2000);
+  });
+
+  it('throws a RangeError for a format that is not supported', () => {
+    expect(() => parseDependencies('a', 'rpm' as 'debian')).toThrow(RangeError);
+  });
+
+  it('accepts the debian format explicitly', () => {
+    expect(parseDependencies('a (>= 1)', 'debian')).toEqual([[{ name: 'a', version: { operator: '>=', version: '1' } }]]);
   });
 });

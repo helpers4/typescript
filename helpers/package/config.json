@@ -1,0 +1,5 @@
+{
+  "label": "Package",
+  "smallDescription": "Package metadata parsers",
+  "description": "Pure parsers for the metadata of software packages: dependency fields (Depends, Build-Depends, ...) read into a format-independent structure, and the deb822 control files (Packages, Sources, Release, control, .dsc, .changes, copyright) they are found in."
+}
