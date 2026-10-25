@@ -4,18 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { parsePropertyPath } from './parsePropertyPath'
+import { parsePropertyPath } from '@helpers4/object';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('parsePropertyPath', () => {
-  bench('simple dot path (cache hit after first call)', () => {
-    parsePropertyPath('a.b.c')
-  })
-  bench('mixed dot/bracket path (cache hit after first call)', () => {
-    parsePropertyPath('layers[1].name.value')
-  })
-  bench('distinct dynamic paths (cache miss every call)', () => {
-    parsePropertyPath(`a.b.c.${Math.random()}`)
-  })
-})
+test('parsePropertyPath', async ({ bench }) => {
+  await bench.compare(
+    bench('simple dot path (cache hit after first call)', () => {
+      consume(parsePropertyPath('a.b.c'));
+    }),
+    bench('mixed dot/bracket path (cache hit after first call)', () => {
+      consume(parsePropertyPath('layers[1].name.value'));
+    }),
+    bench('distinct dynamic paths (cache miss every call)', () => {
+      consume(parsePropertyPath(`a.b.c.${Math.random()}`));
+    }),
+    RUN,
+  );
+});

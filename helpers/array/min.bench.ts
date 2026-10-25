@@ -4,25 +4,24 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { min } from './min';
+import { test } from 'vitest';
+import { min } from '@helpers4/array';
+import { RUN, consume } from '../../scripts/bench';
 
 const small = Array.from({ length: 100 }, () => Math.random() * 1000);
 const large = Array.from({ length: 100_000 }, () => Math.random() * 1000);
 
-describe('min', () => {
-  bench('min() — 100 elements', () => {
-    min(small);
-  });
-
-  bench('Math.min(...arr) — 100 elements', () => {
-    Math.min(...small);
-  });
-
-  bench('min() — 100 000 elements', () => {
-    min(large);
-  });
-
-  // Math.min(...large) would throw RangeError (Maximum call stack size exceeded)
-  // so it is intentionally omitted for the large case
+test('min', async ({ bench }) => {
+  await bench.compare(
+    bench('min() — 100 elements', () => {
+      consume(min(small));
+    }),
+    bench('Math.min(...arr) — 100 elements', () => {
+      Math.min(...small);
+    }),
+    bench('min() — 100 000 elements', () => {
+      consume(min(large));
+    }),
+    RUN,
+  );
 });

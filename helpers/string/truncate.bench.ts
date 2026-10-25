@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { truncate } from './truncate';
+import { test } from 'vitest';
+import { truncate } from '@helpers4/string';
+import { RUN, consume } from '../../scripts/bench';
 
 const short = 'Hi';
 const long = 'Hello, world! '.repeat(200);
@@ -21,23 +22,26 @@ const emojiHeavy = 'Hello 👨‍👩‍👧‍👦 world 🇫🇷 flag test '.r
 // repeated progress brings this back down to single-digit milliseconds.
 const zalgo = 'a'.repeat(1000) + 'e' + String.fromCharCode(0x0301).repeat(200_000) + 'b'.repeat(1000);
 
-describe('truncate', () => {
-  bench('already within limit (no-op path)', () => {
-    truncate(short, 10);
-  });
-  bench('long string, truncated near the start', () => {
-    truncate(long, 50);
-  });
-  bench('very long string (~28k chars), cut point deep in (20k)', () => {
-    // The grapheme-boundary check only segments a small window around the
-    // cut point (not the whole prefix), so this stays roughly as fast as the
-    // "cut near the start" case above regardless of how deep the cut is.
-    truncate(veryLong, 20_000);
-  });
-  bench('emoji-heavy string, truncated (family/flag sequences)', () => {
-    truncate(emojiHeavy, 50);
-  });
-  bench('pathological "Zalgo" cluster (200k combining marks), cut in the middle', () => {
-    truncate(zalgo, 100_100);
-  });
+test('truncate', async ({ bench }) => {
+  await bench.compare(
+    bench('already within limit (no-op path)', () => {
+      consume(truncate(short, 10));
+    }),
+    bench('long string, truncated near the start', () => {
+      consume(truncate(long, 50));
+    }),
+    bench('very long string (~28k chars), cut point deep in (20k)', () => {
+      // The grapheme-boundary check only segments a small window around the
+      // cut point (not the whole prefix), so this stays roughly as fast as the
+      // "cut near the start" case above regardless of how deep the cut is.
+      consume(truncate(veryLong, 20_000));
+    }),
+    bench('emoji-heavy string, truncated (family/flag sequences)', () => {
+      consume(truncate(emojiHeavy, 50));
+    }),
+    bench('pathological "Zalgo" cluster (200k combining marks), cut in the middle', () => {
+      consume(truncate(zalgo, 100_100));
+    }),
+    RUN,
+  );
 });

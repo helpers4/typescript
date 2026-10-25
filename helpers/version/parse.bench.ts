@@ -4,18 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { parse } from './parse'
+import { parse } from '@helpers4/version';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('parse', () => {
-  bench('core version only', () => {
-    parse('1.2.3')
-  })
-  bench('with prerelease and build metadata', () => {
-    parse('1.0.0-beta.1+exp.sha.5114f85')
-  })
-  bench('with leading v', () => {
-    parse('v2.0.0-alpha.1')
-  })
-})
+test('parse', async ({ bench }) => {
+  await bench.compare(
+    bench('core version only', () => {
+      consume(parse('1.2.3'));
+    }),
+    bench('with prerelease and build metadata', () => {
+      consume(parse('1.0.0-beta.1+exp.sha.5114f85'));
+    }),
+    bench('with leading v', () => {
+      consume(parse('v2.0.0-alpha.1'));
+    }),
+    RUN,
+  );
+});

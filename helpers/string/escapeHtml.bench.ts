@@ -4,22 +4,26 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { escapeHtml } from './escapeHtml'
+import { escapeHtml } from '@helpers4/string';
+import { RUN, consume } from '../../scripts/bench';
 
-const short = '<script>alert("xss")</script>'
-const plain = 'no special characters here at all'
-const long = '<div class="a">&amp;</div>'.repeat(200)
+const short = '<script>alert("xss")</script>';
+const plain = 'no special characters here at all';
+const long = '<div class="a">&amp;</div>'.repeat(200);
 
-describe('escapeHtml', () => {
-  bench('short string with special chars', () => {
-    escapeHtml(short)
-  })
-  bench('plain string, nothing to escape', () => {
-    escapeHtml(plain)
-  })
-  bench('long string with many special chars', () => {
-    escapeHtml(long)
-  })
-})
+test('escapeHtml', async ({ bench }) => {
+  await bench.compare(
+    bench('short string with special chars', () => {
+      consume(escapeHtml(short));
+    }),
+    bench('plain string, nothing to escape', () => {
+      consume(escapeHtml(plain));
+    }),
+    bench('long string with many special chars', () => {
+      consume(escapeHtml(long));
+    }),
+    RUN,
+  );
+});

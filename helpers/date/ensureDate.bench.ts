@@ -4,36 +4,40 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { ensureDate } from './ensureDate'
+import { ensureDate } from '@helpers4/date';
+import { RUN, consume } from '../../scripts/bench';
 
-const dateObj = new Date('2025-01-19T12:00:00Z')
-const millis = 1737288000000
-const seconds = 1737288000
-const isoString = '2025-01-19T12:00:00Z'
-const epochMs = Temporal.Instant.fromEpochMilliseconds(1737288000000)
+const dateObj = new Date('2025-01-19T12:00:00Z');
+const millis = 1737288000000;
+const seconds = 1737288000;
+const isoString = '2025-01-19T12:00:00Z';
+const epochMs = Temporal.Instant.fromEpochMilliseconds(1737288000000);
 
-describe('ensureDate', () => {
-  bench('from Date object', () => {
-    ensureDate(dateObj)
-  })
-  bench('from milliseconds timestamp', () => {
-    ensureDate(millis)
-  })
-  bench('from seconds timestamp', () => {
-    ensureDate(seconds)
-  })
-  bench('from ISO string', () => {
-    ensureDate(isoString)
-  })
-  bench('from Temporal.Instant', () => {
-    ensureDate(epochMs)
-  })
-  bench('null input', () => {
-    ensureDate(null)
-  })
-  bench('invalid string', () => {
-    ensureDate('not-a-date')
-  })
-})
+test('ensureDate', async ({ bench }) => {
+  await bench.compare(
+    bench('from Date object', () => {
+      consume(ensureDate(dateObj));
+    }),
+    bench('from milliseconds timestamp', () => {
+      consume(ensureDate(millis));
+    }),
+    bench('from seconds timestamp', () => {
+      consume(ensureDate(seconds));
+    }),
+    bench('from ISO string', () => {
+      consume(ensureDate(isoString));
+    }),
+    bench('from Temporal.Instant', () => {
+      consume(ensureDate(epochMs));
+    }),
+    bench('null input', () => {
+      consume(ensureDate(null));
+    }),
+    bench('invalid string', () => {
+      consume(ensureDate('not-a-date'));
+    }),
+    RUN,
+  );
+});

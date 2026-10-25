@@ -4,15 +4,19 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { argbToRgb } from './argbToRgb'
+import { argbToRgb } from '@helpers4/color';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('argbToRgb', () => {
-  bench('opaque red', () => {
-    argbToRgb(0xffff0000)
-  })
-  bench('semi-transparent green', () => {
-    argbToRgb(0x8000ff00)
-  })
-})
+test('argbToRgb', async ({ bench }) => {
+  await bench.compare(
+    bench('opaque red', () => {
+      consume(argbToRgb(0xffff0000));
+    }),
+    bench('semi-transparent green', () => {
+      consume(argbToRgb(0x8000ff00));
+    }),
+    RUN,
+  );
+});

@@ -4,20 +4,24 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { compact } from './compact'
+import { compact } from '@helpers4/object';
+import { RUN, consume } from '../../scripts/bench';
 
-const small = { a: 1, b: null, c: '', d: 0, e: 'hello' }
+const small = { a: 1, b: null, c: '', d: 0, e: 'hello' };
 const large: Record<string, unknown> = Object.fromEntries(
   Array.from({ length: 1_000 }, (_, i) => [`key${i}`, i % 3 === 0 ? 0 : i]),
-)
+);
 
-describe('compact', () => {
-  bench('small mixed-falsy object', () => {
-    compact(small)
-  })
-  bench('large object, 1/3 falsy', () => {
-    compact(large)
-  })
-})
+test('compact', async ({ bench }) => {
+  await bench.compare(
+    bench('small mixed-falsy object', () => {
+      consume(compact(small));
+    }),
+    bench('large object, 1/3 falsy', () => {
+      consume(compact(large));
+    }),
+    RUN,
+  );
+});

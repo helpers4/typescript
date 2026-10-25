@@ -4,27 +4,31 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { onlyPath } from './onlyPath'
+import { onlyPath } from '@helpers4/url';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('onlyPath', () => {
-  bench('with no input', () => {
-    onlyPath(undefined)
-  })
-  bench('with empty string', () => {
-    onlyPath('')
-  })
-  bench('with path only', () => {
-    onlyPath('/some/path')
-  })
-  bench('with path and query', () => {
-    onlyPath('/some/path?query=thing')
-  })
-  bench('with path and fragment', () => {
-    onlyPath('/some/path#fragment')
-  })
-  bench('with path, query, and fragment', () => {
-    onlyPath('/some/path?query=thing#fragment')
-  })
-})
+test('onlyPath', async ({ bench }) => {
+  await bench.compare(
+    bench('with no input', () => {
+      consume(onlyPath(undefined));
+    }),
+    bench('with empty string', () => {
+      consume(onlyPath(''));
+    }),
+    bench('with path only', () => {
+      consume(onlyPath('/some/path'));
+    }),
+    bench('with path and query', () => {
+      consume(onlyPath('/some/path?query=thing'));
+    }),
+    bench('with path and fragment', () => {
+      consume(onlyPath('/some/path#fragment'));
+    }),
+    bench('with path, query, and fragment', () => {
+      consume(onlyPath('/some/path?query=thing#fragment'));
+    }),
+    RUN,
+  );
+});

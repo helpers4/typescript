@@ -4,19 +4,23 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { buildConventionalCommitRegex } from './buildConventionalCommitRegex'
+import { buildConventionalCommitRegex } from '@helpers4/commit';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('buildConventionalCommitRegex', () => {
-  bench('no constraints', () => {
-    buildConventionalCommitRegex()
-  })
-  bench('constrained types and scopes', () => {
-    buildConventionalCommitRegex({
-      types: ['feat', 'fix', 'docs', 'refactor', 'test', 'chore'],
-      scopes: ['array', 'object', 'string', 'date', 'guard'],
-      requireScope: true,
-    })
-  })
-})
+test('buildConventionalCommitRegex', async ({ bench }) => {
+  await bench.compare(
+    bench('no constraints', () => {
+      consume(buildConventionalCommitRegex());
+    }),
+    bench('constrained types and scopes', () => {
+      consume(buildConventionalCommitRegex({
+        types: ['feat', 'fix', 'docs', 'refactor', 'test', 'chore'],
+        scopes: ['array', 'object', 'string', 'date', 'guard'],
+        requireScope: true,
+      }));
+    }),
+    RUN,
+  );
+});

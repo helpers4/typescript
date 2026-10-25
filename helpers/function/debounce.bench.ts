@@ -4,18 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { debounce } from './debounce'
+import { debounce } from '@helpers4/function';
+import { RUN, consume } from '../../scripts/bench';
 
-const noop = (): void => {}
-const debounced = debounce(noop, 1_000)
+const noop = (): void => {};
+const debounced = debounce(noop, 1_000);
 
-describe('debounce', () => {
-  bench('create a debounced wrapper', () => {
-    debounce(noop, 1_000)
-  })
-  bench('call a pre-built debounced wrapper (resets the timer)', () => {
-    debounced()
-  })
-})
+test('debounce', async ({ bench }) => {
+  await bench.compare(
+    bench('create a debounced wrapper', () => {
+      consume(debounce(noop, 1_000));
+    }),
+    bench('call a pre-built debounced wrapper (resets the timer)', () => {
+      debounced();
+    }),
+    RUN,
+  );
+});

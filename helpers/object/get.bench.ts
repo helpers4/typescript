@@ -4,24 +4,28 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { get } from './get'
+import { get } from '@helpers4/object';
+import { RUN, consume } from '../../scripts/bench';
 
-const obj = { a: { b: { c: 42 } } }
-const withArray = { layers: [{ name: 'bg' }, { name: 'fg' }] }
+const obj = { a: { b: { c: 42 } } };
+const withArray = { layers: [{ name: 'bg' }, { name: 'fg' }] };
 
-describe('get', () => {
-  bench('shallow key array path', () => {
-    get(obj, ['a', 'b', 'c'])
-  })
-  bench('dot-notation string path (parsed + cached)', () => {
-    get(obj, 'a.b.c')
-  })
-  bench('bracket-notation path into array', () => {
-    get(withArray, 'layers[1].name')
-  })
-  bench('missing path with default', () => {
-    get(obj, 'x.y.z', 'default')
-  })
-})
+test('get', async ({ bench }) => {
+  await bench.compare(
+    bench('shallow key array path', () => {
+      consume(get(obj, ['a', 'b', 'c']));
+    }),
+    bench('dot-notation string path (parsed + cached)', () => {
+      consume(get(obj, 'a.b.c'));
+    }),
+    bench('bracket-notation path into array', () => {
+      consume(get(withArray, 'layers[1].name'));
+    }),
+    bench('missing path with default', () => {
+      consume(get(obj, 'x.y.z', 'default'));
+    }),
+    RUN,
+  );
+});

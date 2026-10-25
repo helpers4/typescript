@@ -4,21 +4,25 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { set } from './set'
+import { set } from '@helpers4/object';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('set', () => {
-  bench('shallow key array path, existing structure', () => {
-    set({ a: { b: { c: 1 } } }, ['a', 'b', 'c'], 42)
-  })
-  bench('dot-notation path, existing structure', () => {
-    set({ a: { b: { c: 1 } } }, 'a.b.c', 42)
-  })
-  bench('dot-notation path, creating intermediate objects', () => {
-    set({}, 'a.b.c.d.e', 42)
-  })
-  bench('bracket-notation path into existing array', () => {
-    set({ layers: [{ name: 'bg' }, { name: 'fg' }] }, 'layers[1].name', 'updated')
-  })
-})
+test('set', async ({ bench }) => {
+  await bench.compare(
+    bench('shallow key array path, existing structure', () => {
+      consume(set({ a: { b: { c: 1 } } }, ['a', 'b', 'c'], 42));
+    }),
+    bench('dot-notation path, existing structure', () => {
+      consume(set({ a: { b: { c: 1 } } }, 'a.b.c', 42));
+    }),
+    bench('dot-notation path, creating intermediate objects', () => {
+      consume(set({}, 'a.b.c.d.e', 42));
+    }),
+    bench('bracket-notation path into existing array', () => {
+      consume(set({ layers: [{ name: 'bg' }, { name: 'fg' }] }, 'layers[1].name', 'updated'));
+    }),
+    RUN,
+  );
+});

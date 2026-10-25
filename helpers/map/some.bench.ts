@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { some } from './some';
+import { test } from 'vitest';
+import { some } from '@helpers4/map';
+import { RUN, consume } from '../../scripts/bench';
 
 const small = new Map([
   ['a', 1],
@@ -14,14 +15,17 @@ const small = new Map([
 ]);
 const large = new Map(Array.from({ length: 10_000 }, (_, i) => [i, i]));
 
-describe('some', () => {
-  bench('small map, no match', () => {
-    some(small, (value) => value > 100);
-  });
-  bench('large map, match near the start (short-circuit)', () => {
-    some(large, (value) => value === 5);
-  });
-  bench('large map, no match (full scan)', () => {
-    some(large, (value) => value === -1);
-  });
+test('some', async ({ bench }) => {
+  await bench.compare(
+    bench('small map, no match', () => {
+      consume(some(small, (value) => value > 100));
+    }),
+    bench('large map, match near the start (short-circuit)', () => {
+      consume(some(large, (value) => value === 5));
+    }),
+    bench('large map, no match (full scan)', () => {
+      consume(some(large, (value) => value === -1));
+    }),
+    RUN,
+  );
 });

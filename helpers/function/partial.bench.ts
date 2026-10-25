@@ -4,18 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { partial } from './partial'
+import { partial } from '@helpers4/function';
+import { RUN, consume } from '../../scripts/bench';
 
-const multiply = (a: number, b: number): number => a * b
-const double = partial(multiply, 2)
+const multiply = (a: number, b: number): number => a * b;
+const double = partial(multiply, 2);
 
-describe('partial', () => {
-  bench('build a partially-applied function', () => {
-    partial(multiply, 2)
-  })
-  bench('call a pre-built partially-applied function', () => {
-    double(5)
-  })
-})
+test('partial', async ({ bench }) => {
+  await bench.compare(
+    bench('build a partially-applied function', () => {
+      consume(partial(multiply, 2));
+    }),
+    bench('call a pre-built partially-applied function', () => {
+      double(5);
+    }),
+    RUN,
+  );
+});

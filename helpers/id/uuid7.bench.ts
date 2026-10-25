@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { uuid7 } from './uuid7'
+import { uuid7 } from '@helpers4/id';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('uuid7', () => {
-  bench('generate a single UUID v7', () => {
-    uuid7()
-  })
-})
+test('uuid7', async ({ bench }) => {
+  await bench('generate a single UUID v7', () => {
+      consume(uuid7());
+    }).run(RUN);
+});

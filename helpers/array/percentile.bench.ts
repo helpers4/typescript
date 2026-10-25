@@ -4,20 +4,24 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { percentile } from './percentile';
+import { test } from 'vitest';
+import { percentile } from '@helpers4/array';
+import { RUN, consume } from '../../scripts/bench';
 
 const small = [5, 3, 1, 4, 2];
 const large = Array.from({ length: 10_000 }, () => Math.random());
 
-describe('percentile', () => {
-  bench('small array, p50', () => {
-    percentile(small, 50);
-  });
-  bench('large array, p50 (interpolated)', () => {
-    percentile(large, 50);
-  });
-  bench('large array, p0 (min, still sorts first)', () => {
-    percentile(large, 0);
-  });
+test('percentile', async ({ bench }) => {
+  await bench.compare(
+    bench('small array, p50', () => {
+      consume(percentile(small, 50));
+    }),
+    bench('large array, p50 (interpolated)', () => {
+      consume(percentile(large, 50));
+    }),
+    bench('large array, p0 (min, still sorts first)', () => {
+      consume(percentile(large, 0));
+    }),
+    RUN,
+  );
 });

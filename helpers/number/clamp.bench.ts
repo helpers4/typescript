@@ -4,18 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { clamp } from './clamp'
+import { clamp } from '@helpers4/number';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('clamp', () => {
-  bench('within range', () => {
-    clamp(5, 0, 10)
-  })
-  bench('above max', () => {
-    clamp(15, 0, 10)
-  })
-  bench('below min', () => {
-    clamp(-5, 0, 10)
-  })
-})
+test('clamp', async ({ bench }) => {
+  await bench.compare(
+    bench('within range', () => {
+      consume(clamp(5, 0, 10));
+    }),
+    bench('above max', () => {
+      consume(clamp(15, 0, 10));
+    }),
+    bench('below min', () => {
+      consume(clamp(-5, 0, 10));
+    }),
+    RUN,
+  );
+});

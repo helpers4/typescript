@@ -4,21 +4,25 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { camelCase } from './camelCase'
+import { camelCase } from '@helpers4/string';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('camelCase', () => {
-  bench('simple kebab-case', () => {
-    camelCase('hello-world')
-  })
-  bench('multiple segments', () => {
-    camelCase('my-long-variable-name')
-  })
-  bench('already camelCase', () => {
-    camelCase('helloWorld')
-  })
-  bench('single word', () => {
-    camelCase('hello')
-  })
-})
+test('camelCase', async ({ bench }) => {
+  await bench.compare(
+    bench('simple kebab-case', () => {
+      consume(camelCase('hello-world'));
+    }),
+    bench('multiple segments', () => {
+      consume(camelCase('my-long-variable-name'));
+    }),
+    bench('already camelCase', () => {
+      consume(camelCase('helloWorld'));
+    }),
+    bench('single word', () => {
+      consume(camelCase('hello'));
+    }),
+    RUN,
+  );
+});

@@ -4,15 +4,19 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { inRange } from './inRange'
+import { inRange } from '@helpers4/number';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('inRange', () => {
-  bench('default inclusive both', () => {
-    inRange(5, 1, 10)
-  })
-  bench('exclusive boundaries', () => {
-    inRange(5, 1, 10, { inclusive: 'none' })
-  })
-})
+test('inRange', async ({ bench }) => {
+  await bench.compare(
+    bench('default inclusive both', () => {
+      consume(inRange(5, 1, 10));
+    }),
+    bench('exclusive boundaries', () => {
+      consume(inRange(5, 1, 10, { inclusive: 'none' }));
+    }),
+    RUN,
+  );
+});

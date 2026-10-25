@@ -4,18 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { negate } from './negate'
+import { negate } from '@helpers4/function';
+import { RUN, consume } from '../../scripts/bench';
 
-const isEven = (n: number): boolean => n % 2 === 0
-const isOdd = negate(isEven)
+const isEven = (n: number): boolean => n % 2 === 0;
+const isOdd = negate(isEven);
 
-describe('negate', () => {
-  bench('build a negated predicate', () => {
-    negate(isEven)
-  })
-  bench('call a pre-built negated predicate', () => {
-    isOdd(3)
-  })
-})
+test('negate', async ({ bench }) => {
+  await bench.compare(
+    bench('build a negated predicate', () => {
+      consume(negate(isEven));
+    }),
+    bench('call a pre-built negated predicate', () => {
+      isOdd(3);
+    }),
+    RUN,
+  );
+});

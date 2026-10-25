@@ -4,17 +4,21 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { agree } from './agree';
+import { test } from 'vitest';
+import { agree } from '@helpers4/license';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('agree', () => {
-  bench('matching families', () => {
-    agree('GPL3', 'GPL-3.0-or-later');
-  });
-  bench('conflicting families', () => {
-    agree('BSD-2-Clause', 'Apache-2.0');
-  });
-  bench('one side non-informative', () => {
-    agree('custom', 'MIT');
-  });
+test('agree', async ({ bench }) => {
+  await bench.compare(
+    bench('matching families', () => {
+      consume(agree('GPL3', 'GPL-3.0-or-later'));
+    }),
+    bench('conflicting families', () => {
+      consume(agree('BSD-2-Clause', 'Apache-2.0'));
+    }),
+    bench('one side non-informative', () => {
+      consume(agree('custom', 'MIT'));
+    }),
+    RUN,
+  );
 });

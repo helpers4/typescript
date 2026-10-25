@@ -4,30 +4,34 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { extractPureURI } from './extractPureURI'
+import { extractPureURI } from '@helpers4/url';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('extractPureURI', () => {
-  bench('with no input', () => {
-    extractPureURI(undefined)
-  })
-  bench('with empty string', () => {
-    extractPureURI('')
-  })
-  bench('with path only', () => {
-    extractPureURI('/some/path')
-  })
-  bench('with query string', () => {
-    extractPureURI('/some/path?query=thing')
-  })
-  bench('with fragment', () => {
-    extractPureURI('/some/path#fragment')
-  })
-  bench('with query and fragment', () => {
-    extractPureURI('/some/path?query=thing#fragment')
-  })
-  bench('with full URL', () => {
-    extractPureURI('https://example.com/some/path?query=thing#fragment')
-  })
-})
+test('extractPureURI', async ({ bench }) => {
+  await bench.compare(
+    bench('with no input', () => {
+      consume(extractPureURI(undefined));
+    }),
+    bench('with empty string', () => {
+      consume(extractPureURI(''));
+    }),
+    bench('with path only', () => {
+      consume(extractPureURI('/some/path'));
+    }),
+    bench('with query string', () => {
+      consume(extractPureURI('/some/path?query=thing'));
+    }),
+    bench('with fragment', () => {
+      consume(extractPureURI('/some/path#fragment'));
+    }),
+    bench('with query and fragment', () => {
+      consume(extractPureURI('/some/path?query=thing#fragment'));
+    }),
+    bench('with full URL', () => {
+      consume(extractPureURI('https://example.com/some/path?query=thing#fragment'));
+    }),
+    RUN,
+  );
+});

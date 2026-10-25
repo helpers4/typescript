@@ -4,21 +4,25 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { chunk } from './chunk'
+import { chunk } from '@helpers4/array';
+import { RUN, consume } from '../../scripts/bench';
 
-const small = [1, 2, 3, 4, 5]
-const large = Array.from({ length: 10_000 }, (_, i) => i)
+const small = [1, 2, 3, 4, 5];
+const large = Array.from({ length: 10_000 }, (_, i) => i);
 
-describe('chunk', () => {
-  bench('small array, size 2', () => {
-    chunk(small, 2)
-  })
-  bench('large array, size 10', () => {
-    chunk(large, 10)
-  })
-  bench('large array, size 1000', () => {
-    chunk(large, 1000)
-  })
-})
+test('chunk', async ({ bench }) => {
+  await bench.compare(
+    bench('small array, size 2', () => {
+      consume(chunk(small, 2));
+    }),
+    bench('large array, size 10', () => {
+      consume(chunk(large, 10));
+    }),
+    bench('large array, size 1000', () => {
+      consume(chunk(large, 1000));
+    }),
+    RUN,
+  );
+});

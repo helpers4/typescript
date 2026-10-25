@@ -4,22 +4,26 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { isSameDay, isSameMonth, isSameYear } from './is'
+import { isSameDay, isSameMonth, isSameYear } from '@helpers4/date';
+import { RUN, consume } from '../../scripts/bench';
 
-const dateA = new Date('2025-06-15T08:00:00Z')
-const dateB = new Date('2025-06-15T22:00:00Z')
-const dateC = new Date('2025-11-02T00:00:00Z')
+const dateA = new Date('2025-06-15T08:00:00Z');
+const dateB = new Date('2025-06-15T22:00:00Z');
+const dateC = new Date('2025-11-02T00:00:00Z');
 
-describe('is', () => {
-  bench('isSameDay, same day', () => {
-    isSameDay(dateA, dateB)
-  })
-  bench('isSameMonth, different day same month', () => {
-    isSameMonth(dateA, dateB)
-  })
-  bench('isSameYear, different month same year', () => {
-    isSameYear(dateA, dateC)
-  })
-})
+test('is', async ({ bench }) => {
+  await bench.compare(
+    bench('isSameDay, same day', () => {
+      consume(isSameDay(dateA, dateB));
+    }),
+    bench('isSameMonth, different day same month', () => {
+      consume(isSameMonth(dateA, dateB));
+    }),
+    bench('isSameYear, different month same year', () => {
+      consume(isSameYear(dateA, dateC));
+    }),
+    RUN,
+  );
+});

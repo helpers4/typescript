@@ -4,15 +4,19 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { parsePackageRepository } from './parsePackageRepository'
+import { parsePackageRepository } from '@helpers4/url';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('parsePackageRepository', () => {
-  bench('shorthand string', () => {
-    parsePackageRepository('github:helpers4/typescript')
-  })
-  bench('object form with git+https URL', () => {
-    parsePackageRepository({ type: 'git', url: 'git+https://github.com/helpers4/typescript.git' })
-  })
-})
+test('parsePackageRepository', async ({ bench }) => {
+  await bench.compare(
+    bench('shorthand string', () => {
+      consume(parsePackageRepository('github:helpers4/typescript'));
+    }),
+    bench('object form with git+https URL', () => {
+      consume(parsePackageRepository({ type: 'git', url: 'git+https://github.com/helpers4/typescript.git' }));
+    }),
+    RUN,
+  );
+});

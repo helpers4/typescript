@@ -4,77 +4,89 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import {
-  fromMillis,
-  fromSeconds,
-  isTimestampInSeconds,
-  normalizeTimestamp,
-  toMillis,
-  toSeconds,
-} from './timestamp'
+import { fromMillis, fromSeconds, isTimestampInSeconds, normalizeTimestamp, toMillis, toSeconds } from '@helpers4/date';
+import { RUN, consume } from '../../scripts/bench';
 
-const dateObj = new Date('2025-01-19T12:00:00Z')
-const seconds = 1737288000
-const millis = 1737288000000
+const dateObj = new Date('2025-01-19T12:00:00Z');
+const seconds = 1737288000;
+const millis = 1737288000000;
 
-describe('isTimestampInSeconds', () => {
-  bench('seconds-range', () => {
-    isTimestampInSeconds(seconds)
-  })
-  bench('millis-range', () => {
-    isTimestampInSeconds(millis)
-  })
-  bench('negative seconds', () => {
-    isTimestampInSeconds(-seconds)
-  })
-})
+test('isTimestampInSeconds', async ({ bench }) => {
+  await bench.compare(
+    bench('seconds-range', () => {
+      consume(isTimestampInSeconds(seconds));
+    }),
+    bench('millis-range', () => {
+      consume(isTimestampInSeconds(millis));
+    }),
+    bench('negative seconds', () => {
+      consume(isTimestampInSeconds(-seconds));
+    }),
+    RUN,
+  );
+});
 
-describe('normalizeTimestamp', () => {
-  bench('from seconds', () => {
-    normalizeTimestamp(seconds)
-  })
-  bench('from millis (no-op)', () => {
-    normalizeTimestamp(millis)
-  })
-})
+test('normalizeTimestamp', async ({ bench }) => {
+  await bench.compare(
+    bench('from seconds', () => {
+      consume(normalizeTimestamp(seconds));
+    }),
+    bench('from millis (no-op)', () => {
+      consume(normalizeTimestamp(millis));
+    }),
+    RUN,
+  );
+});
 
-describe('toSeconds', () => {
-  bench('from Date', () => {
-    toSeconds(dateObj)
-  })
-  bench('from ISO string', () => {
-    toSeconds('2025-01-19T12:00:00Z')
-  })
-})
+test('toSeconds', async ({ bench }) => {
+  await bench.compare(
+    bench('from Date', () => {
+      consume(toSeconds(dateObj));
+    }),
+    bench('from ISO string', () => {
+      consume(toSeconds('2025-01-19T12:00:00Z'));
+    }),
+    RUN,
+  );
+});
 
-describe('toMillis', () => {
-  bench('from Date', () => {
-    toMillis(dateObj)
-  })
-  bench('from ISO string', () => {
-    toMillis('2025-01-19T12:00:00Z')
-  })
-})
+test('toMillis', async ({ bench }) => {
+  await bench.compare(
+    bench('from Date', () => {
+      consume(toMillis(dateObj));
+    }),
+    bench('from ISO string', () => {
+      consume(toMillis('2025-01-19T12:00:00Z'));
+    }),
+    RUN,
+  );
+});
 
-describe('fromSeconds', () => {
-  bench('positive', () => {
-    fromSeconds(seconds)
-  })
-  bench('zero', () => {
-    fromSeconds(0)
-  })
-  bench('negative', () => {
-    fromSeconds(-seconds)
-  })
-})
+test('fromSeconds', async ({ bench }) => {
+  await bench.compare(
+    bench('positive', () => {
+      consume(fromSeconds(seconds));
+    }),
+    bench('zero', () => {
+      consume(fromSeconds(0));
+    }),
+    bench('negative', () => {
+      consume(fromSeconds(-seconds));
+    }),
+    RUN,
+  );
+});
 
-describe('fromMillis', () => {
-  bench('positive', () => {
-    fromMillis(millis)
-  })
-  bench('zero', () => {
-    fromMillis(0)
-  })
-})
+test('fromMillis', async ({ bench }) => {
+  await bench.compare(
+    bench('positive', () => {
+      consume(fromMillis(millis));
+    }),
+    bench('zero', () => {
+      consume(fromMillis(0));
+    }),
+    RUN,
+  );
+});

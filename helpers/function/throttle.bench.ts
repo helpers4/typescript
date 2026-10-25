@@ -4,18 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { throttle } from './throttle'
+import { throttle } from '@helpers4/function';
+import { RUN, consume } from '../../scripts/bench';
 
-const noop = (): void => {}
-const throttled = throttle(noop, 1_000)
+const noop = (): void => {};
+const throttled = throttle(noop, 1_000);
 
-describe('throttle', () => {
-  bench('create a throttled wrapper', () => {
-    throttle(noop, 1_000)
-  })
-  bench('call a pre-built throttled wrapper (mostly rate-limited path)', () => {
-    throttled()
-  })
-})
+test('throttle', async ({ bench }) => {
+  await bench.compare(
+    bench('create a throttled wrapper', () => {
+      consume(throttle(noop, 1_000));
+    }),
+    bench('call a pre-built throttled wrapper (mostly rate-limited path)', () => {
+      throttled();
+    }),
+    RUN,
+  );
+});

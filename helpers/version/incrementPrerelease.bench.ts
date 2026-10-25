@@ -4,33 +4,32 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
+import { test } from 'vitest';
 
-import { incrementPrerelease } from './incrementPrerelease';
+import { incrementPrerelease } from '@helpers4/version';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('incrementPrerelease', () => {
-  bench('start new prerelease line', () => {
-    incrementPrerelease('1.2.3', 'alpha');
-  });
-
-  bench('increment same prerelease type', () => {
-    incrementPrerelease('1.2.4-alpha.5', 'alpha');
-  });
-
-  bench('switch prerelease type', () => {
-    incrementPrerelease('1.2.4-alpha.3', 'beta');
-  });
-
-  bench('with leading v prefix', () => {
-    incrementPrerelease('v1.2.4-alpha.0', 'alpha');
-  });
-
-  bench('with build metadata', () => {
-    incrementPrerelease('1.2.4-alpha.0+sha.abc123', 'alpha');
-  });
-
-  bench('null and undefined pass through', () => {
-    incrementPrerelease(null, 'alpha');
-    incrementPrerelease(undefined, 'alpha');
-  });
+test('incrementPrerelease', async ({ bench }) => {
+  await bench.compare(
+    bench('start new prerelease line', () => {
+      consume(incrementPrerelease('1.2.3', 'alpha'));
+    }),
+    bench('increment same prerelease type', () => {
+      consume(incrementPrerelease('1.2.4-alpha.5', 'alpha'));
+    }),
+    bench('switch prerelease type', () => {
+      consume(incrementPrerelease('1.2.4-alpha.3', 'beta'));
+    }),
+    bench('with leading v prefix', () => {
+      consume(incrementPrerelease('v1.2.4-alpha.0', 'alpha'));
+    }),
+    bench('with build metadata', () => {
+      consume(incrementPrerelease('1.2.4-alpha.0+sha.abc123', 'alpha'));
+    }),
+    bench('null and undefined pass through', () => {
+      consume(incrementPrerelease(null, 'alpha'));
+      consume(incrementPrerelease(undefined, 'alpha'));
+    }),
+    RUN,
+  );
 });

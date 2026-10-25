@@ -4,18 +4,22 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { unzip } from './unzip'
+import { unzip } from '@helpers4/array';
+import { RUN, consume } from '../../scripts/bench';
 
-const small: [number, string][] = [[1, 'a'], [2, 'b'], [3, 'c']]
-const large: [number, string][] = Array.from({ length: 10_000 }, (_, i) => [i, `item-${i}`])
+const small: [number, string][] = [[1, 'a'], [2, 'b'], [3, 'c']];
+const large: [number, string][] = Array.from({ length: 10_000 }, (_, i) => [i, `item-${i}`]);
 
-describe('unzip', () => {
-  bench('small array of pairs', () => {
-    unzip(small)
-  })
-  bench('large array of pairs', () => {
-    unzip(large)
-  })
-})
+test('unzip', async ({ bench }) => {
+  await bench.compare(
+    bench('small array of pairs', () => {
+      consume(unzip(small));
+    }),
+    bench('large array of pairs', () => {
+      consume(unzip(large));
+    }),
+    RUN,
+  );
+});

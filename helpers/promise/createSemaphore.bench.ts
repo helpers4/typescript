@@ -4,29 +4,30 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { createSemaphore } from './createSemaphore';
+import { test } from 'vitest';
+import { createSemaphore } from '@helpers4/promise';
+import { RUN, consume } from '../../scripts/bench';
 
 const noop = (): number => 42;
 
-describe('createSemaphore', () => {
-  bench('create a semaphore', () => {
-    createSemaphore(10);
-  });
-
-  bench('acquire + release, uncontended', async () => {
-    const semaphore = createSemaphore(10);
-    const release = await semaphore.acquire();
-    release();
-  });
-
-  bench('run(), uncontended', async () => {
-    const semaphore = createSemaphore(10);
-    await semaphore.run(noop);
-  });
-
-  bench('run(), 20 concurrent callers over 10 permits', async () => {
-    const semaphore = createSemaphore(10);
-    await Promise.all(Array.from({ length: 20 }, () => semaphore.run(noop)));
-  });
+test('createSemaphore', async ({ bench }) => {
+  await bench.compare(
+    bench('create a semaphore', () => {
+      consume(createSemaphore(10));
+    }),
+    bench('acquire + release, uncontended', async () => {
+      const semaphore = createSemaphore(10);
+      const release = await semaphore.acquire();
+      release();
+    }),
+    bench('run(), uncontended', async () => {
+      const semaphore = createSemaphore(10);
+      await semaphore.run(noop);
+    }),
+    bench('run(), 20 concurrent callers over 10 permits', async () => {
+      const semaphore = createSemaphore(10);
+      await Promise.all(Array.from({ length: 20 }, () => semaphore.run(noop)));
+    }),
+    RUN,
+  );
 });

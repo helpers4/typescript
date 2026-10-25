@@ -4,19 +4,23 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { returnOrThrowError } from './returnOrThrowError'
+import { returnOrThrowError } from '@helpers4/function';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('returnOrThrowError', () => {
-  bench('defined value (fast path)', () => {
-    returnOrThrowError(42, 'should not throw')
-  })
-  bench('nullish value (throw + catch)', () => {
-    try {
-      returnOrThrowError(null, 'value is required')
-    } catch {
-      // expected
-    }
-  })
-})
+test('returnOrThrowError', async ({ bench }) => {
+  await bench.compare(
+    bench('defined value (fast path)', () => {
+      consume(returnOrThrowError(42, 'should not throw'));
+    }),
+    bench('nullish value (throw + catch)', () => {
+      try {
+        consume(returnOrThrowError(null, 'value is required'));
+      } catch {
+        // expected
+      }
+    }),
+    RUN,
+  );
+});

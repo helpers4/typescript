@@ -4,17 +4,21 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { select } from './select'
+import { select } from '@helpers4/array';
+import { RUN, consume } from '../../scripts/bench';
 
-const large = Array.from({ length: 10_000 }, (_, i) => i)
+const large = Array.from({ length: 10_000 }, (_, i) => i);
 
-describe('select', () => {
-  bench('map only (no condition)', () => {
-    select(large, x => x * 2)
-  })
-  bench('filter + map, half pass', () => {
-    select(large, x => x * 2, x => x % 2 === 0)
-  })
-})
+test('select', async ({ bench }) => {
+  await bench.compare(
+    bench('map only (no condition)', () => {
+      consume(select(large, x => x * 2));
+    }),
+    bench('filter + map, half pass', () => {
+      consume(select(large, x => x * 2, x => x % 2 === 0));
+    }),
+    RUN,
+  );
+});

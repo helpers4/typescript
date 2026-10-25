@@ -4,22 +4,26 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { escapeRegExp } from './escapeRegExp'
+import { escapeRegExp } from '@helpers4/string';
+import { RUN, consume } from '../../scripts/bench';
 
-const short = '1 + 1 = 2?'
-const plain = 'no special characters here at all'
-const long = '(a.b)*+c[d]?'.repeat(200)
+const short = '1 + 1 = 2?';
+const plain = 'no special characters here at all';
+const long = '(a.b)*+c[d]?'.repeat(200);
 
-describe('escapeRegExp', () => {
-  bench('short string with metacharacters', () => {
-    escapeRegExp(short)
-  })
-  bench('plain string, nothing to escape', () => {
-    escapeRegExp(plain)
-  })
-  bench('long string with many metacharacters', () => {
-    escapeRegExp(long)
-  })
-})
+test('escapeRegExp', async ({ bench }) => {
+  await bench.compare(
+    bench('short string with metacharacters', () => {
+      consume(escapeRegExp(short));
+    }),
+    bench('plain string, nothing to escape', () => {
+      consume(escapeRegExp(plain));
+    }),
+    bench('long string with many metacharacters', () => {
+      consume(escapeRegExp(long));
+    }),
+    RUN,
+  );
+});

@@ -4,19 +4,23 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { once } from './once'
+import { once } from '@helpers4/function';
+import { RUN, consume } from '../../scripts/bench';
 
-const expensiveSetup = (): number => 42
-const wrapped = once(expensiveSetup)
-wrapped()
+const expensiveSetup = (): number => 42;
+const wrapped = once(expensiveSetup);
+wrapped();
 
-describe('once', () => {
-  bench('create a once-wrapped function', () => {
-    once(expensiveSetup)
-  })
-  bench('call after first invocation (cached path)', () => {
-    wrapped()
-  })
-})
+test('once', async ({ bench }) => {
+  await bench.compare(
+    bench('create a once-wrapped function', () => {
+      consume(once(expensiveSetup));
+    }),
+    bench('call after first invocation (cached path)', () => {
+      wrapped();
+    }),
+    RUN,
+  );
+});

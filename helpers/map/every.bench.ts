@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { every } from './every';
+import { test } from 'vitest';
+import { every } from '@helpers4/map';
+import { RUN, consume } from '../../scripts/bench';
 
 const small = new Map([
   ['a', 1],
@@ -14,14 +15,17 @@ const small = new Map([
 ]);
 const large = new Map(Array.from({ length: 10_000 }, (_, i) => [i, i]));
 
-describe('every', () => {
-  bench('small map, all match', () => {
-    every(small, (value) => value > 0);
-  });
-  bench('large map, all match (worst case, full scan)', () => {
-    every(large, (value) => value >= 0);
-  });
-  bench('large map, first entry fails (short-circuit)', () => {
-    every(large, (value) => value > 0);
-  });
+test('every', async ({ bench }) => {
+  await bench.compare(
+    bench('small map, all match', () => {
+      consume(every(small, (value) => value > 0));
+    }),
+    bench('large map, all match (worst case, full scan)', () => {
+      consume(every(large, (value) => value >= 0));
+    }),
+    bench('large map, first entry fails (short-circuit)', () => {
+      consume(every(large, (value) => value > 0));
+    }),
+    RUN,
+  );
 });

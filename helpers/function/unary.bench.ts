@@ -4,17 +4,21 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest'
+import { test } from 'vitest';
 
-import { unary } from './unary'
+import { unary } from '@helpers4/function';
+import { RUN, consume } from '../../scripts/bench';
 
-const unaryParseInt = unary(parseInt)
+const unaryParseInt = unary(parseInt);
 
-describe('unary', () => {
-  bench('build a unary-restricted function', () => {
-    unary(parseInt)
-  })
-  bench('call a pre-built unary-restricted function', () => {
-    unaryParseInt('42')
-  })
-})
+test('unary', async ({ bench }) => {
+  await bench.compare(
+    bench('build a unary-restricted function', () => {
+      consume(unary(parseInt));
+    }),
+    bench('call a pre-built unary-restricted function', () => {
+      unaryParseInt('42');
+    }),
+    RUN,
+  );
+});

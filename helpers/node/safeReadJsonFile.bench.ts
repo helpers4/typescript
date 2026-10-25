@@ -7,8 +7,9 @@
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterAll, bench, describe } from 'vitest';
-import { safeReadJsonFile } from './safeReadJsonFile';
+import { afterAll, test } from 'vitest';
+import { safeReadJsonFile } from '@helpers4/node';
+import { RUN, consume } from '../../scripts/bench';
 
 const dir = mkdtempSync(join(tmpdir(), 'helpers4-bench-'));
 
@@ -38,28 +39,27 @@ writeFileSync(largeJsoncPath, `{\n  // 1000 generated entries\n  ${largeJsoncEnt
 
 const missingPath = join(dir, 'missing.json');
 
-describe('safeReadJsonFile', () => {
-  afterAll(() => {
-    rmSync(dir, { recursive: true, force: true });
-  });
+afterAll(() => {
+  rmSync(dir, { recursive: true, force: true });
+});
 
-  bench('small file, strict JSON (fast path)', () => {
-    safeReadJsonFile(smallJsonPath);
-  });
-
-  bench('small file, JSONC — comments + trailing comma (fallback path)', () => {
-    safeReadJsonFile(smallJsoncPath);
-  });
-
-  bench('large file (1000 keys), strict JSON (fast path)', () => {
-    safeReadJsonFile(largeJsonPath);
-  });
-
-  bench('large file (1000 keys), JSONC (fallback path)', () => {
-    safeReadJsonFile(largeJsoncPath);
-  });
-
-  bench('missing file (falls back to null)', () => {
-    safeReadJsonFile(missingPath);
-  });
+test('safeReadJsonFile', async ({ bench }) => {
+  await bench.compare(
+    bench('small file, strict JSON (fast path)', () => {
+      consume(safeReadJsonFile(smallJsonPath));
+    }),
+    bench('small file, JSONC — comments + trailing comma (fallback path)', () => {
+      consume(safeReadJsonFile(smallJsoncPath));
+    }),
+    bench('large file (1000 keys), strict JSON (fast path)', () => {
+      consume(safeReadJsonFile(largeJsonPath));
+    }),
+    bench('large file (1000 keys), JSONC (fallback path)', () => {
+      consume(safeReadJsonFile(largeJsoncPath));
+    }),
+    bench('missing file (falls back to null)', () => {
+      consume(safeReadJsonFile(missingPath));
+    }),
+    RUN,
+  );
 });

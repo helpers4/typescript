@@ -4,14 +4,18 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { rgbToCss } from './rgbToCss';
+import { test } from 'vitest';
+import { rgbToCss } from '@helpers4/color';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('rgbToCss', () => {
-  bench('opaque', () => {
-    rgbToCss({ r: 255, g: 128, b: 0 });
-  });
-  bench('with alpha', () => {
-    rgbToCss({ r: 0, g: 128, b: 255, a: 0.5 });
-  });
+test('rgbToCss', async ({ bench }) => {
+  await bench.compare(
+    bench('opaque', () => {
+      consume(rgbToCss({ r: 255, g: 128, b: 0 }));
+    }),
+    bench('with alpha', () => {
+      consume(rgbToCss({ r: 0, g: 128, b: 255, a: 0.5 }));
+    }),
+    RUN,
+  );
 });
