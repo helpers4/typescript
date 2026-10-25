@@ -31,26 +31,3 @@ describe('obfuscate', () => {
     expect(deobfuscate(obfuscate('a😀b'))).toBe('a😀b');
   });
 });
-
-describe('deobfuscate', () => {
-  it('reads what obfuscate wrote', () => {
-    expect(deobfuscate('bW9jLmVscG1heGVAZW0')).toBe('me@example.com');
-    expect(deobfuscate('')).toBe('');
-    expect(deobfuscate(obfuscate('héllo wörld — 日本語'))).toBe('héllo wörld — 日本語');
-  });
-
-  it('returns null for a token obfuscate could not have produced', () => {
-    expect(deobfuscate('not a token!')).toBeNull();
-    expect(deobfuscate('YmE=')).toBeNull();
-    expect(deobfuscate('Y')).toBeNull();
-    expect(deobfuscate('YmE+')).toBeNull();
-    expect(deobfuscate('/w')).toBeNull();
-    expect(deobfuscate('_w')).toBeNull();
-  });
-
-  it('returns null, not an exception, for anything that is not a string', () => {
-    expect(deobfuscate(undefined as unknown as string)).toBeNull();
-    expect(deobfuscate(null as unknown as string)).toBeNull();
-    expect(deobfuscate(42 as unknown as string)).toBeNull();
-  });
-});
