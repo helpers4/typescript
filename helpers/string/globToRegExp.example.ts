@@ -30,6 +30,17 @@ const examples: HelperExamples = {
       },
     },
     {
+      title: 'Path globs with braces and **',
+      description: 'extended: true turns on {a,b}, [abc] and a ** that crosses directories while * stays in one segment.',
+      code: `const isSource = globToRegExp('src/**/*.{ts,tsx}', { extended: true });
+isSource.test('src/ui/App.tsx')
+// => true`,
+      assert: () => {
+        const isSource = globToRegExp('src/**/*.{ts,tsx}', { extended: true });
+        if (!isSource.test('src/ui/App.tsx') || isSource.test('lib/App.tsx')) throw new Error('Expected a path glob match');
+      },
+    },
+    {
       title: 'Reuse the same pattern for many strings efficiently',
       description: 'Compile the RegExp once and reuse it for every check instead of recompiling per candidate. If you also need to cache across many different call sites, wrap globToRegExp itself with memoize() from @helpers4/function.',
       code: `const isTestFile = globToRegExp('*.test.ts');
