@@ -28,7 +28,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "bench": "vitest bench --run",
+    "bench": "pnpm build && vitest bench --run",
     "bench:watch": "vitest bench",
     "build": "tsx scripts/build/index.ts",
     "lint": "oxlint",
