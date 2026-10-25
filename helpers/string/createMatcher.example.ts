@@ -31,6 +31,17 @@ isScreen('Screen 2 (old)') // => false`,
         if (!createMatcher('/usr/lib/*', { syntax: 'glob' })('/usr/lib/img')) throw new Error('Expected a match');
       },
     },
+    {
+      title: 'Fix the reading of one pattern with re: or glob:',
+      description: 'A prefix overrides the syntax option for that pattern only, so globs and regular expressions mix freely.',
+      code: `const matches = createMatcher(['glob:src/*', 're:\\\\.tsx?$', '!re:test']);
+matches('lib/b.ts')      // => true
+matches('lib/b.test.ts') // => false`,
+      assert: () => {
+        const matches = createMatcher(['glob:src/*', 're:\\.tsx?$', '!re:test']);
+        if (!matches('lib/b.ts') || matches('lib/b.test.ts')) throw new Error('Expected prefixes to apply per pattern');
+      },
+    },
   ],
 };
 

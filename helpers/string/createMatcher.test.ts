@@ -65,6 +65,46 @@ describe('createMatcher', () => {
     });
   });
 
+  describe('explicit re: and glob: prefixes', () => {
+    it('re: reads the rest as a regular expression, whatever the syntax option', () => {
+      expect(createMatcher('re:^v\\d+$')('v12')).toBe(true);
+      expect(createMatcher('re:^v\\d+$', { syntax: 'glob' })('v12')).toBe(true);
+      expect(createMatcher('re:^v$', { caseSensitive: false })('V')).toBe(true);
+    });
+
+    it('glob: reads the rest as a glob, even when it looks like /source/flags', () => {
+      expect(createMatcher('glob:/a/')('/a/')).toBe(true);
+      expect(createMatcher('glob:/a/', { syntax: 'regex' })('/a/')).toBe(true);
+      expect(createMatcher('glob:*.ts')('a.ts')).toBe(true);
+    });
+
+    it('mixes readings in one array, with exclusions', () => {
+      const matches = createMatcher(['glob:src/*', 're:\\.tsx?$', '!re:test']);
+      expect(matches('src/a.md')).toBe(true);
+      expect(matches('lib/b.ts')).toBe(true);
+      expect(matches('lib/b.test.ts')).toBe(false);
+    });
+
+    it('glob:re: matches a string that really starts with re:', () => {
+      expect(createMatcher('glob:re:*')('re:x')).toBe(true);
+    });
+
+    it('throws on an invalid re: pattern', () => {
+      expect(() => createMatcher('re:(')).toThrow(SyntaxError);
+    });
+  });
+
+  describe('extended globs', () => {
+    it('turns on braces, classes and path-aware wildcards', () => {
+      const matches = createMatcher('src/**/*.{ts,tsx}', { extended: true });
+      expect(matches('src/ui/App.tsx')).toBe(true);
+      expect(matches('src/a.ts')).toBe(true);
+      expect(matches('src/a.js')).toBe(false);
+      expect(createMatcher('src/*.ts')('src/ui/a.ts')).toBe(true);
+      expect(createMatcher('src/*.ts', { extended: true })('src/ui/a.ts')).toBe(false);
+    });
+  });
+
   describe('arrays', () => {
     it('matches when any pattern matches', () => {
       const matches = createMatcher(['*.fig', /\.sketch$/, (text) => text === 'x']);

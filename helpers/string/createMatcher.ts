@@ -5,6 +5,7 @@
  */
 
 import { globToRegExp } from './globToRegExp';
+import type { GlobOptions } from './globToRegExp';
 
 /**
  * One pattern accepted by {@link createMatcher}: a string (read according to
@@ -33,6 +34,11 @@ export interface MatcherOptions {
    * string or a `RegExp` keeps its own flags.
    */
   caseSensitive?: boolean;
+  /**
+   * Reads globs as path globs — `{a,b}`, `[abc]`, `**` — instead of just `*` and `?`. Defaults to
+   * `false`, see {@link GlobOptions.extended}.
+   */
+  extended?: boolean;
 }
 
 const REGEXP_LITERAL = /^\/(.+)\/([dgimsuvy]*)$/s;
@@ -40,7 +46,10 @@ const REGEXP_LITERAL = /^\/(.+)\/([dgimsuvy]*)$/s;
 /**
  * Turns user-supplied filters (a setting, a CLI flag, a list of rules) into one predicate.
  *
- * - A string is a glob, or a regular expression — see {@link MatcherOptions.syntax}.
+ * - A string is a glob, or a regular expression — see {@link MatcherOptions.syntax}. A `re:` or
+ *   `glob:` prefix (`'re:^v\\d+$'`, `'glob:*.ts'`) fixes the reading of that one pattern, whatever
+ *   the syntax option says; to match a string that really starts with one of them, spell it
+ *   `'glob:re:…'`.
  * - A `RegExp` is used as is, except that its `g` and `y` flags are dropped: they make
  *   `test()` depend on the previous call.
  * - A function is called as is.
@@ -86,10 +95,16 @@ function compile(pattern: MatcherPattern, options: MatcherOptions): (text: strin
 }
 
 function fromString(pattern: string, options: MatcherOptions): RegExp {
-  const { syntax = 'auto', caseSensitive = true } = options;
-  const literal = syntax === 'auto' ? REGEXP_LITERAL.exec(pattern) : null;
-  if (syntax === 'glob' || (syntax === 'auto' && !literal)) return globToRegExp(pattern, caseSensitive);
-  const [source, flags] = literal ? [literal[1]!, literal[2]!] : [pattern, caseSensitive ? '' : 'i'];
+  const { caseSensitive = true, extended = false } = options;
+  const prefixed = pattern.startsWith('re:') ? 'regex' : pattern.startsWith('glob:') ? 'glob' : null;
+  const syntax = prefixed ?? options.syntax ?? 'auto';
+  const text = prefixed ? pattern.slice(prefixed === 'regex' ? 3 : 5) : pattern;
+  const literal = syntax === 'auto' ? REGEXP_LITERAL.exec(text) : null;
+  if (syntax === 'glob' || (syntax === 'auto' && !literal)) {
+    const glob: GlobOptions = { caseSensitive, extended };
+    return globToRegExp(text, glob);
+  }
+  const [source, flags] = literal ? [literal[1]!, literal[2]!] : [text, caseSensitive ? '' : 'i'];
   try {
     return new RegExp(source, flags);
   } catch (error) {

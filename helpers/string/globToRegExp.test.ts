@@ -60,4 +60,79 @@ describe('globToRegExp', () => {
     expect(globToRegExp('*-?-*').test('left-x-right')).toBe(true);
     expect(globToRegExp('*-?-*').test('left-xy-right')).toBe(false);
   });
+  describe('extended', () => {
+    const glob = (pattern: string, text: string, caseSensitive = true) =>
+      globToRegExp(pattern, { extended: true, caseSensitive }).test(text);
+
+    it('keeps * and ? inside one path segment', () => {
+      expect(glob('src/*.ts', 'src/a.ts')).toBe(true);
+      expect(glob('src/*.ts', 'src/ui/a.ts')).toBe(false);
+      expect(glob('a?c', 'abc')).toBe(true);
+      expect(glob('a?c', 'a/c')).toBe(false);
+    });
+
+    it('lets ** cross segments, and match no directory before a slash', () => {
+      expect(glob('src/**', 'src/ui/deep/a.ts')).toBe(true);
+      expect(glob('src/**/*.ts', 'src/a.ts')).toBe(true);
+      expect(glob('src/**/*.ts', 'src/ui/deep/a.ts')).toBe(true);
+      expect(glob('**/a.ts', 'a.ts')).toBe(true);
+      expect(glob('**/a.ts', 'x/y/a.ts')).toBe(true);
+      expect(glob('src/**/*.ts', 'lib/a.ts')).toBe(false);
+    });
+
+    it('treats ** glued to a name as a plain wildcard', () => {
+      expect(glob('a**', 'a/b/c')).toBe(true);
+      expect(glob('x**/y', 'x/z/y')).toBe(true);
+    });
+
+    it('expands braces, nested ones included', () => {
+      expect(glob('*.{ts,tsx}', 'a.tsx')).toBe(true);
+      expect(glob('*.{ts,tsx}', 'a.js')).toBe(false);
+      expect(glob('{a,b{c,d}}x', 'bdx')).toBe(true);
+      expect(glob('{a,b{c,d}}x', 'bx')).toBe(false);
+      expect(glob('{,a}b', 'b')).toBe(true);
+    });
+
+    it('reads a brace without a comma, or unclosed, literally', () => {
+      expect(glob('{a}', '{a}')).toBe(true);
+      expect(glob('{a', '{a')).toBe(true);
+      expect(glob('a}', 'a}')).toBe(true);
+      expect(glob('a,b', 'a,b')).toBe(true);
+    });
+
+    it('supports character classes, ranges and negation', () => {
+      expect(glob('file[0-9].txt', 'file7.txt')).toBe(true);
+      expect(glob('file[0-9].txt', 'filex.txt')).toBe(false);
+      expect(glob('[abc]', 'b')).toBe(true);
+      expect(glob('[!abc]', 'd')).toBe(true);
+      expect(glob('[^abc]', 'a')).toBe(false);
+      expect(glob('[!a]', '/')).toBe(false);
+      expect(glob('[]]', ']')).toBe(true);
+      expect(glob('[a\\]b]', ']')).toBe(true);
+      expect(glob('[a[b]', '[')).toBe(true);
+      expect(glob('[a^]', '^')).toBe(true);
+    });
+
+    it('reads an unclosed or out-of-order class literally', () => {
+      expect(glob('[abc', '[abc')).toBe(true);
+      expect(glob('[z-a]', '[z-a]')).toBe(true);
+      expect(glob('a[', 'a[')).toBe(true);
+      expect(glob('[', '[')).toBe(true);
+    });
+
+    it('escapes with a backslash', () => {
+      expect(glob('a\\*b', 'a*b')).toBe(true);
+      expect(glob('a\\*b', 'axb')).toBe(false);
+      expect(glob('a\\{b,c}', 'a{b,c}')).toBe(true);
+      expect(glob('trailing\\', 'trailing\\')).toBe(true);
+      expect(glob('[a\\', '[a\\')).toBe(true);
+    });
+
+    it('honours caseSensitive, and a boolean still works', () => {
+      expect(glob('SRC/*.TS', 'src/a.ts', false)).toBe(true);
+      expect(glob('SRC/*.TS', 'src/a.ts')).toBe(false);
+      expect(globToRegExp('A*', false).test('abc')).toBe(true);
+      expect(globToRegExp('a*', {}).test('abc')).toBe(true);
+    });
+  });
 });
