@@ -3,7 +3,7 @@
   "version": "{{version}}",
   "description": "Complete collection of helpers4 utilities - all categories in one convenient package.",
   "author": "baxyz <craft@baxyz.dev>",
-  "license": "LGPL-3.0",
+  "license": "LGPL-3.0-or-later",
   "homepage": "https://helpers4.dev/typescript/",
   "repository": {
     "type": "git",

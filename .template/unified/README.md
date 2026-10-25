@@ -42,4 +42,4 @@ especially convenient for AI coding assistants that otherwise have to be told to
 
 ## License
 
-LGPL-3.0
+LGPL-3.0-or-later
