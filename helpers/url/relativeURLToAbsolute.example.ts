@@ -23,6 +23,16 @@ const examples: HelperExamples = {
         if (!result.includes('/api/data')) throw new Error(`Expected URL to contain '/api/data', got: ${result}`);
       },
     },
+    {
+      title: 'Resolve against an explicit base, with no browser',
+      description: 'Pass a base to use it in Node.js or during server-side rendering.',
+      code: `relativeURLToAbsolute('/api/data', 'https://example.com')
+// => 'https://example.com/api/data'`,
+      assert: () => {
+        const result = relativeURLToAbsolute('/api/data', 'https://example.com');
+        if (result !== 'https://example.com/api/data') throw new Error(`Expected https://example.com/api/data, got: ${result}`);
+      },
+    },
   ],
 };
 

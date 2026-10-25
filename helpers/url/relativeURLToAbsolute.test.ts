@@ -8,7 +8,7 @@
  * This program is under the terms of the GNU Lesser General Public License version 3
  * The full license information can be found in LICENSE in the root directory of this project.
  */
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { relativeURLToAbsolute } from "./relativeURLToAbsolute";
 
 describe('relativeURLToAbsolute', () => {
@@ -107,5 +107,24 @@ describe('relativeURLToAbsolute', () => {
             const result = relativeURLToAbsolute('/path%00evil');
             expect(result).toBe('https://www.example.com/path%00evil');
         });
+    });
+
+    test("should use the given base, with no DOM at all", () => {
+        vi.stubGlobal("document", undefined);
+        vi.stubGlobal("window", undefined);
+        expect(relativeURLToAbsolute("/api//data", "https://example.com/")).toBe("https://example.com/api/data");
+        vi.unstubAllGlobals();
+    });
+
+    test("should prefer the given base over the document", () => {
+        global.document = { ...document, baseURI: "https://www.document.baseURI.com" };
+        expect(relativeURLToAbsolute("/x", "https://other.test")).toBe("https://other.test/x");
+    });
+
+    test("should throw a TypeError without a base nor a document", () => {
+        vi.stubGlobal("document", undefined);
+        vi.stubGlobal("window", undefined);
+        expect(() => relativeURLToAbsolute("/x")).toThrow(TypeError);
+        vi.unstubAllGlobals();
     });
 });
