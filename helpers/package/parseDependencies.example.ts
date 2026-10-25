@@ -57,6 +57,16 @@ const examples: HelperExamples = {
         throw new Error('Expected a SyntaxError');
       },
     },
+    {
+      title: 'Read the obsolete < and > of old packages',
+      description: 'They are refused by default; compat mode reads them as dpkg does, <= and >=.',
+      code: `parseDependencies('libfoo (< 2)', 'debian', { compat: true })
+// => [[{ name: 'libfoo', version: { operator: '<=', version: '2' } }]]`,
+      assert: () => {
+        const groups = parseDependencies('libfoo (< 2)', 'debian', { compat: true });
+        if (groups[0]![0]!.version?.operator !== '<=') throw new Error('Expected <=');
+      },
+    },
   ],
 };
 
