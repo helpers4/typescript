@@ -69,13 +69,13 @@ function keepFirst<T>(faces: readonly T[], read: (face: T) => number | string, o
  * @returns The closest face, the first one when several are equally close, or `undefined` for no face
  * @example
  * const faces = [{ weight: 300 }, { weight: 400 }, { weight: 700 }];
- * pickClosest(faces, { weight: 600 }) // => { weight: 700 }
+ * pickClosestFontFace(faces, { weight: 600 }) // => { weight: 700 }
  * @example
- * pickClosest([{ weight: 400 }, { weight: 400, style: 'italic' }], { style: 'italic' })
+ * pickClosestFontFace([{ weight: 400 }, { weight: 400, style: 'italic' }], { style: 'italic' })
  * // => { weight: 400, style: 'italic' }
  * @since next
  */
-export function pickClosest<T extends FontFaceDescriptor>(faces: readonly T[], wanted: FontFaceDescriptor = {}): T | undefined {
+export function pickClosestFontFace<T extends FontFaceDescriptor>(faces: readonly T[], wanted: FontFaceDescriptor = {}): T | undefined {
   const { weight = 400, style = 'normal', stretch = 100 } = wanted;
 
   const stretchOf = (face: T) => face.stretch ?? 100;

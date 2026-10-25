@@ -1,5 +1,0 @@
-{
-  "label": "Font",
-  "smallDescription": "Font selection and metrics helpers",
-  "description": "Pure functions for working with fonts without a browser: the CSS font matching algorithm to pick the face closest to a request among a family's faces."
-}
