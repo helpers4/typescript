@@ -19,20 +19,32 @@ describe('parseDependencies', () => {
     ]);
   });
 
-  it('parses a bare name and the five Policy operators, as the usual operators', () => {
+  it('parses a bare name and the five Policy operators', () => {
     expect(parseDependencies('a')).toEqual([[{ name: 'a' }]]);
-    const operators = { '<<': '<', '<=': '<=', '=': '=', '>=': '>=', '>>': '>' };
-    for (const [written, operator] of Object.entries(operators)) {
-      expect(parseDependencies(`pkg (${written} 1:2.0-1~rc1)`)).toEqual([
+    for (const operator of ['<<', '<=', '=', '>=', '>>']) {
+      expect(parseDependencies(`pkg (${operator} 1:2.0-1~rc1)`)).toEqual([
         [{ name: 'pkg', version: { operator, version: '1:2.0-1~rc1' } }],
       ]);
     }
   });
 
-  it('reads the obsolete < and > as dpkg does, <= and >=', () => {
-    expect(parseDependencies('a (< 2), b (> 1)')).toEqual([
+  it('reads the obsolete < and > as dpkg does, <= and >=, in compat mode', () => {
+    expect(parseDependencies('a (< 2), b (> 1)', 'debian', { compat: true })).toEqual([
       [{ name: 'a', version: { operator: '<=', version: '2' } }],
       [{ name: 'b', version: { operator: '>=', version: '1' } }],
+    ]);
+  });
+
+  it('refuses the obsolete < and > by default, with a hint', () => {
+    expect(() => parseDependencies('a (< 2)')).toThrow(SyntaxError);
+    expect(() => parseDependencies('a (< 2)')).toThrow(/obsolete operator "<" is not allowed/);
+    expect(() => parseDependencies('b (> 1)', 'debian', { compat: false })).toThrow(/obsolete operator ">"/);
+  });
+
+  it('still reads the five Policy operators as written in compat mode', () => {
+    expect(parseDependencies('a (<< 2), b (>> 1)', 'debian', { compat: true })).toEqual([
+      [{ name: 'a', version: { operator: '<<', version: '2' } }],
+      [{ name: 'b', version: { operator: '>>', version: '1' } }],
     ]);
   });
 
@@ -54,7 +66,7 @@ describe('parseDependencies', () => {
       [{
         name: 'gcc',
         arch: 'native',
-        version: { operator: '>', version: '4:12' },
+        version: { operator: '>>', version: '4:12' },
         architectures: ['amd64', 'arm64'],
         profiles: [['!cross'], ['pkg.x']],
       }],

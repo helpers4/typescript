@@ -46,10 +46,10 @@ describe('stringifyDependencies', () => {
     expect(parseDependencies(stringifyDependencies(groups))).toEqual(groups);
   });
 
-  it('writes the Debian spelling of the operators', () => {
+  it('writes the operators as they are', () => {
     const groups = [
-      [{ name: 'a', version: { operator: '<' as const, version: '1' } }],
-      [{ name: 'b', version: { operator: '>' as const, version: '2' } }],
+      [{ name: 'a', version: { operator: '<<' as const, version: '1' } }],
+      [{ name: 'b', version: { operator: '>>' as const, version: '2' } }],
       [{ name: 'c', version: { operator: '=' as const, version: '3' } }],
     ];
     expect(stringifyDependencies(groups)).toBe('a (<< 1), b (>> 2), c (= 3)');

@@ -10,7 +10,7 @@ import type { Dependency, DependencyOperator } from './parseDependencies';
 import { parseDependencies } from './parseDependencies';
 import { stringifyDependencies } from './stringifyDependencies';
 
-const operators: DependencyOperator[] = ['<', '<=', '=', '>=', '>'];
+const operators: DependencyOperator[] = ['<<', '<=', '=', '>=', '>>'];
 
 const relationship: fc.Arbitrary<Dependency> = fc
   .record(
