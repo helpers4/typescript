@@ -18,7 +18,7 @@ const TOKEN = /^[A-Za-z0-9_-]*$/;
  * @example
  * deobfuscate('bW9jLmVscG1heGVAZW0') // => 'me@example.com'
  * deobfuscate('not a token!')        // => null
- * @since next
+ * @since 3.1.9
  */
 export function deobfuscate(token: string): string | null {
   if (typeof token !== 'string' || !TOKEN.test(token) || token.length % 4 === 1) return null;

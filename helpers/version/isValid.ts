@@ -17,7 +17,7 @@ const SEMVER =
 
 /**
  * Options for {@link isValid}.
- * @since next
+ * @since 3.1.9
  */
 export interface IsValidOptions {
   /**
@@ -62,7 +62,7 @@ export interface IsValidOptions {
  * @example
  * isValid('1:2.30~rc1-3', 'debian') // => true
  * isValid('1.0_1', 'debian')        // => false
- * @since next
+ * @since 3.1.9
  */
 export function isValid(version: unknown, scheme: VersionScheme = 'semver', options: IsValidOptions = {}): boolean {
   if (typeof version !== 'string') return false;

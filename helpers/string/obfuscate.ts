@@ -21,7 +21,7 @@ import { toBase64 } from './toBase64';
  * @returns A base64url token, with no `=` padding
  * @example
  * obfuscate('me@example.com') // => 'bW9jLmVscG1heGVAZW0'
- * @since next
+ * @since 3.1.9
  */
 export function obfuscate(text: string): string {
   return toBase64(Array.from(text).toReversed().join(''), { urlSafe: true });

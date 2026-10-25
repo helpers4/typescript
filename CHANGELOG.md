@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.1.9] - 2026-10-25
+
+### 🚀 Features
+- **string**: add obfuscate and deobfuscate
+- **version**: add the prefix option to isValid to forbid, allow or require a leading v
+- **version**: add sortVersions
+- **version**: add isValid, a strict validity check for every scheme
+
+### 🐛 Bug Fixes
+- **version**: keep hyphens inside SemVer prerelease identifiers when parsing
+
+### ✅ Tests
+- **string**: give deobfuscate its own test and spec files
+
 ## [3.1.8] - 2026-10-25
 
 ### 🚀 Features
@@ -23,6 +37,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **version**: add the rpm, pacman and pep440 schemes
 
 ### 🔧 Miscellaneous
+- **CI-CD**: refresh mutation testing incremental baseline
 - **helpers4**: add the binary, font and geo commit scopes
 
 ### ♻️ Refactoring
@@ -1299,6 +1314,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.1.9]: https://github.com/helpers4/typescript/compare/v3.1.8...v3.1.9
 [3.1.8]: https://github.com/helpers4/typescript/compare/v3.1.7...v3.1.8
 [3.1.7]: https://github.com/helpers4/typescript/compare/v3.1.6...v3.1.7
 [3.1.6]: https://github.com/helpers4/typescript/compare/v3.1.5...v3.1.6

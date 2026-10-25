@@ -9,7 +9,7 @@ import type { VersionScheme } from './types';
 
 /**
  * Options for {@link sortVersions}.
- * @since next
+ * @since 3.1.9
  */
 export interface SortVersionsOptions {
   /** `'asc'` (oldest first, default) or `'desc'` (newest first). */
@@ -36,7 +36,7 @@ export interface SortVersionsOptions {
  * @example
  * sortVersions(['v1.0.0', 'v2.0.0-rc.1', 'v1.5.0'], { order: 'desc' })[0]
  * // => 'v2.0.0-rc.1' — the latest
- * @since next
+ * @since 3.1.9
  */
 export function sortVersions<T extends string>(versions: readonly T[], options: SortVersionsOptions = {}): T[] {
   const { order = 'asc', scheme = 'semver' } = options;
