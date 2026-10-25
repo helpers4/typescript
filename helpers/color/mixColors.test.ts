@@ -55,4 +55,8 @@ describe('mixColors', () => {
   it('gives the other color when one is fully transparent and gets no weight', () => {
     expect(mixColors({ ...red, a: 0 }, blue, 0)).toEqual({ ...blue, a: 1 });
   });
+
+  it('throws a RangeError for a NaN percent', () => {
+    expect(() => mixColors({ r: 0, g: 0, b: 0 }, { r: 255, g: 255, b: 255 }, Number.NaN)).toThrow(RangeError);
+  });
 });

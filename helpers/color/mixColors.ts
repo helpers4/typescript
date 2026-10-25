@@ -19,6 +19,7 @@ import { unpremultiply } from './unpremultiply';
  * @param color - The color to mix in
  * @param base - The color it is mixed into
  * @param percent - Share of `color`, from 0 (all `base`) to 100 (all `color`); clamped. Defaults to 50.
+ * @throws {RangeError} If `percent` is `NaN`
  * @returns The straight result: channels rounded to integers, alpha to 3 decimals
  * @example
  * mixColors({ r: 255, g: 0, b: 0 }, { r: 0, g: 0, b: 255 }, 25) // => { r: 64, g: 0, b: 191, a: 1 }
@@ -27,6 +28,7 @@ import { unpremultiply } from './unpremultiply';
  * @since next
  */
 export function mixColors(color: RgbColor, base: RgbColor, percent = 50): RgbColor {
+  if (Number.isNaN(percent)) throw new RangeError('mixColors: percent must be a number');
   const p = clamp(percent, 0, 100) / 100;
   const c = premultiply(color);
   const d = premultiply(base);
