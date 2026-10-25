@@ -284,3 +284,15 @@ describe("compare", () => {
     });
   });
 });
+
+describe('rpm, pacman and pep440 schemes', () => {
+  it('compares per scheme', () => {
+    expect(compare('1.0~rc1', '1.0', 'rpm')).toBe(-1);
+    expect(compare('1.0^git1', '1.0', 'rpm')).toBe(1);
+    expect(compare('1.0rc1', '1.0', 'pacman')).toBe(-1);
+    expect(compare('2___a', '2_a', 'pacman')).toBe(1);
+    expect(compare('1.0rc1', '1.0', 'pep440')).toBe(-1);
+    expect(compare('1.0.post1', '1.0', 'pep440')).toBe(1);
+    expect(compare('1.0', '1.0.0', 'pep440')).toBe(0);
+  });
+});

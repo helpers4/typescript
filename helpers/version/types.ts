@@ -9,7 +9,7 @@
  * version string. Defaults to `'semver'` everywhere it's accepted.
  * @since 3.0.8
  */
-export type VersionScheme = 'semver' | 'gentoo' | 'debian';
+export type VersionScheme = 'semver' | 'gentoo' | 'debian' | 'rpm' | 'pacman' | 'pep440';
 
 /** The unit to bump — see {@link increment}. */
 export type IncrementType = 'major' | 'minor' | 'patch';
@@ -98,10 +98,76 @@ export interface ParsedDebianVersion {
 }
 
 /**
+ * A version parsed according to the RPM version format (Fedora, RHEL, openSUSE):
+ * `[epoch:]version[-release]`, e.g. `1:2.30~rc1-3.fc40`. Ordering follows `rpmvercmp`,
+ * including its `~` (sorts before everything) and `^` (sorts after the end, before anything
+ * else) extensions.
+ * @since next
+ */
+export interface ParsedRpmVersion {
+  scheme: 'rpm';
+  /** Epoch before the first `:`, or `0` if none is given. */
+  epoch: number;
+  /** Version, between the epoch and the `-` that starts the release (e.g. `'2.30~rc1'`). Never empty. */
+  version: string;
+  /** Release after the last `-` (e.g. `'3.fc40'`), or `''` if none is given. */
+  release: string;
+}
+
+/**
+ * A version parsed according to Arch Linux's pacman (libalpm) version format:
+ * `[epoch:]pkgver[-pkgrel]`, e.g. `1:2.30rc1-3`. Ordering follows `vercmp`: alphanumeric
+ * segments are compared one by one, numbers above letters, and a trailing letter segment sorts
+ * below the same version without it (`1.0rc1` < `1.0`).
+ * @since next
+ */
+export interface ParsedPacmanVersion {
+  scheme: 'pacman';
+  /** Epoch before the first `:`, or `0` if none is given. */
+  epoch: number;
+  /** Package version, between the epoch and the last `-` (e.g. `'2.30rc1'`). Never empty. */
+  version: string;
+  /** Package release after the last `-` (e.g. `'3'`), or `''` if none is given. */
+  release: string;
+}
+
+/**
+ * A pre-release marker of a PEP 440 version: `a` (alpha), `b` (beta) or `rc` (release candidate).
+ * @since next
+ */
+export interface Pep440Prerelease {
+  type: 'a' | 'b' | 'rc';
+  number: number;
+}
+
+/**
+ * A version parsed according to PEP 440 (Python packaging):
+ * `[N!]N(.N)*[{a|b|rc}N][.postN][.devN][+local]`, e.g. `1!2.0rc1.post2.dev3+ubuntu.1`. Every
+ * spelling PEP 440 accepts (`1.0-alpha`, `1.0.RC1`, `v1.0-1`, ...) is normalized when parsing.
+ * @since next
+ */
+export interface ParsedPep440Version {
+  scheme: 'pep440';
+  /** Epoch before the `!`, or `0` if none is given. */
+  epoch: number;
+  /** The release segment (e.g. `[1, 2, 3]` for `1.2.3`). Never empty. */
+  release: number[];
+  /** The pre-release marker, or `null`. */
+  pre: Pep440Prerelease | null;
+  /** The post-release number, or `null`. */
+  post: number | null;
+  /** The development release number, or `null`. */
+  dev: number | null;
+  /** The local version label after the `+`, split on its separators (numbers as numbers, the rest lowercased). Empty if none. */
+  local: (number | string)[];
+}
+
+/**
  * A version parsed by {@link parse}, in whichever scheme it was parsed as — narrow on the
  * `scheme` field to access scheme-specific properties (`major`/`minor`/`patch` for `'semver'`,
  * `components`/`letter`/`suffixes`/`revision` for `'gentoo'`, `epoch`/`upstream`/`revision` for
- * `'debian'`).
+ * `'debian'`, `epoch`/`version`/`release` for `'rpm'` and `'pacman'`, `epoch`/`release`/`pre`/`post`/`dev`/`local`
+ * for `'pep440'`).
  *
  * Deliberately **not** named `ParsedVersion`: that name has been public API since 2.0.0 for
  * the flat SemVer-only shape (`.major`/`.minor`/`.patch` directly, no narrowing needed), and
@@ -110,7 +176,13 @@ export interface ParsedDebianVersion {
  * `MIGRATION.md` entry, since this repo ties breaking changes to major-version bumps.
  * @since 3.0.8
  */
-export type AnyParsedVersion = ParsedSemVerVersion | ParsedGentooVersion | ParsedDebianVersion;
+export type AnyParsedVersion =
+  | ParsedSemVerVersion
+  | ParsedGentooVersion
+  | ParsedDebianVersion
+  | ParsedRpmVersion
+  | ParsedPacmanVersion
+  | ParsedPep440Version;
 
 /**
  * A version parsed according to SemVer 2.0.0 — alias of {@link ParsedSemVerVersion}, kept under

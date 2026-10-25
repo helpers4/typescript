@@ -198,3 +198,13 @@ describe("satisfiesRange", () => {
     });
   });
 });
+
+describe('rpm, pacman and pep440 schemes', () => {
+  it('checks ranges per scheme', () => {
+    expect(satisfiesRange('2.30-3.fc40', '>= 2.0', 'rpm')).toBe(true);
+    expect(satisfiesRange('1.0rc1', '<1.0', 'pacman')).toBe(true);
+    expect(satisfiesRange('1.4.9', '~=1.4.5', 'pep440')).toBe(true);
+    expect(satisfiesRange('2.0rc1', '<2.0', 'pep440')).toBe(false);
+    expect(satisfiesRange('1.5', '>=1.0,<2.0', 'pep440')).toBe(true);
+  });
+});

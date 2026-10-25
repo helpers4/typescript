@@ -7,6 +7,9 @@
 import { assertNeverScheme } from './_assertNeverScheme';
 import { isPrereleaseDebian } from './_debian';
 import { isPrereleaseGentoo } from './_gentoo';
+import { isPrereleasePacman } from './_pacman';
+import { isPrereleasePep440 } from './_pep440';
+import { isPrereleaseRpm } from './_rpm';
 import { parse } from './parse';
 import type { AnyParsedVersion, VersionScheme } from './types';
 
@@ -23,6 +26,14 @@ import type { AnyParsedVersion, VersionScheme } from './types';
  * **`'debian'`** — `true` when the upstream part contains `~`, the Debian convention for a
  * version that must sort before the final release (`1.0~rc1`). A `~` in the revision doesn't
  * count — `1.0-1~bpo12+1` is a backport of the `1.0` release, not a prerelease of it.
+ *
+ * **`'rpm'`** — `true` when the version contains `~`, the RPM convention for a version that sorts
+ * before the final release (`1.0~rc1`).
+ *
+ * **`'pacman'`** — `true` when the version has an alphabetic segment after its first number, which
+ * pacman sorts below the same version without it (`1.0rc1`).
+ *
+ * **`'pep440'`** — `true` for an `a`/`b`/`rc` pre-release or a `dev` release, as Python's `packaging` does.
  *
  * @param version - A version string (e.g. `'2.0.0-alpha.1'`, `'1.0.0'`, `'1.2.3_rc1'`).
  * @param scheme - Which version scheme to interpret `version` as. Defaults to `'semver'`.
@@ -71,6 +82,12 @@ export function isPrerelease(version: string | AnyParsedVersion | undefined | nu
       return isPrereleaseGentoo(parsed);
     case 'debian':
       return isPrereleaseDebian(parsed);
+    case 'rpm':
+      return isPrereleaseRpm(parsed);
+    case 'pacman':
+      return isPrereleasePacman(parsed);
+    case 'pep440':
+      return isPrereleasePep440(parsed);
     default:
       return assertNeverScheme(parsed);
   }
