@@ -11,6 +11,7 @@ export * from './get-external-dependencies.helper';
 export * from './prepare-category-package-json';
 export * from './prepare-category-readme';
 export * from './categories-table.helper';
+export * from './reserved-category-names.helper';
 
 // Bundle helpers
 export * from './prepare-bundle-package-json';
