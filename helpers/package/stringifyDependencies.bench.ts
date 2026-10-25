@@ -9,18 +9,19 @@ import { test } from 'vitest';
 import { parseDependencies, stringifyDependencies } from '@helpers4/package';
 import { RUN, consume } from '../../scripts/bench';
 
-const SMALL = parseDependencies('libc6 (>= 2.14)');
+const SMALL = parseDependencies('libc6 (>= 2.14)', 'debian');
 const LARGE = parseDependencies(
   Array.from({ length: 200 }, (_, index) => `libpackage${index} (>= 1.${index}) [amd64] | other${index}`).join(', '),
+  'debian',
 );
 
 test('stringifyDependencies', async ({ bench }) => {
   await bench.compare(
     bench('one versioned package', () => {
-      consume(stringifyDependencies(SMALL));
+      consume(stringifyDependencies(SMALL, 'debian'));
     }),
     bench('200 entries with alternatives', () => {
-      consume(stringifyDependencies(LARGE));
+      consume(stringifyDependencies(LARGE, 'debian'));
     }),
     RUN,
   );

@@ -18,27 +18,27 @@ const examples: HelperExamples = {
       code: `stringifyDependencies([
   [{ name: 'libc6', version: { operator: '>=', version: '2.34' } }],
   [{ name: 'python3', arch: 'any' }, { name: 'python3' }],
-])
+], 'debian')
 // => 'libc6 (>= 2.34), python3:any | python3'`,
       assert: () => {
         const text = stringifyDependencies([
           [{ name: 'libc6', version: { operator: '>=', version: '2.34' } }],
           [{ name: 'python3', arch: 'any' }, { name: 'python3' }],
-        ]);
+        ], 'debian');
         if (text !== 'libc6 (>= 2.34), python3:any | python3') throw new Error(`Unexpected text: ${text}`);
       },
     },
     {
       title: 'Normalise a field after editing it',
       description: 'Parse, change the groups, write them back in canonical spacing.',
-      code: `const groups = parseDependencies('libc6 (>=2.34) ,\\n  foo [ amd64 ]');
+      code: `const groups = parseDependencies('libc6 (>=2.34) ,\\n  foo [ amd64 ]', 'debian');
 groups.push([{ name: 'bar', profiles: [['!nocheck']] }]);
-stringifyDependencies(groups)
+stringifyDependencies(groups, 'debian')
 // => 'libc6 (>= 2.34), foo [amd64], bar <!nocheck>'`,
       assert: () => {
-        const groups = parseDependencies('libc6 (>=2.34) ,\n  foo [ amd64 ]');
+        const groups = parseDependencies('libc6 (>=2.34) ,\n  foo [ amd64 ]', 'debian');
         groups.push([{ name: 'bar', profiles: [['!nocheck']] }]);
-        const text = stringifyDependencies(groups);
+        const text = stringifyDependencies(groups, 'debian');
         if (text !== 'libc6 (>= 2.34), foo [amd64], bar <!nocheck>') throw new Error(`Unexpected text: ${text}`);
       },
     },

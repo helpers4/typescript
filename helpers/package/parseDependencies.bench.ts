@@ -16,13 +16,13 @@ const LARGE = Array.from({ length: 200 }, (_, index) => `libpackage${index} (>= 
 test('parseDependencies', async ({ bench }) => {
   await bench.compare(
     bench('one versioned package', () => {
-      consume(parseDependencies(SMALL));
+      consume(parseDependencies(SMALL, 'debian'));
     }),
     bench('every kind of part', () => {
-      consume(parseDependencies(FULL));
+      consume(parseDependencies(FULL, 'debian'));
     }),
     bench('200 entries with alternatives', () => {
-      consume(parseDependencies(LARGE));
+      consume(parseDependencies(LARGE, 'debian'));
     }),
     RUN,
   );
