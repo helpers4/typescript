@@ -1,5 +1,5 @@
 {
   "label": "Date",
   "smallDescription": "Date and time utility functions",
-  "description": "Utilities for working with dates and times including comparison, formatting, and difference calculations"
+  "description": "Utilities for working with dates and times including comparison, formatting, and difference calculations. Several helpers (`ensureDate`, `range`, `timeAgo`, `formatDuration`, the timezone ones) use the Temporal API: it needs Node.js 26+ or a recent Chrome/Firefox/Edge, and Safari has no stable support yet (WebKit signals late 2026) \u2014 load a Temporal polyfill there."
 }
