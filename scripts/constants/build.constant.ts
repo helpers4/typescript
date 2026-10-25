@@ -11,5 +11,7 @@ export const BUILD = {
   /** Internal name for the bundle package */
   BUNDLE_NAME: "all",
   /** Internal name for the unified package (all categories under one npm package) */
-  UNIFIED_NAME: "helpers4"
+  UNIFIED_NAME: "helpers4",
+  /** Internal name for the presets package (shared tool configs, not helpers) */
+  PRESETS_NAME: "presets"
 };

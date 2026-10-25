@@ -8,7 +8,7 @@
 
 import { spawn } from 'node:child_process';
 
-const tests = ['bundle', 'unified', 'version', 'category', 'dependencies', 'sizes', 'jsdoc-since'];
+const tests = ['bundle', 'unified', 'presets', 'version', 'category', 'dependencies', 'sizes', 'jsdoc-since'];
 
 function runScript(name: string, script: string): Promise<{ name: string; ok: boolean }> {
   return new Promise(resolve => {

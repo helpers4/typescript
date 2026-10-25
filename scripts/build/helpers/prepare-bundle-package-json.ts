@@ -5,7 +5,7 @@
  */
 
 import { join } from "node:path";
-import { DIR } from "../../constants";
+import { BUILD, DIR } from "../../constants";
 import { readFileJson, writeFile } from "../../utils";
 
 /**
@@ -22,9 +22,9 @@ export async function prepareBundlePackageJson(
 
   const version = rootPackage.version as string;
 
-  // Create peer dependencies object with all categories
-  const peerDependencies = categories.reduce<Record<string, string>>((acc, category) => {
-    acc[`@helpers4/${category}`] = version;
+  // Create peer dependencies object with all categories, plus the presets package
+  const peerDependencies = [...categories, BUILD.PRESETS_NAME].reduce<Record<string, string>>((acc, name) => {
+    acc[`@helpers4/${name}`] = version;
     return acc;
   }, {});
 

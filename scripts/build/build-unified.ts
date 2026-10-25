@@ -9,6 +9,7 @@ import { join } from "node:path";
 import { DIR, BUILD } from "../constants";
 import {
   copyStaticUnifiedFiles,
+  copyUnifiedPresets,
   createUnifiedCategoryShims,
   createUnifiedMetadata,
   prepareUnifiedPackageJson,
@@ -39,6 +40,9 @@ export async function buildUnified(validCategories: string[]): Promise<void> {
 
   // Write the helpers4/<category> re-export shims
   await createUnifiedCategoryShims(buildUnifiedDir, validCategories);
+
+  // Copy the presets files under helpers4/presets/
+  await copyUnifiedPresets(buildUnifiedDir);
 
   // Prepare unified package.json with real dependencies and per-category exports
   await prepareUnifiedPackageJson(buildUnifiedDir, validCategories);

@@ -8,6 +8,7 @@ import { emptyDir } from "fs-extra";
 import { DIR } from "../constants";
 import { buildCategories } from "./build-categories";
 import { buildBundle } from "./build-bundle";
+import { buildPresets } from "./build-presets";
 import { buildUnified } from "./build-unified";
 import { buildWebsiteMetadata } from "./build-website-metadata";
 import { buildLlmsTxt } from "./build-llms-txt";
@@ -19,6 +20,9 @@ async function main() {
 
   // Build all individual categories
   const validCategories = await buildCategories();
+
+  // Build the presets package (shared tool configs, outside helpers/)
+  await buildPresets();
 
   // Generate enriched website metadata in meta/
   await buildWebsiteMetadata(validCategories);

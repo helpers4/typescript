@@ -25,3 +25,4 @@ export * from './prepare-unified-readme';
 export * from './create-unified-metadata';
 export * from './copy-static-unified-files';
 export * from './create-unified-category-shims';
+export * from './copy-unified-presets';

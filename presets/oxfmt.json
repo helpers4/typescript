@@ -1,0 +1,5 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxfmt/configuration_schema.json",
+  "printWidth": 120,
+  "ignorePatterns": ["build", "coverage", "dist", "reports", "pnpm-lock.yaml"]
+}

@@ -169,7 +169,7 @@ async function validatePackages(packages: any[], config: PublishConfig): Promise
   let allValid = true;
 
   for (const pkg of packages) {
-    const issues = await validatePackageStructure(pkg.path, pkg.isBundle);
+    const issues = await validatePackageStructure(pkg.path, pkg.isBundle, pkg.isPresets);
 
     // A version npm has ever seen published (even if later unpublished) can never be
     // published again — npm rejects it with E400 regardless of whether it currently shows
@@ -255,7 +255,7 @@ async function publishPackages(config: PublishConfig): Promise<void> {
 
     console.log(`📋 Found ${packages.length} packages:`);
     packages.forEach(pkg => {
-      const type = pkg.isBundle ? 'bundle' : 'category';
+      const type = pkg.isBundle ? 'bundle' : (pkg.isPresets ? 'presets' : 'category');
       console.log(`   - ${pkg.name}@${pkg.version} (${type})`);
     });
 

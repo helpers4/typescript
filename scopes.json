@@ -26,6 +26,7 @@
   "object",
   "observable",
   "package",
+  "presets",
   "promise",
   "release",
   "scorecard",

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "baxyz",
+    "codecov",
+    "dependabot",
+    "devcontainer",
+    "editorconfig",
+    "esnext",
+    "gitmoji",
+    "oxfmt",
+    "oxlint",
+    "oxlintrc",
+    "pnpm",
+    "SPDX",
+    "stryker",
+    "transpiled",
+    "tsbuildinfo",
+    "typedoc",
+    "vitest"
+  ],
+  "ignorePaths": [
+    ".git",
+    ".history",
+    ".vscode",
+    "build",
+    "coverage",
+    "dist",
+    "node_modules",
+    "package.json",
+    "pnpm-lock.yaml",
+    "reports"
+  ]
+}

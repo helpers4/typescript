@@ -14,6 +14,8 @@ export interface PackageMetadata {
   path: string;
   isCategory: boolean;
   isBundle: boolean;
+  /** `@helpers4/presets`: shared tool configs, published with the categories (before the bundles that depend on it) */
+  isPresets: boolean;
   dependencies: string[];
 }
 
@@ -51,7 +53,8 @@ export async function discoverPackages(buildDir: string): Promise<PackageMetadat
           ...packageJson.peerDependencies
         }),
         isBundle: entry === 'all' || entry === 'helpers4',
-        isCategory: entry !== 'all' && entry !== 'helpers4',
+        isCategory: entry !== 'all' && entry !== 'helpers4' && entry !== 'presets',
+        isPresets: entry === 'presets',
         name: packageInfo.name,
         path: entryPath,
         version: packageInfo.version
@@ -103,7 +106,7 @@ export function groupPackagesByType(packages: PackageMetadata[]): {
 /**
  * Validate package structure before publishing
  */
-export async function validatePackageStructure(packagePath: string, isBundle: boolean = false): Promise<string[]> {
+export async function validatePackageStructure(packagePath: string, isBundle: boolean = false, isPresets: boolean = false): Promise<string[]> {
   const issues: string[] = [];
 
   // Check required files
@@ -127,8 +130,13 @@ export async function validatePackageStructure(packagePath: string, isBundle: bo
       }
     }
 
-    // For category packages, check for code-related fields
-    if (!isBundle) {
+    if (isPresets) {
+      // The presets package has no lib/: every file is reached through an explicit exports entry
+      if (!packageJson.exports) {
+        issues.push('Missing exports field in package.json');
+      }
+    } else if (!isBundle) {
+      // For category packages, check for code-related fields
       const codeRequiredFields = ['main', 'types'];
       for (const field of codeRequiredFields) {
         if (!packageJson[field]) {

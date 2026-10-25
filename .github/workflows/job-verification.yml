@@ -48,6 +48,16 @@ jobs:
             exit 1
           fi
 
+      - name: Run Presets Package test
+        id: presets-test
+        run: |
+          if pnpm run coherency:presets; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
       - name: Run Version Consistency test
         id: version-test
         run: |
@@ -112,6 +122,7 @@ jobs:
         id: summary
         run: |
           if [[ "${{ steps.bundle-test.outputs.status }}" == "success" && \
+                "${{ steps.presets-test.outputs.status }}" == "success" && \
                 "${{ steps.version-test.outputs.status }}" == "success" && \
                 "${{ steps.category-test.outputs.status }}" == "success" && \
                 "${{ steps.dependencies-test.outputs.status }}" == "success" && \
