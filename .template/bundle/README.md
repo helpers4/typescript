@@ -40,4 +40,4 @@ You can also install individual categories if you prefer:
 
 ## License
 
-LGPL-3.0
+LGPL-3.0-or-later
