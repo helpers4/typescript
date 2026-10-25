@@ -18,10 +18,10 @@ const EARTH_RADIUS_KM = 6371;
  * @param lon2 - Longitude of the second point, in degrees
  * @returns The distance in kilometres
  * @example
- * geoDistance(48.8566, 2.3522, 51.5074, -0.1278) // => about 343.5 (Paris to London)
+ * distance(48.8566, 2.3522, 51.5074, -0.1278) // => about 343.5 (Paris to London)
  * @since next
  */
-export function geoDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+export function distance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const toRadians = Math.PI / 180;
   const dLat = (lat2 - lat1) * toRadians;
   const dLon = (lon2 - lon1) * toRadians;

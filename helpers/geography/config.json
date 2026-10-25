@@ -1,0 +1,5 @@
+{
+  "label": "Geography",
+  "smallDescription": "Geographic coordinates helpers",
+  "description": "Helpers for WGS84 latitude/longitude coordinates on the Earth's surface: great-circle distance between two points and radius checks. For flat 2D points and rectangles, see geometry."
+}
