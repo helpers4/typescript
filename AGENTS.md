@@ -68,6 +68,19 @@ pnpm release:auto
   has no `dependencies`), so tree-shaking and package independence are unaffected. `_shared/` is
   only for logic with no natural public "owner" on either side.
 
+**Packages built outside `helpers/`:** `build/` holds more than the categories, and every script
+that walks it (coherency, publish, website docs) must know these:
+
+| Package | Source | Built by | Notes |
+| --- | --- | --- | --- |
+| `@helpers4/all` | `.template/bundle` | `build-bundle.ts` | No code: `peerDependencies` on every category and on `@helpers4/presets` |
+| `helpers4` | `.template/unified` | `build-unified.ts` | Re-export shims per category; `presets/` is a **copy** of `@helpers4/presets` (tools read those files by path) |
+| `@helpers4/presets` | `presets/` | `build-presets.ts` | Shared tool configs (tsconfig, oxlint, oxfmt, Vitest, Stryker, cspell, EditorConfig, git-cliff). No `lib/`, no `meta/`, not documented as a category. Every file needs an `exports` entry in `presets/package.json` |
+
+The repository uses its own `presets/`: the root `tsconfig.json`, `.oxlintrc.json`, `.cspell.json` and
+`vitest.config.ts` extend it, so lint, typecheck and tests validate the presets. A stricter preset
+can break consumers' builds: say so in the commit (`BREAKING CHANGE:` when it does).
+
 **License header (all source files):**
 
 ```typescript

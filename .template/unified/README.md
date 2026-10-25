@@ -36,6 +36,17 @@ directly when you want the smallest possible dependency footprint for a single c
 especially convenient for AI coding assistants that otherwise have to be told to install every
 `@helpers4/<category>` package individually.
 
+## Tool presets
+
+`helpers4/presets/…` holds the shared tool configs of
+[`@helpers4/presets`](https://www.npmjs.com/package/@helpers4/presets) (tsconfig, oxlint, oxfmt,
+Vitest, Stryker, cspell, EditorConfig, git-cliff), at the same paths:
+
+```jsonc
+// tsconfig.json
+{ "extends": "helpers4/presets/tsconfig/lib.json" }
+```
+
 ## Included Categories
 
 {{categories_table}}

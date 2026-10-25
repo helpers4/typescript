@@ -13,6 +13,7 @@ export const DIR = {
   BUILD: join("./", "build"),
   HELPERS: join("./", "helpers"),
   ROOT: "./",
+  PRESETS: join("./", "presets"),
   TEMPLATE: join("./", ".template"),
   TEMPLATE_BUNDLE: join("./", ".template", "bundle"),
   TEMPLATE_CATEGORY: join("./", ".template", "category"),

@@ -1,5 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./presets/tsconfig/lib.json",
   "compilerOptions": {
     "paths": {
       "*": [
@@ -7,22 +8,10 @@
       ]
     },
     "incremental": true,
-    "target": "ESNext",
     "outDir": "build",
     "rootDir": ".",
-    "moduleResolution": "bundler",
-    "module": "ESNext",
-    "declaration": true,
-    "declarationMap": true,
     "inlineSourceMap": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    // Strict type checking
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
+    // Strict type checking: from presets/tsconfig/base.json
     // Note: The 'any' type is strictly forbidden in this codebase.
     // Use 'unknown' for truly unknown types, or specific union types.
     "traceResolution": false,
@@ -37,7 +26,6 @@
     "types": [
       "node"
     ],
-    "skipLibCheck": true,
     "typeRoots": [
       "node_modules/@types"
     ]
@@ -45,6 +33,7 @@
   "include": [
     "helpers/**/*.ts",
     "scripts/**/*.ts",
+    "presets/**/*.ts",
     "vitest.config.ts"
   ],
   "exclude": [

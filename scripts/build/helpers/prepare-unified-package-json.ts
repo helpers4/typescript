@@ -5,7 +5,7 @@
  */
 
 import { join } from "node:path";
-import { DIR } from "../../constants";
+import { BUILD, DIR } from "../../constants";
 import { readFileJson, writeFile } from "../../utils";
 
 /**
@@ -15,6 +15,9 @@ import { readFileJson, writeFile } from "../../utils";
  * `dependencies` on every category — `npm install helpers4` alone must be enough to get
  * every category, no follow-up peer-dependency install required. There is intentionally no
  * `"."` export: the package root has no code, only `helpers4/<category>` subpaths resolve.
+ *
+ * `helpers4/presets/*` serves a copy of `@helpers4/presets` (see `copyUnifiedPresets`): a
+ * re-export shim cannot stand in for a JSON file that a tool reads through `extends`.
  * @param buildUnifiedDir - The build unified package directory.
  * @param categories - The list of available categories.
  */
@@ -27,8 +30,8 @@ export async function prepareUnifiedPackageJson(
 
   const version = rootPackage.version as string;
 
-  const dependencies = categories.reduce<Record<string, string>>((acc, category) => {
-    acc[`@helpers4/${category}`] = version;
+  const dependencies = [...categories, BUILD.PRESETS_NAME].reduce<Record<string, string>>((acc, name) => {
+    acc[`@helpers4/${name}`] = version;
     return acc;
   }, {});
 
@@ -47,6 +50,16 @@ export async function prepareUnifiedPackageJson(
     files.push(`${category}/`);
   }
 
+  // Same subpaths as @helpers4/presets, one level down: "./vitest" becomes "./presets/vitest".
+  const presetsPackage = readFileJson<{ exports: Record<string, unknown> }>(join(DIR.PRESETS, "package.json"));
+  for (const [subpath, target] of Object.entries(presetsPackage.exports)) {
+    if (subpath === "./package.json") {
+      continue;
+    }
+    exports[`./${BUILD.PRESETS_NAME}/${subpath.slice(2)}`] = prefixExportTarget(target, `./${BUILD.PRESETS_NAME}/`);
+  }
+  files.push(`${BUILD.PRESETS_NAME}/`);
+
   // Clone the template and update the values
   const packageJson = {
     ...templatePackage,
@@ -57,4 +70,19 @@ export async function prepareUnifiedPackageJson(
   };
 
   writeFile(join(buildUnifiedDir, "package.json"), JSON.stringify(packageJson, null, 2));
+}
+
+/**
+ * Move an `exports` target (a path, or a conditions object of paths) under a sub-directory.
+ * @param target - The `exports` target, whose paths start with `./`
+ * @param prefix - The sub-directory, ending with `/`
+ * @returns The same target with every path under `prefix`
+ */
+function prefixExportTarget(target: unknown, prefix: string): unknown {
+  if (typeof target === "string") {
+    return `${prefix}${target.slice(2)}`;
+  }
+  return Object.fromEntries(
+    Object.entries(target as Record<string, unknown>).map(([condition, value]) => [condition, prefixExportTarget(value, prefix)])
+  );
 }

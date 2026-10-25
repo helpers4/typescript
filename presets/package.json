@@ -1,0 +1,72 @@
+{
+  "name": "@helpers4/presets",
+  "version": "{{version}}",
+  "description": "Shared tool presets of helpers4 projects: tsconfig, oxlint, oxfmt, Vitest, Stryker, cspell, EditorConfig and git-cliff.",
+  "author": "baxyz <craft@baxyz.dev>",
+  "license": "LGPL-3.0-or-later",
+  "homepage": "https://helpers4.dev/typescript/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helpers4/typescript.git"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "keywords": [
+    "presets",
+    "config",
+    "preset",
+    "tsconfig",
+    "oxlint",
+    "oxfmt",
+    "vitest",
+    "stryker",
+    "cspell",
+    "editorconfig"
+  ],
+  "exports": {
+    "./package.json": "./package.json",
+    "./tsconfig/*": "./tsconfig/*",
+    "./oxlint/*": "./oxlint/*",
+    "./oxfmt.json": "./oxfmt.json",
+    "./cspell.json": "./cspell.json",
+    "./vitest": {
+      "types": "./vitest.d.ts",
+      "import": "./vitest.js"
+    },
+    "./stryker": {
+      "types": "./stryker.d.ts",
+      "import": "./stryker.js"
+    },
+    "./editorconfig": "./editorconfig",
+    "./cliff.toml": "./cliff.toml"
+  },
+  "files": [
+    "package.json",
+    "README.md",
+    "LICENSE.md",
+    "tsconfig/",
+    "oxlint/",
+    "oxfmt.json",
+    "cspell.json",
+    "vitest.js",
+    "vitest.js.map",
+    "vitest.d.ts",
+    "stryker.js",
+    "stryker.js.map",
+    "stryker.d.ts",
+    "editorconfig",
+    "cliff.toml"
+  ],
+  "peerDependencies": {
+    "@stryker-mutator/api": ">=10.0.0",
+    "vitest": ">=3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@stryker-mutator/api": {
+      "optional": true
+    },
+    "vitest": {
+      "optional": true
+    }
+  }
+}

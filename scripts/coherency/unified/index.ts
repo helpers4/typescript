@@ -68,7 +68,7 @@ async function testUnified() {
   // that actually re-exports the matching @helpers4/<category> package.
   const buildDir = join(process.cwd(), "build");
   const actualCategories = readdirSync(buildDir, { withFileTypes: true })
-    .filter(e => e.isDirectory() && e.name !== 'all' && e.name !== 'helpers4')
+    .filter(e => e.isDirectory() && e.name !== 'all' && e.name !== 'helpers4' && e.name !== 'presets')
     .map(e => e.name)
     .toSorted();
 

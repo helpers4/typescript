@@ -63,6 +63,17 @@ describe('discoverPackages', () => {
     expect(unified).toMatchObject({ isBundle: true, isCategory: false, dependencies: ['@helpers4/array'] });
   });
 
+  it('tags the presets package as neither a category nor a bundle', async () => {
+    await writePackage(buildDir, '@helpers4/presets');
+
+    const packages = await discoverPackages(buildDir);
+    const presets = packages.find(p => p.name === '@helpers4/presets')!;
+
+    expect(presets).toMatchObject({ isBundle: false, isCategory: false, isPresets: true });
+    // Not a bundle: published in the first phase, before helpers4 which depends on it
+    expect(groupPackagesByType(packages).categories).toContain(presets);
+  });
+
   it('skips directories without a package.json instead of failing', async () => {
     await mkdir(path.join(buildDir, 'not-a-package'), { recursive: true });
     await writePackage(buildDir, '@helpers4/array');
@@ -88,6 +99,7 @@ describe('sortPackagesForPublishing', () => {
     path: name,
     isCategory: !isBundle,
     isBundle,
+    isPresets: false,
     dependencies: [],
   });
 
@@ -104,8 +116,8 @@ describe('sortPackagesForPublishing', () => {
 
 describe('groupPackagesByType', () => {
   it('splits packages into categories and bundles', () => {
-    const array: PackageMetadata = { name: '@helpers4/array', version: '3.0.0', path: 'array', isCategory: true, isBundle: false, dependencies: [] };
-    const all: PackageMetadata = { name: '@helpers4/all', version: '3.0.0', path: 'all', isCategory: false, isBundle: true, dependencies: [] };
+    const array: PackageMetadata = { name: '@helpers4/array', version: '3.0.0', path: 'array', isCategory: true, isBundle: false, isPresets: false, dependencies: [] };
+    const all: PackageMetadata = { name: '@helpers4/all', version: '3.0.0', path: 'all', isCategory: false, isBundle: true, isPresets: false, dependencies: [] };
 
     expect(groupPackagesByType([array, all])).toEqual({ categories: [array], bundles: [all] });
   });
@@ -178,6 +190,23 @@ describe('validatePackageStructure', () => {
     expect(issues).toContain('Missing meta directory');
     // Bundle packages are not held to the category main/types/exports/lib bar
     expect(issues).not.toContain('Missing required field in package.json: main');
+  });
+
+  it('requires exports but no lib/ or meta/ for the presets package', async () => {
+    await writeFile(
+      path.join(dir, 'package.json'),
+      JSON.stringify({ name: '@helpers4/presets', version: '3.0.0', description: 'd', license: 'LGPL-3.0-or-later' }),
+    );
+    await writeFile(path.join(dir, 'README.md'), '# readme');
+    await writeFile(path.join(dir, 'LICENSE.md'), 'license');
+
+    expect(await validatePackageStructure(dir, false, true)).toEqual(['Missing exports field in package.json']);
+
+    await writeFile(
+      path.join(dir, 'package.json'),
+      JSON.stringify({ name: '@helpers4/presets', version: '3.0.0', description: 'd', license: 'LGPL-3.0-or-later', exports: {} }),
+    );
+    expect(await validatePackageStructure(dir, false, true)).toEqual([]);
   });
 
   it('flags an invalid package.json', async () => {

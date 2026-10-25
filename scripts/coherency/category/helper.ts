@@ -20,7 +20,7 @@ export async function testCategoryPackages(): Promise<void> {
   }
 
   const buildDirs = await fs.readdir(buildDir);
-  const categoryDirs = buildDirs.filter(dir => dir !== 'all' && dir !== 'helpers4');
+  const categoryDirs = buildDirs.filter(dir => dir !== 'all' && dir !== 'helpers4' && dir !== 'presets');
 
   for (const categoryDir of categoryDirs) {
     const categoryPath = path.join(buildDir, categoryDir);
