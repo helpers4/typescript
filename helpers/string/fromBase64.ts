@@ -17,7 +17,7 @@ const VALUES = /* @__PURE__ */ (() => {
 
 /**
  * Options for {@link fromBase64}.
- * @since next
+ * @since 3.1.8
  */
 export interface FromBase64Options {
   /** `'string'` (default) decodes the bytes as UTF-8; `'bytes'` returns them as they are. */
@@ -37,7 +37,7 @@ export interface FromBase64Options {
  * fromBase64('aMOpbGxv') // => 'héllo'
  * @example
  * fromBase64('-_8', { output: 'bytes' }) // => Uint8Array [251, 255]
- * @since next
+ * @since 3.1.8
  */
 export function fromBase64(text: string, options: FromBase64Options & { output: 'bytes' }): Uint8Array;
 export function fromBase64(text: string, options?: FromBase64Options): string;

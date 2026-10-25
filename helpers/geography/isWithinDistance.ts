@@ -19,7 +19,7 @@ import { distance } from './distance';
  * @example
  * isWithinDistance(48.8566, 2.3522, 5, 48.8606, 2.3376) // => true (a few km from the center of Paris)
  * isWithinDistance(48.8566, 2.3522, 5, 51.5074, -0.1278) // => false (London)
- * @since next
+ * @since 3.1.8
  */
 export function isWithinDistance(centerLat: number, centerLon: number, radius: number, pointLat: number, pointLon: number): boolean {
   if (Number.isNaN(radius) || radius < 0) throw new RangeError('isWithinDistance: radius must be a non-negative number');

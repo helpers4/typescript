@@ -6,7 +6,7 @@
 
 /**
  * Options for {@link reflectAttribute}.
- * @since next
+ * @since 3.1.8
  */
 export interface ReflectAttributeOptions {
   /**
@@ -42,7 +42,7 @@ export interface ReflectAttributeOptions {
  * @example
  * reflectAttribute(card, 'selected', { type: 'boolean' });
  * card.selected = true;     // <my-card selected="">
- * @since next
+ * @since 3.1.8
  */
 export function reflectAttribute(element: Element, property: string, options: ReflectAttributeOptions = {}): () => void {
   const { type = 'string', attribute = property.toLowerCase() } = options;

@@ -19,7 +19,7 @@ const EARTH_RADIUS_KM = 6371;
  * @returns The distance in kilometres
  * @example
  * distance(48.8566, 2.3522, 51.5074, -0.1278) // => about 343.5 (Paris to London)
- * @since next
+ * @since 3.1.8
  */
 export function distance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const toRadians = Math.PI / 180;

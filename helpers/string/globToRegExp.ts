@@ -8,7 +8,7 @@ import { escapeRegExp } from './escapeRegExp';
 
 /**
  * Options for {@link globToRegExp}.
- * @since next
+ * @since 3.1.8
  */
 export interface GlobOptions {
   /** Whether the resulting `RegExp` is case-sensitive. Defaults to `true`. */

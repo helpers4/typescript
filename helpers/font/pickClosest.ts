@@ -6,7 +6,7 @@
 
 /**
  * The properties of a font face that CSS font matching compares.
- * @since next
+ * @since 3.1.8
  */
 export interface FontFaceDescriptor {
   /** CSS `font-weight`, 1-1000. Defaults to 400. */
@@ -73,7 +73,7 @@ function keepFirst<T>(faces: readonly T[], read: (face: T) => number | string, o
  * @example
  * pickClosest([{ weight: 400 }, { weight: 400, style: 'italic' }], { style: 'italic' })
  * // => { weight: 400, style: 'italic' }
- * @since next
+ * @since 3.1.8
  */
 export function pickClosest<T extends FontFaceDescriptor>(faces: readonly T[], wanted: FontFaceDescriptor = {}): T | undefined {
   const { weight = 400, style = 'normal', stretch = 100 } = wanted;

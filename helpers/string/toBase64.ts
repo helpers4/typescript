@@ -8,7 +8,7 @@ import { STANDARD_ALPHABET, URL_SAFE_ALPHABET } from './_base64Alphabet';
 
 /**
  * Options for {@link toBase64}.
- * @since next
+ * @since 3.1.8
  */
 export interface ToBase64Options {
   /** Use the URL and filename safe alphabet (`-` and `_` instead of `+` and `/`, RFC 4648 §5). Defaults to `false`. */
@@ -28,7 +28,7 @@ export interface ToBase64Options {
  * toBase64('héllo') // => 'aMOpbGxv'
  * @example
  * toBase64(new Uint8Array([251, 255]), { urlSafe: true }) // => '-_8'
- * @since next
+ * @since 3.1.8
  */
 export function toBase64(input: string | Uint8Array, options: ToBase64Options = {}): string {
   const { urlSafe = false, padding = !urlSafe } = options;

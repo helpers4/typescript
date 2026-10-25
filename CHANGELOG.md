@@ -8,6 +8,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.1.8] - 2026-10-25
+
+### 🚀 Features
+- **binary**: add the binary category: byte reader and writer, LEB128 and zigzag
+- **browser**: add onPointerIntent and reflectAttribute
+- **color**: add premultiply, unpremultiply and blendColors
+- **font**: add the font category with pickClosest
+- **geo**: add the geo category with distance and isWithinDistance
+- **string**: add toBase64 and fromBase64
+- **string**: add path globs and re:/glob: prefixes to globToRegExp and createMatcher
+- **url**: let relativeURLToAbsolute take a base so it works without a browser
+- **version**: add the maven scheme, ported from Maven's ComparableVersion
+- **version**: add the rpm, pacman and pep440 schemes
+
+### 🔧 Miscellaneous
+- **helpers4**: add the binary, font and geo commit scopes
+
+### ♻️ Refactoring
+- **geography**: make geography and font categories with plain helper names
+- **geometry**: rename the geo helpers geoDistance and isWithinGeoDistance, drop the geo and font scopes
+
+### 📝 Documentation
+- **date**: document that Temporal has no stable Safari support yet
+- **license**: write the year of creation in new file headers
+
 ## [3.1.7] - 2026-10-24
 
 ### 🐛 Bug Fixes
@@ -15,6 +40,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **deps**: bump Stryker to 10.1.1 so mutants run their tests with vitest 5
 
 ### 🔧 Miscellaneous
+- **CI-CD**: refresh mutation testing incremental baseline
 - **CI-CD**: rebuild the mutation testing incremental baseline
 
 ### ✅ Tests
@@ -1273,6 +1299,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.1.8]: https://github.com/helpers4/typescript/compare/v3.1.7...v3.1.8
 [3.1.7]: https://github.com/helpers4/typescript/compare/v3.1.6...v3.1.7
 [3.1.6]: https://github.com/helpers4/typescript/compare/v3.1.5...v3.1.6
 [3.1.5]: https://github.com/helpers4/typescript/compare/v3.1.4...v3.1.5

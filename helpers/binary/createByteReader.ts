@@ -8,7 +8,7 @@ import { readLeb128 } from './_leb128';
 
 /**
  * Byte order of a multi-byte value.
- * @since next
+ * @since 3.1.8
  */
 export type Endian = 'big' | 'little';
 
@@ -18,7 +18,7 @@ const little = (endian: Endian | undefined) => endian === 'little';
  * A reader created by {@link createByteReader}. Every `read*` method returns `undefined` when the
  * data is truncated or invalid, and then leaves the position where it was, so {@link position} is
  * the offset of the read that failed.
- * @since next
+ * @since 3.1.8
  */
 export interface ByteReader {
   /** The offset of the next byte to read. */
@@ -74,7 +74,7 @@ export interface ByteReader {
  * reader.readCString();   // => 'hi'
  * reader.readU16('little'); // => 1
  * reader.readU8();        // => undefined (end of data)
- * @since next
+ * @since 3.1.8
  */
 export function createByteReader(data: Uint8Array): ByteReader {
   const view = new DataView(data.buffer, data.byteOffset, data.byteLength);

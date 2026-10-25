@@ -17,7 +17,7 @@ const MASK_64 = (1n << 64n) - 1n;
  * @example
  * zigzagEncode(-1n) // => 1n
  * zigzagEncode(1n)  // => 2n
- * @since next
+ * @since 3.1.8
  */
 export function zigzagEncode(value: bigint): bigint {
   if (value < -(1n << 63n) || value >= 1n << 63n) throw new RangeError('zigzagEncode: value does not fit a signed 64-bit integer');

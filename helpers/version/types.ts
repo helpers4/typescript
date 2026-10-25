@@ -102,7 +102,7 @@ export interface ParsedDebianVersion {
  * `[epoch:]version[-release]`, e.g. `1:2.30~rc1-3.fc40`. Ordering follows `rpmvercmp`,
  * including its `~` (sorts before everything) and `^` (sorts after the end, before anything
  * else) extensions.
- * @since next
+ * @since 3.1.8
  */
 export interface ParsedRpmVersion {
   scheme: 'rpm';
@@ -119,7 +119,7 @@ export interface ParsedRpmVersion {
  * `[epoch:]pkgver[-pkgrel]`, e.g. `1:2.30rc1-3`. Ordering follows `vercmp`: alphanumeric
  * segments are compared one by one, numbers above letters, and a trailing letter segment sorts
  * below the same version without it (`1.0rc1` < `1.0`).
- * @since next
+ * @since 3.1.8
  */
 export interface ParsedPacmanVersion {
   scheme: 'pacman';
@@ -133,7 +133,7 @@ export interface ParsedPacmanVersion {
 
 /**
  * A pre-release marker of a PEP 440 version: `a` (alpha), `b` (beta) or `rc` (release candidate).
- * @since next
+ * @since 3.1.8
  */
 export interface Pep440Prerelease {
   type: 'a' | 'b' | 'rc';
@@ -144,7 +144,7 @@ export interface Pep440Prerelease {
  * A version parsed according to PEP 440 (Python packaging):
  * `[N!]N(.N)*[{a|b|rc}N][.postN][.devN][+local]`, e.g. `1!2.0rc1.post2.dev3+ubuntu.1`. Every
  * spelling PEP 440 accepts (`1.0-alpha`, `1.0.RC1`, `v1.0-1`, ...) is normalized when parsing.
- * @since next
+ * @since 3.1.8
  */
 export interface ParsedPep440Version {
   scheme: 'pep440';
@@ -165,7 +165,7 @@ export interface ParsedPep440Version {
 /**
  * One item of a parsed Maven version: a number, a lowercase qualifier string (`'rc'`, `'sp'`,
  * `'sec01'`…), or a nested list started by a `-`.
- * @since next
+ * @since 3.1.8
  */
 export type MavenVersionItem = bigint | string | MavenVersionItem[];
 
@@ -177,7 +177,7 @@ export type MavenVersionItem = bigint | string | MavenVersionItem[];
  *
  * `1.0.0` and `1` parse to the same items, so `stringify` gives Maven's canonical form
  * (`1`), not the original text.
- * @since next
+ * @since 3.1.8
  */
 export interface ParsedMavenVersion {
   scheme: 'maven';

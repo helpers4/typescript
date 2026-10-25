@@ -26,7 +26,7 @@ const I64_MAX = (1n << 63n) - 1n;
 /**
  * A writer created by {@link createByteWriter}. Every `write*` method returns the writer, to
  * chain, and throws a `RangeError` for a value outside the range of its type.
- * @since next
+ * @since 3.1.8
  */
 export interface ByteWriter {
   /** The number of bytes written so far. */
@@ -73,7 +73,7 @@ export interface ByteWriter {
  * @example
  * const bytes = createByteWriter().writeU8(42).writeVarU32(300).writeCString('hi').writeU16(1, 'little').toBytes();
  * // => Uint8Array [0x2a, 0xac, 0x02, 0x68, 0x69, 0, 0x01, 0x00]
- * @since next
+ * @since 3.1.8
  */
 export function createByteWriter(): ByteWriter {
   let buffer = new Uint8Array(64);

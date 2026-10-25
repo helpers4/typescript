@@ -8,7 +8,7 @@ import { onAbort } from '../_shared/_onAbort.js';
 
 /**
  * What a pointer is doing, passed to the handlers of {@link onPointerIntent}.
- * @since next
+ * @since 3.1.8
  */
 export interface PointerIntent {
   /** The DOM event that triggered the handler. */
@@ -26,7 +26,7 @@ export interface PointerIntent {
 
 /**
  * Handlers for {@link onPointerIntent}; every one is optional.
- * @since next
+ * @since 3.1.8
  */
 export interface PointerIntentHandlers {
   /** A mouse or pen enters (`true`) or leaves (`false`) the target. Not called for touch. */
@@ -47,7 +47,7 @@ export interface PointerIntentHandlers {
 
 /**
  * Options for {@link onPointerIntent}.
- * @since next
+ * @since 3.1.8
  */
 export interface PointerIntentOptions {
   /** Distance in pixels the pointer must travel while pressed before a tap becomes a drag. Defaults to `4`. */
@@ -78,7 +78,7 @@ export interface PointerIntentOptions {
  *   onDrag: ({ dx, dy }) => move(dx, dy),
  * });
  * stop();
- * @since next
+ * @since 3.1.8
  */
 export function onPointerIntent(
   target: Element,

@@ -11,7 +11,7 @@ import type { RgbColor } from './hexToRgb';
 /**
  * The separable blend modes of the W3C Compositing and Blending specification, the same ones as
  * CSS `mix-blend-mode`.
- * @since next
+ * @since 3.1.8
  */
 export type BlendMode =
   | 'normal'
@@ -63,7 +63,7 @@ const BLEND: Record<BlendMode, (cb: number, cs: number) => number> = {
  * blendColors({ r: 255, g: 0, b: 0 }, { r: 0, g: 0, b: 255, a: 0.5 }) // => { r: 128, g: 0, b: 128, a: 1 }
  * @example
  * blendColors({ r: 200, g: 100, b: 50 }, { r: 100, g: 100, b: 100 }, 'multiply') // => { r: 78, g: 39, b: 20, a: 1 }
- * @since next
+ * @since 3.1.8
  */
 export function blendColors(backdrop: RgbColor, source: RgbColor, mode: BlendMode = 'normal'): RgbColor {
   const ab = clamp(backdrop.a ?? 1, 0, 1);

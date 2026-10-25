@@ -14,7 +14,7 @@
  * @example
  * zigzagDecode(1n) // => -1n
  * zigzagDecode(2n) // => 1n
- * @since next
+ * @since 3.1.8
  */
 export function zigzagDecode(value: bigint): bigint {
   if (value < 0n || value >= 1n << 64n) throw new RangeError('zigzagDecode: value does not fit an unsigned 64-bit integer');
