@@ -22,6 +22,15 @@ isValid('garbage')  // => false`,
       },
     },
     {
+      title: 'Check a git tag',
+      description: "prefix: 'require' demands the v of a tag; 'allow' accepts both spellings.",
+      code: `isValid('v1.2.3', 'semver', { prefix: 'require' }) // => true
+isValid('1.2.3', 'semver', { prefix: 'require' })  // => false`,
+      assert: () => {
+        if (!isValid('v1.2.3', 'semver', { prefix: 'require' }) || isValid('1.2.3', 'semver', { prefix: 'require' })) throw new Error('Expected true, false');
+      },
+    },
+    {
       title: 'Validate in another scheme',
       description: 'Debian versions are checked against dpkg\'s grammar.',
       code: `isValid('1:2.30~rc1-3', 'debian') // => true
