@@ -68,7 +68,10 @@ pnpm release:auto
 ```typescript
 /**
  * This file is part of helpers4.
- * Copyright (C) 2025 baxyz
+ * Copyright (C) <year> baxyz
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 ```
+
+`<year>` is the year the file is created. Existing headers keep their year (`2025` for most of the
+library) — never rewrite them.

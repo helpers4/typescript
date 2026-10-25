@@ -55,7 +55,7 @@ Create `helpers/<category>/functionName.ts`:
 ```typescript
 /**
  * This file is part of helpers4.
- * Copyright (C) 2025 <Your Name>
+ * Copyright (C) <year> <Your Name>
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
@@ -95,7 +95,7 @@ Create `helpers/<category>/functionName.test.ts`:
 ```typescript
 /**
  * This file is part of helpers4.
- * Copyright (C) 2025 <Your Name>
+ * Copyright (C) <year> <Your Name>
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
@@ -152,7 +152,7 @@ Create `helpers/<category>/functionName.spec.ts` alongside the unit test file:
 ```typescript
 /**
  * This file is part of helpers4.
- * Copyright (C) 2025 <Your Name>
+ * Copyright (C) <year> <Your Name>
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
@@ -213,7 +213,7 @@ Create `helpers/<category>/functionName.example.ts`:
 ```typescript
 /**
  * This file is part of helpers4.
- * Copyright (C) 2025 <Your Name>
+ * Copyright (C) <year> <Your Name>
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
@@ -272,7 +272,7 @@ Create `helpers/<category>/functionName.bench.ts` for performance-sensitive help
 ```typescript
 /**
  * This file is part of helpers4.
- * Copyright (C) 2025 <Your Name>
+ * Copyright (C) <year> <Your Name>
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
