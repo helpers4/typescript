@@ -42,6 +42,16 @@ stringifyDependencies(groups, 'debian')
         if (text !== 'libc6 (>= 2.34), foo [amd64], bar <!nocheck>') throw new Error(`Unexpected text: ${text}`);
       },
     },
+    {
+      title: 'Write another format',
+      description: 'The same function writes RPM, Arch, Alpine and PEP 508 fields, each from its own dependency type.',
+      code: `stringifyDependencies([[{ name: 'musl', version: { operator: '>=', version: '1.2' } }], [{ name: 'openrc', conflict: true }]], 'alpine')
+// => 'musl>=1.2 !openrc'`,
+      assert: () => {
+        const text = stringifyDependencies([[{ name: 'musl', version: { operator: '>=', version: '1.2' } }], [{ name: 'openrc', conflict: true }]], 'alpine');
+        if (text !== 'musl>=1.2 !openrc') throw new Error(`Unexpected text: ${text}`);
+      },
+    },
   ],
 };
 

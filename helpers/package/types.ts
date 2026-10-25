@@ -30,11 +30,12 @@ export type DebianOperator = '<<' | '<=' | '=' | '>=' | '>>';
 export type ComparisonOperator = '<' | '<=' | '=' | '>=' | '>';
 
 /**
- * The operators of an Alpine (apk) version constraint: the five comparisons, and `~`, a fuzzy
- * match (`foo~1.2` accepts `1.2.5`).
+ * The operators of an Alpine (apk) version constraint, as apk writes them: the five comparisons;
+ * `~`, a fuzzy match (`foo~1.2` accepts `1.2.5`), and its ordered variants `<~` and `>~`; and `><`,
+ * a checksum comparison used by package indexes.
  * @since next
  */
-export type AlpineOperator = ComparisonOperator | '~';
+export type AlpineOperator = ComparisonOperator | '~' | '<~' | '>~' | '><';
 
 /**
  * The operators of a PEP 440 version specifier, as PEP 508 requirements use them.
