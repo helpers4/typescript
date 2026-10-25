@@ -7,6 +7,7 @@
 import { assertNeverScheme } from './_assertNeverScheme';
 import { isPrereleaseDebian } from './_debian';
 import { isPrereleaseGentoo } from './_gentoo';
+import { isPrereleaseMaven } from './_maven';
 import { isPrereleasePacman } from './_pacman';
 import { isPrereleasePep440 } from './_pep440';
 import { isPrereleaseRpm } from './_rpm';
@@ -34,6 +35,9 @@ import type { AnyParsedVersion, VersionScheme } from './types';
  * pacman sorts below the same version without it (`1.0rc1`).
  *
  * **`'pep440'`** — `true` for an `a`/`b`/`rc` pre-release or a `dev` release, as Python's `packaging` does.
+ *
+ * **`'maven'`** — `true` when there is an `alpha`, `beta`, `milestone`, `rc`/`cr` or `snapshot`
+ * qualifier, all of which sort below the plain release.
  *
  * @param version - A version string (e.g. `'2.0.0-alpha.1'`, `'1.0.0'`, `'1.2.3_rc1'`).
  * @param scheme - Which version scheme to interpret `version` as. Defaults to `'semver'`.
@@ -88,6 +92,8 @@ export function isPrerelease(version: string | AnyParsedVersion | undefined | nu
       return isPrereleasePacman(parsed);
     case 'pep440':
       return isPrereleasePep440(parsed);
+    case 'maven':
+      return isPrereleaseMaven(parsed);
     default:
       return assertNeverScheme(parsed);
   }

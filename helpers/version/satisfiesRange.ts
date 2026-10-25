@@ -7,6 +7,7 @@
 import { assertNeverScheme } from './_assertNeverScheme';
 import { satisfiesRangeDebian } from './_debian';
 import { satisfiesRangeGentoo } from './_gentoo';
+import { satisfiesRangeMaven } from './_maven';
 import { satisfiesRangePacman } from './_pacman';
 import { satisfiesRangePep440 } from './_pep440';
 import { satisfiesRangeRpm } from './_rpm';
@@ -40,6 +41,11 @@ import type { VersionScheme } from './types';
  * `>=`, `~=` (compatible release: `~=1.4.5` is `>=1.4.5, ==1.4.*`) or `===` (exact string). Follows
  * `packaging`'s rules: `<2.0` does not admit `2.0rc1`, `>2.0` does not admit `2.0.post1`. Pre-releases
  * are not excluded otherwise.
+ *
+ * **`'maven'`** — a Maven version range: `[1.0,2.0)` (`[`/`]` include a bound, `(`/`)` exclude it, a
+ * missing bound is open), `[1.5]` for exactly 1.5, several joined by commas for a union
+ * (`(,1.0],[1.2,)`). A bare version is an exact match (in a POM it would be a soft preference).
+ * Throws a `SyntaxError` on a malformed range.
  *
  * @param version - Version to check
  * @param range - Range pattern (e.g., ">=1.0.0", "~1.2.0", "^1.0.0")
@@ -77,6 +83,8 @@ export function satisfiesRange(version: string, range: string, scheme: VersionSc
       return satisfiesRangePacman(version, range);
     case 'pep440':
       return satisfiesRangePep440(version, range);
+    case 'maven':
+      return satisfiesRangeMaven(version, range);
     default:
       return assertNeverScheme(scheme);
   }

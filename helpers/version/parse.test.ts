@@ -327,3 +327,9 @@ describe('rpm, pacman and pep440 schemes', () => {
     expect(() => parse('abc', 'pep440')).toThrow(SyntaxError);
   });
 });
+
+describe('maven scheme', () => {
+  it('parses into normalized items', () => {
+    expect(parse('1.0a1', 'maven')).toEqual({ scheme: 'maven', items: [1n, ['alpha', [1n]]] });
+  });
+});

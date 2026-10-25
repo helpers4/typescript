@@ -101,3 +101,9 @@ describe('rpm, pacman and pep440 schemes', () => {
     expect(increment('1.2.3rc1.dev2', 'minor', 'pep440')).toBe('1.3.0');
   });
 });
+
+describe('maven scheme', () => {
+  it('bumps the leading numbers', () => {
+    expect(increment('1.2.3-SNAPSHOT', 'minor', 'maven')).toBe('1.3.0');
+  });
+});
