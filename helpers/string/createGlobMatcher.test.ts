@@ -20,3 +20,12 @@ describe('createGlobMatcher', () => {
     expect(createGlobMatcher('*.FIG', { caseSensitive: false })('a.fig')).toBe(true);
   });
 });
+
+describe('createGlobMatcher — prefixes are plain text', () => {
+  it('never reads re: or glob: as a prefix, and never throws', () => {
+    expect(createGlobMatcher('re:(')('re:(')).toBe(true);
+    expect(createGlobMatcher('re:a')('re:a')).toBe(true);
+    expect(createGlobMatcher('re:a')('a')).toBe(false);
+    expect(createGlobMatcher('glob:x')('glob:x')).toBe(true);
+  });
+});

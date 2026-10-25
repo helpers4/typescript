@@ -66,15 +66,14 @@ describe('createMatcher', () => {
   });
 
   describe('explicit re: and glob: prefixes', () => {
-    it('re: reads the rest as a regular expression, whatever the syntax option', () => {
+    it('re: reads the rest as a regular expression', () => {
       expect(createMatcher('re:^v\\d+$')('v12')).toBe(true);
-      expect(createMatcher('re:^v\\d+$', { syntax: 'glob' })('v12')).toBe(true);
+      expect(createMatcher('re:^v\\d+$', { syntax: 'auto' })('v12')).toBe(true);
       expect(createMatcher('re:^v$', { caseSensitive: false })('V')).toBe(true);
     });
 
     it('glob: reads the rest as a glob, even when it looks like /source/flags', () => {
       expect(createMatcher('glob:/a/')('/a/')).toBe(true);
-      expect(createMatcher('glob:/a/', { syntax: 'regex' })('/a/')).toBe(true);
       expect(createMatcher('glob:*.ts')('a.ts')).toBe(true);
     });
 
@@ -83,6 +82,14 @@ describe('createMatcher', () => {
       expect(matches('src/a.md')).toBe(true);
       expect(matches('lib/b.ts')).toBe(true);
       expect(matches('lib/b.test.ts')).toBe(false);
+    });
+
+    it('are plain text with an explicit glob or regex syntax', () => {
+      expect(createMatcher('re:x', { syntax: 'glob' })('re:x')).toBe(true);
+      expect(createMatcher('re:x', { syntax: 'glob' })('x')).toBe(false);
+      expect(() => createMatcher('re:(', { syntax: 'glob' })).not.toThrow();
+      expect(createMatcher('glob:x', { syntax: 'regex' })('glob:x')).toBe(true);
+      expect(createMatcher('glob:x', { syntax: 'regex' })('x')).toBe(false);
     });
 
     it('glob:re: matches a string that really starts with re:', () => {

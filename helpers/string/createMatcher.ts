@@ -27,6 +27,9 @@ export interface MatcherOptions {
    *   (`d`, `g`, `i`, `m`, `s`, `u`, `v`, `y`), anything else is a glob. So `/src/*.ts` and
    *   `/src/index` are globs, but `/usr/lib/img` is the regular expression `usr\/lib` with the
    *   flags `img`: use `'glob'` when every pattern is a path.
+   *
+   * The `re:` and `glob:` prefixes only exist with `'auto'`: with `'glob'` or `'regex'` the whole
+   * option wins and a string such as `'re:x'` is just text (a glob, or a regular expression).
    */
   syntax?: 'auto' | 'glob' | 'regex';
   /**
@@ -47,9 +50,10 @@ const REGEXP_LITERAL = /^\/(.+)\/([dgimsuvy]*)$/s;
  * Turns user-supplied filters (a setting, a CLI flag, a list of rules) into one predicate.
  *
  * - A string is a glob, or a regular expression — see {@link MatcherOptions.syntax}. A `re:` or
- *   `glob:` prefix (`'re:^v\\d+$'`, `'glob:*.ts'`) fixes the reading of that one pattern, whatever
- *   the syntax option says; to match a string that really starts with one of them, spell it
- *   `'glob:re:…'`.
+ *   `glob:` prefix (`'re:^v\\d+$'`, `'glob:*.ts'`) fixes the reading of that one pattern when the
+ *   syntax is `'auto'` (the default); with an explicit `'glob'` or `'regex'` syntax the prefixes
+ *   are plain text, so {@link createGlobMatcher} never reads a regular expression. To match a
+ *   string that really starts with one of them under `'auto'`, spell it `'glob:re:…'`.
  * - A `RegExp` is used as is, except that its `g` and `y` flags are dropped: they make
  *   `test()` depend on the previous call.
  * - A function is called as is.
@@ -96,8 +100,9 @@ function compile(pattern: MatcherPattern, options: MatcherOptions): (text: strin
 
 function fromString(pattern: string, options: MatcherOptions): RegExp {
   const { caseSensitive = true, extended = false } = options;
-  const prefixed = pattern.startsWith('re:') ? 'regex' : pattern.startsWith('glob:') ? 'glob' : null;
-  const syntax = prefixed ?? options.syntax ?? 'auto';
+  const configured = options.syntax ?? 'auto';
+  const prefixed = configured !== 'auto' ? null : pattern.startsWith('re:') ? 'regex' : pattern.startsWith('glob:') ? 'glob' : null;
+  const syntax = prefixed ?? configured;
   const text = prefixed ? pattern.slice(prefixed === 'regex' ? 3 : 5) : pattern;
   const literal = syntax === 'auto' ? REGEXP_LITERAL.exec(text) : null;
   if (syntax === 'glob' || (syntax === 'auto' && !literal)) {
