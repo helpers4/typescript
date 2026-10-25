@@ -43,8 +43,9 @@ templates:
   string, and a throwing `assert()`
 - `helpers/<category>/<name>.bench.ts` — **optional**; match the category's own convention rather
   than guessing: `ls helpers/<category>/*.bench.ts | wc -l` vs. the function count tells you
-  whether that category typically has one or typically doesn't. `vitest bench` supports async
-  callbacks, so a helper that `await`s real work isn't a reason to skip it.
+  whether that category typically has one or typically doesn't. Follow the template and the rules
+  of `CONTRIBUTING.md` "Step 5" (Vitest 5 `test()` + `bench` fixture, import `@helpers4/<category>`,
+  `consume()` every result, pass `RUN`). Async callbacks are supported.
 
 Do **not** hand-edit `helpers/<category>/index.ts` — it's generated at build time and
 gitignored; the build discovers new files automatically.
@@ -61,7 +62,7 @@ pnpm typecheck && pnpm lint && pnpm test:coverage && pnpm build && pnpm coherenc
 
 All must pass. Check `pnpm test:coverage`'s per-file output for the new files specifically —
 100% on the aggregate can hide a gap in exactly the file just added. If a `.bench.ts` was added,
-also run `npx vitest bench helpers/<category>/<name>.bench.ts --run` to confirm it executes
+also run `pnpm build && npx vitest bench --run helpers/<category>/<name>.bench.ts` to confirm it executes
 cleanly (`pnpm bench` on its own runs the *entire* suite, slow and unnecessary for one file).
 
 ## 4. Commit

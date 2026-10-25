@@ -276,22 +276,42 @@ Create `helpers/<category>/functionName.bench.ts` for performance-sensitive help
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { bench, describe } from 'vitest';
-import { clamp } from './clamp';
+import { test } from 'vitest';
+import { clamp } from '@helpers4/number';
+import { RUN, consume } from '../../scripts/bench';
 
-describe('clamp', () => {
-  bench('clamp number', () => {
-    clamp(15, 0, 10);
-  });
+test('clamp', async ({ bench }) => {
+  await bench.compare(
+    bench('inside the range', () => {
+      consume(clamp(5, 0, 10));
+    }),
+    bench('above the range', () => {
+      consume(clamp(15, 0, 10));
+    }),
+    RUN,
+  );
 });
 ```
+
+The rules, which come from how Vitest 5 and V8 behave:
+
+- **Import the built package** (`@helpers4/<category>`, resolved to `build/<category>`), not the
+  source. Vite's module runner turns every source export into a getter, which dominates the time of
+  a helper that takes nanoseconds; the build is also what users run. `pnpm bench` builds first.
+- **`consume()` the result** of every call you time, or the engine may remove a pure call whose
+  result nothing reads and you would measure an empty loop.
+- **Pass `RUN`** as the last argument (`bench.compare(…, RUN)` or `.run(RUN)`): it keeps each
+  benchmark to a fraction of a second. Without it a 30-million-calls-per-second helper takes seconds.
+- **Compare variants of the same helper** (small and large input, fast path and fallback). One
+  `test()` per file, named after the helper. Put setup outside the timed function, or in a
+  `beforeEach` option of the `bench()` call.
+- Benchmark files are not type-checked (`tsconfig.json` excludes them); `pnpm lint` still covers them.
 
 Run benchmarks:
 
 ```bash
-pnpm bench                                              # All benchmarks
-npx vitest bench helpers/<category>/functionName.bench.ts # Single file
-pnpm bench:watch                                        # Watch mode
+pnpm bench                                                          # Build, then all benchmarks
+pnpm build && npx vitest bench --run helpers/<category>/functionName.bench.ts # Single file
 ```
 
 Benchmarks are **non-blocking** and **opt-in** — they don't fail the CI and are not required for every
