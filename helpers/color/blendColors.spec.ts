@@ -9,7 +9,7 @@ import { describe, expect, it } from 'vitest';
 import { blendColors } from './blendColors';
 import type { BlendMode } from './blendColors';
 
-const MODES: BlendMode[] = ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion'];
+const MODES: BlendMode[] = ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'];
 const byte = fc.integer({ min: 0, max: 255 });
 const color = fc.record({ r: byte, g: byte, b: byte, a: fc.double({ min: 0, max: 1, noNaN: true }) });
 

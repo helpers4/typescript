@@ -37,6 +37,13 @@ const versionBase = (key: string, version: string): string => `${keyBase(key)}${
 const manifestUrl = (key: string, version: string): string => `${versionBase(key, version)}manifest`;
 const fileUrl = (key: string, version: string, path: string): string => `${versionBase(key, version)}files/${encodeURIComponent(path)}`;
 
+async function remove(cache: Cache, key: string): Promise<boolean> {
+  const base = keyBase(key);
+  const entries = (await cache.keys()).filter((request) => request.url.startsWith(base));
+  const results = await Promise.all(entries.map((request) => cache.delete(request)));
+  return results.some(Boolean);
+}
+
 /**
  * Creates a file store on a named Cache API cache: keep a computed set of files (a bake, a
  * download, extracted layers) under a key and a version, and read it back later, even offline.
@@ -55,13 +62,6 @@ const fileUrl = (key: string, version: string, path: string): string => `${versi
  */
 export function createFileStore(name: string): FileStore {
   const open = (): Promise<Cache> | undefined => (typeof globalThis.caches === 'undefined' ? undefined : globalThis.caches.open(name));
-  async function remove(cache: Cache, key: string): Promise<boolean> {
-    const base = keyBase(key);
-    const entries = (await cache.keys()).filter((request) => request.url.startsWith(base));
-    const results = await Promise.all(entries.map((request) => cache.delete(request)));
-    return results.some(Boolean);
-  }
-
   return {
     async put(key, files, version = '') {
       const opened = open();
