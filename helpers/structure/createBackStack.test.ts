@@ -48,6 +48,34 @@ describe('createBackStack', () => {
     expect(stack.canGoBack).toBe(false);
   });
 
+  it('previous is the entry back would return to', () => {
+    const stack = createBackStack('a');
+    expect(stack.previous).toBeUndefined();
+    stack.push('b');
+    expect(stack.previous).toBe('a');
+    stack.push('c');
+    expect(stack.previous).toBe('b');
+    stack.back();
+    expect(stack.previous).toBe('a');
+  });
+
+  it('replace changes the current entry and keeps the ones underneath', () => {
+    const stack = createBackStack('a');
+    stack.push('b');
+    stack.replace('c');
+    expect(stack.current).toBe('c');
+    expect(stack.previous).toBe('a');
+    expect(stack.back()).toBe('c');
+    expect(stack.current).toBe('a');
+  });
+
+  it('replace on a single entry leaves nothing to go back to', () => {
+    const stack = createBackStack('a');
+    stack.replace('b');
+    expect(stack.current).toBe('b');
+    expect(stack.canGoBack).toBe(false);
+  });
+
   it('reset clears the stack, to the initial entry by default', () => {
     const stack = createBackStack('a');
     stack.push('b');
@@ -65,11 +93,12 @@ describe('createBackStack', () => {
     stack.push('b');
     stack.back();
     stack.back(); // nothing to go back to: no notification
+    stack.replace('r');
     stack.reset('z');
-    expect(listener.mock.calls).toEqual([['b'], ['a'], ['z']]);
+    expect(listener.mock.calls).toEqual([['b'], ['a'], ['r'], ['z']]);
     unsubscribe();
     stack.push('c');
-    expect(listener).toHaveBeenCalledTimes(3);
+    expect(listener).toHaveBeenCalledTimes(4);
   });
 
   it('a listener can unsubscribe while being notified', () => {
