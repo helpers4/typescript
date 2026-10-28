@@ -46,3 +46,22 @@ export interface Matrix {
   e: number;
   f: number;
 }
+
+/**
+ * One command of SVG path data: its letter (uppercase is absolute, lowercase relative to the
+ * current point) and its numbers, as written in the `d` attribute.
+ *
+ * | Letter | Command | Numbers |
+ * | --- | --- | --- |
+ * | `M` `L` `T` | move, line, smooth quadratic | `x y` |
+ * | `H` `V` | horizontal, vertical line | `x` or `y` |
+ * | `C` | cubic Bézier | `x1 y1 x2 y2 x y` |
+ * | `S` `Q` | smooth cubic, quadratic | `x2 y2 x y` or `x1 y1 x y` |
+ * | `A` | elliptical arc | `rx ry rotation large-arc sweep x y` |
+ * | `Z` | close the subpath | none |
+ * @since next
+ */
+export interface PathCommand {
+  type: string;
+  values: number[];
+}
