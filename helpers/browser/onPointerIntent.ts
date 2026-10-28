@@ -5,6 +5,7 @@
  */
 
 import { onAbort } from '../_shared/_onAbort.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * What a pointer is doing, passed to the handlers of {@link onPointerIntent}.
@@ -55,7 +56,7 @@ export interface PointerIntentOptions {
   /** The button that presses: `0` primary (default), `1` auxiliary, `2` secondary. */
   button?: number;
   /** Stops listening when aborted. */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

@@ -5,6 +5,7 @@
  */
 
 import { onAbort } from '../_shared/_onAbort.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options for {@link observeResize}.
@@ -12,7 +13,7 @@ import { onAbort } from '../_shared/_onAbort.js';
  */
 export interface ObserveResizeOptions {
   /** Stops observing when aborted. */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

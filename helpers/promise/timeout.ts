@@ -5,6 +5,7 @@
  */
 
 import { onAbort } from '../_shared/_onAbort.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Error thrown when a promise exceeds the specified timeout duration.
@@ -23,7 +24,7 @@ export class TimeoutError extends Error {
  */
 export interface TimeoutOptions {
   /** Clears the timer and rejects with the signal's reason when aborted, without waiting for `promise`. */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

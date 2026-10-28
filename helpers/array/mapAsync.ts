@@ -5,6 +5,7 @@
  */
 
 import { resolveAsyncArrayOptions, runConcurrentMap } from './_concurrentMap.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options for {@link mapAsync}, {@link mapSettled}, {@link filterAsync} and {@link forEachAsync}.
@@ -17,7 +18,7 @@ export interface AsyncArrayOptions {
    * Starts no new call when aborted, and rejects with the signal's reason at once, without
    * waiting for the running ones: pass the same signal to their work to cancel it too.
    */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

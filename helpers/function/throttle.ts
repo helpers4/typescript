@@ -5,6 +5,7 @@
  */
 
 import { onAbort } from '../_shared/_onAbort.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options for {@link throttle}.
@@ -12,7 +13,7 @@ import { onAbort } from '../_shared/_onAbort.js';
  */
 export interface ThrottleOptions {
   /** Drops the pending trailing call when aborted; later calls are ignored. */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

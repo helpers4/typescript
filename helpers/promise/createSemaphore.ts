@@ -6,6 +6,7 @@
 
 import { onAbort } from '../_shared/_onAbort.js';
 import { validatePositiveCount } from '../_shared/_validatePositiveCount.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /** Releases the permit this specific function was issued for. @ignore */
 type Release = () => void;
@@ -19,7 +20,7 @@ export interface AcquireOptions {
    * Gives up waiting when aborted: the caller leaves the queue and the promise rejects with the
    * signal's reason. No effect once the permit is granted — release it as usual.
    */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /** A semaphore created by {@link createSemaphore}. */
