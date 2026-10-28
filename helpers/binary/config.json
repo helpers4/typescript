@@ -1,5 +1,5 @@
 {
   "label": "Binary",
-  "smallDescription": "Read and write binary formats",
-  "description": "Decode and encode binary data without Node.js Buffer: a bounds-checked byte reader and a growable byte writer for fixed-size integers and floats, LEB128 varints, NUL-terminated strings, and the zigzag mapping for signed varints."
+  "smallDescription": "Read, write and identify binary formats",
+  "description": "Decode and encode binary data without Node.js Buffer: a bounds-checked byte reader and a growable byte writer for fixed-size integers and floats, LEB128 varints, NUL-terminated strings, and the zigzag mapping for signed varints. Also: hexadecimal output and media types, from the first bytes of an image or the extension of a path."
 }
