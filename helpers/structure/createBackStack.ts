@@ -25,8 +25,19 @@ export interface BackStack<T> {
   readonly current: T;
   /** Whether {@link back} has a previous entry to return to. */
   readonly canGoBack: boolean;
+  /**
+   * The entry {@link back} would return to, or `undefined` when there is none. Read it to compare
+   * before popping.
+   */
+  readonly previous: T | undefined;
   /** Makes `value` the current entry; the previous one is kept for {@link back}. */
   push(value: T): void;
+  /**
+   * Makes `value` the current entry without adding one: the entries underneath are kept, so
+   * {@link back} still returns to the same previous entry. For a change that is not a step to
+   * undo: an overlay closed out of order, a state that only lasts while the pointer stays.
+   */
+  replace(value: T): void;
   /**
    * Leaves the current entry for the previous one.
    * @returns The entry that was left, or `undefined` (and nothing changes) when there is no previous entry
@@ -35,8 +46,8 @@ export interface BackStack<T> {
   /** Clears the stack, with `value` (the initial entry by default) as the only entry. */
   reset(value?: T): void;
   /**
-   * Calls `listener` with the new current entry after each change (`push`, a successful `back`,
-   * `reset`).
+   * Calls `listener` with the new current entry after each change (`push`, `replace`, a successful
+   * `back`, `reset`).
    * @returns A function that removes the listener
    */
   subscribe(listener: (current: T) => void): () => void;
@@ -78,6 +89,12 @@ export function createBackStack<T>(initial: T, options: BackStackOptions = {}): 
     },
     get canGoBack() {
       return past.length > 0;
+    },
+    get previous() {
+      return past.at(-1);
+    },
+    replace(value) {
+      change(value);
     },
     push(value) {
       past.push(current);

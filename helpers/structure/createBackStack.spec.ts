@@ -31,6 +31,30 @@ describe('createBackStack — property-based', () => {
   });
 });
 
+describe('createBackStack — replace', () => {
+  it('never changes how many entries back goes through', () => {
+    fc.assert(fc.property(fc.array(fc.integer(), { maxLength: 30 }), fc.integer(), (values, replacement) => {
+      const stack = createBackStack(-1);
+      for (const value of values) stack.push(value);
+      stack.replace(replacement);
+      expect(stack.current).toBe(replacement);
+      let steps = 0;
+      while (stack.back() !== undefined) steps++;
+      expect(steps).toBe(values.length);
+    }));
+  });
+
+  it('previous is always what the next back restores', () => {
+    fc.assert(fc.property(fc.array(fc.integer(), { minLength: 1, maxLength: 30 }), (values) => {
+      const stack = createBackStack(-1);
+      for (const value of values) stack.push(value);
+      const expected = stack.previous;
+      stack.back();
+      expect(stack.current).toBe(expected);
+    }));
+  });
+});
+
 describe('createBackStack — contract', () => {
   it('stores undefined as a regular entry', () => {
     const stack = createBackStack<string | undefined>('a');

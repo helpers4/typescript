@@ -26,6 +26,22 @@ screens.current; // => 'home'`,
       },
     },
     {
+      title: 'Change the current entry without a step to undo',
+      description: 'replace() swaps the current entry and keeps the ones underneath; previous is where back() would go.',
+      code: `const screens = createBackStack('home');
+screens.push('menu');
+screens.replace('menu-closed');
+screens.previous; // => 'home'
+screens.back();   // => 'menu-closed'`,
+      assert: () => {
+        const screens = createBackStack('home');
+        screens.push('menu');
+        screens.replace('menu-closed');
+        if (screens.previous !== 'home') throw new Error('Expected previous to stay home');
+        if (screens.back() !== 'menu-closed') throw new Error('Expected back() to leave the replaced entry');
+      },
+    },
+    {
       title: 'Bound the stack',
       description: 'limit caps how many past entries are kept; the oldest are dropped first.',
       code: `const stack = createBackStack('', { limit: 1 });
