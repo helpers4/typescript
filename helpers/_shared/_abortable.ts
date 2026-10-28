@@ -5,6 +5,7 @@
  */
 
 import { onAbort } from './_onAbort.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Settles like `promise`, or rejects with the signal's reason as soon as `signal` aborts,
@@ -14,7 +15,7 @@ import { onAbort } from './_onAbort.js';
  * @returns `promise` itself without a signal
  * @ignore
  */
-export function abortable<T>(promise: Promise<T>, signal: AbortSignal | undefined): Promise<T> {
+export function abortable<T>(promise: Promise<T>, signal: AbortSignalLike | undefined): Promise<T> {
   if (!signal) return promise;
   return new Promise<T>((resolve, reject) => {
     const removeListener = onAbort(signal, reject);

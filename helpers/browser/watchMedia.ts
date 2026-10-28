@@ -5,6 +5,7 @@
  */
 
 import { onAbort } from '../_shared/_onAbort.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options for {@link watchMedia}.
@@ -12,7 +13,7 @@ import { onAbort } from '../_shared/_onAbort.js';
  */
 export interface WatchMediaOptions {
   /** Stops watching when aborted. */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

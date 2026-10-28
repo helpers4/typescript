@@ -108,6 +108,16 @@ jobs:
             exit 1
           fi
 
+      - name: Run No-DOM test
+        id: no-dom-test
+        run: |
+          if pnpm run coherency:no-dom; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
       - name: Run post-build smoke tests
         id: smoke-test
         run: |
@@ -128,6 +138,7 @@ jobs:
                 "${{ steps.dependencies-test.outputs.status }}" == "success" && \
                 "${{ steps.bundle-sizes-test.outputs.status }}" == "success" && \
                 "${{ steps.jsdoc-since-test.outputs.status }}" == "success" && \
+                "${{ steps.no-dom-test.outputs.status }}" == "success" && \
                 "${{ steps.smoke-test.outputs.status }}" == "success" ]]; then
             echo "status=success" >> $GITHUB_OUTPUT
           else

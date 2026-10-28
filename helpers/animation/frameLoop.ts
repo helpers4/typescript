@@ -5,6 +5,7 @@
  */
 
 import { onAbort } from '../_shared/_onAbort.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options for {@link frameLoop}.
@@ -18,7 +19,7 @@ export interface FrameLoopOptions {
    * is never called.
    * @since 3.1.6
    */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

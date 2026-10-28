@@ -5,6 +5,7 @@
  */
 
 import { abortable } from '../_shared/_abortable.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options for {@link parallel} and {@link parallelSettle}.
@@ -15,7 +16,7 @@ export interface ParallelOptions {
    * Starts no new function when aborted, and rejects with the signal's reason at once, without
    * waiting for the running ones: pass the same signal to their work to cancel it too.
    */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

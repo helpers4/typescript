@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import type { AbortSignalLike } from '../type/AbortSignalLike';
+
 /**
  * Options for {@link paginate}.
  * @since 3.1.5
@@ -22,7 +24,7 @@ export interface PaginateOptions {
    * signal to the request inside `fetchPage` to cancel the page in flight too.
    * @since 3.1.6
    */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

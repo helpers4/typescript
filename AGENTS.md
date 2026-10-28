@@ -34,8 +34,8 @@ pnpm release:auto
 - 100% coverage: lines, functions, branches, statements — no exceptions
 - Tree-shakable exports only (no side effects)
 - Cancellation: a helper that starts something lasting (a timer, a frame, a listener, an
-  observer, a queued wait, a loop of async calls) accepts `signal?: AbortSignal` in an options
-  object — the W3C design principle "Cancel asynchronous APIs/operations using AbortSignal".
+  observer, a queued wait, a loop of async calls) accepts `signal?: AbortSignalLike` (`helpers/type/AbortSignalLike`) in an
+  options object — the W3C design principle "Cancel asynchronous APIs/operations using AbortSignal".
   One `abort()` then stops everything a caller started, which is what an unmount, a navigation
   or a GNOME Shell `disable()` needs.
   - A returned promise rejects with `signal.reason`, at once if the signal is already aborted,
@@ -44,7 +44,11 @@ pnpm release:auto
   - Remove the abort listener once the work ends on its own, or it piles up on a long-lived signal.
   - Only touch `signal.aborted`, `signal.reason` and `add`/`removeEventListener` (see
     `helpers/_shared/_onAbort.ts`), and never reference the `AbortController` global: some
-    runtimes (GJS) only have a polyfill, or none when no signal is passed.
+    runtimes (GJS) only have a polyfill, or none when no signal is passed. That is why the option
+    type is `AbortSignalLike`, which names no DOM type: a real `AbortSignal` is assignable to it.
+  - Outside `browser`/`node`, the published `index.d.ts` of a category must compile with no DOM
+    lib and no Node types (`pnpm coherency:no-dom`). Only `promise` (`fetch*`), `url`
+    (`isExternal`) and `guard` (`isBlob`, `isFormData`) are exempt for now.
 - Breaking changes: use the real Conventional Commits `BREAKING CHANGE:` footer (own paragraph,
   literal uppercase token) — `git-cliff` (CHANGELOG.md generation, see `cliff.toml`) only detects
   that exact syntax. Prose like "Breaking change for v3." in the body is invisible to it.

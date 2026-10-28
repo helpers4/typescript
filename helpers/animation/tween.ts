@@ -8,6 +8,7 @@ import { frameLoop } from './frameLoop';
 import type { FrameLoop } from './frameLoop';
 import { interpolate } from './interpolate';
 import type { Interpolatable, Interpolated } from './interpolate';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options for {@link tween}.
@@ -36,7 +37,7 @@ export interface TweenOptions<T, V> {
    * Cancels the tween when aborted, as {@link FrameLoop.cancel} does.
    * @since 3.1.6
    */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

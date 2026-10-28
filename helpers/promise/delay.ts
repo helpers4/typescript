@@ -5,6 +5,7 @@
  */
 
 import { onAbort } from '../_shared/_onAbort.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options for {@link delay}.
@@ -12,7 +13,7 @@ import { onAbort } from '../_shared/_onAbort.js';
  */
 export interface DelayOptions {
   /** Clears the timer and rejects with the signal's reason when aborted. */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

@@ -5,6 +5,7 @@
  */
 
 import { onAbort } from '../_shared/_onAbort.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options for {@link observeIntersection}: those of `IntersectionObserver`, and a signal.
@@ -12,7 +13,7 @@ import { onAbort } from '../_shared/_onAbort.js';
  */
 export interface ObserveIntersectionOptions extends IntersectionObserverInit {
   /** Stops observing when aborted. */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

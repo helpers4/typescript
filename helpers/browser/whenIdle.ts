@@ -5,6 +5,7 @@
  */
 
 import { onAbort } from '../_shared/_onAbort.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options for {@link whenIdle}.
@@ -17,7 +18,7 @@ export interface WhenIdleOptions {
    * Cancels the callback when aborted, if it has not run yet.
    * @since 3.1.6
    */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

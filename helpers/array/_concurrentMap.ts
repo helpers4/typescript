@@ -11,6 +11,7 @@ import { abortable } from '../_shared/_abortable.js';
 import { validatePositiveCount } from '../_shared/_validatePositiveCount.js';
 import { parallel } from '../promise/parallel.js';
 import type { AsyncArrayOptions } from './mapAsync.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Reads the last argument of the async array helpers: a bare `concurrency`, or the options.
@@ -52,7 +53,7 @@ export async function runConcurrentMap<T, R>(
   items: readonly T[],
   fn: (item: T, index: number) => R | Promise<R>,
   concurrency: number | undefined,
-  signal?: AbortSignal,
+  signal?: AbortSignalLike,
 ): Promise<R[]> {
   const workerCount = resolveConcurrency(concurrency, items.length);
   if (signal?.aborted) throw signal.reason;
@@ -82,7 +83,7 @@ export async function runConcurrentEach<T>(
   items: readonly T[],
   fn: (item: T, index: number) => unknown,
   concurrency: number | undefined,
-  signal?: AbortSignal,
+  signal?: AbortSignalLike,
 ): Promise<void> {
   const workerCount = resolveConcurrency(concurrency, items.length);
   if (signal?.aborted) throw signal.reason;

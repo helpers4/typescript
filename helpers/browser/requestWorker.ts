@@ -5,6 +5,7 @@
  */
 
 import { onAbort } from '../_shared/_onAbort';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options of {@link requestWorker}.
@@ -16,7 +17,7 @@ export interface RequestWorkerOptions<Progress> {
   /** Called with each progress value the worker reports. */
   onProgress?: (progress: Progress) => void;
   /** Ends the worker and rejects with `signal.reason` once aborted. */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

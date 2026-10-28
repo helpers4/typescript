@@ -5,6 +5,7 @@
  */
 
 import { delay as wait } from './delay';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options for {@link retry}.
@@ -34,7 +35,7 @@ export interface RetryOptions {
    * work inside `fn` (a `fetch`) to cancel the running attempt too.
    * @since 3.1.6
    */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**

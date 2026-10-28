@@ -5,6 +5,7 @@
  */
 
 import { onAbort } from '../_shared/_onAbort.js';
+import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options for {@link debounce}.
@@ -12,7 +13,7 @@ import { onAbort } from '../_shared/_onAbort.js';
  */
 export interface DebounceOptions {
   /** Drops the pending call when aborted; later calls are ignored. */
-  signal?: AbortSignal;
+  signal?: AbortSignalLike;
 }
 
 /**
