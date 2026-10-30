@@ -105,6 +105,17 @@ Both forms resolve to the exact same code — pick whichever fits your project.
 
 Full API documentation is available at **[helpers4.dev/typescript](https://helpers4.dev/typescript)**.
 
+## Claude Code plugin
+
+A Claude Code plugin ships two skills: `replace-with-helpers4` scans your project for hand-written
+code that a helpers4 helper already provides and proposes the replacement, and `ci-guidelines`
+audits your GitHub Actions CI against the [helpers4 guide](https://helpers4.dev/guides/ci/).
+
+```text
+/plugin marketplace add helpers4/typescript
+/plugin install helpers4@helpers4
+```
+
 ## Development
 
 ```bash

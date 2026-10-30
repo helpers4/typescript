@@ -1,0 +1,15 @@
+{
+  "name": "helpers4",
+  "owner": {
+    "name": "helpers4",
+    "url": "https://helpers4.dev"
+  },
+  "plugins": [
+    {
+      "name": "helpers4",
+      "source": "./plugins/helpers4",
+      "description": "Find code in your project that a helpers4 helper already provides, and audit your GitHub Actions CI against the helpers4 guidelines",
+      "category": "development"
+    }
+  ]
+}

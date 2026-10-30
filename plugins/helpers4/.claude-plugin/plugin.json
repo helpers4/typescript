@@ -1,0 +1,20 @@
+{
+  "name": "helpers4",
+  "description": "Skills for projects that use helpers4: find hand-written code a helper already provides (replace-with-helpers4), and audit or build a GitHub Actions CI against the helpers4 guidelines (ci-guidelines)",
+  "version": "0.1.0",
+  "author": {
+    "name": "helpers4",
+    "url": "https://helpers4.dev"
+  },
+  "homepage": "https://helpers4.dev/typescript",
+  "repository": "https://github.com/helpers4/typescript",
+  "license": "LGPL-3.0-or-later",
+  "keywords": [
+    "typescript",
+    "helpers",
+    "utilities",
+    "refactoring",
+    "ci",
+    "github-actions"
+  ]
+}
