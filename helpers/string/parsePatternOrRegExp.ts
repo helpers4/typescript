@@ -22,7 +22,7 @@ const REGEXP_LITERAL = /^\/(.+)\/([dgimsuvy]*)$/s;
  * @example
  * parsePatternOrRegExp('SF Pro*').test('SF Pro Display') // => true
  * parsePatternOrRegExp('/^SF Pro/i').test('sf pro text') // => true
- * @since next
+ * @since 3.1.10
  */
 export function parsePatternOrRegExp(pattern: string, options: MatchGlobOptions = {}): RegExp {
   const literal = REGEXP_LITERAL.exec(pattern);

@@ -6,7 +6,7 @@
 
 /**
  * One field of a deb822 stanza, with the name spelled as in the source.
- * @since next
+ * @since 3.1.10
  */
 export interface Deb822Field {
   /** The field name, in its original case (`Package`, `SHA256`, `X-Foo`). */
@@ -23,7 +23,7 @@ export interface Deb822Field {
  * lower-cased name because Debian field names are case-insensitive (Policy 5.1), so a lookup is
  * `stanza.fields[name.toLowerCase()]`, and a plain object stays serialisable and diff-friendly,
  * where a `get()` method would not survive `JSON.stringify` or a structured clone.
- * @since next
+ * @since 3.1.10
  */
 export interface Deb822Stanza {
   /** Every field in source order, original spelling, duplicates kept. */
@@ -36,7 +36,7 @@ export interface Deb822Stanza {
 
 /**
  * Options for {@link parseDeb822}.
- * @since next
+ * @since 3.1.10
  */
 export interface Deb822Options {
   /** Throw a `SyntaxError` on a line that is not a field, instead of collecting it in `unparsed`. Defaults to `false`. */
@@ -85,7 +85,7 @@ const FIELD_RE = /^([^\s:#-][^\s:]*):(.*)$/;
  * pkg.entries[0];         // { name: 'Package', value: 'zlib1g' }
  * ```
  *
- * @since next
+ * @since 3.1.10
  */
 export function parseDeb822(text: string, options: Deb822Options = {}): Deb822Stanza[] {
   const stanzas: Deb822Stanza[] = [];

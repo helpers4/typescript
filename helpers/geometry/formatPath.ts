@@ -15,7 +15,7 @@ import type { PathCommand } from './types';
  * @returns The path data
  * @example
  * formatPath([{ type: 'M', values: [0, 0.5] }, { type: 'L', values: [10, 1 / 3] }]) // => 'M0 0.5 L10 0.333333'
- * @since next
+ * @since 3.1.10
  */
 export function formatPath(commands: readonly PathCommand[], precision = 6): string {
   const write = (n: number): string => String(Number(n.toFixed(precision)) + 0);

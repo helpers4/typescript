@@ -17,7 +17,7 @@ import type { PathCommand, Rect } from './types';
  * @example
  * roundedRectPath({ x: 0, y: 0, width: 10, height: 10 }, 0) // => 'M0 0 L10 0 L10 10 L0 10 L0 0 Z'
  * roundedRectPath({ x: 0, y: 0, width: 10, height: 10 }, [5, 0, 0, 0]) // => 'M5 0 L10 0 L10 10 L0 10 L0 5 A5 5 0 0 1 5 0 Z'
- * @since next
+ * @since 3.1.10
  */
 export function roundedRectPath(rect: Rect, radius: number | readonly [number, number, number, number]): string {
   const limit = Math.min(rect.width, rect.height) / 2;

@@ -6,13 +6,13 @@
 
 /**
  * What {@link createFileStore} accepts as a file's content.
- * @since next
+ * @since 3.1.10
  */
 export type FileContent = Blob | BufferSource | string;
 
 /**
  * A set of files kept in the browser's Cache API under a key, created by {@link createFileStore}.
- * @since next
+ * @since 3.1.10
  */
 export interface FileStore {
   /**
@@ -58,7 +58,7 @@ async function remove(cache: Cache, key: string): Promise<boolean> {
  * const store = createFileStore('bakes');
  * await store.put('design-1', { 'a.png': blob, 'index.json': '{}' }, 'v3');
  * const files = await store.get('design-1', 'v3'); // => { 'a.png': Blob, 'index.json': Blob }
- * @since next
+ * @since 3.1.10
  */
 export function createFileStore(name: string): FileStore {
   const open = (): Promise<Cache> | undefined => (typeof globalThis.caches === 'undefined' ? undefined : globalThis.caches.open(name));

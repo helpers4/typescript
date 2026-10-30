@@ -14,7 +14,7 @@ import type { RgbColor } from './hexToRgb';
  * @returns The color with `r`, `g`, `b` from `0` to `1`
  * @example
  * rgbToUnit({ r: 255, g: 51, b: 0 }) // => { r: 1, g: 0.2, b: 0, a: 1 }
- * @since next
+ * @since 3.1.10
  */
 export function rgbToUnit({ r, g, b, a = 1 }: RgbColor): RgbColor {
   return { r: r / 255, g: g / 255, b: b / 255, a };

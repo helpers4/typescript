@@ -59,7 +59,7 @@ export interface Matrix {
  * | `S` `Q` | smooth cubic, quadratic | `x2 y2 x y` or `x1 y1 x y` |
  * | `A` | elliptical arc | `rx ry rotation large-arc sweep x y` |
  * | `Z` | close the subpath | none |
- * @since next
+ * @since 3.1.10
  */
 export interface PathCommand {
   type: string;

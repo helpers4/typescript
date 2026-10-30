@@ -16,7 +16,7 @@ import type { Matrix, Rect } from './types';
  * @example
  * rectToRect({ x: 0, y: 0, width: 10, height: 10 }, { x: 5, y: 5, width: 20, height: 10 })
  * // => { a: 2, b: 0, c: 0, d: 1, e: 5, f: 5 }
- * @since next
+ * @since 3.1.10
  */
 export function rectToRect(from: Rect, to: Rect): Matrix {
   const a = from.width === 0 ? 1 : to.width / from.width;

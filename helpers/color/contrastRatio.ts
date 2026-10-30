@@ -21,7 +21,7 @@ import { relativeLuminance } from './relativeLuminance';
  * contrastRatio({ r: 0, g: 0, b: 0 }, { r: 255, g: 255, b: 255 }) // => 21
  * @example
  * contrastRatio({ r: 119, g: 119, b: 119 }, { r: 255, g: 255, b: 255 }) >= 4.5 // => false (about 4.48)
- * @since next
+ * @since 3.1.10
  */
 export function contrastRatio(foreground: RgbColor, background: RgbColor): number {
   const a = relativeLuminance(foreground);

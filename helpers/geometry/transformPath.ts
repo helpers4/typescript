@@ -21,7 +21,7 @@ import type { Matrix } from './types';
  * @throws {SyntaxError} If `d` is not valid path data — see {@link parsePath}
  * @example
  * transformPath('M0 0 h10 v10 z', translate(5, 5)) // => 'M5 5 L15 5 L15 15 Z'
- * @since next
+ * @since 3.1.10
  */
 export function transformPath(d: string, m: Matrix, precision = 6): string {
   const moved = normalizePath(parsePath(d)).map(({ type, values }) => ({

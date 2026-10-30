@@ -50,7 +50,7 @@ import type {
  * // 'libc6 (>= 2.34), python3:any | python3'
  * ```
  *
- * @since next
+ * @since 3.1.10
  */
 export function stringifyDependencies<Format extends DependencyFormat>(
   groups: readonly DependencyGroup<DependencyOf<NoInfer<Format>>>[],

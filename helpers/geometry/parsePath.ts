@@ -24,7 +24,7 @@ const FLAG = /[01]/y;
  * @example
  * parsePath('M0 0h10v10z')
  * // => [{ type: 'M', values: [0, 0] }, { type: 'h', values: [10] }, { type: 'v', values: [10] }, { type: 'z', values: [] }]
- * @since next
+ * @since 3.1.10
  */
 export function parsePath(d: string): PathCommand[] {
   const commands: PathCommand[] = [];

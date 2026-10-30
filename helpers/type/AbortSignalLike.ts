@@ -21,7 +21,7 @@
  *   removeEventListener: (_type, listener) => listeners.delete(listener),
  * };
  * await delay(1000, { signal });
- * @since next
+ * @since 3.1.10
  */
 export interface AbortSignalLike {
   /** Whether the work is cancelled. */

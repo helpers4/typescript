@@ -6,7 +6,7 @@
 
 /**
  * Options for {@link isHostname}.
- * @since next
+ * @since 3.1.10
  */
 export interface IsHostnameOptions {
   /** Accept one trailing dot (fully qualified name such as `example.com.`). Default `false`. */
@@ -49,7 +49,7 @@ const MAX_LABEL_LENGTH = 63;
  * isHostname('example.com.', { allowTrailingDot: true })      // => true
  * isHostname('_dmarc.example.com', { allowUnderscore: true }) // => true
  * isHostname('example.com:80')                                // => false
- * @since next
+ * @since 3.1.10
  */
 export function isHostname(value: unknown, options: IsHostnameOptions = {}): value is string {
   if (typeof value !== 'string') return false;

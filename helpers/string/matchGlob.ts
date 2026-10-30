@@ -8,7 +8,7 @@ import { globToRegExp } from './globToRegExp';
 
 /**
  * Options for {@link matchGlob} and {@link parsePatternOrRegExp}.
- * @since next
+ * @since 3.1.10
  */
 export interface MatchGlobOptions {
   /** Ignores case when matching a glob. Defaults to `false`. */
@@ -29,7 +29,7 @@ export interface MatchGlobOptions {
  * @example
  * matchGlob('*.fig', 'design.fig') // => true
  * matchGlob('screen *', 'Screen 2', { caseInsensitive: true }) // => true
- * @since next
+ * @since 3.1.10
  */
 export function matchGlob(pattern: string, text: string, options: MatchGlobOptions = {}): boolean {
   return globToRegExp(pattern, { caseSensitive: !options.caseInsensitive, extended: options.extended }).test(text);

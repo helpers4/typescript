@@ -15,7 +15,7 @@ import type { Rect } from './types';
  * @returns The path data, closed
  * @example
  * ellipsePath({ x: 0, y: 0, width: 10, height: 6 }) // => 'M0 3 A5 3 0 0 1 10 3 A5 3 0 0 1 0 3 Z'
- * @since next
+ * @since 3.1.10
  */
 export function ellipsePath({ x, y, width, height }: Rect): string {
   const rx = width / 2;

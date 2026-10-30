@@ -8,6 +8,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.1.10] - 2026-10-30
+
+### 🚀 Features
+- **binary**: add mediaTypeOf, mediaTypeOfPath and toHex
+- **browser**: add requestWorker, createFileStore and sha256Hex
+- **color**: add non-separable blend modes, unitToRgb and rgbToUnit
+- **color**: add relativeLuminance, contrastRatio and mixColors
+- **debian**: add the debian category with parseDeb822, parseRelationships and stringifyRelationships
+- **geometry**: add SVG path helpers and rectToRect
+- **guard**: add isHostname
+- **package**: cover every dependency format in the public tests, examples and benchmark
+- **package**: add the pep508 dependency format
+- **package**: add the alpine dependency format
+- **package**: add the arch dependency format
+- **package**: add the rpm dependency format
+- **package**: keep Debian's own operators and add a compat option for the obsolete ones
+- **presets**: add the @helpers4/presets package of shared tool configs
+- **string**: add matchGlob and parsePatternOrRegExp
+- **structure**: add replace and previous to createBackStack
+- **type**: add AbortSignalLike and use it for every signal option
+
+### 🐛 Bug Fixes
+- **color**: make mixColors throw a RangeError for a NaN percent
+- **deps**: run benchmarks on the built packages with shared run options
+- **string**: read the re: and glob: prefixes only with the auto syntax
+- publish every package under LGPL-3.0-or-later
+
+### 🔧 Miscellaneous
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+- **deps-dev**: bump the dev-dependencies group with 2 updates
+- **helpers4**: add the debian commit scope
+
+### ♻️ Refactoring
+- **helpers4**: rewrite every benchmark for Vitest 5
+- **package**: type parseDependencies and stringifyDependencies per format
+- **package**: make the debian category a package category with format-independent dependency helpers
+
+### 📝 Documentation
+- **agents**: describe the Vitest 5 benchmark template and its rules
+
+### 📦 Build
+- refuse a category named all, helpers4 or presets
+
+### 👷 CI/CD
+- **CI-CD**: read the benchmark summary from Vitest's JSON report
+
+### 📌 Dependencies
+- **deps**: bump github/codeql-action/upload-sarif
+
 ## [3.1.9] - 2026-10-25
 
 ### 🚀 Features
@@ -18,6 +72,9 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 ### 🐛 Bug Fixes
 - **version**: keep hyphens inside SemVer prerelease identifiers when parsing
+
+### 🔧 Miscellaneous
+- **CI-CD**: refresh mutation testing incremental baseline
 
 ### ✅ Tests
 - **string**: give deobfuscate its own test and spec files
@@ -1314,6 +1371,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.1.10]: https://github.com/helpers4/typescript/compare/v3.1.9...v3.1.10
 [3.1.9]: https://github.com/helpers4/typescript/compare/v3.1.8...v3.1.9
 [3.1.8]: https://github.com/helpers4/typescript/compare/v3.1.7...v3.1.8
 [3.1.7]: https://github.com/helpers4/typescript/compare/v3.1.6...v3.1.7

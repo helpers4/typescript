@@ -7,7 +7,7 @@
 /**
  * A version constraint such as the `(>= 2.34)` of `libc6 (>= 2.34)`, with the operator spelled as
  * the format spells it.
- * @since next
+ * @since 3.1.10
  */
 export interface DependencyConstraint<Operator extends string = string> {
   /** The comparison operator. */
@@ -19,13 +19,13 @@ export interface DependencyConstraint<Operator extends string = string> {
 /**
  * The operators of a Debian version constraint (Debian Policy 7.1): `<<` (strictly earlier), `<=`,
  * `=`, `>=` and `>>` (strictly later).
- * @since next
+ * @since 3.1.10
  */
 export type DebianOperator = '<<' | '<=' | '=' | '>=' | '>>';
 
 /**
  * The operators of an RPM or Arch Linux version constraint.
- * @since next
+ * @since 3.1.10
  */
 export type ComparisonOperator = '<' | '<=' | '=' | '>=' | '>';
 
@@ -33,19 +33,19 @@ export type ComparisonOperator = '<' | '<=' | '=' | '>=' | '>';
  * The operators of an Alpine (apk) version constraint, as apk writes them: the five comparisons;
  * `~`, a fuzzy match (`foo~1.2` accepts `1.2.5`), and its ordered variants `<~` and `>~`; and `><`,
  * a checksum comparison used by package indexes.
- * @since next
+ * @since 3.1.10
  */
 export type AlpineOperator = ComparisonOperator | '~' | '<~' | '>~' | '><';
 
 /**
  * The operators of a PEP 440 version specifier, as PEP 508 requirements use them.
- * @since next
+ * @since 3.1.10
  */
 export type Pep508Operator = '~=' | '==' | '!=' | '<=' | '>=' | '<' | '>' | '===';
 
 /**
  * One package reference of a Debian relationship field: `name[:arch] [(op version)] [[archs]] [<profiles>]`.
- * @since next
+ * @since 3.1.10
  */
 export interface DebianDependency {
   /** The package name. */
@@ -65,7 +65,7 @@ export interface DebianDependency {
 
 /**
  * One package reference of an RPM `Requires` field.
- * @since next
+ * @since 3.1.10
  */
 export interface RpmDependency {
   /** The capability name: a package, a file path (`/usr/bin/perl`), `perl(Foo::Bar)`, `libfoo.so.1()(64bit)`... */
@@ -76,7 +76,7 @@ export interface RpmDependency {
 
 /**
  * One package reference of an Arch Linux `depends` array.
- * @since next
+ * @since 3.1.10
  */
 export interface ArchDependency {
   /** The package or provided name. */
@@ -87,7 +87,7 @@ export interface ArchDependency {
 
 /**
  * One package reference of an Alpine (apk) `depends` list.
- * @since next
+ * @since 3.1.10
  */
 export interface AlpineDependency {
   /** The package or virtual name (`so:libfoo.so.1`, `cmd:bash`, `pc:glib-2.0` included). */
@@ -100,7 +100,7 @@ export interface AlpineDependency {
 
 /**
  * One requirement of a PEP 508 dependency specification.
- * @since next
+ * @since 3.1.10
  */
 export interface Pep508Dependency {
   /** The distribution name, as written. */
@@ -117,7 +117,7 @@ export interface Pep508Dependency {
 
 /**
  * Options of the Debian format of {@link parseDependencies}.
- * @since next
+ * @since 3.1.10
  */
 export interface DebianDependencyOptions {
   /**
@@ -132,7 +132,7 @@ export interface DebianDependencyOptions {
 /**
  * For each supported format, the shape of one dependency and the options its parser takes. This is
  * what makes {@link parseDependencies} and {@link stringifyDependencies} type-safe per format.
- * @since next
+ * @since 3.1.10
  */
 export interface DependencyFormats {
   debian: { dependency: DebianDependency; options: DebianDependencyOptions };
@@ -144,27 +144,27 @@ export interface DependencyFormats {
 
 /**
  * The formats of dependency fields: `'debian'`, `'rpm'`, `'arch'`, `'alpine'` and `'pep508'`.
- * @since next
+ * @since 3.1.10
  */
 export type DependencyFormat = keyof DependencyFormats;
 
 /**
  * The dependency type of a format.
- * @since next
+ * @since 3.1.10
  */
 export type DependencyOf<Format extends DependencyFormat> = DependencyFormats[Format]['dependency'];
 
 /**
  * The alternatives (`a | b`) that satisfy one entry of a dependency field. A format without
  * alternatives (`'arch'`, `'alpine'`, `'pep508'`) always has a single one.
- * @since next
+ * @since 3.1.10
  */
 export type DependencyGroup<Dependency> = Dependency[];
 
 /**
  * The extra arguments of {@link parseDependencies}: the options of the format if it has some, none
  * otherwise.
- * @since next
+ * @since 3.1.10
  */
 export type ParseDependenciesOptions<Format extends DependencyFormat> = DependencyFormats[Format]['options'] extends undefined
   ? []

@@ -25,7 +25,7 @@ import { unpremultiply } from './unpremultiply';
  * mixColors({ r: 255, g: 0, b: 0 }, { r: 0, g: 0, b: 255 }, 25) // => { r: 64, g: 0, b: 191, a: 1 }
  * @example
  * mixColors({ r: 255, g: 0, b: 0, a: 0.5 }, { r: 0, g: 0, b: 255 }) // => { r: 85, g: 0, b: 170, a: 0.75 }
- * @since next
+ * @since 3.1.10
  */
 export function mixColors(color: RgbColor, base: RgbColor, percent = 50): RgbColor {
   if (Number.isNaN(percent)) throw new RangeError('mixColors: percent must be a number');

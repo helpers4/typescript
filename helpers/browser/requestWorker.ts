@@ -9,7 +9,7 @@ import type { AbortSignalLike } from '../type/AbortSignalLike';
 
 /**
  * Options of {@link requestWorker}.
- * @since next
+ * @since 3.1.10
  */
 export interface RequestWorkerOptions<Progress> {
   /** Objects moved to the worker with the request instead of copied. */
@@ -23,7 +23,7 @@ export interface RequestWorkerOptions<Progress> {
 /**
  * What a worker answers to {@link requestWorker}, through `postMessage`: any number of
  * `{ type: 'progress', value }`, then one `{ type: 'result', value }` or `{ type: 'error', message }`.
- * @since next
+ * @since 3.1.10
  */
 export type WorkerReply<Result, Progress = never> =
   | { type: 'progress'; value: Progress }
@@ -51,7 +51,7 @@ export type WorkerReply<Result, Progress = never> =
  *   { file: 'design.fig' },
  *   { onProgress: (done) => bar.update(done) },
  * );
- * @since next
+ * @since 3.1.10
  */
 export function requestWorker<Request, Result, Progress = never>(
   worker: string | URL | (() => Worker),

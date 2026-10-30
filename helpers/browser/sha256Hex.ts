@@ -18,7 +18,7 @@ import { toHex } from '../binary/toHex';
  * @throws {RangeError} (as a rejection) If `length` is not an integer from `1` to `64`
  * @example
  * await sha256Hex(new TextEncoder().encode('abc'), 8) // => 'ba7816bf'
- * @since next
+ * @since 3.1.10
  */
 export async function sha256Hex(data: BufferSource, length = 16): Promise<string> {
   if (!Number.isInteger(length) || length < 1 || length > 64) {

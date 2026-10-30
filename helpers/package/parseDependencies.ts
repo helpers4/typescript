@@ -64,7 +64,7 @@ import type { DebianDependencyOptions, DependencyFormat, DependencyGroup, Depend
  * // ]
  * ```
  *
- * @since next
+ * @since 3.1.10
  */
 export function parseDependencies<Format extends DependencyFormat>(
   field: string,

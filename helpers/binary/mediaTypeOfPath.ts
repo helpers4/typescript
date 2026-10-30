@@ -47,7 +47,7 @@ const TYPES: Record<string, string> = {
  * @example
  * mediaTypeOfPath('layers/a@2x.webp') // => 'image/webp'
  * mediaTypeOfPath('/fonts/Inter.WOFF2?v=3') // => 'font/woff2'
- * @since next
+ * @since 3.1.10
  */
 export function mediaTypeOfPath(path: string): string | undefined {
   const name = path.split(/[?#]/, 1)[0]!.split(/[\\/]/).pop()!;

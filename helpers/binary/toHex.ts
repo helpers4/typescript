@@ -14,7 +14,7 @@ const HEX = Array.from({ length: 256 }, (_, i) => i.toString(16).padStart(2, '0'
  * @returns The hex string, twice as long as `bytes`
  * @example
  * toHex(new Uint8Array([0, 15, 255])) // => '000fff'
- * @since next
+ * @since 3.1.10
  */
 export function toHex(bytes: Uint8Array): string {
   let out = '';

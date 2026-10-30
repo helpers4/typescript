@@ -19,7 +19,7 @@ const ascii = (text: string): number[] => Array.from(text, (c) => c.charCodeAt(0
  * @returns The media type (`'image/png'`, ...), or `undefined` when it is none of these
  * @example
  * mediaTypeOf(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) // => 'image/png'
- * @since next
+ * @since 3.1.10
  */
 export function mediaTypeOf(bytes: Uint8Array): string | undefined {
   if (startsWith(bytes, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) return 'image/png';

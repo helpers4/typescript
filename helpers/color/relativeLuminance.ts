@@ -22,7 +22,7 @@ function linearize(channel: number): number {
  * relativeLuminance({ r: 255, g: 0, b: 0 }) // => 0.2126
  * @example
  * relativeLuminance({ r: 0, g: 0, b: 0 }) // => 0
- * @since next
+ * @since 3.1.10
  */
 export function relativeLuminance({ r, g, b }: RgbColor): number {
   return 0.2126 * linearize(r) + 0.7152 * linearize(g) + 0.0722 * linearize(b);
