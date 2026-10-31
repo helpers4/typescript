@@ -22,7 +22,7 @@ import * as path from 'node:path';
 const EXEMPT: Record<string, string> = {
   browser: 'DOM APIs by design',
   node: 'Node.js APIs by design',
-  guard: 'isBlob and isFormData name Blob and FormData',
+  guard: 'isBlob and isFormData name Blob and FormData (known limitation, see AGENTS.md)',
   fetch: 'wraps the Fetch API, so it names RequestInit and Response',
   promise: 'the deprecated fetchJson, fetchOrThrow and safeFetch aliases name RequestInit, Response and URL until v4 removes them',
 };
