@@ -30,6 +30,16 @@ describe('isExternal', () => {
   it('accepts a URL object as base', () => {
     expect(isExternal('https://example.com/a', new URL('https://example.com'))).toBe(false);
     expect(isExternal('https://other.com', new URL('https://example.com'))).toBe(true);
+    expect(isExternal('https://other.com', { href: 'https://example.com' })).toBe(true);
+  });
+
+  it('treats the default port of the scheme as no port, and ignores case and userinfo', () => {
+    expect(isExternal('https://example.com:443/a', 'https://example.com')).toBe(false);
+    expect(isExternal('http://example.com:80', 'http://example.com')).toBe(false);
+    expect(isExternal('https://EXAMPLE.com/a', 'https://example.com')).toBe(false);
+    expect(isExternal('https://user:pw@example.com/a', 'https://example.com')).toBe(false);
+    expect(isExternal('https://[::1]:8080/a', 'https://[::1]:8080')).toBe(false);
+    expect(isExternal('https://[::1]:8080/a', 'https://[::1]')).toBe(true);
   });
 
   it('treats another scheme, port or subdomain as another origin', () => {
@@ -50,5 +60,7 @@ describe('isExternal', () => {
   it('returns false when the URL or base cannot be parsed', () => {
     expect(isExternal('http://', 'https://example.com')).toBe(false);
     expect(isExternal('https://example.com', 'not a url')).toBe(false);
+    expect(isExternal('//example.com', '//example.com')).toBe(false);
+    expect(isExternal('https://example.com:', 'https://other.com')).toBe(true);
   });
 });
