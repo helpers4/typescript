@@ -49,7 +49,10 @@ pnpm release:auto
   - Outside `browser`/`node`, the published `index.d.ts` of a category must compile with no DOM
     lib and no Node types (`pnpm coherency:no-dom`). Only `fetch` (it wraps the Fetch API),
     `promise` (the deprecated `fetch*` aliases, until v4 removes them) and `guard` (`isBlob`,
-    `isFormData`) are exempt for now.
+    `isFormData`) are exempt for now. The `guard` exemption is a known limitation, left as is on
+    purpose: structural types would change the narrowed type for callers that have the DOM, moving
+    the two helpers to `browser` would break imports, and a polyfill would not fix the compile
+    error. Revisit for v4.
 - Breaking changes: use the real Conventional Commits `BREAKING CHANGE:` footer (own paragraph,
   literal uppercase token) — `git-cliff` (CHANGELOG.md generation, see `cliff.toml`) only detects
   that exact syntax. Prose like "Breaking change for v3." in the body is invisible to it.
