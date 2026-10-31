@@ -30,9 +30,7 @@
     "{{methods}}"
   ],
   "files": [
-    "lib/index.js",
-    "lib/index.d.ts",
-    "lib/index.js.map",
+    "lib/",
     "meta/",
     "llms.txt",
     "LICENSE.md",

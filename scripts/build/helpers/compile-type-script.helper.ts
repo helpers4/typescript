@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
-import { basename } from "node:path";
+import { basename, dirname } from "node:path";
 import { readFile, writeFile } from "node:fs/promises";
 import { builtinModules } from "node:module";
 import { build, type InlineConfig } from 'vite';
@@ -50,7 +50,11 @@ export async function compileTypeScript(filePath: string, outDir: string) {
         rollupOptions: {
           external: EXTERNAL_DEPS,
           output: {
-            preserveModules: false,
+            // One file per helper, so a bundler can split a category across chunks
+            // (a single module cannot be split; `sideEffects: false` then keeps unused files out).
+            preserveModules: true,
+            preserveModulesRoot: dirname(filePath),
+            entryFileNames: '[name].js',
           }
         },
         minify: false,
