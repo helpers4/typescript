@@ -52,7 +52,7 @@ export async function buildCategories(): Promise<string[]> {
       // Create an index.ts to export all methods
       const indexFilePath = await createIndexFile(categoryPath, tsFiles);
 
-      // Compile everything into a single bundled index.js and generate proper .d.ts
+      // Compile one file per helper plus index.js (so bundlers can split a category) and a bundled .d.ts
       await compileTypeScript(indexFilePath, libDir);
 
       // Copy static files
