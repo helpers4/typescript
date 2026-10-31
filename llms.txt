@@ -1,6 +1,6 @@
 # @helpers4/typescript
 
-> Zero-dependency, tree-shakable TypeScript utility functions. Each of the 18 categories below
+> Zero-dependency, tree-shakable TypeScript utility functions. Each category below
 > ships as its own npm package (`@helpers4/<category>`); `@helpers4/all` bundles everything as
 > peerDependencies (documentation only, no code of its own); `helpers4` bundles everything as
 > real dependencies with per-category subpaths — install once, get every category, no follow-up
@@ -28,22 +28,32 @@
 
 - animation — animation timing: `parseEasing` (any CSS easing), `cubicBezier`, `steps`, springs, CSS `linear()`, `interpolate`, `tween`, `frameLoop`
 - array — array manipulation, chunking, comparison
+- binary — read, write and identify binary formats
 - browser — browser APIs safe to import anywhere: media queries, ResizeObserver, image decoding, fonts, idle callbacks
 - ci — CI/CD workflow status formatting (PR comments, pipeline reports)
 - color — color conversion and validation
 - commit — Conventional Commits parsing, validation, analysis
 - date — date/time utilities, comparison, validation
+- fetch — fetch wrappers: status errors, JSON bodies, retries
+- font — font selection helpers
 - function — function composition and wrappers (memoize, retry, debounce, …)
+- geography — geographic coordinates helpers
 - geometry — 2D points, rectangles, affine matrices, `fit` (CSS object-fit), `matrixToCss`, polyline simplification
 - guard — runtime type guards (`isString`, `isArray`, `isDefined`, …)
 - id — unique identifier generation (UUID v7, …)
+- json — JSON parsing and serialization, with its common variants
+- license — license string classification and comparison
+- map — native Map manipulation utilities
 - markdown — Markdown formatting/escaping
 - node — Node.js-specific utilities
 - number — numeric operations and formatting
 - object — object manipulation, deep comparison, merging, path get/set
 - observable — RxJS Observable helpers and operators
+- package — package metadata parsers
 - promise — promise utilities: retry, delay, timeout, error handling
+- set — native Set manipulation utilities
 - string — string manipulation: capitalize, slugify, camelCase, …
+- structure — generic, domain-agnostic data structures
 - type — compile-time-only TypeScript utility types (`DeepPartial`, `Maybe`, `Prettify`, …)
 - url — URL parsing, manipulation, normalization
 - version — semantic version parsing and comparison
