@@ -185,3 +185,29 @@ export async function testSourceStructure(): Promise<void> {
 
   console.log(`  ✅ Source category structure check passed`);
 }
+
+/**
+ * Test that every category is listed in the README package table and in the root llms.txt,
+ * which are written by hand and otherwise drift as categories are added.
+ */
+export async function testCategoriesListed(): Promise<void> {
+  console.log("  📋 Checking README.md and llms.txt list every category...");
+
+  const root = process.cwd();
+  const categories = await listHelperCategories(path.resolve(root, 'helpers'));
+  const readme = await fs.readFile(path.resolve(root, 'README.md'), 'utf8');
+  const llms = await fs.readFile(path.resolve(root, 'llms.txt'), 'utf8');
+
+  const missingFromReadme = categories.filter(category => !readme.includes(`[\`@helpers4/${category}\`]`));
+  const missingFromLlms = categories.filter(category => !llms.includes(`\n- ${category} — `));
+
+  const problems = [
+    missingFromReadme.length > 0 && `README.md package table is missing: ${missingFromReadme.join(', ')}`,
+    missingFromLlms.length > 0 && `llms.txt "Packages" list is missing: ${missingFromLlms.join(', ')}`,
+  ].filter(Boolean);
+  if (problems.length > 0) {
+    throw new Error(problems.join('; '));
+  }
+
+  console.log(`  ✅ README.md and llms.txt list all ${categories.length} categories`);
+}
