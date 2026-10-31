@@ -10,7 +10,7 @@ import type { RetryOptions } from '../promise/retry';
 
 /**
  * Options for {@link fetchJson}.
- * @since next
+ * @since 3.1.11
  */
 export interface FetchJsonOptions {
   /**
@@ -55,7 +55,7 @@ function isTransient(error: unknown): boolean {
  *   retry: { attempts: 5, delayMs: (attempt) => 500 * 2 ** (attempt - 1) },
  * })
  * @see {@link safeFetch} for a version that returns `null` instead of throwing
- * @since next
+ * @since 3.1.11
  */
 export async function fetchJson<T>(
   input: RequestInfo | URL,

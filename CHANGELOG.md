@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
 
+## [3.1.11] - 2026-10-31
+
+### 🚀 Features
+- **fetch**: add the fetch category and move the fetch helpers out of promise
+- **url**: let isExternal run without a URL global
+
+### 🐛 Bug Fixes
+- **CI-CD**: build one file per helper so bundlers can split a category
+- **coherency**: list every category in llms.txt and the README, and check it
+- **security**: bump glob to 14 and override minimatch to fix the audit
+
+### 🔧 Miscellaneous
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+
+### 📝 Documentation
+- **guard**: document that isBlob and isFormData need the DOM types
+
+### 📌 Dependencies
+- **deps**: migrate to pnpm 12
+
 ## [3.1.10] - 2026-10-30
 
 ### 🚀 Features
@@ -1371,6 +1392,7 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 - **monorepo**: Import libs from dedicated repos
 
 ## [1.9.9] - 2024-02-24
+[3.1.11]: https://github.com/helpers4/typescript/compare/v3.1.10...v3.1.11
 [3.1.10]: https://github.com/helpers4/typescript/compare/v3.1.9...v3.1.10
 [3.1.9]: https://github.com/helpers4/typescript/compare/v3.1.8...v3.1.9
 [3.1.8]: https://github.com/helpers4/typescript/compare/v3.1.7...v3.1.8
