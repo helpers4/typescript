@@ -9,7 +9,7 @@ import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
   helper: 'fetchOrThrow',
-  category: 'promise',
+  category: 'fetch',
   examples: [
     {
       title: 'Fail loud on a non-2xx response',

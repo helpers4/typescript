@@ -1,0 +1,5 @@
+{
+  "label": "Fetch",
+  "smallDescription": "fetch wrappers: status errors, JSON bodies, retries",
+  "description": "Helpers around the Fetch API: throw a typed HttpError on a non-2xx status, read a JSON body with retries on transient failures, or get null instead of an exception. They use the global fetch, so they run wherever it exists (browsers, Node.js, Deno, Bun)."
+}

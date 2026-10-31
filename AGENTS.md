@@ -47,8 +47,9 @@ pnpm release:auto
     runtimes (GJS) only have a polyfill, or none when no signal is passed. That is why the option
     type is `AbortSignalLike`, which names no DOM type: a real `AbortSignal` is assignable to it.
   - Outside `browser`/`node`, the published `index.d.ts` of a category must compile with no DOM
-    lib and no Node types (`pnpm coherency:no-dom`). Only `promise` (`fetch*`), `url`
-    (`isExternal`) and `guard` (`isBlob`, `isFormData`) are exempt for now.
+    lib and no Node types (`pnpm coherency:no-dom`). Only `fetch` (it wraps the Fetch API),
+    `promise` (the deprecated `fetch*` aliases, until v4 removes them) and `guard` (`isBlob`,
+    `isFormData`) are exempt for now.
 - Breaking changes: use the real Conventional Commits `BREAKING CHANGE:` footer (own paragraph,
   literal uppercase token) — `git-cliff` (CHANGELOG.md generation, see `cliff.toml`) only detects
   that exact syntax. Prose like "Breaking change for v3." in the body is invisible to it.

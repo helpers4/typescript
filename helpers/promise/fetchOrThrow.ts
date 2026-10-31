@@ -4,35 +4,27 @@
  * SPDX-License-Identifier: LGPL-3.0-or-later
  */
 
+import { HttpError as FetchHttpError, fetchOrThrow as fetchOrThrowImpl } from '../fetch/fetchOrThrow';
+
 /**
  * Error thrown by {@link fetchOrThrow} when the server answers with a non-2xx status.
- * Carries the status and the response itself, so a caller can still read its body.
+ *
+ * It is the very same class as `HttpError` from `@helpers4/fetch`, so `instanceof` works with
+ * either import.
+ *
+ * @deprecated Use `HttpError` from `@helpers4/fetch` instead — same class. This alias will be
+ * removed in v4.
  * @since 3.1.3
  */
-export class HttpError extends Error {
-  /** HTTP status code, e.g. `404`. */
-  readonly status: number;
-  /** HTTP status text, e.g. `'Not Found'` (often empty over HTTP/2). */
-  readonly statusText: string;
-  /** The URL that was requested — the final one, after redirects, when the response knows it. */
-  readonly url: string;
-  /** The response itself, body unread. */
-  readonly response: Response;
-
-  constructor(response: Response, url: string) {
-    super(`HTTP ${response.status}${response.statusText ? ` ${response.statusText}` : ''}: ${url}`);
-    this.name = 'HttpError';
-    this.status = response.status;
-    this.statusText = response.statusText;
-    this.url = url;
-    this.response = response;
-  }
-}
+export const HttpError = FetchHttpError;
+/**
+ * @deprecated Use `HttpError` from `@helpers4/fetch` instead. This alias will be removed in v4.
+ * @since 3.1.3
+ */
+export type HttpError = FetchHttpError;
 
 /**
- * Wraps `fetch` so that a non-2xx response rejects with an {@link HttpError}, instead of
- * resolving like any other response — the throwing counterpart to `safeFetch`, for when a
- * failed request should fail loud. Network errors reject as `fetch` itself rejects them.
+ * Wraps `fetch` so that a non-2xx response rejects with an {@link HttpError}.
  *
  * @param input - URL or `Request` object passed to `fetch`
  * @param init - Optional `RequestInit` options passed to `fetch`
@@ -40,24 +32,10 @@ export class HttpError extends Error {
  * @throws {HttpError} When the response status is not 2xx
  * @example
  * const response = await fetchOrThrow('https://api.example.com/repo');
- * const repo = await response.json();
- * @example
- * try {
- *   await fetchOrThrow('https://api.example.com/missing');
- * } catch (error) {
- *   if (error instanceof HttpError && error.status === 404) { /* not found *\/ }
- * }
+ * @deprecated Use `fetchOrThrow` from `@helpers4/fetch` instead — same behavior. It will be
+ * removed from `@helpers4/promise` in v4.
  * @since 3.1.3
  */
 export async function fetchOrThrow(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
-  const response = await fetch(input, init);
-  if (!response.ok) {
-    throw new HttpError(response, response.url || requestUrl(input));
-  }
-  return response;
-}
-
-function requestUrl(input: RequestInfo | URL): string {
-  if (typeof input === 'string') return input;
-  return input instanceof URL ? input.href : input.url;
+  return fetchOrThrowImpl(input, init);
 }

@@ -6,6 +6,7 @@ replacement already exists, so you can switch now.
 | Deprecated | Use instead | Available since |
 | ---------- | ----------- | --------------- |
 | `object.safeJsonParse` | `json.safeParseStrict` (same parsing, same `fallback` behavior) | v3.2.0 |
+| `promise.fetchJson`, `promise.fetchOrThrow`, `promise.safeFetch`, `promise.HttpError` and their option types | the same names in `@helpers4/fetch` (same code; `HttpError` is the same class, so `instanceof` works with both) | v3.2.0 |
 
 # Migrating to v3
 
