@@ -9,7 +9,7 @@ import type { HelperExamples } from '../../scripts/examples/types';
 
 const examples: HelperExamples = {
   helper: 'safeFetch',
-  category: 'promise',
+  category: 'fetch',
   examples: [
     {
       title: 'Fetch JSON safely',
