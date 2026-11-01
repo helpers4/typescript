@@ -1,224 +1,42 @@
-# Release Process Documentation
+# Releasing
 
-This document describes the automated release process for helpers4.
+Releases are made by [`.github/workflows/release.yml`](../.github/workflows/release.yml), which runs
+[helpers4/action-release](https://github.com/helpers4/action-release). One version for every package.
 
-## Overview
+## Run a release
 
-The release process is automated through GitHub Actions and includes:
-1. **Testing** - Runs all unit tests
-2. **Version Update** - Increments version numbers
-3. **Building** - Builds all packages
-4. **Coherency Tests** - Validates package integrity
-5. **Git Operations** - Creates commit and tag
-6. **Publishing** - Publishes to NPM registry
+*Actions -> Release -> Run workflow*, from `main`:
 
-## Release Types
+| Input | |
+| --- | --- |
+| `bump` | `auto` (from the Conventional Commits), `patch`, `minor`, `major`, `alpha` / `beta` / `rc` (prereleases, from any branch), or `resume` |
+| `dry-run` | Build and dry-run everything, write nothing. The run summary shows the version, the packages and the notes. |
 
-### Version Types
-- **patch**: Bug fixes (1.0.0 → 1.0.1)
-- **minor**: New features (1.0.0 → 1.1.0) 
-- **major**: Breaking changes (1.0.0 → 2.0.0)
-- **prerelease**: Alpha/Beta versions (1.0.0 → 1.0.1-alpha.0)
+Run a dry-run first. A stable release only runs from `main`.
 
-### Prerelease Handling
-- If current version is `2.0.0-alpha.5`, prerelease becomes `2.0.0-alpha.6`
-- If current version is `2.0.0`, prerelease becomes `2.0.1-alpha.0`
+## What it does
 
-## Manual Release (Local)
+1. The gates of a pull request (lint, types, tests with coverage, security) run on the commit to release.
+2. The version is computed and written in `package.json`; `@since next` becomes the version in
+   `helpers/` (a prerelease keeps `next`); `CHANGELOG.md` gets the section of the version. A summary
+   written by hand under `## [Unreleased]` leads that section and the GitHub release notes.
+3. `pnpm run build && pnpm coherency` build `build/<package>/` for every category, the presets and the
+   bundles, each with that version, and check them. Every package is dry-run with `npm publish`.
+4. The signed release commit goes to `main` (as `helpers4-bot`), is tagged, and every package is published
+   to npm with trusted publishing (the dependencies of a package first: the bundles come last), then the
+   GitHub release is published with the build metadata and its provenance.
+5. The website is told to regenerate its docs.
 
-### Prerequisites
-```bash
-# Ensure you have the latest changes
-git pull origin main
+Anything wrong before step 4 stops the release with nothing written. After the commit, *Re-run failed jobs*
+(or `bump: resume`) publishes only what npm does not serve yet.
 
-# Ensure dependencies are installed
-pnpm install
+## A new category
 
-# Ensure working directory is clean
-git status
-```
+A new `@helpers4/<category>` package must exist on npm before it can have a trusted publisher: see
+"Adding a category" in [CONTRIBUTING.md](../CONTRIBUTING.md). The release stops before writing anything
+if one is missing.
 
-### Release Commands
-```bash
-# Dry run (recommended first)
-pnpm run release:dry-run
+## Failures
 
-# Patch release
-pnpm run release:patch
-
-# Minor release  
-pnpm run release:minor
-
-# Major release
-pnpm run release:major
-
-# Prerelease (alpha/beta)
-pnpm run release:prerelease
-```
-
-### Advanced Options
-```bash
-# Skip specific steps
-pnpm exec tsx scripts/version/release.ts patch --skip-tests --skip-build
-
-# Target specific branch
-pnpm exec tsx scripts/version/release.ts minor --branch develop
-
-# Full dry run
-pnpm exec tsx scripts/version/release.ts major --dry-run
-```
-
-## GitHub Actions Release
-
-### Triggering a Release
-1. Go to **Actions** tab in GitHub repository
-2. Select **Release** workflow
-3. Click **Run workflow**
-4. Choose:
-   - **Version type**: patch/minor/major/prerelease
-   - **Target branch**: usually 'main'
-5. Click **Run workflow**
-
-### What Happens
-1. **Checkout & Setup**: Gets code and sets up Node.js
-2. **Tests**: Runs `pnpm test`
-3. **Version Update**: Updates package.json versions
-4. **Build**: Runs `pnpm run build` 
-5. **Coherency**: Runs coherency tests
-6. **Git Operations**: Creates commit and tag, pushes to repository
-7. **NPM Publish**: Publishes all packages to NPM registry
-8. **GitHub Release**: Creates GitHub release with notes
-
-### Package Publication Order
-1. **Category packages** (array, string, url, etc.) - published first
-2. **Wait 60 seconds** - allows NPM registry to process
-3. **Bundle package** (all) - published last
-
-### Transaction Safety
-- If any category package fails to publish, the process stops
-- Packages already published before the failure stay published as-is — npm has no safe way
-  to undo a publish (`npm unpublish` permanently bans republishing that exact version,
-  forever, and `npm deprecate` needs a classic auth token this pipeline's OIDC/provenance
-  publish flow doesn't have, so it 404s every time). The run reports which packages already
-  went live instead of trying to touch them.
-- Bundle package only publishes if all category packages succeed
-- **Recovering from a partial failure**: fix whatever broke, then re-run the release at the
-  *same* version — publishing skips any package already on the registry
-  (`packageVersionExists`) and resumes with the rest. Do **not** revert the version-bump
-  commit and re-release at that same number: npm permanently refuses to republish a version
-  it has ever seen (published or since unpublished), so recomputing the identical version
-  will fail identically. Only fall back to `pnpm run unpublish:version` as a last resort,
-  and only once you accept that version can never be reused for the packages it removes.
-
-## Coherency Tests
-
-The coherency testing system validates:
-
-### Bundle Package Test
-- Verifies main bundle package structure
-- Checks required files exist
-- Validates package.json metadata
-
-### Version Consistency Test  
-- Ensures all packages have matching versions
-- Compares root package.json with build packages
-- Reports any version mismatches
-
-### Category Packages Test
-- Validates each category package structure
-- Checks for required files (package.json, README.md, LICENSE.md)
-- Verifies lib directory contains built files
-- Ensures proper package.json structure
-
-### Dependencies Coherency Test
-- Compares dependency versions across packages
-- Validates license and repository fields
-- Reports version mismatches with warnings
-
-## Troubleshooting
-
-### Common Issues
-
-**Working Directory Not Clean**
-```bash
-git status
-git add . && git commit -m "prep for release"
-# or
-git stash
-```
-
-**Version Update Fails**
-- Check package.json syntax
-- Ensure no file locks on package.json
-
-**Build Fails**
-- Run `pnpm run build` locally to debug
-- Check for TypeScript errors
-
-**Coherency Tests Fail**
-- Run `pnpm run coherency` locally
-- Review specific test failures
-
-**NPM Publish Fails**
-- Verify OIDC publisher is configured on npmjs.com for `helpers4/typescript`
-- Verify `id-token: write` permission is set in the workflow
-- Check NPM registry status
-- Ensure package names are available
-
-### Recovery Commands
-
-**A publish failed partway through — do NOT revert the version-bump commit.** Once the
-version commit has been pushed and at least one package published, reverting
-`package.json` back down just means the *next* release recomputes and retries the exact
-same version number — which npm will refuse again for any package it already touched
-(published or since unpublished). Instead:
-
-```bash
-# Fix whatever broke the failing package, then re-run the release at the SAME version.
-# Already-published packages are detected and skipped automatically.
-pnpm exec tsx scripts/publish/index.ts
-```
-
-**Remove Created Tag** (only if the release must be abandoned entirely, before any package published)
-```bash
-git tag -d v1.2.3
-git push origin :refs/tags/v1.2.3  # if pushed
-```
-
-**Unpublish a burned release (last resort)**
-
-Only when packages were published in a release that must be abandoned. This permanently
-bans that version number from ever being republished — prefer the resume path above.
-```bash
-pnpm run unpublish:version 1.2.3
-```
-
-## File Structure
-
-```
-scripts/
-├── version/
-│   ├── version-manager.ts    # Version increment logic
-│   ├── git-utils.ts         # Git operations
-│   ├── release.ts           # Main release orchestrator
-│   └── index.ts            # Exports
-├── coherency/
-│   ├── index.ts                       # Test runner
-│   ├── test-bundle.ts                 # Bundle tests  
-│   ├── test-version-consistency.ts    # Version tests
-│   ├── test-category-packages.ts      # Category tests
-│   └── test-dependencies-coherency.ts # Dependency tests
-├── build/                   # Build scripts
-└── publish/                 # Publish scripts
-
-.github/workflows/
-└── release.yml             # GitHub Actions workflow
-```
-
-## Security Notes
-
-- **OIDC Provenance**: Publishing uses npm OIDC via GitHub Actions (`--provenance`)
-- **No NPM token required**: Authentication is handled by OpenID Connect
-- **GITHUB_TOKEN**: Automatically provided by GitHub Actions
-- All operations use secure OIDC authentication
-- No sensitive data is logged or exposed
+Every message is explained in the
+[troubleshooting guide](https://github.com/helpers4/action-release/blob/main/docs/troubleshooting.md).

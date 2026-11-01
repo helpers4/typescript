@@ -43,25 +43,16 @@ Mutation testing support scripts
 
 ### 🚀 `publish/`
 
-Package publishing scripts
+Package maintenance (the release itself is `.github/workflows/release.yml`, see [RELEASE.md](RELEASE.md))
 
-- **helpers/** : Publishing utilities (npm, package discovery, transaction management)
+- **unpublish-version.ts** : Unpublish a version
+- **helpers/** : npm utilities
 
 ### 🧪 `tests/`
 
 Test utility scripts
 
 - **preload.ts** : Test preload configuration
-
-### 🏷️ `version/`
-
-Version and release management
-
-- **commit-analyzer.ts** : Commit analysis for versioning
-- **git-utils.ts** : Git utilities
-- **pre-release-validator.ts** : Pre-release validation
-- **release.ts** : Release process
-- **version-manager.ts** : Version management
 
 ## Quick Start
 
@@ -72,17 +63,6 @@ pnpm run build
 # Run coherency tests
 pnpm run coherency
 
-# Version bump (patch/minor/major/prerelease)
-pnpm run version:patch
-
-# Auto-detect version from commits
-pnpm run version:auto
-
-# Publish packages
-pnpm run publish
-
-# Dry run publish
-pnpm run publish:dry-run
 ```
 
 ## Documentation
@@ -93,6 +73,5 @@ Each subdirectory contains its own README.md with detailed documentation for its
 - **[coherency/README.md](coherency/README.md)** - Coherency testing and validation
 - **[constants/README.md](constants/README.md)** - Shared constants documentation
 - **[license/README.md](license/README.md)** - License management tools
-- **[publish/README.md](publish/README.md)** - Publishing system with transaction safety
+- **[RELEASE.md](RELEASE.md)** - Releasing
 - **[tests/README.md](tests/README.md)** - Test utilities and configuration
-- **[version/README.md](version/README.md)** - Version management and release automation

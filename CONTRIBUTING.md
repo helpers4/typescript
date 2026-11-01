@@ -410,13 +410,11 @@ a new category is picked up automatically the next time `pnpm build` runs.
 
 **Before the first release that publishes it**, bootstrap the new `@helpers4/<new-category>`
 package on npm. The release workflow authenticates via npm Trusted Publishing (OIDC,
-`--provenance`, no static token — see `.github/workflows/release.yml`), and npm can only
+no static token — see `.github/workflows/release.yml`), and npm can only
 configure a trusted publisher for a package that already exists on the registry. A brand-new
 package has no trusted publisher yet, so its first automated publish fails with a permission
-error — after the fact, mid-release, with every other package already published successfully.
-`scripts/publish/index.ts`'s pre-publish validation now catches this upfront (release aborts
-before publishing anything, with a clear message) instead of failing partway through, but the
-package still has to actually be bootstrapped before a release can succeed for it:
+error. The release checks this upfront and stops before writing or publishing anything, with a
+clear message, but the package still has to be bootstrapped before a release can succeed for it:
 
 1. Publish an initial version manually, e.g. `npx --yes setup-npm-trusted-publish @helpers4/<new-category>`
    (or a manual `npm publish` from a machine with a classic npm token)
