@@ -21,15 +21,13 @@ helpers/<category>/
 
 ```bash
 pnpm test && pnpm build && pnpm lint && pnpm typecheck && pnpm coherency
-pnpm version:patch|minor|major|prerelease
-pnpm release:auto
 ```
 
 **Rules:**
 
 - `any` forbidden — use `unknown` or specific types
 - JSDoc on all exports: `@param` `@returns` `@example` `@since <version>`
-  - Not yet released → `@since next` (replaced at publish time)
+  - Not yet released → `@since next` (replaced by the version at release time)
   - Existing `@since x.x.x` → **never change** (records first published version)
 - 100% coverage: lines, functions, branches, statements — no exceptions
 - Tree-shakable exports only (no side effects)
