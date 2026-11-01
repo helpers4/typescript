@@ -127,7 +127,7 @@ jobs:
       # anything is written or published.
       - name: Release
         id: release
-        uses: helpers4/action-release@86f2862ebc70051c60caf8bd632c3b9c0f0257cd # v0.5.0
+        uses: helpers4/action-release@229809c6515199cf00e085764bed9716c8af195c # v0.5.1
         with:
           bump: ${{ inputs.bump }}
           dry-run: ${{ inputs.dry-run }}
