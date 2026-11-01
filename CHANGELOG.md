@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 
+## [Unreleased]
+
+## [3.1.12] - 2026-11-01
+
+### 🔧 Miscellaneous
+- **CI-CD**: refresh mutation testing incremental baseline
+- **CI-CD**: refresh mutation testing incremental baseline
+
+### 👷 CI/CD
+- **release**: update helpers4/action-release to v0.5.1
+- **release**: pin helpers4/action-release by commit SHA
+- **release**: release with helpers4/action-release
 
 ## [3.1.11] - 2026-10-31
 
@@ -1442,4 +1454,3 @@ Upgrading a major version? See [MIGRATION.md](MIGRATION.md).
 [2.0.0-alpha.3]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.2...v2.0.0-alpha.3
 [2.0.0-alpha.2]: https://github.com/helpers4/typescript/compare/v2.0.0-alpha.1...v2.0.0-alpha.2
 [2.0.0-alpha.1]: https://github.com/helpers4/typescript/compare/v1.9.9...v2.0.0-alpha.1
-
