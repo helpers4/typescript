@@ -4,11 +4,6 @@ on:
   pull_request:
     branches: [main, develop]
     types: [opened, synchronize, reopened, ready_for_review]
-    paths-ignore:
-      - "**.md"
-      - "llms.txt"
-      - "LICENSE"
-      - ".github/ISSUE_TEMPLATE/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
