@@ -347,7 +347,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) with a gitmo
 
 **Format:** `<type>(<scope>): <emoji> <description>`
 
-**Scopes:** `array`, `color`, `commit`, `date`, `function`, `guard`, `id`, `json`, `markdown`, `node`, `number`, `object`, `observable`, `promise`, `string`, `type`, `url`, `version`, `CI-CD`
+**Scopes:** `array`, `color`, `commit`, `date`, `function`, `guard`, `id`, `json`, `markdown`, `node`, `number`, `object`, `observable`, `promise`, `string`, `type`, `url`, `version`, `ai`, `ci`, `deps`, `docs` (full list: `scopes.json`)
 
 | Type | Primary | Alternatives (gitmoji.dev) | When to use |
 |------|---------|---------------------------|-------------|
