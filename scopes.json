@@ -1,10 +1,10 @@
 [
-  "agents",
+  "ai",
   "animation",
   "array",
   "binary",
   "browser",
-  "CI-CD",
+  "ci",
   "coherency",
   "color",
   "commit",
@@ -38,5 +38,6 @@
   "structure",
   "type",
   "url",
-  "version"
+  "version",
+  "docs"
 ]

@@ -199,5 +199,5 @@ jobs:
         uses: grafana/github-api-commit-action@b1d81091e8480dd11fcea8bc1f0ab977a0376ca5 # v1.0.0
         with:
           token: ${{ steps.app_token.outputs.token }}
-          commit-message: "chore(CI-CD): 🔧 refresh mutation testing incremental baseline"
+          commit-message: "chore(ci): 🔧 refresh mutation testing incremental baseline"
           success-if-no-changes: "true"
